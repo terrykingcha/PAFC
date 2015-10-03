@@ -1,0 +1,25 @@
+{
+  "name": "PAFC-web",
+  "version": "0.1.0",
+  "homepage": "https://github.com/terrykingcha/PAFC",
+  "authors": [
+    "Terry King <terrykingcha@gmail.com>"
+  ],
+  "description": "The website of PAFC",
+  "main": "src/main.js",
+  "keywords": [
+    "PAFC"
+  ],
+  "license": "GPLv2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "three.js": "git@github.com:mrdoob/three.js.git",
+    "regenerator": "git@github.com:facebook/regenerator.git#~0.8.41"
+  }
+}
