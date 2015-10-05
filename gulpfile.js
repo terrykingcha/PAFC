@@ -49,4 +49,4 @@ gulp.task('dist', ['webpack'], function() {
         .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', ['webpack']);
+gulp.task('default', ['dist']);
