@@ -8,8 +8,9 @@ import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Controls from './controls';
 import * as Plane from './plane';
+import * as Ball from './ball';
 
-var scene, camera, renderer, domElement, light, plane;
+var scene, camera, renderer, domElement, light, plane, ball;
 
 export var init = async () => {    
     await Promise.all([
@@ -17,7 +18,8 @@ export var init = async () => {
         Camera.ready(),
         Renderer.ready(),
         Light.ready(),
-        Plane.ready()
+        Plane.ready(),
+        Ball.ready()
     ]);
 
     scene = Scene.scene;
@@ -25,18 +27,17 @@ export var init = async () => {
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
     light = Light.light;
-    plane = Plane.object.clone();
+    plane = Plane.object;
 
     scene.add(camera);
     scene.add(light);
     scene.add(plane);
 
-
     camera.position.set(0, 0, 200);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
-    // light.position.set(-10, 10, 10);
+    light.position.set(-10, 10, 10);
     plane.position.set(-125, -75, 0);
-    Controls.init(camera);
+    Controls.init(camera, renderer);
 
     await pageLoad();
     domElement.setAttribute('chapter', 'two');

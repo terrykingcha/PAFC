@@ -1,5 +1,6 @@
 import {defer} from '../lib/promise';
 import {width, height} from '../lib/env';
+import {requestAnimationFrame, cancelAnimationFrame} from '../lib/util';
 
 export var camera;
 

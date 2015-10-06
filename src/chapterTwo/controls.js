@@ -1,5 +1,6 @@
 import {defer} from '../lib/promise';
 import CubicBezier from '../lib/cubicbezier';
+import {requestAnimationFrame, cancelAnimationFrame} from '../lib/util';
 
 export var camera;
 
@@ -30,7 +31,11 @@ function animate() {
     camera.updateProjectionMatrix();
 }
 
-export function init(_camera) {
+export function init(_camera, _renderer) {
+    // var controls = new THREE.OrbitControls(_camera, _renderer.domElement);
+    // controls.addEventListener('change', function() {
+    //     controls.update();
+    // });
     camera = _camera;
     startZ = camera.position.z;
     document.addEventListener('mousewheel', onMouseWheel, false);

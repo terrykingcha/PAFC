@@ -45,7 +45,7 @@ gulp.task('dist', ['webpack'], function() {
     console.log(srcPaths);
     return gulp.src(srcPaths)
         .pipe(concat('pafc.js'))
-        .pipe(uglifyjs())
+        // .pipe(uglifyjs())
         .pipe(gulp.dest('dist/'));
 });
 

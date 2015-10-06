@@ -10,11 +10,12 @@ export var object;
 export function render() {
     var time = Date.now() * 0.00005;
     var h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
-    pointMaterial.color.setHSL(h, 0.5, 0.5);
-    lineMaterial.color.setHSL(h, 0.5, 0.5);
+    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
+    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 }
 
 var pointMaterial;
+var pointHaloMaterial;
 var pointMaterialDeferred = defer();
 var pointMaterialLoader = new THREE.TextureLoader(manager);
 pointMaterialLoader.load(
@@ -22,13 +23,20 @@ pointMaterialLoader.load(
     function(texture) {
         pointMaterial = new THREE.PointsMaterial({
             size: 5, 
-            map: texture, 
-            // sizeAttenuation: false,
+            map: texture,
             alphaTest: 0.5, 
             transparent: true,
+            sizeAttenuation: true,
             fog: true
         });
-        pointMaterial.color.setHSL( 1.0, 0.3, 0.7 );
+        pointHaloMaterial = new THREE.PointsMaterial({
+            size: 7,
+            opacity: 0.5,
+            map: texture,
+            transparent: true,
+            sizeAttenuation: true,
+            fog: true
+        });
         pointMaterialDeferred.resolve();
     },
     onProgress, 
@@ -37,33 +45,23 @@ pointMaterialLoader.load(
 
 var lineMaterialDeferred = defer();
 var lineMaterial = new THREE.LineBasicMaterial({
-    linewidth: 2.5,
-    // sizeAttenuation: false,
+    linewidth: 5,
+    color: 0xFFFFFF,
+    fog: true
+});
+var lineHaloMaterial = new THREE.LineBasicMaterial({
+    linewidth: 12,
+    opacity: 0.5,
+    transparent: true,
     fog: true
 });
 lineMaterialDeferred.resolve();
-// var lineMaterialLoader = new THREE.OBJMTLLoader(manager);
-// lineMaterialLoader.load(
-//     'assets/obj/others/ball.obj',
-//     'assets/obj/others/ball.mtl',
-//     function (material) {
-//         object = material;
-//         deferred.resolve();
-//         // lineMaterial = material;
-//         // lineMaterialDeferred.resolve();
-//     }, 
-//     onProgress, 
-//     onError
-// );
 
 (async () => {
     await Promise.all([
         pointMaterialDeferred.promise,
         lineMaterialDeferred.promise
     ]);
-
-    pointMaterial.color.setHSL(1.0, 0.3, 0.7);
-    lineMaterial.color.setHSL(1.0, 0.3, 0.7);
 
     object = new THREE.Object3D();
 
@@ -98,13 +96,19 @@ lineMaterialDeferred.resolve();
         }
 
         if (lineGeometry) {
+            let lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
             let line = new THREE.Line(lineGeometry, lineMaterial);
-            object.add(line);
+            let lineGroup = new THREE.Group();
+            lineGroup.add(lineHalo, line);
+            object.add(lineGroup);
         }
 
         if (pointGeometry) {
+            let pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
             let point = new THREE.Points(pointGeometry, pointMaterial);
-            object.add(point);
+            let pointGroup = new THREE.Group();
+            pointGroup.add(pointHalo, point);
+            object.add(pointGroup);
         }
     }
 
