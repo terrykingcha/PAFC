@@ -1,4 +1,5 @@
 import {defer} from '../lib/promise';
+import CubicBezier from '../lib/cubicbezier';
 
 export var camera;
 
@@ -7,21 +8,31 @@ export var end = () => deferred.promise;
 
 function onMouseWheel(e) {
     e.preventDefault();
-    var offset = -event.wheelDeltaY * 0.005;
+}
 
-    camera.position.z += offset;
-    camera.position.z = Math.min(camera.position.z, 200);
-    camera.position.z = Math.max(camera.position.z, -5);  
-
-    // if (camera.position.z === -5) {
-        // document.removeEventListener('mousewheel', onMouseWheel);
-        // deferred.resolve();
-    // }
-
+var startZ;
+var endZ = -5;
+var zoom = 0;
+var zoomStep = 0.005;
+var easeIn = CubicBezier.easeIn;
+var requestFrameId;
+function animate() {
+    requestFrameId = requestAnimationFrame(animate);
+    var z = startZ + (endZ - startZ) * easeIn(zoom);
+    zoom += zoomStep;
+    if (z <= -5) {
+        document.removeEventListener('mousewheel', onMouseWheel);
+        cancelAnimationFrame(requestFrameId);
+        deferred.resolve();
+    } else {
+        camera.position.z = z;
+    }
     camera.updateProjectionMatrix();
 }
 
 export function init(_camera) {
     camera = _camera;
+    startZ = camera.position.z;
     document.addEventListener('mousewheel', onMouseWheel, false);
+    animate();
 }

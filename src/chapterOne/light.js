@@ -8,7 +8,13 @@ const Z = 0;
 var deferred = defer();
 export var ready = () => deferred.promise;
 
-export var light = new THREE.PointLight(COLOR);
-light.position.set(X, Y, Z);
+export var pointLight = new THREE.PointLight(COLOR);
+pointLight.position.set(X, Y, Z);
+
+export var directionallight = new THREE.DirectionalLight(COLOR);
+directionallight.position.set(X, Y, Z);
+
+export var ambientlight = new THREE.AmbientLight(COLOR);
+ambientlight.position.set(X, Y, Z);
 
 deferred.resolve();

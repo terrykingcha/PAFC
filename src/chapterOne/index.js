@@ -10,7 +10,7 @@ import * as Controls from './controls';
 import * as Tower from './tower';
 import * as Sky from './sky';
 
-var scene, camera, renderer, domElement, light, tower, sky;
+var scene, camera, renderer, domElement, plight, dlight, alight, tower, sky;
 var gui;
 export var init = async () => {    
     await Promise.all([
@@ -26,23 +26,32 @@ export var init = async () => {
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    light = Light.light;
+    plight = Light.pointLight;
+    dlight = Light.directionallight;
+    alight = Light.ambientlight;
     tower = Tower.object;
     sky = Sky.object;
 
     scene.add(camera);
-    scene.add(light);
+    scene.add(plight);
+    // scene.add(dlight);
+    // scene.add(alight);
     scene.add(tower);
     scene.add(sky);
 
     camera.position.set(0, 0, 4);
     camera.lookAt(scene.position);
 
-    light.position.set(
+    plight.position.set(
         sky.geometry.parameters.radius * 0.4, 
         sky.geometry.parameters.radius * 0.4, 
         -sky.geometry.parameters.radius * 0.8
     );
+    // alight.position.set(
+    //     sky.geometry.parameters.radius * 0.4, 
+    //     sky.geometry.parameters.radius * 0.4, 
+    //     -sky.geometry.parameters.radius * 0.8
+    // );
     tower.position.set(0, -1.2, 0);
     sky.position.set(0, 0, 0);
     Controls.init(camera);

@@ -13,7 +13,7 @@ var lonStep = 0.3;
 var initRaduis;
 var raduis;
 var raduisStep;
-var xOffsetPercent = 0;
+var xOffsetPercent = 0.5;
 var yOffsetPercent = 0;
 var requestFrameId;
 var zoomIn = false;

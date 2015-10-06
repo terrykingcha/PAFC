@@ -5,7 +5,10 @@ import * as prologue from './prologue';
 import * as chapteri from './chapterOne';
 import * as chapterii from './chapterTwo';
 
-var chapters = [chapteri, chapterii];
+var chapters = [
+    // chapteri, 
+    chapterii
+];
 
 (async () => {
     await prologue.ready();
