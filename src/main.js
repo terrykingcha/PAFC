@@ -6,7 +6,7 @@ import * as chapteri from './chapterOne';
 import * as chapterii from './chapterTwo';
 
 var chapters = [
-    // chapteri, 
+    chapteri, 
     chapterii
 ];
 
