@@ -7,19 +7,18 @@ import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Controls from './controls';
-import * as Plane from './plane';
-import * as Ball from './ball';
+import * as Box from './box';
+import Visualizer from './visualizer';
 
-var scene, camera, renderer, domElement, light, plane, ball;
+var scene, camera, renderer, domElement, light, box, visualizer;
 
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
         Camera.ready(),
         Renderer.ready(),
-        Light.ready(),
-        Plane.ready(),
-        Ball.ready()
+        Box.ready(),
+        Light.ready()
     ]);
 
     scene = Scene.scene;
@@ -27,16 +26,20 @@ export var init = async () => {
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
     light = Light.light;
-    plane = Plane.object;
+    box = Box.object;
+    visualizer = new Visualizer();
+    visualizer.load('./assets/sounds/sugar.mp3');
 
     scene.add(camera);
     scene.add(light);
-    scene.add(plane);
+    scene.add(box);
 
-    camera.position.set(0, 0, 200);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    box.position.set(0, 0, 0);
+    camera.position.set(Box.xSize() / 2, 
+        Box.ySize() / 2, 
+        Box.ySize() * Math.tan(THREE.Math.degToRad(camera.fov)) + Box.zSize());
+    camera.lookAt(camera.position);
     light.position.set(-10, 10, 10);
-    plane.position.set(-125, -75, 0);
     Controls.init(camera, renderer);
 
     await pageLoad();
@@ -55,7 +58,8 @@ function resize() {
 }
 
 function render() {
-    Plane.render();
+    visualizer.analysis();
+    Box.render(visualizer);
     renderer.render(scene, camera);
 }
 

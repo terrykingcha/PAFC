@@ -39789,7 +39789,9 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var chapterii = _interopRequireWildcard(_chapterTwo);
 	
-	var chapters = [chapteri, chapterii];
+	var chapters = [
+	// chapteri,
+	chapterii];
 	
 	(function callee$0$0() {
 	    var lastChapter, i, chapter;
@@ -41157,6 +41159,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _this = this;
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
 	__webpack_require__(19);
@@ -41185,22 +41189,22 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _plane = __webpack_require__(27);
+	var _box = __webpack_require__(27);
 	
-	var Plane = _interopRequireWildcard(_plane);
+	var Box = _interopRequireWildcard(_box);
 	
-	var _ball = __webpack_require__(28);
+	var _visualizer = __webpack_require__(28);
 	
-	var Ball = _interopRequireWildcard(_ball);
+	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
-	var scene, camera, renderer, domElement, light, plane, ball;
+	var scene, camera, renderer, domElement, light, box, visualizer;
 	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Plane.ready(), Ball.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Box.ready(), Light.ready()]));
 	
 	            case 2:
 	
@@ -41209,22 +41213,24 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                renderer = Renderer.renderer;
 	                domElement = Renderer.domElement;
 	                light = Light.light;
-	                plane = Plane.object;
+	                box = Box.object;
+	                visualizer = new _visualizer2['default']();
+	                visualizer.load('./assets/sounds/sugar.mp3');
 	
 	                scene.add(camera);
 	                scene.add(light);
-	                scene.add(plane);
+	                scene.add(box);
 	
-	                camera.position.set(0, 0, 200);
-	                camera.lookAt(new THREE.Vector3(0, 0, 0));
+	                box.position.set(0, 0, 0);
+	                camera.position.set(Box.xSize() / 2, Box.ySize() / 2, Box.ySize() * Math.tan(THREE.Math.degToRad(camera.fov)) + Box.zSize());
+	                camera.lookAt(camera.position);
 	                light.position.set(-10, 10, 10);
-	                plane.position.set(-125, -75, 0);
 	                Controls.init(camera, renderer);
 	
-	                context$1$0.next = 18;
+	                context$1$0.next = 20;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 18:
+	            case 20:
 	                domElement.setAttribute('chapter', 'two');
 	                document.body.appendChild(domElement);
 	                window.addEventListener('resize', resize, false);
@@ -41232,7 +41238,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 24:
+	            case 26:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41246,7 +41252,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	}
 	
 	function render() {
-	    Plane.render();
+	    visualizer.analysis();
+	    Box.render(visualizer);
 	    renderer.render(scene, camera);
 	}
 	
@@ -41338,7 +41345,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	exports.ready = ready;
 	var scene = new THREE.Scene();
 	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.0085);
+	scene.fog = new THREE.FogExp2(COLOR, 0.002);
 	
 	deferred.resolve();
 
@@ -41535,39 +41542,55 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	};
 	
 	exports.end = end;
-	function onMouseWheel(e) {
-	    e.preventDefault();
-	}
+	// var startZ;
+	// var endZ = -5;
+	// var zoom = 0;
+	// var zoomStep = 0.005;
+	// var easeIn = CubicBezier.easeIn;
+	// var requestFrameId;
+	// function onMouseWheel(e) {
+	//     e.preventDefault();
+	// }
+	
+	// function animate() {
+	//     requestFrameId = requestAnimationFrame(animate);
+	//     var z = startZ + (endZ - startZ) * easeIn(zoom);
+	//     zoom += zoomStep;
+	//     if (z <= -5) {
+	//         document.removeEventListener('mousewheel', onMouseWheel);
+	//         cancelAnimationFrame(requestFrameId);
+	//         deferred.resolve();
+	//     } else {
+	//         camera.position.z = z;
+	//     }
+	//     camera.updateProjectionMatrix();
+	// }
 	
 	var startZ;
-	var endZ = -5;
-	var zoom = 0;
-	var zoomStep = 0.005;
-	var easeIn = _libCubicbezier2['default'].easeIn;
-	var requestFrameId;
-	function animate() {
-	    requestFrameId = (0, _libUtil.requestAnimationFrame)(animate);
-	    var z = startZ + (endZ - startZ) * easeIn(zoom);
-	    zoom += zoomStep;
-	    if (z <= -5) {
+	var stepRatio = 0.005;
+	function onMouseWheel(e) {
+	    e.preventDefault();
+	
+	    var offset = e.wheelDelta * stepRatio;
+	    var z = camera.position.z;
+	
+	    z += offset;
+	    z = Math.min(z, startZ);
+	    z = Math.max(z, 0);
+	
+	    if (z <= 0) {
 	        document.removeEventListener('mousewheel', onMouseWheel);
-	        (0, _libUtil.cancelAnimationFrame)(requestFrameId);
 	        deferred.resolve();
-	    } else {
-	        camera.position.z = z;
 	    }
+	    camera.position.z = z;
 	    camera.updateProjectionMatrix();
 	}
 	
 	function init(_camera, _renderer) {
-	    // var controls = new THREE.OrbitControls(_camera, _renderer.domElement);
-	    // controls.addEventListener('change', function() {
-	    //     controls.update();
-	    // });
 	    exports.camera = camera = _camera;
 	    startZ = camera.position.z;
 	    document.addEventListener('mousewheel', onMouseWheel, false);
-	    animate();
+	    // animate();
 	}
 
 /***/ },
@@ -41704,8 +41727,22 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var _this = this;
 	
 	exports.render = render;
+	exports.lineCurve = lineCurve;
+	exports.beatAt = beatAt;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
 	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var _libCubicbezier = __webpack_require__(26);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
 	
 	var _prologue = __webpack_require__(5);
 	
@@ -41718,12 +41755,28 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var object;
 	
 	exports.object = object;
+	var beating = false;
 	
-	function render() {
+	function render(visualizer) {
 	    var time = Date.now() * 0.00005;
 	    var h = 360 * (1.0 + time) % 360 / 360;
 	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
 	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
+	
+	    if (!beating) {
+	        var freq = visualizer.freqs[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
+	        var time = visualizer.times[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
+	
+	        var x = parseInt(X_LENGTH * freq / 256);
+	        var y = parseInt((Y_LENGTH - LINE_CURVE_DIST * 2) * time / 256) + LINE_CURVE_DIST;
+	
+	        beating = new Promise(function (resolve, reject) {
+	            return beatAt(x, y).then(function () {
+	                beating = false;
+	                resolve();
+	            });
+	        });
+	    }
 	}
 	
 	var pointMaterial;
@@ -41732,19 +41785,19 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var pointMaterialLoader = new THREE.TextureLoader(_prologue.manager);
 	pointMaterialLoader.load('assets/images/disc.png', function (texture) {
 	    pointMaterial = new THREE.PointsMaterial({
-	        size: 5,
+	        size: 10,
 	        map: texture,
 	        alphaTest: 0.5,
 	        transparent: true,
-	        sizeAttenuation: true,
+	        sizeAttenuation: false,
 	        fog: true
 	    });
 	    pointHaloMaterial = new THREE.PointsMaterial({
-	        size: 7,
+	        size: 15,
 	        opacity: 0.5,
 	        map: texture,
 	        transparent: true,
-	        sizeAttenuation: true,
+	        sizeAttenuation: false,
 	        fog: true
 	    });
 	    pointMaterialDeferred.resolve();
@@ -41752,83 +41805,247 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var lineMaterialDeferred = (0, _libPromise.defer)();
 	var lineMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 5,
+	    linewidth: 3,
 	    color: 0xFFFFFF,
+	    alphaTest: 0.5,
+	    transparent: true,
 	    fog: true
 	});
 	var lineHaloMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 12,
+	    linewidth: 10,
 	    opacity: 0.5,
 	    transparent: true,
 	    fog: true
 	});
 	lineMaterialDeferred.resolve();
 	
+	var XYRatio = (0, _libEnv.width)() / (0, _libEnv.height)();
+	
+	var X_MIN = 0;
+	exports.X_MIN = X_MIN;
+	var X_MAX = 40;
+	exports.X_MAX = X_MAX;
+	var Y_MIN = 0;
+	exports.Y_MIN = Y_MIN;
+	var Y_MAX = parseInt(X_MAX / XYRatio);
+	exports.Y_MAX = Y_MAX;
+	var Z_MIN = 0;
+	exports.Z_MIN = Z_MIN;
+	var Z_MAX = 3;
+	exports.Z_MAX = Z_MAX;
+	var X_INTER = 20;
+	exports.X_INTER = X_INTER;
+	var Y_INTER = 20;
+	exports.Y_INTER = Y_INTER;
+	var Z_INTER = 20;
+	exports.Z_INTER = Z_INTER;
+	var X_LENGTH = X_MAX - X_MIN + 1;
+	exports.X_LENGTH = X_LENGTH;
+	var Y_LENGTH = Y_MAX - Y_MIN + 1;
+	exports.Y_LENGTH = Y_LENGTH;
+	var Z_LENGTH = Z_MAX - Z_MIN + 1;
+	
+	exports.Z_LENGTH = Z_LENGTH;
+	var xSize = function xSize() {
+	    return X_LENGTH * X_INTER;
+	};
+	exports.xSize = xSize;
+	var ySize = function ySize() {
+	    return Y_LENGTH * Y_INTER;
+	};
+	exports.ySize = ySize;
+	var zSize = function zSize() {
+	    return Z_LENGTH * Z_INTER;
+	};
+	
+	exports.zSize = zSize;
+	var points = {};
+	var lines = [];
+	
+	var LINE_CURVE_DIST = 2;
+	exports.LINE_CURVE_DIST = LINE_CURVE_DIST;
+	
+	function lineCurve(x, y, z) {
+	    var cp = Math.random() * 0.4 + 0.3;
+	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, (y - LINE_CURVE_DIST) * Y_INTER, z * Z_INTER), new THREE.Vector3(0, (y - LINE_CURVE_DIST * (1 - cp)) * Y_INTER, z * Z_INTER), new THREE.Vector3(x * X_INTER, (y - LINE_CURVE_DIST * cp) * Y_INTER, z * Z_INTER), new THREE.Vector3(x * X_INTER, y * Y_INTER, z * Z_INTER));
+	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x * X_INTER, y * Y_INTER, z * Z_INTER), new THREE.Vector3(x * X_INTER, (y + LINE_CURVE_DIST * cp) * Y_INTER, z * Z_INTER), new THREE.Vector3(0, (y + LINE_CURVE_DIST * (1 - cp)) * Y_INTER, z * Z_INTER), new THREE.Vector3(0, (y + LINE_CURVE_DIST) * Y_INTER, z * Z_INTER));
+	
+	    var curvePoints = curve1.getPoints(1000).concat(curve2.getPoints(1000));
+	
+	    return curvePoints;
+	}
+	
+	function beatAt(x, y) {
+	    var deferred = (0, _libPromise.defer)();
+	
+	    var ticks = [];
+	
+	    lines.forEach(function (lineGroup) {
+	        var originX = lineGroup.position.x / X_INTER;
+	        var originZ = lineGroup.position.z / Z_INTER;
+	
+	        lineGroup.children.slice(1, 2).forEach(function (line) {
+	            var geometry = line.geometry;
+	            if (geometry.vertices.length > 2) {
+	                geometry.vertices.splice(1, geometry.vertices.length - 2);
+	            }
+	
+	            ticks.push({
+	                tick: function tick(x1, x2) {
+	                    var _line$geometry$vertices;
+	
+	                    var curvePoints = lineCurve(x2, y, 0);
+	                    line.geometry = geometry.clone();
+	                    (_line$geometry$vertices = line.geometry.vertices).splice.apply(_line$geometry$vertices, [1, 0].concat(_toConsumableArray(curvePoints)));
+	                },
+	                start: x - originX - (x - originX) / originX,
+	                end: 0
+	            });
+	
+	            // geometry.vertices.splice(1, 0, ...curvePoints);
+	            // geometry.verticesNeedUpdate = true;
+	        });
+	    });
+	
+	    for (var originX in points) {
+	        // originX = parseFloat(originX);
+	        var kx = x + 0.5;
+	        var offset = kx - originX;
+	        var sign = Math.sign(offset);
+	        var group = points[originX];
+	        var y1 = y,
+	            y2 = y;
+	        var step1 = offset / (y1 - Y_MIN);
+	        var step2 = offset / (Y_MAX - y2);
+	
+	        while (y1 >= Y_MIN || y2 <= Y_MAX) {
+	            if (y1 >= Y_MIN) {
+	                (function () {
+	                    var point = group[y1];
+	                    var originY = point.position.y / Y_INTER;
+	                    ticks.push({
+	                        tick: function tick(x1, x2) {
+	                            point.position.x = x2[0] * X_INTER;
+	                            point.position.y = x2[1] * X_INTER;
+	                        },
+	                        start: [kx - step1 * (y - y1), originY * (1 + Math.random() * 0.5)],
+	                        end: [originX, originY]
+	                    });
+	                    y1--;
+	                })();
+	            }
+	
+	            if (y2 <= Y_MAX) {
+	                (function () {
+	                    var point = group[y2];
+	                    var originY = point.position.y / Y_INTER;
+	                    ticks.push({
+	                        tick: function tick(x1, x2) {
+	                            point.position.x = x2[0] * X_INTER;
+	                            point.position.y = x2[1] * X_INTER;
+	                        },
+	                        start: [kx - step2 * (y2 - y), originY * (1 - Math.random() * 0.5)],
+	                        end: [originX, originY]
+	                    });
+	                    y2++;
+	                })();
+	            }
+	        }
+	    }
+	
+	    var bezier = _libCubicbezier2['default'].easeInOut;
+	    var i = 0;
+	    (0, _libUtil.requestAnimationFrame)(function tween() {
+	        if (i > 1) return deferred.resolve();
+	        (0, _libUtil.requestAnimationFrame)(tween);
+	        ticks.forEach(function (tick) {
+	            var i1, i2;
+	            if (tick.start instanceof Array && tick.end instanceof Array) {
+	                i1 = tick.start.map(function (start, idx) {
+	                    var end = tick.end[idx];
+	                    return start + (end - start) * i;
+	                });
+	                i2 = tick.start.map(function (start, idx) {
+	                    var end = tick.end[idx];
+	                    return start + (end - start) * bezier(i);
+	                });
+	            } else {
+	                var i1 = tick.start + (tick.end - tick.start) * i;
+	                var i2 = tick.start + (tick.end - tick.start) * bezier(i);
+	            }
+	            tick.tick(i1, i2);
+	        });
+	        i += 0.05;
+	    });
+	
+	    return deferred.promise;
+	}
+	
+	window.beatAt = beatAt;
+	
 	(function callee$0$0() {
-	    var X_MIN, X_MAX, Y_MIN, Y_MAX, X_INTER, Y_INTER, x, pointGeometry, lineGeometry, y, vector, lineHalo, line, lineGroup, pointHalo, point, pointGroup;
+	    var vec31, makePoint, vec32, vec33, makeLine, x, xPoints, kx, y, clonedPointGroup, clonedLineGroup;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
+	                makeLine = function makeLine() {
+	                    var lineGeometry = new THREE.Geometry();
+	                    lineGeometry.vertices.push(vec32.clone());
+	                    lineGeometry.vertices.push(vec33.clone());
+	                    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+	                    var line = new THREE.Line(lineGeometry, lineMaterial);
+	                    var lineGroup = new THREE.Group();
+	                    lineGroup.add(lineHalo, line);
+	                    return lineGroup;
+	                };
+	
+	                makePoint = function makePoint() {
+	                    var pointGeometry = new THREE.Geometry();
+	                    pointGeometry.vertices.push(vec31.clone());
+	                    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
+	                    var point = new THREE.Points(pointGeometry, pointMaterial);
+	                    var pointGroup = new THREE.Group();
+	                    pointGroup.add(pointHalo, point);
+	                    return pointGroup;
+	                };
+	
+	                context$1$0.next = 4;
 	                return regeneratorRuntime.awrap(Promise.all([pointMaterialDeferred.promise, lineMaterialDeferred.promise]));
 	
-	            case 2:
+	            case 4:
 	
 	                exports.object = object = new THREE.Object3D();
 	
-	                X_MIN = 0;
-	                X_MAX = 49;
-	                Y_MIN = 0;
-	                Y_MAX = 29;
-	                X_INTER = 5;
-	                Y_INTER = 5;
+	                vec31 = new THREE.Vector3(0, 0, 0);
+	                vec32 = new THREE.Vector3(0, Y_MIN, 0);
+	                vec33 = new THREE.Vector3(0, Y_MAX * Y_INTER, 0);
 	
 	                for (x = X_MIN; x <= X_MAX; x++) {
-	                    pointGeometry = undefined;
-	                    lineGeometry = undefined;
+	                    xPoints = [];
+	                    kx = x + 0.5;
 	
-	                    if (x % 2 === 0) {
-	                        pointGeometry = new THREE.Geometry();
+	                    points[kx] = xPoints;
+	                    for (y = Y_MIN; y <= Y_MAX; y++) {
+	                        clonedPointGroup = makePoint();
+	
+	                        clonedPointGroup.position.set(kx * X_INTER, y * Y_INTER, (parseInt(Math.random() * (Z_MAX - Z_MIN)) + Z_MIN) * Z_INTER);
+	                        xPoints.push(clonedPointGroup);
+	                        object.add(clonedPointGroup);
 	                    }
 	
-	                    if (x > X_MIN && x < X_MAX && x % 2 === 1) {
-	                        lineGeometry = new THREE.Geometry();
-	                    }
+	                    // for (let z = Z_MIN; z <= Z_MAX; z++) {
+	                    clonedLineGroup = makeLine();
 	
-	                    for (y = Y_MIN; y < Y_MAX; y++) {
-	                        vector = new THREE.Vector3(x * X_INTER, y * Y_INTER, 0);
-	
-	                        if (lineGeometry) {
-	                            lineGeometry.vertices.push(vector.clone());
-	                        }
-	
-	                        if (pointGeometry) {
-	                            pointGeometry.vertices.push(vector.clone());
-	                        }
-	                    }
-	
-	                    if (lineGeometry) {
-	                        lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
-	                        line = new THREE.Line(lineGeometry, lineMaterial);
-	                        lineGroup = new THREE.Group();
-	
-	                        lineGroup.add(lineHalo, line);
-	                        object.add(lineGroup);
-	                    }
-	
-	                    if (pointGeometry) {
-	                        pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
-	                        point = new THREE.Points(pointGeometry, pointMaterial);
-	                        pointGroup = new THREE.Group();
-	
-	                        pointGroup.add(pointHalo, point);
-	                        object.add(pointGroup);
-	                    }
+	                    clonedLineGroup.position.x = x * X_INTER;
+	                    clonedLineGroup.position.z = (parseInt(Math.random() * (Z_MAX - Z_MIN)) + Z_MIN) * Z_INTER;
+	                    lines.push(clonedLineGroup);
+	                    object.add(clonedLineGroup);
+	                    // }
 	                }
 	
 	                deferred.resolve();
 	
-	            case 11:
+	            case 10:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41839,32 +42056,187 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 /* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	// Start off by initializing a new context.
+	"use strict";
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
 	var _libPromise = __webpack_require__(4);
 	
-	var _prologue = __webpack_require__(5);
+	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
+	audioContext.createGain = audioContext.createGain || audioContext.createGainNode;
+	audioContext.createDelay = audioContext.createDelay || audioContext.createDelayNode;
+	audioContext.createScriptProcessor = audioContext.createScriptProcessor || audioContext.createJavaScriptNode;
 	
-	exports.ready = ready;
-	var object;
+	var BufferLoader = (function () {
+	    function BufferLoader(audioContext, urlList, callback) {
+	        _classCallCheck(this, BufferLoader);
 	
-	exports.object = object;
-	THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
+	        this.audioContext = audioContext;
+	        this.urlList = urlList;
+	        this.onload = callback;
+	        this.bufferList = new Array();
+	        this.loadCount = 0;
+	    }
 	
-	var loader = new THREE.JSONLoader(_prologue.manager);
-	loader.load('assets/obj/others/ball.js', function (geometry, materials) {
-	    exports.object = object = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-	    deferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
+	    // Interesting parameters to tweak!
+	
+	    _createClass(BufferLoader, [{
+	        key: "loadBuffer",
+	        value: function loadBuffer(url, index) {
+	            // Load buffer asynchronously
+	            var request = new XMLHttpRequest();
+	            request.open("GET", url, true);
+	            request.responseType = "arraybuffer";
+	
+	            var loader = this;
+	
+	            request.onload = function () {
+	                // Asynchronously decode the audio file data in request.response
+	                loader.audioContext.decodeAudioData(request.response, function (buffer) {
+	                    if (!buffer) {
+	                        alert('error decoding file data: ' + url);
+	                        return;
+	                    }
+	                    loader.bufferList[index] = buffer;
+	                    if (++loader.loadCount == loader.urlList.length) loader.onload(loader.bufferList);
+	                }, function (error) {
+	                    console.error('decodeAudioData error', error);
+	                });
+	            };
+	
+	            request.onerror = function () {
+	                alert('BufferLoader: XHR error');
+	            };
+	
+	            request.send();
+	        }
+	    }, {
+	        key: "load",
+	        value: function load() {
+	            for (var i = 0; i < this.urlList.length; ++i) this.loadBuffer(this.urlList[i], i);
+	        }
+	    }]);
+	
+	    return BufferLoader;
+	})();
+	
+	var SMOOTHING = 0.8;
+	var FFT_SIZE = 32; // 快速傅里叶变换
+	
+	var Visualizer = (function () {
+	    function Visualizer() {
+	        _classCallCheck(this, Visualizer);
+	
+	        var that = this;
+	        this.analyser = audioContext.createAnalyser();
+	
+	        this.analyser.connect(audioContext.destination);
+	        this.analyser.minDecibels = -140;
+	        this.analyser.maxDecibels = 0;
+	
+	        this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
+	        this.times = new Uint8Array(this.analyser.frequencyBinCount);
+	
+	        this.isPlaying = false;
+	        this.startTime = 0;
+	        this.startOffset = 0;
+	
+	        this.deferred = (0, _libPromise.defer)();
+	    }
+	
+	    _createClass(Visualizer, [{
+	        key: "ready",
+	        value: function ready() {
+	            return this.deferred.promise;
+	        }
+	    }, {
+	        key: "load",
+	        value: function load(path) {
+	            var that = this;
+	            var soundMap = {
+	                buffer: path
+	            };
+	            var names = [];
+	            var paths = [];
+	            for (var name in soundMap) {
+	                var path = soundMap[name];
+	                names.push(name);
+	                paths.push(path);
+	            }
+	            var bufferLoader = new BufferLoader(audioContext, paths, function (bufferList) {
+	                for (var i = 0; i < bufferList.length; i++) {
+	                    var buffer = bufferList[i];
+	                    var name = names[i];
+	                    that[name] = buffer;
+	                }
+	                that.togglePlayback();
+	                that.deferred.resolve();
+	            });
+	            bufferLoader.load();
+	
+	            return that.deferred.promise;
+	        }
+	    }, {
+	        key: "togglePlayback",
+	        value: function togglePlayback() {
+	            if (this.isPlaying) {
+	                // Stop playback
+	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
+	                this.startOffset += audioContext.currentTime - this.startTime;
+	                console.log('paused at', this.startOffset);
+	                // Save the position of the play head.
+	            } else {
+	                    this.startTime = audioContext.currentTime;
+	                    console.log('started at', this.startOffset);
+	                    this.source = audioContext.createBufferSource();
+	                    // Connect graph
+	                    this.source.connect(this.analyser);
+	                    this.source.buffer = this.buffer;
+	                    this.source.loop = true;
+	                    // Start playback, but make sure we stay in bound of the buffer.
+	                    this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
+	                }
+	            this.isPlaying = !this.isPlaying;
+	        }
+	    }, {
+	        key: "analysis",
+	        value: function analysis() {
+	            this.analyser.smoothingTimeConstant = SMOOTHING;
+	            this.analyser.fftSize = FFT_SIZE;
+	
+	            // Get the frequency data from the currently playing music
+	            this.analyser.getByteFrequencyData(this.freqs); // 频率数据
+	            this.analyser.getByteTimeDomainData(this.times); // 波形数据
+	        }
+	    }, {
+	        key: "getFrequencyValue",
+	        value: function getFrequencyValue(freq) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(freq / nyquist * this.freqs.length);
+	            return this.freqs[index];
+	        }
+	    }, {
+	        key: "getTimeValue",
+	        value: function getTimeValue(time) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(time / nyquist * this.times.length);
+	            return this.times[index];
+	        }
+	    }]);
+	
+	    return Visualizer;
+	})();
+	
+	exports["default"] = Visualizer;
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map
