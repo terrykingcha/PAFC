@@ -27,8 +27,8 @@ export var init = async () => {
     domElement = Renderer.domElement;
     light = Light.light;
     box = Box.object;
-    visualizer = new Visualizer();
-    visualizer.load('./assets/sounds/sugar.mp3');
+    // visualizer = new Visualizer();
+    // visualizer.load('./assets/sounds/sugar.mp3');
 
     scene.add(camera);
     scene.add(light);
@@ -58,8 +58,8 @@ function resize() {
 }
 
 function render() {
-    visualizer.analysis();
-    Box.render(visualizer);
+    // visualizer.analysis();
+    Box.render();
     renderer.render(scene, camera);
 }
 

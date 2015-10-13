@@ -4,10 +4,13 @@ import {delay, waitForEvent} from './lib/promise';
 import * as prologue from './prologue';
 import * as chapteri from './chapterOne';
 import * as chapterii from './chapterTwo';
+import * as chapteriii from './chapterThree';
+
 
 var chapters = [
     // chapteri, 
-    chapterii
+    // chapterii,
+    chapteriii
 ];
 
 (async () => {

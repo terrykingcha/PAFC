@@ -16,7 +16,7 @@ export function render(visualizer) {
     pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
     lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 
-    if (!beating) {
+    if (visualizer && !beating) {
         var freq = visualizer.freqs[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
         var time = visualizer.times[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
 
@@ -219,8 +219,6 @@ export function beatAt(x, y) {
 
     return deferred.promise;
 }
-
-window.beatAt = beatAt;
 
 (async () => {
     await Promise.all([
