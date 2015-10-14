@@ -39781,17 +39781,25 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _chapterOne = __webpack_require__(6);
+	var _chapter1 = __webpack_require__(6);
 	
-	var chapteri = _interopRequireWildcard(_chapterOne);
+	var chapter1 = _interopRequireWildcard(_chapter1);
 	
-	var _chapterTwo = __webpack_require__(18);
+	var _chapter2 = __webpack_require__(19);
 	
-	var chapterii = _interopRequireWildcard(_chapterTwo);
+	var chapter2 = _interopRequireWildcard(_chapter2);
 	
-	var chapters = [
-	// chapteri,
-	chapterii];
+	var _chapter3 = __webpack_require__(29);
+	
+	var chapter3 = _interopRequireWildcard(_chapter3);
+	
+	var chapters = [chapter1, chapter2, chapter3];
+	
+	var matched;
+	if (matched = location.search.match(/chapter=(\d+)/)) {
+	    var no = matched[1] >> 0;
+	    chapters = chapters.slice(no - 1, no);
+	}
 	
 	(function callee$0$0() {
 	    var lastChapter, i, chapter;
@@ -40540,8 +40548,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var Sky = _interopRequireWildcard(_sky);
 	
 	var scene, camera, renderer, domElement, plight, dlight, alight, tower, sky;
-	var gui;
 	var init = function init() {
+	    var SkyDynamic;
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -40562,28 +40570,28 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	                scene.add(camera);
 	                scene.add(plight);
-	                // scene.add(dlight);
-	                // scene.add(alight);
 	                scene.add(tower);
 	                scene.add(sky);
 	
 	                camera.position.set(0, 0, 4);
 	                camera.lookAt(scene.position);
-	
 	                plight.position.set(sky.geometry.parameters.radius * 0.4, sky.geometry.parameters.radius * 0.4, -sky.geometry.parameters.radius * 0.8);
-	                // alight.position.set(
-	                //     sky.geometry.parameters.radius * 0.4,
-	                //     sky.geometry.parameters.radius * 0.4,
-	                //     -sky.geometry.parameters.radius * 0.8
-	                // );
 	                tower.position.set(0, -1.2, 0);
 	                sky.position.set(0, 0, 0);
 	                Controls.init(camera);
 	
-	                context$1$0.next = 23;
+	                SkyDynamic = __webpack_require__(18);
+	
+	                SkyDynamic.ready().then(function (obj) {
+	                    scene.add(obj);
+	                    obj.position.set(0, 0, 0);
+	                    obj.scale.set(0.95, 0.95, 0.95);
+	                });
+	
+	                context$1$0.next = 25;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 23:
+	            case 25:
 	                domElement.setAttribute('chapter', 'one');
 	                document.body.appendChild(domElement);
 	                window.addEventListener('resize', resize, false);
@@ -40591,7 +40599,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 29:
+	            case 31:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40658,8 +40666,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./chapteri.less", function() {
-				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./chapteri.less");
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -40736,7 +40744,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _libEnv = __webpack_require__(9);
 	
-	var VIEW_ANGLE = 45;
+	var VIEW_ANGLE = 60;
 	var NEAR = 1;
 	var FAR = 10000;
 	var X = 0;
@@ -40918,7 +40926,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	};
 	
 	exports.end = end;
-	var lat = 10;
+	var lat = 5;
 	var latStep = 0.1;
 	var lon = 90;
 	var lonStep = 0.3;
@@ -40953,8 +40961,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    } else {
 	        lon += xOffsetPercent * lonStep;
 	        lat += yOffsetPercent * latStep;
-	        lat = Math.min(lat, 10);
-	        lat = Math.max(lat, -10);
+	        lat = Math.min(lat, 5);
+	        lat = Math.max(lat, 0);
 	        var theta = THREE.Math.degToRad(lon);
 	        var phi = THREE.Math.degToRad(lat);
 	        camera.position.x = raduis * Math.cos(theta);
@@ -41101,11 +41109,17 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _prologue = __webpack_require__(5);
 	
+	var bgIndex = location.search.match(/bgi=(\d+)/);
+	if (bgIndex) {
+	    bgIndex = bgIndex[1] >> 0;
+	} else {
+	    bgIndex = 1;
+	}
+	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
 	    return deferred.promise;
 	};
-	
 	exports.ready = ready;
 	var object;
 	
@@ -41113,7 +41127,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var skyMaterial;
 	var skyMaterialDeferred = (0, _libPromise.defer)();
 	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	skyMaterialLoader.load('assets/images/bg4.jpg', function (texture) {
+	skyMaterialLoader.load('assets/images/bg' + bgIndex + '.jpg', function (texture) {
 	    skyMaterial = new THREE.MeshBasicMaterial({
 	        map: texture,
 	        side: THREE.BackSide
@@ -41135,7 +41149,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                imageW = skyMaterial.map.image.width;
 	                imageH = skyMaterial.map.image.height;
 	                ratio = Math.max(windowW / windowH, imageW / imageH);
-	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64, 0, Math.PI * 2, THREE.Math.degToRad(55), THREE.Math.degToRad(75));
+	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64);
 	
 	                exports.object = object = new THREE.Mesh(shpereGeometry, skyMaterial);
 	                deferred.resolve();
@@ -41159,43 +41173,119 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _this = this;
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(5);
+	
+	var bgIndex = location.search.match(/bgi=(\d+)/);
+	if (bgIndex) {
+	    bgIndex = bgIndex[1] >> 0;
+	} else {
+	    bgIndex = 1;
+	}
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var skyMaterial;
+	var skyMaterialDeferred = (0, _libPromise.defer)();
+	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
+	skyMaterialLoader.load('assets/images/bg' + bgIndex + 'd.png', function (texture) {
+	    skyMaterial = new THREE.MeshBasicMaterial({
+	        map: texture,
+	        transparent: true,
+	        side: THREE.BackSide
+	    });
+	    skyMaterialDeferred.resolve();
+	}, _prologue.onProgress, _prologue.onError);
+	
+	var rotateY = 0;
+	var radians = THREE.Math.degToRad(0.02);
+	function animate() {
+	    (0, _libUtil.requestAnimationFrame)(animate);
+	    object.rotation.y = rotateY;
+	    rotateY -= radians;
+	}
+	
+	(function callee$0$0() {
+	    var windowW, windowH, imageW, imageH, ratio, shpereGeometry;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(skyMaterialDeferred.promise);
+	
+	            case 2:
+	                windowW = (0, _libEnv.width)();
+	                windowH = (0, _libEnv.height)();
+	                imageW = skyMaterial.map.image.width;
+	                imageH = skyMaterial.map.image.height;
+	                ratio = Math.max(windowW / windowH, imageW / imageH);
+	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64);
+	
+	                exports.object = object = new THREE.Mesh(shpereGeometry, skyMaterial);
+	                deferred.resolve(object);
+	                animate();
+	
+	            case 11:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(19);
+	__webpack_require__(20);
 	
 	var _libPromise = __webpack_require__(4);
 	
 	var _libEnv = __webpack_require__(9);
 	
-	var _scene = __webpack_require__(21);
+	var _scene = __webpack_require__(22);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(22);
+	var _camera = __webpack_require__(23);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(23);
+	var _renderer = __webpack_require__(24);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(24);
+	var _light = __webpack_require__(25);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _controls = __webpack_require__(25);
+	var _controls = __webpack_require__(26);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _box = __webpack_require__(27);
+	var _box = __webpack_require__(28);
 	
 	var Box = _interopRequireWildcard(_box);
-	
-	var _visualizer = __webpack_require__(28);
-	
-	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
 	var scene, camera, renderer, domElement, light, box, visualizer;
 	
@@ -41214,23 +41304,21 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                domElement = Renderer.domElement;
 	                light = Light.light;
 	                box = Box.object;
-	                visualizer = new _visualizer2['default']();
-	                visualizer.load('./assets/sounds/sugar.mp3');
 	
 	                scene.add(camera);
 	                scene.add(light);
 	                scene.add(box);
 	
 	                box.position.set(0, 0, 0);
-	                camera.position.set(Box.xSize() / 2, Box.ySize() / 2, Box.ySize() * Math.tan(THREE.Math.degToRad(camera.fov)) + Box.zSize());
+	                camera.position.set(Box.xSize() / 2, Box.ySize() / 2, Box.ySize() * Math.tan(THREE.Math.degToRad(camera.fov)) + Box.zSize() / 4);
 	                camera.lookAt(camera.position);
 	                light.position.set(-10, 10, 10);
 	                Controls.init(camera, renderer);
 	
-	                context$1$0.next = 20;
+	                context$1$0.next = 18;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 20:
+	            case 18:
 	                domElement.setAttribute('chapter', 'two');
 	                document.body.appendChild(domElement);
 	                window.addEventListener('resize', resize, false);
@@ -41238,7 +41326,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 26:
+	            case 24:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41252,8 +41340,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	}
 	
 	function render() {
-	    visualizer.analysis();
-	    Box.render(visualizer);
+	    Box.render();
 	    renderer.render(scene, camera);
 	}
 	
@@ -41292,13 +41379,13 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	exports.destory = destory;
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(20);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -41307,8 +41394,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./chapterii.less", function() {
-				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./chapterii.less");
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41318,13 +41405,13 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	}
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = "[chapter=\"two\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41350,7 +41437,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	deferred.resolve();
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41416,7 +41503,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	})();
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41484,7 +41571,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	})();
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41513,7 +41600,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	deferred.resolve();
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41527,7 +41614,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libCubicbezier = __webpack_require__(26);
+	var _libCubicbezier = __webpack_require__(27);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
@@ -41542,30 +41629,6 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	};
 	
 	exports.end = end;
-	// var startZ;
-	// var endZ = -5;
-	// var zoom = 0;
-	// var zoomStep = 0.005;
-	// var easeIn = CubicBezier.easeIn;
-	// var requestFrameId;
-	// function onMouseWheel(e) {
-	//     e.preventDefault();
-	// }
-	
-	// function animate() {
-	//     requestFrameId = requestAnimationFrame(animate);
-	//     var z = startZ + (endZ - startZ) * easeIn(zoom);
-	//     zoom += zoomStep;
-	//     if (z <= -5) {
-	//         document.removeEventListener('mousewheel', onMouseWheel);
-	//         cancelAnimationFrame(requestFrameId);
-	//         deferred.resolve();
-	//     } else {
-	//         camera.position.z = z;
-	//     }
-	//     camera.updateProjectionMatrix();
-	// }
-	
 	var startZ;
 	var stepRatio = 0.005;
 	function onMouseWheel(e) {
@@ -41590,11 +41653,10 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    exports.camera = camera = _camera;
 	    startZ = camera.position.z;
 	    document.addEventListener('mousewheel', onMouseWheel, false);
-	    // animate();
 	}
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41715,7 +41777,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	module.exports = exports["default"];
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41738,7 +41800,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _libEnv = __webpack_require__(9);
 	
-	var _libCubicbezier = __webpack_require__(26);
+	var _libCubicbezier = __webpack_require__(27);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
@@ -41763,7 +41825,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
 	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 	
-	    if (!beating) {
+	    if (visualizer && !beating) {
 	        var freq = visualizer.freqs[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
 	        var time = visualizer.times[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
 	
@@ -41831,13 +41893,13 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	exports.Y_MAX = Y_MAX;
 	var Z_MIN = 0;
 	exports.Z_MIN = Z_MIN;
-	var Z_MAX = 3;
+	var Z_MAX = 2;
 	exports.Z_MAX = Z_MAX;
-	var X_INTER = 20;
+	var X_INTER = 40;
 	exports.X_INTER = X_INTER;
-	var Y_INTER = 20;
+	var Y_INTER = 40;
 	exports.Y_INTER = Y_INTER;
-	var Z_INTER = 20;
+	var Z_INTER = 40;
 	exports.Z_INTER = Z_INTER;
 	var X_LENGTH = X_MAX - X_MIN + 1;
 	exports.X_LENGTH = X_LENGTH;
@@ -41847,15 +41909,15 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	exports.Z_LENGTH = Z_LENGTH;
 	var xSize = function xSize() {
-	    return X_LENGTH * X_INTER;
+	    return (X_LENGTH - 1) * X_INTER;
 	};
 	exports.xSize = xSize;
 	var ySize = function ySize() {
-	    return Y_LENGTH * Y_INTER;
+	    return (Y_LENGTH - 1) * Y_INTER;
 	};
 	exports.ySize = ySize;
 	var zSize = function zSize() {
-	    return Z_LENGTH * Z_INTER;
+	    return (Z_LENGTH - 1) * Z_INTER;
 	};
 	
 	exports.zSize = zSize;
@@ -41908,7 +41970,6 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    });
 	
 	    for (var originX in points) {
-	        // originX = parseFloat(originX);
 	        var kx = x + 0.5;
 	        var offset = kx - originX;
 	        var sign = Math.sign(offset);
@@ -41981,10 +42042,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    return deferred.promise;
 	}
 	
-	window.beatAt = beatAt;
-	
 	(function callee$0$0() {
-	    var vec31, makePoint, vec32, vec33, makeLine, x, xPoints, kx, y, clonedPointGroup, clonedLineGroup;
+	    var vec31, makePoint, vec32, vec33, makeLine, x, xPoints, kx, y, clonedPointGroup, z, clonedLineGroup;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -42033,14 +42092,14 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                        object.add(clonedPointGroup);
 	                    }
 	
-	                    // for (let z = Z_MIN; z <= Z_MAX; z++) {
-	                    clonedLineGroup = makeLine();
+	                    for (z = Z_MIN; z <= Z_MAX; z++) {
+	                        clonedLineGroup = makeLine();
 	
-	                    clonedLineGroup.position.x = x * X_INTER;
-	                    clonedLineGroup.position.z = (parseInt(Math.random() * (Z_MAX - Z_MIN)) + Z_MIN) * Z_INTER;
-	                    lines.push(clonedLineGroup);
-	                    object.add(clonedLineGroup);
-	                    // }
+	                        clonedLineGroup.position.x = x * X_INTER;
+	                        clonedLineGroup.position.z = z * Z_INTER;
+	                        lines.push(clonedLineGroup);
+	                        object.add(clonedLineGroup);
+	                    }
 	                }
 	
 	                deferred.resolve();
@@ -42053,190 +42112,687 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	})();
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// Start off by initializing a new context.
-	"use strict";
+	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
+	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _this = this;
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(30);
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	var _libEnv = __webpack_require__(9);
 	
-	audioContext.createGain = audioContext.createGain || audioContext.createGainNode;
-	audioContext.createDelay = audioContext.createDelay || audioContext.createDelayNode;
-	audioContext.createScriptProcessor = audioContext.createScriptProcessor || audioContext.createJavaScriptNode;
+	var _scene = __webpack_require__(32);
 	
-	var BufferLoader = (function () {
-	    function BufferLoader(audioContext, urlList, callback) {
-	        _classCallCheck(this, BufferLoader);
+	var Scene = _interopRequireWildcard(_scene);
 	
-	        this.audioContext = audioContext;
-	        this.urlList = urlList;
-	        this.onload = callback;
-	        this.bufferList = new Array();
-	        this.loadCount = 0;
-	    }
+	var _camera = __webpack_require__(33);
 	
-	    // Interesting parameters to tweak!
+	var Camera = _interopRequireWildcard(_camera);
 	
-	    _createClass(BufferLoader, [{
-	        key: "loadBuffer",
-	        value: function loadBuffer(url, index) {
-	            // Load buffer asynchronously
-	            var request = new XMLHttpRequest();
-	            request.open("GET", url, true);
-	            request.responseType = "arraybuffer";
+	var _renderer = __webpack_require__(34);
 	
-	            var loader = this;
+	var Renderer = _interopRequireWildcard(_renderer);
 	
-	            request.onload = function () {
-	                // Asynchronously decode the audio file data in request.response
-	                loader.audioContext.decodeAudioData(request.response, function (buffer) {
-	                    if (!buffer) {
-	                        alert('error decoding file data: ' + url);
-	                        return;
+	var _light = __webpack_require__(35);
+	
+	var Light = _interopRequireWildcard(_light);
+	
+	var _controls = __webpack_require__(36);
+	
+	var Controls = _interopRequireWildcard(_controls);
+	
+	var _cube = __webpack_require__(37);
+	
+	var Cube = _interopRequireWildcard(_cube);
+	
+	var scene, camera, renderer, domElement, light, cube;
+	
+	var init = function init() {
+	    return regeneratorRuntime.async(function init$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Cube.ready(), Light.ready()]));
+	
+	            case 2:
+	
+	                scene = Scene.scene;
+	                camera = Camera.camera;
+	                renderer = Renderer.renderer;
+	                domElement = Renderer.domElement;
+	                light = Light.light;
+	                cube = Cube.object;
+	
+	                scene.add(camera);
+	                scene.add(light);
+	                scene.add(cube);
+	
+	                cube.position.set(-Cube.xSize() / 2, -Cube.ySize() / 2, -Cube.zSize() / 2);
+	                camera.position.set(0, 0, Cube.zSize() / 2);
+	                camera.lookAt(camera.position);
+	                light.position.set(-10, 10, 10);
+	
+	                Controls.init(camera, renderer);
+	                Controls.controls.minDistance = Cube.zSize() / 4;
+	                Controls.controls.maxDistance = Cube.zSize();
+	
+	                context$1$0.next = 20;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 20:
+	                domElement.setAttribute('chapter', 'three');
+	                document.body.appendChild(domElement);
+	                window.addEventListener('resize', resize, false);
+	                window.scene = scene;
+	                window.camera = camera;
+	                window.renderer = renderer;
+	
+	            case 26:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.init = init;
+	function resize() {
+	    Renderer.resize();
+	    Camera.resize();
+	}
+	
+	function render() {
+	    Cube.render();
+	    Controls.update();
+	    renderer.render(scene, camera);
+	}
+	
+	var requestFrameId;
+	var start = function start() {
+	    requestFrameId = requestAnimationFrame(start);
+	    render();
+	};
+	
+	exports.start = start;
+	var end = function end() {
+	    return Controls.end().then(function () {
+	        requestFrameId && cancelAnimationFrame(requestFrameId);
+	        window.removeEventListener('resize', resize);
+	    });
+	};
+	
+	exports.end = end;
+	var show = function show() {
+	    domElement.style.transition = 'opacity 0.4s ease-out 0s';
+	    domElement.style.opacity = 1;
+	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
+	};
+	
+	exports.show = show;
+	var hide = function hide() {
+	    domElement.style.transition = 'opacity 0.4s ease-in 0s';
+	    domElement.style.opacity = 0;
+	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
+	};
+	
+	exports.hide = hide;
+	var destory = function destory() {
+	    document.body.removeChild(domElement);
+	};
+	exports.destory = destory;
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(31);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
+	module.exports = "[chapter=\"three\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var COLOR = 0x000000;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var scene = new THREE.Scene();
+	exports.scene = scene;
+	scene.fog = new THREE.FogExp2(COLOR, 0.005);
+	
+	deferred.resolve();
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var VIEW_ANGLE = 45;
+	var NEAR = 1;
+	var FAR = 10000;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var camera;
+	
+	exports.camera = camera;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    renderer.setSize(w, h);
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.camera = camera = new THREE.PerspectiveCamera(VIEW_ANGLE, w / h, NEAR, FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
+	                camera.position.set(X, Y, Z); //放置位置
+	
+	                deferred.resolve();
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var COLOR = 0x000000;
+	var ALPHA = 1;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var renderer;
+	exports.renderer = renderer;
+	var domElement;
+	
+	exports.domElement = domElement;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    camera.aspect = w / h;
+	    camera.updateProjectionMatrix();
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.renderer = renderer = new THREE.WebGLRenderer();
+	                renderer.setSize(w, h);
+	                renderer.setClearColor(COLOR, ALPHA);
+	
+	                exports.domElement = domElement = renderer.domElement;
+	
+	                deferred.resolve();
+	
+	            case 9:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var COLOR = 0xFFFFFF;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var light = new THREE.PointLight(COLOR);
+	exports.light = light;
+	light.position.set(X, Y, Z);
+	
+	deferred.resolve();
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.init = init;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libCubicbezier = __webpack_require__(27);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var camera;
+	exports.camera = camera;
+	var controls;
+	exports.controls = controls;
+	var update = function update() {
+	    controls.update();
+	};
+	
+	exports.update = update;
+	var deferred = (0, _libPromise.defer)();
+	var end = function end() {
+	    return deferred.promise;
+	};
+	
+	exports.end = end;
+	
+	function init(_camera, _renderer) {
+	    exports.camera = camera = _camera;
+	    exports.controls = controls = new THREE.OrbitControls(_camera, _renderer.domElement);
+	    controls.enableDamping = true;
+	    controls.dampingFactor = 0.7;
+	    controls.enableZoom = true;
+	}
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.render = render;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var _libCubicbezier = __webpack_require__(27);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(5);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	
+	function render(visualizer) {
+	    var time = Date.now() * 0.00005;
+	    var h = 360 * (1.0 + time) % 360 / 360;
+	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
+	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
+	}
+	
+	var pointMaterial;
+	var pointHaloMaterial;
+	var pointMaterialDeferred = (0, _libPromise.defer)();
+	var pointMaterialLoader = new THREE.TextureLoader(_prologue.manager);
+	pointMaterialLoader.load('assets/images/disc.png', function (texture) {
+	    pointMaterial = new THREE.PointsMaterial({
+	        size: 20,
+	        map: texture,
+	        alphaTest: 0.5,
+	        transparent: true,
+	        sizeAttenuation: false,
+	        fog: true
+	    });
+	    pointHaloMaterial = new THREE.PointsMaterial({
+	        size: 30,
+	        opacity: 0.5,
+	        map: texture,
+	        transparent: true,
+	        sizeAttenuation: false,
+	        fog: true
+	    });
+	    pointMaterialDeferred.resolve();
+	}, _prologue.onProgress, _prologue.onError);
+	
+	var lineMaterialDeferred = (0, _libPromise.defer)();
+	var lineMaterial = new THREE.LineBasicMaterial({
+	    linewidth: 3,
+	    color: 0xFFFFFF,
+	    alphaTest: 0.5,
+	    transparent: true,
+	    fog: true
+	});
+	var lineHaloMaterial = new THREE.LineBasicMaterial({
+	    linewidth: 10,
+	    opacity: 0.5,
+	    transparent: true,
+	    fog: true
+	});
+	lineMaterialDeferred.resolve();
+	
+	var X_MIN = 0;
+	exports.X_MIN = X_MIN;
+	var X_MAX = 4;
+	exports.X_MAX = X_MAX;
+	var Y_MIN = 0;
+	exports.Y_MIN = Y_MIN;
+	var Y_MAX = 4;
+	exports.Y_MAX = Y_MAX;
+	var Z_MIN = 0;
+	exports.Z_MIN = Z_MIN;
+	var Z_MAX = 4;
+	exports.Z_MAX = Z_MAX;
+	var X_INTER = 100;
+	exports.X_INTER = X_INTER;
+	var Y_INTER = 100;
+	exports.Y_INTER = Y_INTER;
+	var Z_INTER = 100;
+	exports.Z_INTER = Z_INTER;
+	var X_LENGTH = X_MAX - X_MIN + 1;
+	exports.X_LENGTH = X_LENGTH;
+	var Y_LENGTH = Y_MAX - Y_MIN + 1;
+	exports.Y_LENGTH = Y_LENGTH;
+	var Z_LENGTH = Z_MAX - Z_MIN + 1;
+	
+	exports.Z_LENGTH = Z_LENGTH;
+	var VEC = {
+	    ORIGIN: new THREE.Vector3(0, 0, 0),
+	    X_MIN: new THREE.Vector3(X_MIN * X_INTER, 0, 0),
+	    X_MAX: new THREE.Vector3(X_MAX * Y_INTER, 0, 0),
+	    Y_MIN: new THREE.Vector3(0, Y_MIN * Y_INTER, 0),
+	    Y_MAX: new THREE.Vector3(0, Y_MAX * Y_INTER, 0),
+	    Z_MIN: new THREE.Vector3(0, 0, Z_MIN * Z_INTER),
+	    Z_MAX: new THREE.Vector3(0, 0, Z_MAX * Z_INTER)
+	};
+	
+	var xSize = function xSize() {
+	    return (X_LENGTH - 1) * X_INTER;
+	};
+	exports.xSize = xSize;
+	var ySize = function ySize() {
+	    return (Y_LENGTH - 1) * Y_INTER;
+	};
+	exports.ySize = ySize;
+	var zSize = function zSize() {
+	    return (Z_LENGTH - 1) * Z_INTER;
+	};
+	
+	exports.zSize = zSize;
+	var points = [];
+	var lines = [];
+	
+	(function callee$0$0() {
+	    var makePoint, makeLine, x, y, clonedLineGroup, z, i, clonedPointGroup;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                makeLine = function makeLine(dir) {
+	                    var lineGeometry = new THREE.Geometry();
+	                    lineGeometry.vertices.push(VEC[dir + '_MIN'].clone());
+	                    lineGeometry.vertices.push(VEC[dir + '_MAX'].clone());
+	                    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+	                    var line = new THREE.Line(lineGeometry, lineMaterial);
+	                    var lineGroup = new THREE.Group();
+	                    lineGroup.add(lineHalo, line);
+	                    return lineGroup;
+	                };
+	
+	                makePoint = function makePoint() {
+	                    var pointGeometry = new THREE.Geometry();
+	                    pointGeometry.vertices.push(VEC.ORIGIN.clone());
+	                    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
+	                    var point = new THREE.Points(pointGeometry, pointMaterial);
+	                    var pointGroup = new THREE.Group();
+	                    pointGroup.add(pointHalo, point);
+	                    return pointGroup;
+	                };
+	
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(Promise.all([pointMaterialDeferred.promise, lineMaterialDeferred.promise]));
+	
+	            case 4:
+	
+	                exports.object = object = new THREE.Object3D();
+	
+	                // for (let i = 0; i <= X_LENGTH * Y_LENGTH * Z_LENGTH; i++) {
+	                //     let clonedPointGroup = makePoint();
+	                //     clonedPointGroup.position.set(
+	                //         (Math.random() * X_LENGTH + X_MIN) * X_INTER,
+	                //         (Math.random() * Y_LENGTH + Z_MIN) * Y_INTER,
+	                //         (Math.random() * Z_LENGTH + Z_MIN) * Z_INTER
+	                //     );
+	                //     points.push(clonedPointGroup);
+	                //     object.add(clonedPointGroup);
+	                // }
+	
+	                for (x = X_MIN; x <= X_MAX; x++) {
+	                    for (y = Y_MIN; y <= Y_MAX; y++) {
+	                        clonedLineGroup = makeLine('Z');
+	
+	                        clonedLineGroup.position.x = x * X_INTER;
+	                        clonedLineGroup.position.y = y * Y_INTER;
+	                        lines.push(clonedLineGroup);
+	                        object.add(clonedLineGroup);
 	                    }
-	                    loader.bufferList[index] = buffer;
-	                    if (++loader.loadCount == loader.urlList.length) loader.onload(loader.bufferList);
-	                }, function (error) {
-	                    console.error('decodeAudioData error', error);
-	                });
-	            };
-	
-	            request.onerror = function () {
-	                alert('BufferLoader: XHR error');
-	            };
-	
-	            request.send();
-	        }
-	    }, {
-	        key: "load",
-	        value: function load() {
-	            for (var i = 0; i < this.urlList.length; ++i) this.loadBuffer(this.urlList[i], i);
-	        }
-	    }]);
-	
-	    return BufferLoader;
-	})();
-	
-	var SMOOTHING = 0.8;
-	var FFT_SIZE = 32; // 快速傅里叶变换
-	
-	var Visualizer = (function () {
-	    function Visualizer() {
-	        _classCallCheck(this, Visualizer);
-	
-	        var that = this;
-	        this.analyser = audioContext.createAnalyser();
-	
-	        this.analyser.connect(audioContext.destination);
-	        this.analyser.minDecibels = -140;
-	        this.analyser.maxDecibels = 0;
-	
-	        this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
-	        this.times = new Uint8Array(this.analyser.frequencyBinCount);
-	
-	        this.isPlaying = false;
-	        this.startTime = 0;
-	        this.startOffset = 0;
-	
-	        this.deferred = (0, _libPromise.defer)();
-	    }
-	
-	    _createClass(Visualizer, [{
-	        key: "ready",
-	        value: function ready() {
-	            return this.deferred.promise;
-	        }
-	    }, {
-	        key: "load",
-	        value: function load(path) {
-	            var that = this;
-	            var soundMap = {
-	                buffer: path
-	            };
-	            var names = [];
-	            var paths = [];
-	            for (var name in soundMap) {
-	                var path = soundMap[name];
-	                names.push(name);
-	                paths.push(path);
-	            }
-	            var bufferLoader = new BufferLoader(audioContext, paths, function (bufferList) {
-	                for (var i = 0; i < bufferList.length; i++) {
-	                    var buffer = bufferList[i];
-	                    var name = names[i];
-	                    that[name] = buffer;
 	                }
-	                that.togglePlayback();
-	                that.deferred.resolve();
-	            });
-	            bufferLoader.load();
 	
-	            return that.deferred.promise;
-	        }
-	    }, {
-	        key: "togglePlayback",
-	        value: function togglePlayback() {
-	            if (this.isPlaying) {
-	                // Stop playback
-	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
-	                this.startOffset += audioContext.currentTime - this.startTime;
-	                console.log('paused at', this.startOffset);
-	                // Save the position of the play head.
-	            } else {
-	                    this.startTime = audioContext.currentTime;
-	                    console.log('started at', this.startOffset);
-	                    this.source = audioContext.createBufferSource();
-	                    // Connect graph
-	                    this.source.connect(this.analyser);
-	                    this.source.buffer = this.buffer;
-	                    this.source.loop = true;
-	                    // Start playback, but make sure we stay in bound of the buffer.
-	                    this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
+	                for (x = X_MIN; x <= X_MAX; x++) {
+	                    for (z = Z_MIN; z <= Z_MAX; z++) {
+	                        clonedLineGroup = makeLine('Y');
+	
+	                        clonedLineGroup.position.x = x * X_INTER;
+	                        clonedLineGroup.position.z = z * Z_INTER;
+	                        lines.push(clonedLineGroup);
+	                        object.add(clonedLineGroup);
+	                    }
 	                }
-	            this.isPlaying = !this.isPlaying;
-	        }
-	    }, {
-	        key: "analysis",
-	        value: function analysis() {
-	            this.analyser.smoothingTimeConstant = SMOOTHING;
-	            this.analyser.fftSize = FFT_SIZE;
 	
-	            // Get the frequency data from the currently playing music
-	            this.analyser.getByteFrequencyData(this.freqs); // 频率数据
-	            this.analyser.getByteTimeDomainData(this.times); // 波形数据
-	        }
-	    }, {
-	        key: "getFrequencyValue",
-	        value: function getFrequencyValue(freq) {
-	            var nyquist = audioContext.sampleRate / 2;
-	            var index = Math.round(freq / nyquist * this.freqs.length);
-	            return this.freqs[index];
-	        }
-	    }, {
-	        key: "getTimeValue",
-	        value: function getTimeValue(time) {
-	            var nyquist = audioContext.sampleRate / 2;
-	            var index = Math.round(time / nyquist * this.times.length);
-	            return this.times[index];
-	        }
-	    }]);
+	                y = Y_MIN;
 	
-	    return Visualizer;
+	            case 8:
+	                if (!(y <= Y_MAX)) {
+	                    context$1$0.next = 37;
+	                    break;
+	                }
+	
+	                z = Z_MIN;
+	
+	            case 10:
+	                if (!(z <= Z_MAX)) {
+	                    context$1$0.next = 34;
+	                    break;
+	                }
+	
+	                clonedLineGroup = makeLine('X');
+	
+	                clonedLineGroup.position.y = y * X_INTER;
+	                clonedLineGroup.position.z = z * Z_INTER;
+	                lines.push(clonedLineGroup);
+	                object.add(clonedLineGroup);
+	
+	                i = 0;
+	
+	            case 17:
+	                if (!(i <= Z_LENGTH)) {
+	                    context$1$0.next = 31;
+	                    break;
+	                }
+	
+	                if (!(y + 0.25 > Y_MAX || z + i / Z_LENGTH > Z_MAX)) {
+	                    context$1$0.next = 20;
+	                    break;
+	                }
+	
+	                return context$1$0.abrupt('continue', 28);
+	
+	            case 20:
+	                clonedPointGroup = makePoint();
+	
+	                clonedPointGroup.position.set((X_MIN + 1) * X_INTER, (y + 0.25) * Y_INTER, (z + i / Z_LENGTH) * Z_INTER);
+	                points.push(clonedPointGroup);
+	                object.add(clonedPointGroup);
+	
+	                clonedPointGroup = clonedPointGroup.clone();
+	                clonedPointGroup.position.x = (X_MAX - 1) * X_INTER;
+	                points.push(clonedPointGroup);
+	                object.add(clonedPointGroup);
+	
+	            case 28:
+	                i++;
+	                context$1$0.next = 17;
+	                break;
+	
+	            case 31:
+	                z++;
+	                context$1$0.next = 10;
+	                break;
+	
+	            case 34:
+	                y++;
+	                context$1$0.next = 8;
+	                break;
+	
+	            case 37:
+	
+	                deferred.resolve();
+	
+	            case 38:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
 	})();
-	
-	exports["default"] = Visualizer;
-	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map

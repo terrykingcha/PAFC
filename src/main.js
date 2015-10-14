@@ -2,16 +2,21 @@ import './main.less';
 import {delay, waitForEvent} from './lib/promise';
 
 import * as prologue from './prologue';
-import * as chapteri from './chapterOne';
-import * as chapterii from './chapterTwo';
-import * as chapteriii from './chapterThree';
-
+import * as chapter1 from './chapter1';
+import * as chapter2 from './chapter2';
+import * as chapter3 from './chapter3';
 
 var chapters = [
-    // chapteri, 
-    // chapterii,
-    chapteriii
+    chapter1, 
+    chapter2,
+    chapter3
 ];
+
+var matched;
+if ((matched = location.search.match(/chapter=(\d+)/))) {
+    var no = matched[1] >> 0;
+    chapters = chapters.slice(no - 1, no);
+}
 
 (async () => {
     await prologue.ready();
