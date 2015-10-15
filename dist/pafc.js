@@ -42309,7 +42309,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	exports.ready = ready;
 	var scene = new THREE.Scene();
 	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.003);
+	scene.fog = new THREE.FogExp2(COLOR, 0.002);
 	
 	deferred.resolve();
 
