@@ -9,7 +9,7 @@ import * as Light from './light';
 import * as Controls from './controls';
 import * as Cube from './cube';
 
-var scene, camera, renderer, domElement, light, cube;
+var scene, camera, renderer, domElement, lights, cube;
 
 export var init = async () => {    
     await Promise.all([
@@ -24,20 +24,25 @@ export var init = async () => {
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    light = Light.light;
+    lights = Light.lights;
     cube = Cube.object;
 
     scene.add(camera);
-    scene.add(light);
+    scene.add(lights[0]);
+    scene.add(lights[1]);
+    scene.add(lights[2]);
     scene.add(cube);
 
     cube.position.set(        
         -Cube.xSize() / 2, 
         -Cube.ySize() / 2, 
         -Cube.zSize() / 2);
-    camera.position.set(0, 0, Cube.zSize() / 2);
+    camera.position.set(10, 10, Cube.zSize() / 2);
     camera.lookAt(camera.position);
-    light.position.set(-10, 10, 10);
+
+    lights[0].position.set(Cube.xSize(), Cube.ySize(), Cube.zSize());
+    lights[1].position.set(-Cube.xSize(), -Cube.ySize(), -Cube.zSize());
+    lights[2].position.set(0, 0, 0);
 
     Controls.init(camera, renderer);
     Controls.controls.minDistance = Cube.zSize() / 4;
@@ -59,7 +64,7 @@ function resize() {
 }
 
 function render() {
-    Cube.render();
+    Light.render();
     Controls.update();
     renderer.render(scene, camera);
 }

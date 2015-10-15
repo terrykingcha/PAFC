@@ -9,52 +9,33 @@ export var ready = () => deferred.promise;
 
 export var object;
 
-export function render(visualizer) {
-    var time = Date.now() * 0.00005;
-    var h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
-    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
-    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
-}
-
-var pointMaterial;
-var pointHaloMaterial;
 var pointMaterialDeferred = defer();
-var pointMaterialLoader = new THREE.TextureLoader(manager);
-pointMaterialLoader.load(
-    'assets/images/disc.png',
-    function(texture) {
-        pointMaterial = new THREE.PointsMaterial({
-            size: 20, 
-            map: texture,
-            alphaTest: 0.5, 
-            transparent: true,
-            sizeAttenuation: false,
-            fog: true
-        });
-        pointHaloMaterial = new THREE.PointsMaterial({
-            size: 30,
-            opacity: 0.5,
-            map: texture,
-            transparent: true,
-            sizeAttenuation: false,
-            fog: true
-        });
-        pointMaterialDeferred.resolve();
-    },
-    onProgress, 
-    onError
-);
-
-var lineMaterialDeferred = defer();
-var lineMaterial = new THREE.LineBasicMaterial({
-    linewidth: 3,
+var pointMaterial = new THREE.MeshBasicMaterial({
     color: 0xFFFFFF,
-    alphaTest: 0.5,
+    emissive: 0x000000,
+    side: THREE.DoubleSide,
+    fog: true
+});
+var pointHaloMaterial = new THREE.MeshPhongMaterial({
+    color: 0xFFFFFF,
+    emissive: 0x000000,
+    opacity: 0.5,
     transparent: true,
     fog: true
 });
-var lineHaloMaterial = new THREE.LineBasicMaterial({
-    linewidth: 10,
+pointMaterialDeferred.resolve();
+
+
+var lineMaterialDeferred = defer();
+var lineMaterial = new THREE.MeshPhongMaterial({
+    color: 0xFFFFFF,
+    emissive: 0x000000,
+    side: THREE.DoubleSide,
+    fog: true
+});
+var lineHaloMaterial = new THREE.MeshLambertMaterial({
+    color: 0xFFFFFF,
+    emissive: 0x000000,
     opacity: 0.5,
     transparent: true,
     fog: true
@@ -62,11 +43,11 @@ var lineHaloMaterial = new THREE.LineBasicMaterial({
 lineMaterialDeferred.resolve();
 
 export const X_MIN = 0;
-export const X_MAX = 4;
+export const X_MAX = 3;
 export const Y_MIN = 0;
-export const Y_MAX = 4;
+export const Y_MAX = 3;
 export const Z_MIN = 0;
-export const Z_MAX = 4;
+export const Z_MAX = 3;
 export const X_INTER = 100;
 export const Y_INTER = 100;
 export const Z_INTER = 100;
@@ -100,42 +81,49 @@ var lines = [];
     object = new THREE.Object3D();
 
     function makePoint() {
-        var pointGeometry = new THREE.Geometry();
-        pointGeometry.vertices.push(VEC.ORIGIN.clone());
-        var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
-        var point = new THREE.Points(pointGeometry, pointMaterial);
+        var pointGeometry = new THREE.SphereGeometry(2, 32, 32);
         var pointGroup = new THREE.Group();
-        pointGroup.add(pointHalo, point);
+        var point = new THREE.Mesh(pointGeometry, pointMaterial);
+        pointGroup.add(point);
+
+        var pointHalo = new THREE.Mesh(pointGeometry.clone(), pointHaloMaterial);
+        pointHalo.scale.set(1.2, 1.2, 1.2);
+        pointGroup.add(pointHalo);
+
         return pointGroup;
     }
 
     function makeLine(dir) {
-        var lineGeometry = new THREE.Geometry();
-        lineGeometry.vertices.push(VEC[`${dir}_MIN`].clone());
-        lineGeometry.vertices.push(VEC[`${dir}_MAX`].clone());
-        var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
-        var line = new THREE.Line(lineGeometry, lineMaterial);
+        var width = dir === 'X' ? xSize() : 1.5;
+        var height = dir === 'Y' ? ySize() : 1.5;
+        var depth = dir === 'Z' ? zSize() : 1.5;
+        var widthSegments = dir === 'X' ? xSize() : 10;
+        var heightSegments = dir === 'Y' ? ySize() : 10;
+        var depthSegments = dir === 'Z' ? zSize() : 10;
+        var lineGeometry = new THREE.BoxGeometry(
+            width, height, depth,
+            widthSegments, heightSegments, depthSegments
+        );
         var lineGroup = new THREE.Group();
-        lineGroup.add(lineHalo, line);
+
+        var line = new THREE.Mesh(lineGeometry, lineMaterial);
+        lineGroup.add(line);
+
+        // var lineHalo = new THREE.Mesh(lineGeometry.clone(), lineHaloMaterial);
+        // lineHalo.scale.x = dir === 'X' ? 1 : 2;
+        // lineHalo.scale.y = dir === 'Y' ? 1 : 2;
+        // lineHalo.scale.z = dir === 'Z' ? 1 : 2;
+        // lineGroup.add(lineHalo);
+
         return lineGroup;
     }
-
-    // for (let i = 0; i <= X_LENGTH * Y_LENGTH * Z_LENGTH; i++) {
-    //     let clonedPointGroup = makePoint();
-    //     clonedPointGroup.position.set(
-    //         (Math.random() * X_LENGTH + X_MIN) * X_INTER,
-    //         (Math.random() * Y_LENGTH + Z_MIN) * Y_INTER,
-    //         (Math.random() * Z_LENGTH + Z_MIN) * Z_INTER
-    //     );
-    //     points.push(clonedPointGroup);
-    //     object.add(clonedPointGroup);
-    // }
 
     for (let x = X_MIN; x <= X_MAX; x++) {
         for (let y = Y_MIN; y <= Y_MAX; y++) {
             let clonedLineGroup = makeLine('Z');
             clonedLineGroup.position.x = x * X_INTER;
             clonedLineGroup.position.y = y * Y_INTER;
+            clonedLineGroup.position.z = zSize() / 2;
             lines.push(clonedLineGroup);
             object.add(clonedLineGroup);
         }
@@ -145,6 +133,7 @@ var lines = [];
         for (let z = Z_MIN; z <= Z_MAX; z++) {
             let clonedLineGroup = makeLine('Y');
             clonedLineGroup.position.x = x * X_INTER;
+            clonedLineGroup.position.y = ySize() / 2;
             clonedLineGroup.position.z = z * Z_INTER;
             lines.push(clonedLineGroup);
             object.add(clonedLineGroup);
@@ -154,7 +143,8 @@ var lines = [];
     for (let y = Y_MIN; y <= Y_MAX; y++) {
         for (let z = Z_MIN; z <= Z_MAX; z++) {
             let clonedLineGroup = makeLine('X');
-            clonedLineGroup.position.y = y * X_INTER;
+            clonedLineGroup.position.x = xSize() / 2;
+            clonedLineGroup.position.y = y * Y_INTER;
             clonedLineGroup.position.z = z * Z_INTER;
             lines.push(clonedLineGroup);
             object.add(clonedLineGroup);

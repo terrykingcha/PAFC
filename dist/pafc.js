@@ -42155,7 +42155,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var Cube = _interopRequireWildcard(_cube);
 	
-	var scene, camera, renderer, domElement, light, cube;
+	var scene, camera, renderer, domElement, lights, cube;
 	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
@@ -42170,26 +42170,31 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                camera = Camera.camera;
 	                renderer = Renderer.renderer;
 	                domElement = Renderer.domElement;
-	                light = Light.light;
+	                lights = Light.lights;
 	                cube = Cube.object;
 	
 	                scene.add(camera);
-	                scene.add(light);
+	                scene.add(lights[0]);
+	                scene.add(lights[1]);
+	                scene.add(lights[2]);
 	                scene.add(cube);
 	
 	                cube.position.set(-Cube.xSize() / 2, -Cube.ySize() / 2, -Cube.zSize() / 2);
-	                camera.position.set(0, 0, Cube.zSize() / 2);
+	                camera.position.set(10, 10, Cube.zSize() / 2);
 	                camera.lookAt(camera.position);
-	                light.position.set(-10, 10, 10);
+	
+	                lights[0].position.set(Cube.xSize(), Cube.ySize(), Cube.zSize());
+	                lights[1].position.set(-Cube.xSize(), -Cube.ySize(), -Cube.zSize());
+	                lights[2].position.set(0, 0, 0);
 	
 	                Controls.init(camera, renderer);
 	                Controls.controls.minDistance = Cube.zSize() / 4;
 	                Controls.controls.maxDistance = Cube.zSize();
 	
-	                context$1$0.next = 20;
+	                context$1$0.next = 24;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 20:
+	            case 24:
 	                domElement.setAttribute('chapter', 'three');
 	                document.body.appendChild(domElement);
 	                window.addEventListener('resize', resize, false);
@@ -42197,7 +42202,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 26:
+	            case 30:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -42211,7 +42216,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	}
 	
 	function render() {
-	    Cube.render();
+	    Light.render();
 	    Controls.update();
 	    renderer.render(scene, camera);
 	}
@@ -42304,7 +42309,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	exports.ready = ready;
 	var scene = new THREE.Scene();
 	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.005);
+	scene.fog = new THREE.FogExp2(COLOR, 0.003);
 	
 	deferred.resolve();
 
@@ -42449,26 +42454,93 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	'use strict';
 	
 	Object.defineProperty(exports, '__esModule', {
-	  value: true
+	    value: true
 	});
+	exports.render = render;
 	
 	var _libPromise = __webpack_require__(4);
 	
 	var COLOR = 0xFFFFFF;
-	var X = 0;
-	var Y = 0;
-	var Z = 0;
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
-	  return deferred.promise;
+	    return deferred.promise;
 	};
 	
 	exports.ready = ready;
-	var light = new THREE.PointLight(COLOR);
-	exports.light = light;
-	light.position.set(X, Y, Z);
+	var rColor = 255;
+	var rColorStep = -0.003;
+	var gColor = 255;
+	var gColorStep = -0.001;
+	var bColor = 255;
+	var bColorStep = -0.002;
 	
+	var rDist = 1000;
+	var rDistStep = 0.5;
+	var gDist = 1000;
+	var gDistStep = 1;
+	var bDist = 1000;
+	var bDistStep = 1.5;
+	
+	function render(visualizer) {
+	    rColor += rColorStep * (Math.random() * 0.2 + 0.9);
+	    rColor = Math.min(rColor, 1);
+	    rColor = Math.max(rColor, 0.5);
+	    if (rColor <= 0.5 || rColor >= 1) {
+	        rColorStep *= -1;
+	    }
+	
+	    gColor += gColorStep * (Math.random() * 0.2 + 0.9);
+	    gColor = Math.min(gColor, 1);
+	    gColor = Math.max(gColor, 0.5);
+	    if (gColor <= 0.5 || gColor >= 1) {
+	        gColorStep *= -1;
+	    }
+	
+	    bColor += bColorStep * (Math.random() * 0.2 + 0.9);
+	    bColor = Math.min(bColor, 1);
+	    bColor = Math.max(bColor, 0.5);
+	    if (bColor <= 0.5 || bColor >= 1) {
+	        bColorStep *= -1;
+	    }
+	
+	    rDist += rDistStep * (Math.random() * 0.2 + 0.9);
+	    rDist = Math.min(rDist, 1000);
+	    rDist = Math.max(rDist, 800);
+	    if (rDist <= 800 || rDist >= 1000) {
+	        rDist *= -1;
+	    }
+	
+	    gDist += gDistStep * (Math.random() * 0.2 + 0.9);
+	    gDist = Math.min(gDist, 1000);
+	    gDist = Math.max(gDist, 800);
+	    if (gDist <= 800 || gDist >= 1000) {
+	        gDist *= -1;
+	    }
+	
+	    bDist += bDistStep * (Math.random() * 0.2 + 0.9);
+	    bDist = Math.min(bDist, 1000);
+	    bDist = Math.max(bDist, 800);
+	    if (bDist <= 800 || bDist >= 1000) {
+	        bDist *= -1;
+	    }
+	
+	    lights[0].color.r = rColor;
+	    // lights[0].intensity = Math.random() * 100;
+	    lights[0].distance = rDist;
+	
+	    lights[1].color.g = gColor;
+	    // lights[1].intensity = Math.random() * 100;
+	    lights[1].distance = gDist;
+	
+	    lights[2].color.b = bColor;
+	    // lights[2].intensity = Math.random() * 100;
+	    lights[2].distance = bDist;
+	}
+	
+	var lights = [new THREE.PointLight(0xFF0000), new THREE.PointLight(0x00FF00), new THREE.PointLight(0x0000FF)];
+	
+	exports.lights = lights;
 	deferred.resolve();
 
 /***/ },
@@ -42528,8 +42600,6 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _this = this;
 	
-	exports.render = render;
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _libPromise = __webpack_require__(4);
@@ -42553,48 +42623,32 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var object;
 	
 	exports.object = object;
-	
-	function render(visualizer) {
-	    var time = Date.now() * 0.00005;
-	    var h = 360 * (1.0 + time) % 360 / 360;
-	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
-	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
-	}
-	
-	var pointMaterial;
-	var pointHaloMaterial;
 	var pointMaterialDeferred = (0, _libPromise.defer)();
-	var pointMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	pointMaterialLoader.load('assets/images/disc.png', function (texture) {
-	    pointMaterial = new THREE.PointsMaterial({
-	        size: 20,
-	        map: texture,
-	        alphaTest: 0.5,
-	        transparent: true,
-	        sizeAttenuation: false,
-	        fog: true
-	    });
-	    pointHaloMaterial = new THREE.PointsMaterial({
-	        size: 30,
-	        opacity: 0.5,
-	        map: texture,
-	        transparent: true,
-	        sizeAttenuation: false,
-	        fog: true
-	    });
-	    pointMaterialDeferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
-	
-	var lineMaterialDeferred = (0, _libPromise.defer)();
-	var lineMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 3,
+	var pointMaterial = new THREE.MeshBasicMaterial({
 	    color: 0xFFFFFF,
-	    alphaTest: 0.5,
+	    emissive: 0x000000,
+	    side: THREE.DoubleSide,
+	    fog: true
+	});
+	var pointHaloMaterial = new THREE.MeshPhongMaterial({
+	    color: 0xFFFFFF,
+	    emissive: 0x000000,
+	    opacity: 0.5,
 	    transparent: true,
 	    fog: true
 	});
-	var lineHaloMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 10,
+	pointMaterialDeferred.resolve();
+	
+	var lineMaterialDeferred = (0, _libPromise.defer)();
+	var lineMaterial = new THREE.MeshPhongMaterial({
+	    color: 0xFFFFFF,
+	    emissive: 0x000000,
+	    side: THREE.DoubleSide,
+	    fog: true
+	});
+	var lineHaloMaterial = new THREE.MeshLambertMaterial({
+	    color: 0xFFFFFF,
+	    emissive: 0x000000,
 	    opacity: 0.5,
 	    transparent: true,
 	    fog: true
@@ -42603,15 +42657,15 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var X_MIN = 0;
 	exports.X_MIN = X_MIN;
-	var X_MAX = 4;
+	var X_MAX = 3;
 	exports.X_MAX = X_MAX;
 	var Y_MIN = 0;
 	exports.Y_MIN = Y_MIN;
-	var Y_MAX = 4;
+	var Y_MAX = 3;
 	exports.Y_MAX = Y_MAX;
 	var Z_MIN = 0;
 	exports.Z_MIN = Z_MIN;
-	var Z_MAX = 4;
+	var Z_MAX = 3;
 	exports.Z_MAX = Z_MAX;
 	var X_INTER = 100;
 	exports.X_INTER = X_INTER;
@@ -42658,23 +42712,37 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                makeLine = function makeLine(dir) {
-	                    var lineGeometry = new THREE.Geometry();
-	                    lineGeometry.vertices.push(VEC[dir + '_MIN'].clone());
-	                    lineGeometry.vertices.push(VEC[dir + '_MAX'].clone());
-	                    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
-	                    var line = new THREE.Line(lineGeometry, lineMaterial);
+	                    var width = dir === 'X' ? xSize() : 1.5;
+	                    var height = dir === 'Y' ? ySize() : 1.5;
+	                    var depth = dir === 'Z' ? zSize() : 1.5;
+	                    var widthSegments = dir === 'X' ? xSize() : 10;
+	                    var heightSegments = dir === 'Y' ? ySize() : 10;
+	                    var depthSegments = dir === 'Z' ? zSize() : 10;
+	                    var lineGeometry = new THREE.BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
 	                    var lineGroup = new THREE.Group();
-	                    lineGroup.add(lineHalo, line);
+	
+	                    var line = new THREE.Mesh(lineGeometry, lineMaterial);
+	                    lineGroup.add(line);
+	
+	                    // var lineHalo = new THREE.Mesh(lineGeometry.clone(), lineHaloMaterial);
+	                    // lineHalo.scale.x = dir === 'X' ? 1 : 2;
+	                    // lineHalo.scale.y = dir === 'Y' ? 1 : 2;
+	                    // lineHalo.scale.z = dir === 'Z' ? 1 : 2;
+	                    // lineGroup.add(lineHalo);
+	
 	                    return lineGroup;
 	                };
 	
 	                makePoint = function makePoint() {
-	                    var pointGeometry = new THREE.Geometry();
-	                    pointGeometry.vertices.push(VEC.ORIGIN.clone());
-	                    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
-	                    var point = new THREE.Points(pointGeometry, pointMaterial);
+	                    var pointGeometry = new THREE.SphereGeometry(2, 32, 32);
 	                    var pointGroup = new THREE.Group();
-	                    pointGroup.add(pointHalo, point);
+	                    var point = new THREE.Mesh(pointGeometry, pointMaterial);
+	                    pointGroup.add(point);
+	
+	                    var pointHalo = new THREE.Mesh(pointGeometry.clone(), pointHaloMaterial);
+	                    pointHalo.scale.set(1.2, 1.2, 1.2);
+	                    pointGroup.add(pointHalo);
+	
 	                    return pointGroup;
 	                };
 	
@@ -42685,23 +42753,13 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	                exports.object = object = new THREE.Object3D();
 	
-	                // for (let i = 0; i <= X_LENGTH * Y_LENGTH * Z_LENGTH; i++) {
-	                //     let clonedPointGroup = makePoint();
-	                //     clonedPointGroup.position.set(
-	                //         (Math.random() * X_LENGTH + X_MIN) * X_INTER,
-	                //         (Math.random() * Y_LENGTH + Z_MIN) * Y_INTER,
-	                //         (Math.random() * Z_LENGTH + Z_MIN) * Z_INTER
-	                //     );
-	                //     points.push(clonedPointGroup);
-	                //     object.add(clonedPointGroup);
-	                // }
-	
 	                for (x = X_MIN; x <= X_MAX; x++) {
 	                    for (y = Y_MIN; y <= Y_MAX; y++) {
 	                        clonedLineGroup = makeLine('Z');
 	
 	                        clonedLineGroup.position.x = x * X_INTER;
 	                        clonedLineGroup.position.y = y * Y_INTER;
+	                        clonedLineGroup.position.z = zSize() / 2;
 	                        lines.push(clonedLineGroup);
 	                        object.add(clonedLineGroup);
 	                    }
@@ -42712,6 +42770,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                        clonedLineGroup = makeLine('Y');
 	
 	                        clonedLineGroup.position.x = x * X_INTER;
+	                        clonedLineGroup.position.y = ySize() / 2;
 	                        clonedLineGroup.position.z = z * Z_INTER;
 	                        lines.push(clonedLineGroup);
 	                        object.add(clonedLineGroup);
@@ -42722,7 +42781,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	            case 8:
 	                if (!(y <= Y_MAX)) {
-	                    context$1$0.next = 37;
+	                    context$1$0.next = 38;
 	                    break;
 	                }
 	
@@ -42730,33 +42789,34 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	            case 10:
 	                if (!(z <= Z_MAX)) {
-	                    context$1$0.next = 34;
+	                    context$1$0.next = 35;
 	                    break;
 	                }
 	
 	                clonedLineGroup = makeLine('X');
 	
-	                clonedLineGroup.position.y = y * X_INTER;
+	                clonedLineGroup.position.x = xSize() / 2;
+	                clonedLineGroup.position.y = y * Y_INTER;
 	                clonedLineGroup.position.z = z * Z_INTER;
 	                lines.push(clonedLineGroup);
 	                object.add(clonedLineGroup);
 	
 	                i = 0;
 	
-	            case 17:
+	            case 18:
 	                if (!(i <= Z_LENGTH)) {
-	                    context$1$0.next = 31;
+	                    context$1$0.next = 32;
 	                    break;
 	                }
 	
 	                if (!(y + 0.25 > Y_MAX || z + i / Z_LENGTH > Z_MAX)) {
-	                    context$1$0.next = 20;
+	                    context$1$0.next = 21;
 	                    break;
 	                }
 	
-	                return context$1$0.abrupt('continue', 28);
+	                return context$1$0.abrupt('continue', 29);
 	
-	            case 20:
+	            case 21:
 	                clonedPointGroup = makePoint();
 	
 	                clonedPointGroup.position.set((X_MIN + 1) * X_INTER, (y + 0.25) * Y_INTER, (z + i / Z_LENGTH) * Z_INTER);
@@ -42768,26 +42828,26 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                points.push(clonedPointGroup);
 	                object.add(clonedPointGroup);
 	
-	            case 28:
+	            case 29:
 	                i++;
-	                context$1$0.next = 17;
+	                context$1$0.next = 18;
 	                break;
 	
-	            case 31:
+	            case 32:
 	                z++;
 	                context$1$0.next = 10;
 	                break;
 	
-	            case 34:
+	            case 35:
 	                y++;
 	                context$1$0.next = 8;
 	                break;
 	
-	            case 37:
+	            case 38:
 	
 	                deferred.resolve();
 	
-	            case 38:
+	            case 39:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
