@@ -9,7 +9,6 @@ export var ready = () => deferred.promise;
 
 export var object;
 
-// var beating = false;
 export function render(visualizer) {
     var time = Date.now() * 0.00005;
     var h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
@@ -17,12 +16,10 @@ export function render(visualizer) {
     lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 
     pointFlow();
-    lineRhythm([1,1,1,1,1,1,1]);
-
 
     if (visualizer && visualizer.isPlaying) {
         var bitCount = visualizer.analyser.frequencyBinCount;
-        var freqs = visualizer.freqs.slice(0, Z_LENGTH);
+        var freqs = visualizer.freqs.slice(0, bitCount);
         var offsets = freqs.map((freq) => X_INTER * freq / 256);
         lineRhythm(offsets);
     }
@@ -50,7 +47,7 @@ var lineMaterialDeferred = defer();
 var lineMaterial = new THREE.LineBasicMaterial({
     linewidth: 1,
     color: 0xFFFFFF,
-    alphaTest: 0.5,
+    opacity: 0.5,
     transparent: true,
     fog: true
 });
@@ -180,8 +177,7 @@ function makeLine() {
 
 const LINE_CURVE_POINTS = 10;
 const LINE_Y_OFFSET = Y_INTER * 1.2;
-function makeLineCurve(line, x, y) {
-    var z = line.position.z;
+function getCurvePoints(x, y, z) {
     var curve1 = new THREE.CubicBezierCurve3(
         new THREE.Vector3(0, y + LINE_Y_OFFSET, z),
         new THREE.Vector3(0, y + LINE_Y_OFFSET / 2, z),
@@ -196,34 +192,78 @@ function makeLineCurve(line, x, y) {
     );
 
     var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
-    var geometry = line.geometry;
-    if (geometry.vertices.length > 2) {
-        geometry.vertices.splice(1, geometry.vertices.length - 2);
-    }
-    geometry.vertices.splice(1, 0, ...curvePoints);
-    geometry.verticesNeedUpdate = true;
+    return curvePoints;
 }
 
+function duplicatePoints(points) {
+    // for (var i = 1; i < points.length;) {
+    //     if (points[i].y <= points[i - 1].y) {
+    //         points.splice(i - 1, 2);
+    //     } else {
+    //         i++;
+    //     }
+    // }
+}
+
+
+let lowYOffset = ySize() / 2 - LINE_Y_OFFSET * 2;
+let midYOffset = ySize() / 2;
+let highYOffset = ySize() / 2 + LINE_Y_OFFSET * 2;
+
 function lineRhythm(offsets) {
+    var lows = offsets.slice(0, Z_LENGTH);
+    var mids = offsets.slice(offsets.length / 2 - Z_LENGTH / 2, offsets.length / 2 + Z_LENGTH / 2);
+    var highs = offsets.slice(offsets.length -  Z_LENGTH, offsets.length);
     var centerX = xSize() / 2;
-    var centerY = ySize() / 2;
+
+    lowYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+    midYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+    highYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+
     for (let lineGroup of lines) {
-        let offset = offsets[lineGroup.position.z / Z_INTER - Z_MIN] || 1;
+        let zPos = lineGroup.position.z / Z_INTER - Z_MIN;
+        let lowXOffset = lows[zPos] || 1;
+        let lowPoints = [];
+        let midXOffset = mids[zPos] || 1;
+        let midPoints = [];
+        let highXOffset = highs[zPos] || 1;
+        let highPoints = [];
+        let firstLine = lineGroup.children[0];
+        let zOffset = firstLine.position.z;
+
+        if (lineGroup.position.x < centerX) {
+            [lowXOffset, midXOffset, highXOffset] = 
+                [lowXOffset, midXOffset, highXOffset].map(
+                    (o) => lineGroup.position.x / centerX * o
+                );
+        } else {
+            [lowXOffset, midXOffset, highXOffset] = 
+                [lowXOffset, midXOffset, highXOffset].map(
+                    (o) => ((lineGroup.position.x - centerX) / centerX + 2) * o
+                );
+        }
+        if (lowXOffset > 0) {
+            lowPoints = getCurvePoints(firstLine.position.x - lowXOffset, lowYOffset, zOffset);
+        }
+        if (midXOffset > 0) {
+            midPoints = getCurvePoints(firstLine.position.x - midXOffset, midYOffset, zOffset);
+        }
+        if (highXOffset > 0) {
+            highPoints = getCurvePoints(firstLine.position.x - highXOffset, highYOffset, zOffset);
+        }
+
         for (let line of lineGroup.children) {
-            let xOffset;
-            if (lineGroup.position.x < centerX) {
-                xOffset = lineGroup.position.x / centerX * offset;
-            } else {
-                xOffset = (lineGroup.position.x - centerX) / centerX * offset + offset * 2;
+            let geometry = line.geometry;
+            if (geometry.vertices.length > 2) {
+                geometry.vertices.splice(1, geometry.vertices.length - 2);
             }
-            if (xOffset > 0) {
-                makeLineCurve(line, line.position.x - xOffset, centerY);
-            }
+            let points = [...lowPoints, ...midPoints, ...highPoints];
+            duplicatePoints(points);
+            geometry.vertices.splice(1, 0, ...points);
+            geometry.verticesNeedUpdate = true;
         }
     }
 }
-
-window.lineRhythm = lineRhythm;
 
 (async () => {
     await Promise.all([

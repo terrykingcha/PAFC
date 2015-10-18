@@ -61,7 +61,7 @@ class BufferLoader {
 
 // Interesting parameters to tweak!
 const SMOOTHING = 0.8;
-const FFT_SIZE = 32; // 快速傅里叶变换
+const FFT_SIZE = 64; // 快速傅里叶变换
 
 export default class Visualizer {
     constructor() {

@@ -41349,6 +41349,8 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _this = this;
 	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
 	exports.render = render;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -41376,7 +41378,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var object;
 	
 	exports.object = object;
-	// var beating = false;
 	
 	function render(visualizer) {
 	    var time = Date.now() * 0.00005;
@@ -41385,11 +41386,10 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 	
 	    pointFlow();
-	    lineRhythm([1, 1, 1, 1, 1, 1, 1]);
 	
 	    if (visualizer && visualizer.isPlaying) {
 	        var bitCount = visualizer.analyser.frequencyBinCount;
-	        var freqs = visualizer.freqs.slice(0, Z_LENGTH);
+	        var freqs = visualizer.freqs.slice(0, bitCount);
 	        var offsets = freqs.map(function (freq) {
 	            return X_INTER * freq / 256;
 	        });
@@ -41419,7 +41419,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var lineMaterial = new THREE.LineBasicMaterial({
 	    linewidth: 1,
 	    color: 0xFFFFFF,
-	    alphaTest: 0.5,
+	    opacity: 0.5,
 	    transparent: true,
 	    fog: true
 	});
@@ -41613,51 +41613,105 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var LINE_CURVE_POINTS = 10;
 	var LINE_Y_OFFSET = Y_INTER * 1.2;
-	function makeLineCurve(line, x, y) {
-	    var _geometry$vertices;
-	
-	    var z = line.position.z;
+	function getCurvePoints(x, y, z) {
 	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, y + LINE_Y_OFFSET, z), new THREE.Vector3(0, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y, z));
 	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x, y, z), new THREE.Vector3(x, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET, z));
 	
 	    var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
-	    var geometry = line.geometry;
-	    if (geometry.vertices.length > 2) {
-	        geometry.vertices.splice(1, geometry.vertices.length - 2);
-	    }
-	    (_geometry$vertices = geometry.vertices).splice.apply(_geometry$vertices, [1, 0].concat(_toConsumableArray(curvePoints)));
-	    geometry.verticesNeedUpdate = true;
+	    return curvePoints;
 	}
 	
+	function duplicatePoints(points) {
+	    // for (var i = 1; i < points.length;) {
+	    //     if (points[i].y <= points[i - 1].y) {
+	    //         points.splice(i - 1, 2);
+	    //     } else {
+	    //         i++;
+	    //     }
+	    // }
+	}
+	
+	var lowYOffset = ySize() / 2 - LINE_Y_OFFSET * 2;
+	var midYOffset = ySize() / 2;
+	var highYOffset = ySize() / 2 + LINE_Y_OFFSET * 2;
+	
 	function lineRhythm(offsets) {
+	    var lows = offsets.slice(0, Z_LENGTH);
+	    var mids = offsets.slice(offsets.length / 2 - Z_LENGTH / 2, offsets.length / 2 + Z_LENGTH / 2);
+	    var highs = offsets.slice(offsets.length - Z_LENGTH, offsets.length);
 	    var centerX = xSize() / 2;
-	    var centerY = ySize() / 2;
+	
+	    lowYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+	    midYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+	    highYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+	
 	    var _iteratorNormalCompletion4 = true;
 	    var _didIteratorError4 = false;
 	    var _iteratorError4 = undefined;
 	
 	    try {
-	        for (var _iterator4 = lines[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	        var _loop = function () {
 	            var lineGroup = _step4.value;
 	
-	            var offset = offsets[lineGroup.position.z / Z_INTER - Z_MIN] || 1;
-	            var _iteratorNormalCompletion5 = true;
-	            var _didIteratorError5 = false;
-	            var _iteratorError5 = undefined;
+	            var zPos = lineGroup.position.z / Z_INTER - Z_MIN;
+	            var lowXOffset = lows[zPos] || 1;
+	            var lowPoints = [];
+	            var midXOffset = mids[zPos] || 1;
+	            var midPoints = [];
+	            var highXOffset = highs[zPos] || 1;
+	            var highPoints = [];
+	            var firstLine = lineGroup.children[0];
+	            var zOffset = firstLine.position.z;
+	
+	            if (lineGroup.position.x < centerX) {
+	                var _map = [lowXOffset, midXOffset, highXOffset].map(function (o) {
+	                    return lineGroup.position.x / centerX * o;
+	                });
+	
+	                var _map2 = _slicedToArray(_map, 3);
+	
+	                lowXOffset = _map2[0];
+	                midXOffset = _map2[1];
+	                highXOffset = _map2[2];
+	            } else {
+	                var _map3 = [lowXOffset, midXOffset, highXOffset].map(function (o) {
+	                    return ((lineGroup.position.x - centerX) / centerX + 2) * o;
+	                });
+	
+	                var _map32 = _slicedToArray(_map3, 3);
+	
+	                lowXOffset = _map32[0];
+	                midXOffset = _map32[1];
+	                highXOffset = _map32[2];
+	            }
+	            if (lowXOffset > 0) {
+	                lowPoints = getCurvePoints(firstLine.position.x - lowXOffset, lowYOffset, zOffset);
+	            }
+	            if (midXOffset > 0) {
+	                midPoints = getCurvePoints(firstLine.position.x - midXOffset, midYOffset, zOffset);
+	            }
+	            if (highXOffset > 0) {
+	                highPoints = getCurvePoints(firstLine.position.x - highXOffset, highYOffset, zOffset);
+	            }
+	
+	            _iteratorNormalCompletion5 = true;
+	            _didIteratorError5 = false;
+	            _iteratorError5 = undefined;
 	
 	            try {
-	                for (var _iterator5 = lineGroup.children[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	                for (_iterator5 = lineGroup.children[Symbol.iterator](); !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	                    var _geometry$vertices;
+	
 	                    var line = _step5.value;
 	
-	                    var xOffset = undefined;
-	                    if (lineGroup.position.x < centerX) {
-	                        xOffset = lineGroup.position.x / centerX * offset;
-	                    } else {
-	                        xOffset = (lineGroup.position.x - centerX) / centerX * offset + offset * 2;
+	                    var geometry = line.geometry;
+	                    if (geometry.vertices.length > 2) {
+	                        geometry.vertices.splice(1, geometry.vertices.length - 2);
 	                    }
-	                    if (xOffset > 0) {
-	                        makeLineCurve(line, line.position.x - xOffset, centerY);
-	                    }
+	                    var _points = [].concat(_toConsumableArray(lowPoints), _toConsumableArray(midPoints), _toConsumableArray(highPoints));
+	                    duplicatePoints(_points);
+	                    (_geometry$vertices = geometry.vertices).splice.apply(_geometry$vertices, [1, 0].concat(_toConsumableArray(_points)));
+	                    geometry.verticesNeedUpdate = true;
 	                }
 	            } catch (err) {
 	                _didIteratorError5 = true;
@@ -41673,6 +41727,18 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                    }
 	                }
 	            }
+	        };
+	
+	        for (var _iterator4 = lines[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	            var _iteratorNormalCompletion5;
+	
+	            var _didIteratorError5;
+	
+	            var _iteratorError5;
+	
+	            var _iterator5, _step5;
+	
+	            _loop();
 	        }
 	    } catch (err) {
 	        _didIteratorError4 = true;
@@ -41689,8 +41755,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	        }
 	    }
 	}
-	
-	window.lineRhythm = lineRhythm;
 	
 	(function callee$0$0() {
 	    var r, clonedPointLineGroup, theta, x, z, clonedLineGroup, sign;
@@ -41817,7 +41881,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 	
 	var SMOOTHING = 0.8;
-	var FFT_SIZE = 32; // 快速傅里叶变换
+	var FFT_SIZE = 64; // 快速傅里叶变换
 	
 	var Visualizer = (function () {
 	    function Visualizer() {
