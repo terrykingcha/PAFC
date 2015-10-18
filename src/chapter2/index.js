@@ -12,6 +12,15 @@ import Visualizer from '../visualizer';
 
 var scene, camera, renderer, domElement, light, box, visualizer;
 
+var music = location.search.match(/music=(\d+)/);
+if (music) {
+    music = music[1];
+} else {
+    music = '01';
+}
+
+console.log(music)
+
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
@@ -28,7 +37,7 @@ export var init = async () => {
     light = Light.light;
     box = Box.object;
     visualizer = new Visualizer();
-    visualizer.load('./assets/sounds/sugar.mp3');
+    visualizer.load(`./assets/sounds/${music}.mp3`);
 
     scene.add(camera);
     scene.add(light);

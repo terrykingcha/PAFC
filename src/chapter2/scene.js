@@ -6,6 +6,6 @@ var deferred = defer();
 export var ready = () => deferred.promise;
 
 export var scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(COLOR, 0.0017);
+scene.fog = new THREE.FogExp2(COLOR, 0.002);
 
 deferred.resolve();

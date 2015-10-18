@@ -168,28 +168,31 @@ function makeLine() {
     lineGeometry.vertices.push(VEC.Y_MIN.clone());
     lineGeometry.vertices.push(VEC.Y_MAX.clone());
     var line = new THREE.Line(lineGeometry, lineMaterial);
+    line.scale.x = 0.5;
     lineGroup.add(line);
 
     var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+    lineHalo.scale.x = 0.5
     lineGroup.add(lineHalo);
 
     return lineGroup;
 }
 
 const LINE_CURVE_POINTS = 10;
+const LINE_Y_OFFSET = Y_INTER * 1.5;
 function makeLineCurve(line, x, y) {
     var z = line.position.z;
     var curve1 = new THREE.CubicBezierCurve3(
-        new THREE.Vector3(0, y + Y_INTER, z),
-        new THREE.Vector3(0, y + Y_INTER / 2, z),
-        new THREE.Vector3(x, y + Y_INTER / 2, z),
+        new THREE.Vector3(0, y + LINE_Y_OFFSET, z),
+        new THREE.Vector3(0, y + LINE_Y_OFFSET / 2, z),
+        new THREE.Vector3(x, y + LINE_Y_OFFSET / 2, z),
         new THREE.Vector3(x, y, z)
     );
     var curve2 = new THREE.CubicBezierCurve3(
         new THREE.Vector3(x, y, z),
-        new THREE.Vector3(x, y - Y_INTER / 2, z),
-        new THREE.Vector3(0, y - Y_INTER / 2,  z),
-        new THREE.Vector3(0, y - Y_INTER, z)
+        new THREE.Vector3(x, y - LINE_Y_OFFSET / 2, z),
+        new THREE.Vector3(0, y - LINE_Y_OFFSET / 2,  z),
+        new THREE.Vector3(0, y - LINE_Y_OFFSET, z)
     );
 
     var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
@@ -209,9 +212,9 @@ function lineRhythm(offsets) {
         for (let line of lineGroup.children) {
             let xOffset;
             if (lineGroup.position.x < centerX) {
-                xOffset = lineGroup.position.x / centerX * offset - offset / 3;
+                xOffset = lineGroup.position.x / centerX * offset - offset / 5;
             } else {
-                xOffset = (lineGroup.position.x - centerX) / centerX * offset;
+                xOffset = (lineGroup.position.x - centerX) / centerX * offset + offset;
             }
             if (xOffset > 0) {
                 makeLineCurve(line, line.position.x - xOffset, centerY);
