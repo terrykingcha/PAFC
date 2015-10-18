@@ -8,6 +8,7 @@ import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Controls from './controls';
 import * as Box from './box';
+import Visualizer from '../visualizer';
 
 var scene, camera, renderer, domElement, light, box, visualizer;
 
@@ -26,17 +27,20 @@ export var init = async () => {
     domElement = Renderer.domElement;
     light = Light.light;
     box = Box.object;
+    visualizer = new Visualizer();
+    visualizer.load('./assets/sounds/sugar.mp3');
 
     scene.add(camera);
     scene.add(light);
     scene.add(box);
 
-    box.position.set(0, 0, 0);
-    camera.position.set(Box.xSize() / 2, 
-        Box.ySize() / 2, 
-        Box.ySize() * Math.tan(THREE.Math.degToRad(camera.fov)) + Box.zSize() / 4);
-    camera.lookAt(camera.position);
-    light.position.set(-10, 10, 10);
+    box.position.set(Box.xSize() / -2, Box.ySize() / -2, 0);
+    // camera.left = Box.xSize() / -2;
+    // camera.right = Box.xSize() / 2;
+    // camera.top = Box.ySize() / 2;
+    // camera.bottom = Box.ySize() / -2;
+    camera.position.set(0, 0, Box.xSize() / 2);
+    light.position.set(0, 0, 100);
     Controls.init(camera, renderer);
 
     await pageLoad();
@@ -55,7 +59,9 @@ function resize() {
 }
 
 function render() {
-    Box.render();
+    visualizer.analysis();
+    Box.render(visualizer);
+    Camera.render();
     renderer.render(scene, camera);
 }
 

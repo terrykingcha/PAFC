@@ -39059,6 +39059,243 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 }() );
 
 /**
+ *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
+ *
+ *	A general perpose camera, for setting FOV, Lens Focal Length,
+ *		and switching between perspective and orthographic views easily.
+ *		Use this only if you do not wish to manage
+ *		both a Orthographic and Perspective Camera
+ *
+ */
+
+
+THREE.CombinedCamera = function ( width, height, fov, near, far, orthoNear, orthoFar ) {
+
+	THREE.Camera.call( this );
+
+	this.fov = fov;
+
+	this.left = - width / 2;
+	this.right = width / 2;
+	this.top = height / 2;
+	this.bottom = - height / 2;
+
+	// We could also handle the projectionMatrix internally, but just wanted to test nested camera objects
+
+	this.cameraO = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 	orthoNear, orthoFar );
+	this.cameraP = new THREE.PerspectiveCamera( fov, width / height, near, far );
+
+	this.zoom = 1;
+
+	this.toPerspective();
+
+};
+
+THREE.CombinedCamera.prototype = Object.create( THREE.Camera.prototype );
+THREE.CombinedCamera.prototype.constructor = THREE.CombinedCamera;
+
+THREE.CombinedCamera.prototype.toPerspective = function () {
+
+	// Switches to the Perspective Camera
+
+	this.near = this.cameraP.near;
+	this.far = this.cameraP.far;
+
+	this.cameraP.fov =  this.fov / this.zoom ;
+
+	this.cameraP.updateProjectionMatrix();
+
+	this.projectionMatrix = this.cameraP.projectionMatrix;
+
+	this.inPerspectiveMode = true;
+	this.inOrthographicMode = false;
+
+};
+
+THREE.CombinedCamera.prototype.toOrthographic = function () {
+
+	// Switches to the Orthographic camera estimating viewport from Perspective
+
+	var fov = this.fov;
+	var aspect = this.cameraP.aspect;
+	var near = this.cameraP.near;
+	var far = this.cameraP.far;
+
+	// The size that we set is the mid plane of the viewing frustum
+
+	var hyperfocus = ( near + far ) / 2;
+
+	var halfHeight = Math.tan( fov * Math.PI / 180 / 2 ) * hyperfocus;
+	var planeHeight = 2 * halfHeight;
+	var planeWidth = planeHeight * aspect;
+	var halfWidth = planeWidth / 2;
+
+	halfHeight /= this.zoom;
+	halfWidth /= this.zoom;
+
+	this.cameraO.left = - halfWidth;
+	this.cameraO.right = halfWidth;
+	this.cameraO.top = halfHeight;
+	this.cameraO.bottom = - halfHeight;
+
+	// this.cameraO.left = -farHalfWidth;
+	// this.cameraO.right = farHalfWidth;
+	// this.cameraO.top = farHalfHeight;
+	// this.cameraO.bottom = -farHalfHeight;
+
+	// this.cameraO.left = this.left / this.zoom;
+	// this.cameraO.right = this.right / this.zoom;
+	// this.cameraO.top = this.top / this.zoom;
+	// this.cameraO.bottom = this.bottom / this.zoom;
+
+	this.cameraO.updateProjectionMatrix();
+
+	this.near = this.cameraO.near;
+	this.far = this.cameraO.far;
+	this.projectionMatrix = this.cameraO.projectionMatrix;
+
+	this.inPerspectiveMode = false;
+	this.inOrthographicMode = true;
+
+};
+
+
+THREE.CombinedCamera.prototype.setSize = function( width, height ) {
+
+	this.cameraP.aspect = width / height;
+	this.left = - width / 2;
+	this.right = width / 2;
+	this.top = height / 2;
+	this.bottom = - height / 2;
+
+};
+
+
+THREE.CombinedCamera.prototype.setFov = function( fov ) {
+
+	this.fov = fov;
+
+	if ( this.inPerspectiveMode ) {
+
+		this.toPerspective();
+
+	} else {
+
+		this.toOrthographic();
+
+	}
+
+};
+
+// For maintaining similar API with PerspectiveCamera
+
+THREE.CombinedCamera.prototype.updateProjectionMatrix = function() {
+
+	if ( this.inPerspectiveMode ) {
+
+		this.toPerspective();
+
+	} else {
+
+		this.toPerspective();
+		this.toOrthographic();
+
+	}
+
+};
+
+/*
+* Uses Focal Length (in mm) to estimate and set FOV
+* 35mm (fullframe) camera is used if frame size is not specified;
+* Formula based on http://www.bobatkins.com/photography/technical/field_of_view.html
+*/
+THREE.CombinedCamera.prototype.setLens = function ( focalLength, frameHeight ) {
+
+	if ( frameHeight === undefined ) frameHeight = 24;
+
+	var fov = 2 * THREE.Math.radToDeg( Math.atan( frameHeight / ( focalLength * 2 ) ) );
+
+	this.setFov( fov );
+
+	return fov;
+
+};
+
+
+THREE.CombinedCamera.prototype.setZoom = function( zoom ) {
+
+	this.zoom = zoom;
+
+	if ( this.inPerspectiveMode ) {
+
+		this.toPerspective();
+
+	} else {
+
+		this.toOrthographic();
+
+	}
+
+};
+
+THREE.CombinedCamera.prototype.toFrontView = function() {
+
+	this.rotation.x = 0;
+	this.rotation.y = 0;
+	this.rotation.z = 0;
+
+	// should we be modifing the matrix instead?
+
+	this.rotationAutoUpdate = false;
+
+};
+
+THREE.CombinedCamera.prototype.toBackView = function() {
+
+	this.rotation.x = 0;
+	this.rotation.y = Math.PI;
+	this.rotation.z = 0;
+	this.rotationAutoUpdate = false;
+
+};
+
+THREE.CombinedCamera.prototype.toLeftView = function() {
+
+	this.rotation.x = 0;
+	this.rotation.y = - Math.PI / 2;
+	this.rotation.z = 0;
+	this.rotationAutoUpdate = false;
+
+};
+
+THREE.CombinedCamera.prototype.toRightView = function() {
+
+	this.rotation.x = 0;
+	this.rotation.y = Math.PI / 2;
+	this.rotation.z = 0;
+	this.rotationAutoUpdate = false;
+
+};
+
+THREE.CombinedCamera.prototype.toTopView = function() {
+
+	this.rotation.x = - Math.PI / 2;
+	this.rotation.y = 0;
+	this.rotation.z = 0;
+	this.rotationAutoUpdate = false;
+
+};
+
+THREE.CombinedCamera.prototype.toBottomView = function() {
+
+	this.rotation.x = Math.PI / 2;
+	this.rotation.y = 0;
+	this.rotation.z = 0;
+	this.rotationAutoUpdate = false;
+
+};
+
+/**
  * Copyright (c) 2014, Facebook, Inc.
  * All rights reserved.
  *
@@ -39781,20 +40018,19 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _chapter1 = __webpack_require__(6);
+	// import * as chapter1 from './chapter1';
 	
-	var chapter1 = _interopRequireWildcard(_chapter1);
-	
-	var _chapter2 = __webpack_require__(19);
+	var _chapter2 = __webpack_require__(6);
 	
 	var chapter2 = _interopRequireWildcard(_chapter2);
 	
-	var _chapter3 = __webpack_require__(29);
+	// import * as chapter3 from './chapter3';
 	
-	var chapter3 = _interopRequireWildcard(_chapter3);
+	var chapters = [
+	// chapter1,
+	chapter2];
 	
-	var chapters = [chapter1, chapter2, chapter3];
-	
+	// chapter3
 	var matched;
 	if (matched = location.search.match(/chapter=(\d+)/)) {
 	    var no = matched[1] >> 0;
@@ -39806,78 +40042,76 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(prologue.ready());
-	
-	            case 2:
 	                i = 0;
 	
-	            case 3:
+	            case 1:
 	                if (!(i < chapters.length)) {
-	                    context$1$0.next = 31;
+	                    context$1$0.next = 29;
 	                    break;
 	                }
 	
 	                chapter = chapters[i];
-	                context$1$0.next = 7;
+	                context$1$0.next = 5;
 	                return regeneratorRuntime.awrap(chapter.init());
 	
-	            case 7:
+	            case 5:
 	                console.log('Chapter ' + i + ' Init');
 	
-	                context$1$0.next = 10;
+	                context$1$0.next = 8;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(50));
 	
-	            case 10:
+	            case 8:
 	                if (!lastChapter) {
-	                    context$1$0.next = 19;
+	                    context$1$0.next = 17;
 	                    break;
 	                }
 	
-	                context$1$0.next = 13;
+	                context$1$0.next = 11;
 	                return regeneratorRuntime.awrap(Promise.all([lastChapter.hide(), chapter.show()]));
 	
-	            case 13:
+	            case 11:
 	                console.log('Chapter ' + (i - 1) + ' Hide', 'Chapter ' + i + ' Show');
-	                context$1$0.next = 16;
+	                context$1$0.next = 14;
 	                return regeneratorRuntime.awrap(lastChapter.destory());
 	
-	            case 16:
+	            case 14:
 	                lastChapter = chapter;
-	                context$1$0.next = 22;
+	                context$1$0.next = 20;
 	                break;
 	
-	            case 19:
-	                context$1$0.next = 21;
+	            case 17:
+	                context$1$0.next = 19;
 	                return regeneratorRuntime.awrap(chapter.show());
 	
-	            case 21:
+	            case 19:
 	                console.log('Chapter ' + i + ' Show');
 	
-	            case 22:
-	                context$1$0.next = 24;
+	            case 20:
+	                context$1$0.next = 22;
 	                return regeneratorRuntime.awrap(chapter.start());
 	
-	            case 24:
+	            case 22:
 	                console.log('Chapter ' + i + ' Start');
 	
-	                context$1$0.next = 27;
+	                context$1$0.next = 25;
 	                return regeneratorRuntime.awrap(chapter.end());
 	
-	            case 27:
+	            case 25:
 	                console.log('Chapter ' + i + ' End');
 	
-	            case 28:
+	            case 26:
 	                i++;
-	                context$1$0.next = 3;
+	                context$1$0.next = 1;
 	                break;
 	
-	            case 31:
+	            case 29:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, _this);
 	})();
+	
+	// await prologue.ready();
 
 /***/ },
 /* 1 */
@@ -40511,6 +40745,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _this = this;
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
 	__webpack_require__(7);
@@ -40539,22 +40775,22 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _tower = __webpack_require__(16);
+	var _box = __webpack_require__(17);
 	
-	var Tower = _interopRequireWildcard(_tower);
+	var Box = _interopRequireWildcard(_box);
 	
-	var _sky = __webpack_require__(17);
+	var _visualizer = __webpack_require__(18);
 	
-	var Sky = _interopRequireWildcard(_sky);
+	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
-	var scene, camera, renderer, domElement, plight, dlight, alight, tower, sky;
+	var scene, camera, renderer, domElement, light, box, visualizer;
+	
 	var init = function init() {
-	    var SkyDynamic;
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Tower.ready(), Sky.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Box.ready(), Light.ready()]));
 	
 	            case 2:
 	
@@ -40562,44 +40798,36 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                camera = Camera.camera;
 	                renderer = Renderer.renderer;
 	                domElement = Renderer.domElement;
-	                plight = Light.pointLight;
-	                dlight = Light.directionallight;
-	                alight = Light.ambientlight;
-	                tower = Tower.object;
-	                sky = Sky.object;
+	                light = Light.light;
+	                box = Box.object;
+	                visualizer = new _visualizer2['default']();
+	                visualizer.load('./assets/sounds/sugar.mp3');
 	
 	                scene.add(camera);
-	                scene.add(plight);
-	                scene.add(tower);
-	                scene.add(sky);
+	                scene.add(light);
+	                scene.add(box);
 	
-	                camera.position.set(0, 0, 4);
-	                camera.lookAt(scene.position);
-	                plight.position.set(sky.geometry.parameters.radius * 0.4, sky.geometry.parameters.radius * 0.4, -sky.geometry.parameters.radius * 0.8);
-	                tower.position.set(0, -1.2, 0);
-	                sky.position.set(0, 0, 0);
-	                Controls.init(camera);
+	                box.position.set(Box.xSize() / -2, Box.ySize() / -2, 0);
+	                // camera.left = Box.xSize() / -2;
+	                // camera.right = Box.xSize() / 2;
+	                // camera.top = Box.ySize() / 2;
+	                // camera.bottom = Box.ySize() / -2;
+	                camera.position.set(0, 0, Box.xSize() / 2);
+	                light.position.set(0, 0, 100);
+	                Controls.init(camera, renderer);
 	
-	                SkyDynamic = __webpack_require__(18);
-	
-	                SkyDynamic.ready().then(function (obj) {
-	                    scene.add(obj);
-	                    obj.position.set(0, 0, 0);
-	                    obj.scale.set(0.95, 0.95, 0.95);
-	                });
-	
-	                context$1$0.next = 25;
+	                context$1$0.next = 19;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 25:
-	                domElement.setAttribute('chapter', 'one');
+	            case 19:
+	                domElement.setAttribute('chapter', 'two');
 	                document.body.appendChild(domElement);
 	                window.addEventListener('resize', resize, false);
 	                window.scene = scene;
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 31:
+	            case 25:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40613,6 +40841,9 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	}
 	
 	function render() {
+	    visualizer.analysis();
+	    Box.render(visualizer);
+	    Camera.render();
 	    renderer.render(scene, camera);
 	}
 	
@@ -40680,7 +40911,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 /* 8 */
 /***/ function(module, exports) {
 
-	module.exports = "[chapter=\"one\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
+	module.exports = "[chapter=\"two\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
 
 /***/ },
 /* 9 */
@@ -40716,6 +40947,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _libPromise = __webpack_require__(4);
 	
+	var COLOR = 0x000000;
+	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
 	  return deferred.promise;
@@ -40724,6 +40957,8 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	exports.ready = ready;
 	var scene = new THREE.Scene();
 	exports.scene = scene;
+	scene.fog = new THREE.FogExp2(COLOR, 0.0017);
+	
 	deferred.resolve();
 
 /***/ },
@@ -40739,14 +40974,17 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var _this = this;
 	
 	exports.resize = resize;
+	exports.render = render;
 	
 	var _libPromise = __webpack_require__(4);
 	
 	var _libEnv = __webpack_require__(9);
 	
-	var VIEW_ANGLE = 60;
+	var FOV = 45;
 	var NEAR = 1;
 	var FAR = 10000;
+	var ORTH_NEAR = -500;
+	var ORTH_FAR = 1000;
 	var X = 0;
 	var Y = 0;
 	var Z = 0;
@@ -40765,7 +41003,11 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    var w = (0, _libEnv.width)();
 	    var h = (0, _libEnv.height)();
 	
-	    renderer.setSize(w, h);
+	    camera.updateProjectionMatrix();
+	}
+	
+	function render() {
+	    camera.updateProjectionMatrix();
 	}
 	
 	(function callee$0$0() {
@@ -40780,12 +41022,14 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                w = (0, _libEnv.width)();
 	                h = (0, _libEnv.height)();
 	
-	                exports.camera = camera = new THREE.PerspectiveCamera(VIEW_ANGLE, w / h, NEAR, FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
+	                // camera = new THREE.OrthographicCamera(w / -2,  w / 2, h / 2,  h / -2, ORTH_NEAR, ORTH_FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
+	                exports.camera = camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
 	                camera.position.set(X, Y, Z); //放置位置
+	                camera.updateProjectionMatrix();
 	
 	                deferred.resolve();
 	
-	            case 7:
+	            case 8:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40811,7 +41055,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var _libEnv = __webpack_require__(9);
 	
 	var COLOR = 0x000000;
-	var ALPHA = 0;
+	var ALPHA = 1;
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -40829,8 +41073,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    var w = (0, _libEnv.width)();
 	    var h = (0, _libEnv.height)();
 	
-	    camera.aspect = w / h;
-	    camera.updateProjectionMatrix();
+	    renderer.setSize(w, h);
 	}
 	
 	(function callee$0$0() {
@@ -40845,11 +41088,9 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	                w = (0, _libEnv.width)();
 	                h = (0, _libEnv.height)();
 	
-	                exports.renderer = renderer = new THREE.WebGLRenderer({
-	                    alpha: true
-	                });
-	                renderer.setPixelRatio(window.devicePixelRatio);
+	                exports.renderer = renderer = new THREE.WebGLRenderer();
 	                renderer.setSize(w, h);
+	                renderer.setPixelRatio(window.devicePixelRatio);
 	                renderer.setClearColor(COLOR, ALPHA);
 	
 	                exports.domElement = domElement = renderer.domElement;
@@ -40886,17 +41127,9 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	};
 	
 	exports.ready = ready;
-	var pointLight = new THREE.PointLight(COLOR);
-	exports.pointLight = pointLight;
-	pointLight.position.set(X, Y, Z);
-	
-	var directionallight = new THREE.DirectionalLight(COLOR);
-	exports.directionallight = directionallight;
-	directionallight.position.set(X, Y, Z);
-	
-	var ambientlight = new THREE.AmbientLight(COLOR);
-	exports.ambientlight = ambientlight;
-	ambientlight.position.set(X, Y, Z);
+	var light = new THREE.DirectionalLight(COLOR);
+	exports.light = light;
+	light.position.set(X, Y, Z);
 	
 	deferred.resolve();
 
@@ -40911,714 +41144,15 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	});
 	exports.init = init;
 	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var _libUtil = __webpack_require__(15);
-	
-	var camera;
-	
-	exports.camera = camera;
-	var deferred = (0, _libPromise.defer)();
-	var end = function end() {
-	    return deferred.promise;
-	};
-	
-	exports.end = end;
-	var lat = 5;
-	var latStep = 0.1;
-	var lon = 90;
-	var lonStep = 0.3;
-	var initRaduis;
-	var raduis;
-	var raduisStep;
-	var xOffsetPercent = 0.5;
-	var yOffsetPercent = 0;
-	var requestFrameId;
-	var zoomIn = false;
-	function animate() {
-	    requestFrameId = (0, _libUtil.requestAnimationFrame)(animate);
-	
-	    if (typeof raduis === 'undefined') {
-	        raduis = initRaduis;
-	        raduisStep = initRaduis / ((360 + 45) / lonStep);
-	    }
-	
-	    if (zoomIn) {
-	        raduis -= xOffsetPercent * raduisStep;
-	    }
-	    raduis = Math.min(raduis, 4);
-	    raduis = Math.max(raduis, 0);
-	
-	    if (raduis < 0.75) {
-	        document.removeEventListener('mousewheel', onMouseWheel);
-	        document.removeEventListener('mouseenter', onMouseEnter);
-	        document.removeEventListener('mousemove', onMouseMove);
-	        document.removeEventListener('mouseleave', onMouseLeave);
-	        (0, _libUtil.cancelAnimationFrame)(requestFrameId);
-	        deferred.resolve();
-	    } else {
-	        lon += xOffsetPercent * lonStep;
-	        lat += yOffsetPercent * latStep;
-	        lat = Math.min(lat, 5);
-	        lat = Math.max(lat, 0);
-	        var theta = THREE.Math.degToRad(lon);
-	        var phi = THREE.Math.degToRad(lat);
-	        camera.position.x = raduis * Math.cos(theta);
-	        camera.position.y = raduis * Math.sin(phi);
-	        camera.position.z = raduis * Math.sin(theta);
-	        camera.lookAt(new THREE.Vector3(0, 0, 0));
-	    }
-	    camera.updateProjectionMatrix();
-	}
-	
-	function onMouseWheel(e) {
-	    e.preventDefault();
-	}
-	
-	function parseXY(e) {
-	    var screenX = e.screenX;
-	    var screenY = e.screenY;
-	    var halfScreenWidth = (0, _libEnv.width)() / 2;
-	    var halfScreenHeight = (0, _libEnv.height)() / 2;
-	    xOffsetPercent = (screenX - halfScreenWidth) / halfScreenWidth;
-	    yOffsetPercent = (screenY - halfScreenHeight) / halfScreenHeight;
-	}
-	
-	function onMouseEnter(e) {
-	    zoomIn = true;
-	    parseXY(e);
-	}
-	
-	function onMouseMove(e) {
-	    parseXY(e);
-	}
-	
-	function onMouseLeave(e) {
-	    parseXY(e);
-	    zoomIn = false;
-	}
-	
-	function init(_camera) {
-	    exports.camera = camera = _camera;
-	    initRaduis = camera.position.z;
-	    document.addEventListener('mousewheel', onMouseWheel, false);
-	    document.addEventListener('mouseenter', onMouseEnter, false);
-	    document.addEventListener('mousemove', onMouseMove, false);
-	    document.addEventListener('mouseleave', onMouseLeave, false);
-	    animate();
-	}
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-	
-	exports.requestAnimationFrame = requestAnimationFrame;
-	var cancelAnimationFrame = window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-	exports.cancelAnimationFrame = cancelAnimationFrame;
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	THREE.Loader.Handlers.add(/\.png$/i, new THREE.ImageLoader());
-	THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
-	THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
-	
-	var loader = new THREE.OBJLoader(_prologue.manager);
-	loader.load('assets/obj/BeautifulGirl/Beautiful Girl.obj',
-	// 'assets/obj/BeautifulGirl/test.mtl',
-	function (_object) {
-	    exports.object = object = _object;
-	    // console.log(object)
-	    object.traverse(function (mesh) {
-	        if (mesh instanceof THREE.Mesh) {
-	            mesh.material.side = THREE.DoubleSide;
-	        }
-	    });
-	
-	    object.scale.set(1, 1, 1);
-	    object.rotation.set(-Math.PI / 2, 0, Math.PI);
-	    deferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
-	
-	// var loader = new THREE.JSONLoader(manager);
-	// loader.load(
-	//     'assets/obj/BeautifulGirl/Beautiful Girl.js',
-	//     function (geometry, materials) {
-	//         console.log(geometry, materials);
-	//         object = new THREE.Mesh(geometry,
-	//             new THREE.MeshFaceMaterial(materials))
-	//         // object = _object;
-	//         object.traverse(function(mesh) {
-	//             if (mesh instanceof THREE.Mesh) {
-	//                 mesh.material.side = THREE.DoubleSide;
-	//             }
-	//         });
-
-	//         object.scale.set(1, 1, 1);
-	//         object.rotation.set(-Math.PI / 2, 0, Math.PI);
-	//         deferred.resolve();
-	//     },
-	//     onProgress,
-	//     onError
-	// );
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var bgIndex = location.search.match(/bgi=(\d+)/);
-	if (bgIndex) {
-	    bgIndex = bgIndex[1] >> 0;
-	} else {
-	    bgIndex = 1;
-	}
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	var skyMaterial;
-	var skyMaterialDeferred = (0, _libPromise.defer)();
-	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	skyMaterialLoader.load('assets/images/bg' + bgIndex + '.jpg', function (texture) {
-	    skyMaterial = new THREE.MeshBasicMaterial({
-	        map: texture,
-	        side: THREE.BackSide
-	    });
-	    skyMaterialDeferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
-	
-	(function callee$0$0() {
-	    var windowW, windowH, imageW, imageH, ratio, shpereGeometry;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(skyMaterialDeferred.promise);
-	
-	            case 2:
-	                windowW = (0, _libEnv.width)();
-	                windowH = (0, _libEnv.height)();
-	                imageW = skyMaterial.map.image.width;
-	                imageH = skyMaterial.map.image.height;
-	                ratio = Math.max(windowW / windowH, imageW / imageH);
-	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64);
-	
-	                exports.object = object = new THREE.Mesh(shpereGeometry, skyMaterial);
-	                deferred.resolve();
-	
-	            case 10:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var _libUtil = __webpack_require__(15);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var bgIndex = location.search.match(/bgi=(\d+)/);
-	if (bgIndex) {
-	    bgIndex = bgIndex[1] >> 0;
-	} else {
-	    bgIndex = 1;
-	}
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	var skyMaterial;
-	var skyMaterialDeferred = (0, _libPromise.defer)();
-	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	skyMaterialLoader.load('assets/images/bg' + bgIndex + 'd.png', function (texture) {
-	    skyMaterial = new THREE.MeshBasicMaterial({
-	        map: texture,
-	        transparent: true,
-	        side: THREE.BackSide
-	    });
-	    skyMaterialDeferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
-	
-	var rotateY = 0;
-	var radians = THREE.Math.degToRad(0.02);
-	function animate() {
-	    (0, _libUtil.requestAnimationFrame)(animate);
-	    object.rotation.y = rotateY;
-	    rotateY -= radians;
-	}
-	
-	(function callee$0$0() {
-	    var windowW, windowH, imageW, imageH, ratio, shpereGeometry;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(skyMaterialDeferred.promise);
-	
-	            case 2:
-	                windowW = (0, _libEnv.width)();
-	                windowH = (0, _libEnv.height)();
-	                imageW = skyMaterial.map.image.width;
-	                imageH = skyMaterial.map.image.height;
-	                ratio = Math.max(windowW / windowH, imageW / imageH);
-	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64);
-	
-	                exports.object = object = new THREE.Mesh(shpereGeometry, skyMaterial);
-	                deferred.resolve(object);
-	                animate();
-	
-	            case 11:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	__webpack_require__(20);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var _scene = __webpack_require__(22);
-	
-	var Scene = _interopRequireWildcard(_scene);
-	
-	var _camera = __webpack_require__(23);
-	
-	var Camera = _interopRequireWildcard(_camera);
-	
-	var _renderer = __webpack_require__(24);
-	
-	var Renderer = _interopRequireWildcard(_renderer);
-	
-	var _light = __webpack_require__(25);
-	
-	var Light = _interopRequireWildcard(_light);
-	
-	var _controls = __webpack_require__(26);
-	
-	var Controls = _interopRequireWildcard(_controls);
-	
-	var _box = __webpack_require__(28);
-	
-	var Box = _interopRequireWildcard(_box);
-	
-	var scene, camera, renderer, domElement, light, box, visualizer;
-	
-	var init = function init() {
-	    return regeneratorRuntime.async(function init$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Box.ready(), Light.ready()]));
-	
-	            case 2:
-	
-	                scene = Scene.scene;
-	                camera = Camera.camera;
-	                renderer = Renderer.renderer;
-	                domElement = Renderer.domElement;
-	                light = Light.light;
-	                box = Box.object;
-	
-	                scene.add(camera);
-	                scene.add(light);
-	                scene.add(box);
-	
-	                box.position.set(0, 0, 0);
-	                camera.position.set(Box.xSize() / 2, Box.ySize() / 2, Box.ySize() * Math.tan(THREE.Math.degToRad(camera.fov)) + Box.zSize() / 4);
-	                camera.lookAt(camera.position);
-	                light.position.set(-10, 10, 10);
-	                Controls.init(camera, renderer);
-	
-	                context$1$0.next = 18;
-	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
-	
-	            case 18:
-	                domElement.setAttribute('chapter', 'two');
-	                document.body.appendChild(domElement);
-	                window.addEventListener('resize', resize, false);
-	                window.scene = scene;
-	                window.camera = camera;
-	                window.renderer = renderer;
-	
-	            case 24:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	};
-	
-	exports.init = init;
-	function resize() {
-	    Renderer.resize();
-	    Camera.resize();
-	}
-	
-	function render() {
-	    Box.render();
-	    renderer.render(scene, camera);
-	}
-	
-	var requestFrameId;
-	var start = function start() {
-	    requestFrameId = requestAnimationFrame(start);
-	    render();
-	};
-	
-	exports.start = start;
-	var end = function end() {
-	    return Controls.end().then(function () {
-	        requestFrameId && cancelAnimationFrame(requestFrameId);
-	        window.removeEventListener('resize', resize);
-	    });
-	};
-	
-	exports.end = end;
-	var show = function show() {
-	    domElement.style.transition = 'opacity 0.4s ease-out 0s';
-	    domElement.style.opacity = 1;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
-	
-	exports.show = show;
-	var hide = function hide() {
-	    domElement.style.transition = 'opacity 0.4s ease-in 0s';
-	    domElement.style.opacity = 0;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
-	
-	exports.hide = hide;
-	var destory = function destory() {
-	    document.body.removeChild(domElement);
-	};
-	exports.destory = destory;
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(21);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
-				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	module.exports = "[chapter=\"two\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var COLOR = 0x000000;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	  return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var scene = new THREE.Scene();
-	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.002);
-	
-	deferred.resolve();
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var VIEW_ANGLE = 45;
-	var NEAR = 1;
-	var FAR = 10000;
-	var X = 0;
-	var Y = 0;
-	var Z = 0;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var camera;
-	
-	exports.camera = camera;
-	
-	function resize() {
-	    var w = (0, _libEnv.width)();
-	    var h = (0, _libEnv.height)();
-	
-	    renderer.setSize(w, h);
-	}
-	
-	(function callee$0$0() {
-	    var w, h;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                w = (0, _libEnv.width)();
-	                h = (0, _libEnv.height)();
-	
-	                exports.camera = camera = new THREE.PerspectiveCamera(VIEW_ANGLE, w / h, NEAR, FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
-	                camera.position.set(X, Y, Z); //放置位置
-	
-	                deferred.resolve();
-	
-	            case 7:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var COLOR = 0x000000;
-	var ALPHA = 1;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var renderer;
-	exports.renderer = renderer;
-	var domElement;
-	
-	exports.domElement = domElement;
-	
-	function resize() {
-	    var w = (0, _libEnv.width)();
-	    var h = (0, _libEnv.height)();
-	
-	    camera.aspect = w / h;
-	    camera.updateProjectionMatrix();
-	}
-	
-	(function callee$0$0() {
-	    var w, h;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                w = (0, _libEnv.width)();
-	                h = (0, _libEnv.height)();
-	
-	                exports.renderer = renderer = new THREE.WebGLRenderer();
-	                renderer.setSize(w, h);
-	                renderer.setClearColor(COLOR, ALPHA);
-	
-	                exports.domElement = domElement = renderer.domElement;
-	
-	                deferred.resolve();
-	
-	            case 9:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var COLOR = 0xFFFFFF;
-	var X = 0;
-	var Y = 0;
-	var Z = 0;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	  return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var light = new THREE.PointLight(COLOR);
-	exports.light = light;
-	light.position.set(X, Y, Z);
-	
-	deferred.resolve();
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.init = init;
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libCubicbezier = __webpack_require__(27);
+	var _libCubicbezier = __webpack_require__(15);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(15);
+	var _libUtil = __webpack_require__(16);
 	
 	var camera;
 	
@@ -41629,34 +41163,32 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	};
 	
 	exports.end = end;
-	var startZ;
-	var stepRatio = 0.005;
+	var startZoom;
+	var stepZoom = 0.0005;
 	function onMouseWheel(e) {
 	    e.preventDefault();
 	
-	    var offset = e.wheelDelta * stepRatio;
-	    var z = camera.position.z;
+	    var offset = -e.wheelDelta * stepZoom;
+	    var zoom = camera.zoom;
 	
-	    z += offset;
-	    z = Math.min(z, startZ);
-	    z = Math.max(z, 0);
+	    zoom += offset;
+	    zoom = Math.max(zoom, startZoom);
 	
-	    if (z <= 0) {
+	    if (zoom <= 0) {
 	        document.removeEventListener('mousewheel', onMouseWheel);
 	        deferred.resolve();
 	    }
-	    camera.position.z = z;
-	    camera.updateProjectionMatrix();
+	    camera.zoom = zoom;
 	}
 	
 	function init(_camera, _renderer) {
 	    exports.camera = camera = _camera;
-	    startZ = camera.position.z;
+	    startZoom = camera.zoom;
 	    document.addEventListener('mousewheel', onMouseWheel, false);
 	}
 
 /***/ },
-/* 27 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41777,7 +41309,22 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	module.exports = exports["default"];
 
 /***/ },
-/* 28 */
+/* 16 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+	
+	exports.requestAnimationFrame = requestAnimationFrame;
+	var cancelAnimationFrame = window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
+	exports.cancelAnimationFrame = cancelAnimationFrame;
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41789,8 +41336,6 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var _this = this;
 	
 	exports.render = render;
-	exports.lineCurve = lineCurve;
-	exports.beatAt = beatAt;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -41800,11 +41345,11 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	
 	var _libEnv = __webpack_require__(9);
 	
-	var _libCubicbezier = __webpack_require__(27);
+	var _libCubicbezier = __webpack_require__(15);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(15);
+	var _libUtil = __webpack_require__(16);
 	
 	var _prologue = __webpack_require__(5);
 	
@@ -41817,7 +41362,7 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var object;
 	
 	exports.object = object;
-	var beating = false;
+	// var beating = false;
 	
 	function render(visualizer) {
 	    var time = Date.now() * 0.00005;
@@ -41825,830 +41370,47 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
 	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 	
-	    if (visualizer && !beating) {
-	        var freq = visualizer.freqs[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
-	        var time = visualizer.times[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
+	    pointFlow();
+	    lineRhythm([1, 1, 1, 1, 1, 1, 1]);
 	
-	        var x = parseInt(X_LENGTH * freq / 256);
-	        var y = parseInt((Y_LENGTH - LINE_CURVE_DIST * 2) * time / 256) + LINE_CURVE_DIST;
-	
-	        beating = new Promise(function (resolve, reject) {
-	            return beatAt(x, y).then(function () {
-	                beating = false;
-	                resolve();
-	            });
+	    if (visualizer && visualizer.isPlaying) {
+	        var bitCount = visualizer.analyser.frequencyBinCount;
+	        var freqs = visualizer.freqs.slice(0, Z_LENGTH);
+	        var offsets = freqs.map(function (freq) {
+	            return X_INTER * freq / 256;
 	        });
+	        lineRhythm(offsets);
 	    }
 	}
 	
-	var pointMaterial;
-	var pointHaloMaterial;
 	var pointMaterialDeferred = (0, _libPromise.defer)();
-	var pointMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	pointMaterialLoader.load('assets/images/disc.png', function (texture) {
-	    pointMaterial = new THREE.PointsMaterial({
-	        size: 10,
-	        map: texture,
-	        alphaTest: 0.5,
-	        transparent: true,
-	        sizeAttenuation: false,
-	        fog: true
-	    });
-	    pointHaloMaterial = new THREE.PointsMaterial({
-	        size: 15,
-	        opacity: 0.5,
-	        map: texture,
-	        transparent: true,
-	        sizeAttenuation: false,
-	        fog: true
-	    });
-	    pointMaterialDeferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
+	var pointMaterial = new THREE.PointsMaterial({
+	    size: 2,
+	    color: 0xFFFFFF,
+	    alphaTest: 0.5,
+	    transparent: true,
+	    sizeAttenuation: false,
+	    fog: true
+	});
+	var pointHaloMaterial = new THREE.PointsMaterial({
+	    size: 4,
+	    opacity: 0.5,
+	    transparent: true,
+	    sizeAttenuation: false,
+	    fog: true
+	});
+	pointMaterialDeferred.resolve();
 	
 	var lineMaterialDeferred = (0, _libPromise.defer)();
 	var lineMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 3,
+	    linewidth: 1,
 	    color: 0xFFFFFF,
 	    alphaTest: 0.5,
 	    transparent: true,
 	    fog: true
 	});
 	var lineHaloMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 10,
-	    opacity: 0.5,
-	    transparent: true,
-	    fog: true
-	});
-	lineMaterialDeferred.resolve();
-	
-	var XYRatio = (0, _libEnv.width)() / (0, _libEnv.height)();
-	
-	var X_MIN = 0;
-	exports.X_MIN = X_MIN;
-	var X_MAX = 40;
-	exports.X_MAX = X_MAX;
-	var Y_MIN = 0;
-	exports.Y_MIN = Y_MIN;
-	var Y_MAX = parseInt(X_MAX / XYRatio);
-	exports.Y_MAX = Y_MAX;
-	var Z_MIN = 0;
-	exports.Z_MIN = Z_MIN;
-	var Z_MAX = 2;
-	exports.Z_MAX = Z_MAX;
-	var X_INTER = 40;
-	exports.X_INTER = X_INTER;
-	var Y_INTER = 40;
-	exports.Y_INTER = Y_INTER;
-	var Z_INTER = 40;
-	exports.Z_INTER = Z_INTER;
-	var X_LENGTH = X_MAX - X_MIN + 1;
-	exports.X_LENGTH = X_LENGTH;
-	var Y_LENGTH = Y_MAX - Y_MIN + 1;
-	exports.Y_LENGTH = Y_LENGTH;
-	var Z_LENGTH = Z_MAX - Z_MIN + 1;
-	
-	exports.Z_LENGTH = Z_LENGTH;
-	var xSize = function xSize() {
-	    return (X_LENGTH - 1) * X_INTER;
-	};
-	exports.xSize = xSize;
-	var ySize = function ySize() {
-	    return (Y_LENGTH - 1) * Y_INTER;
-	};
-	exports.ySize = ySize;
-	var zSize = function zSize() {
-	    return (Z_LENGTH - 1) * Z_INTER;
-	};
-	
-	exports.zSize = zSize;
-	var points = {};
-	var lines = [];
-	
-	var LINE_CURVE_DIST = 2;
-	exports.LINE_CURVE_DIST = LINE_CURVE_DIST;
-	
-	function lineCurve(x, y, z) {
-	    var cp = Math.random() * 0.4 + 0.3;
-	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, (y - LINE_CURVE_DIST) * Y_INTER, z * Z_INTER), new THREE.Vector3(0, (y - LINE_CURVE_DIST * (1 - cp)) * Y_INTER, z * Z_INTER), new THREE.Vector3(x * X_INTER, (y - LINE_CURVE_DIST * cp) * Y_INTER, z * Z_INTER), new THREE.Vector3(x * X_INTER, y * Y_INTER, z * Z_INTER));
-	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x * X_INTER, y * Y_INTER, z * Z_INTER), new THREE.Vector3(x * X_INTER, (y + LINE_CURVE_DIST * cp) * Y_INTER, z * Z_INTER), new THREE.Vector3(0, (y + LINE_CURVE_DIST * (1 - cp)) * Y_INTER, z * Z_INTER), new THREE.Vector3(0, (y + LINE_CURVE_DIST) * Y_INTER, z * Z_INTER));
-	
-	    var curvePoints = curve1.getPoints(1000).concat(curve2.getPoints(1000));
-	
-	    return curvePoints;
-	}
-	
-	function beatAt(x, y) {
-	    var deferred = (0, _libPromise.defer)();
-	
-	    var ticks = [];
-	
-	    lines.forEach(function (lineGroup) {
-	        var originX = lineGroup.position.x / X_INTER;
-	        var originZ = lineGroup.position.z / Z_INTER;
-	
-	        lineGroup.children.slice(1, 2).forEach(function (line) {
-	            var geometry = line.geometry;
-	            if (geometry.vertices.length > 2) {
-	                geometry.vertices.splice(1, geometry.vertices.length - 2);
-	            }
-	
-	            ticks.push({
-	                tick: function tick(x1, x2) {
-	                    var _line$geometry$vertices;
-	
-	                    var curvePoints = lineCurve(x2, y, 0);
-	                    line.geometry = geometry.clone();
-	                    (_line$geometry$vertices = line.geometry.vertices).splice.apply(_line$geometry$vertices, [1, 0].concat(_toConsumableArray(curvePoints)));
-	                },
-	                start: x - originX - (x - originX) / originX,
-	                end: 0
-	            });
-	
-	            // geometry.vertices.splice(1, 0, ...curvePoints);
-	            // geometry.verticesNeedUpdate = true;
-	        });
-	    });
-	
-	    for (var originX in points) {
-	        var kx = x + 0.5;
-	        var offset = kx - originX;
-	        var sign = Math.sign(offset);
-	        var group = points[originX];
-	        var y1 = y,
-	            y2 = y;
-	        var step1 = offset / (y1 - Y_MIN);
-	        var step2 = offset / (Y_MAX - y2);
-	
-	        while (y1 >= Y_MIN || y2 <= Y_MAX) {
-	            if (y1 >= Y_MIN) {
-	                (function () {
-	                    var point = group[y1];
-	                    var originY = point.position.y / Y_INTER;
-	                    ticks.push({
-	                        tick: function tick(x1, x2) {
-	                            point.position.x = x2[0] * X_INTER;
-	                            point.position.y = x2[1] * X_INTER;
-	                        },
-	                        start: [kx - step1 * (y - y1), originY * (1 + Math.random() * 0.5)],
-	                        end: [originX, originY]
-	                    });
-	                    y1--;
-	                })();
-	            }
-	
-	            if (y2 <= Y_MAX) {
-	                (function () {
-	                    var point = group[y2];
-	                    var originY = point.position.y / Y_INTER;
-	                    ticks.push({
-	                        tick: function tick(x1, x2) {
-	                            point.position.x = x2[0] * X_INTER;
-	                            point.position.y = x2[1] * X_INTER;
-	                        },
-	                        start: [kx - step2 * (y2 - y), originY * (1 - Math.random() * 0.5)],
-	                        end: [originX, originY]
-	                    });
-	                    y2++;
-	                })();
-	            }
-	        }
-	    }
-	
-	    var bezier = _libCubicbezier2['default'].easeInOut;
-	    var i = 0;
-	    (0, _libUtil.requestAnimationFrame)(function tween() {
-	        if (i > 1) return deferred.resolve();
-	        (0, _libUtil.requestAnimationFrame)(tween);
-	        ticks.forEach(function (tick) {
-	            var i1, i2;
-	            if (tick.start instanceof Array && tick.end instanceof Array) {
-	                i1 = tick.start.map(function (start, idx) {
-	                    var end = tick.end[idx];
-	                    return start + (end - start) * i;
-	                });
-	                i2 = tick.start.map(function (start, idx) {
-	                    var end = tick.end[idx];
-	                    return start + (end - start) * bezier(i);
-	                });
-	            } else {
-	                var i1 = tick.start + (tick.end - tick.start) * i;
-	                var i2 = tick.start + (tick.end - tick.start) * bezier(i);
-	            }
-	            tick.tick(i1, i2);
-	        });
-	        i += 0.05;
-	    });
-	
-	    return deferred.promise;
-	}
-	
-	(function callee$0$0() {
-	    var vec31, makePoint, vec32, vec33, makeLine, x, xPoints, kx, y, clonedPointGroup, z, clonedLineGroup;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                makeLine = function makeLine() {
-	                    var lineGeometry = new THREE.Geometry();
-	                    lineGeometry.vertices.push(vec32.clone());
-	                    lineGeometry.vertices.push(vec33.clone());
-	                    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
-	                    var line = new THREE.Line(lineGeometry, lineMaterial);
-	                    var lineGroup = new THREE.Group();
-	                    lineGroup.add(lineHalo, line);
-	                    return lineGroup;
-	                };
-	
-	                makePoint = function makePoint() {
-	                    var pointGeometry = new THREE.Geometry();
-	                    pointGeometry.vertices.push(vec31.clone());
-	                    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
-	                    var point = new THREE.Points(pointGeometry, pointMaterial);
-	                    var pointGroup = new THREE.Group();
-	                    pointGroup.add(pointHalo, point);
-	                    return pointGroup;
-	                };
-	
-	                context$1$0.next = 4;
-	                return regeneratorRuntime.awrap(Promise.all([pointMaterialDeferred.promise, lineMaterialDeferred.promise]));
-	
-	            case 4:
-	
-	                exports.object = object = new THREE.Object3D();
-	
-	                vec31 = new THREE.Vector3(0, 0, 0);
-	                vec32 = new THREE.Vector3(0, Y_MIN, 0);
-	                vec33 = new THREE.Vector3(0, Y_MAX * Y_INTER, 0);
-	
-	                for (x = X_MIN; x <= X_MAX; x++) {
-	                    xPoints = [];
-	                    kx = x + 0.5;
-	
-	                    points[kx] = xPoints;
-	                    for (y = Y_MIN; y <= Y_MAX; y++) {
-	                        clonedPointGroup = makePoint();
-	
-	                        clonedPointGroup.position.set(kx * X_INTER, y * Y_INTER, (parseInt(Math.random() * (Z_MAX - Z_MIN)) + Z_MIN) * Z_INTER);
-	                        xPoints.push(clonedPointGroup);
-	                        object.add(clonedPointGroup);
-	                    }
-	
-	                    for (z = Z_MIN; z <= Z_MAX; z++) {
-	                        clonedLineGroup = makeLine();
-	
-	                        clonedLineGroup.position.x = x * X_INTER;
-	                        clonedLineGroup.position.z = z * Z_INTER;
-	                        lines.push(clonedLineGroup);
-	                        object.add(clonedLineGroup);
-	                    }
-	                }
-	
-	                deferred.resolve();
-	
-	            case 10:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	__webpack_require__(30);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var _scene = __webpack_require__(32);
-	
-	var Scene = _interopRequireWildcard(_scene);
-	
-	var _camera = __webpack_require__(33);
-	
-	var Camera = _interopRequireWildcard(_camera);
-	
-	var _renderer = __webpack_require__(34);
-	
-	var Renderer = _interopRequireWildcard(_renderer);
-	
-	var _light = __webpack_require__(35);
-	
-	var Light = _interopRequireWildcard(_light);
-	
-	var _controls = __webpack_require__(36);
-	
-	var Controls = _interopRequireWildcard(_controls);
-	
-	var _cube = __webpack_require__(37);
-	
-	var Cube = _interopRequireWildcard(_cube);
-	
-	var scene, camera, renderer, domElement, lights, cube;
-	
-	var init = function init() {
-	    return regeneratorRuntime.async(function init$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Cube.ready(), Light.ready()]));
-	
-	            case 2:
-	
-	                scene = Scene.scene;
-	                camera = Camera.camera;
-	                renderer = Renderer.renderer;
-	                domElement = Renderer.domElement;
-	                lights = Light.lights;
-	                cube = Cube.object;
-	
-	                scene.add(camera);
-	                scene.add(lights[0]);
-	                scene.add(lights[1]);
-	                scene.add(lights[2]);
-	                scene.add(cube);
-	
-	                cube.position.set(-Cube.xSize() / 2, -Cube.ySize() / 2, -Cube.zSize() / 2);
-	                camera.position.set(10, 10, Cube.zSize() / 2);
-	                camera.lookAt(camera.position);
-	
-	                lights[0].position.set(Cube.xSize(), Cube.ySize(), Cube.zSize());
-	                lights[1].position.set(-Cube.xSize(), -Cube.ySize(), -Cube.zSize());
-	                lights[2].position.set(0, 0, 0);
-	
-	                Controls.init(camera, renderer);
-	                Controls.controls.minDistance = Cube.zSize() / 4;
-	                Controls.controls.maxDistance = Cube.zSize();
-	
-	                context$1$0.next = 24;
-	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
-	
-	            case 24:
-	                domElement.setAttribute('chapter', 'three');
-	                document.body.appendChild(domElement);
-	                window.addEventListener('resize', resize, false);
-	                window.scene = scene;
-	                window.camera = camera;
-	                window.renderer = renderer;
-	
-	            case 30:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	};
-	
-	exports.init = init;
-	function resize() {
-	    Renderer.resize();
-	    Camera.resize();
-	}
-	
-	function render() {
-	    Light.render();
-	    Controls.update();
-	    renderer.render(scene, camera);
-	}
-	
-	var requestFrameId;
-	var start = function start() {
-	    requestFrameId = requestAnimationFrame(start);
-	    render();
-	};
-	
-	exports.start = start;
-	var end = function end() {
-	    return Controls.end().then(function () {
-	        requestFrameId && cancelAnimationFrame(requestFrameId);
-	        window.removeEventListener('resize', resize);
-	    });
-	};
-	
-	exports.end = end;
-	var show = function show() {
-	    domElement.style.transition = 'opacity 0.4s ease-out 0s';
-	    domElement.style.opacity = 1;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
-	
-	exports.show = show;
-	var hide = function hide() {
-	    domElement.style.transition = 'opacity 0.4s ease-in 0s';
-	    domElement.style.opacity = 0;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
-	
-	exports.hide = hide;
-	var destory = function destory() {
-	    document.body.removeChild(domElement);
-	};
-	exports.destory = destory;
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(31);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
-				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	module.exports = "[chapter=\"three\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var COLOR = 0x000000;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	  return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var scene = new THREE.Scene();
-	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.002);
-	
-	deferred.resolve();
-
-/***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var VIEW_ANGLE = 45;
-	var NEAR = 1;
-	var FAR = 10000;
-	var X = 0;
-	var Y = 0;
-	var Z = 0;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var camera;
-	
-	exports.camera = camera;
-	
-	function resize() {
-	    var w = (0, _libEnv.width)();
-	    var h = (0, _libEnv.height)();
-	
-	    renderer.setSize(w, h);
-	}
-	
-	(function callee$0$0() {
-	    var w, h;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                w = (0, _libEnv.width)();
-	                h = (0, _libEnv.height)();
-	
-	                exports.camera = camera = new THREE.PerspectiveCamera(VIEW_ANGLE, w / h, NEAR, FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
-	                camera.position.set(X, Y, Z); //放置位置
-	
-	                deferred.resolve();
-	
-	            case 7:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var COLOR = 0x000000;
-	var ALPHA = 1;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var renderer;
-	exports.renderer = renderer;
-	var domElement;
-	
-	exports.domElement = domElement;
-	
-	function resize() {
-	    var w = (0, _libEnv.width)();
-	    var h = (0, _libEnv.height)();
-	
-	    camera.aspect = w / h;
-	    camera.updateProjectionMatrix();
-	}
-	
-	(function callee$0$0() {
-	    var w, h;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                w = (0, _libEnv.width)();
-	                h = (0, _libEnv.height)();
-	
-	                exports.renderer = renderer = new THREE.WebGLRenderer();
-	                renderer.setSize(w, h);
-	                renderer.setClearColor(COLOR, ALPHA);
-	
-	                exports.domElement = domElement = renderer.domElement;
-	
-	                deferred.resolve();
-	
-	            case 9:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.render = render;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var COLOR = 0xFFFFFF;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var rColor = 255;
-	var rColorStep = -0.003;
-	var gColor = 255;
-	var gColorStep = -0.001;
-	var bColor = 255;
-	var bColorStep = -0.002;
-	
-	var rDist = 1000;
-	var rDistStep = 0.5;
-	var gDist = 1000;
-	var gDistStep = 1;
-	var bDist = 1000;
-	var bDistStep = 1.5;
-	
-	function render(visualizer) {
-	    rColor += rColorStep * (Math.random() * 0.2 + 0.9);
-	    rColor = Math.min(rColor, 1);
-	    rColor = Math.max(rColor, 0.5);
-	    if (rColor <= 0.5 || rColor >= 1) {
-	        rColorStep *= -1;
-	    }
-	
-	    gColor += gColorStep * (Math.random() * 0.2 + 0.9);
-	    gColor = Math.min(gColor, 1);
-	    gColor = Math.max(gColor, 0.5);
-	    if (gColor <= 0.5 || gColor >= 1) {
-	        gColorStep *= -1;
-	    }
-	
-	    bColor += bColorStep * (Math.random() * 0.2 + 0.9);
-	    bColor = Math.min(bColor, 1);
-	    bColor = Math.max(bColor, 0.5);
-	    if (bColor <= 0.5 || bColor >= 1) {
-	        bColorStep *= -1;
-	    }
-	
-	    rDist += rDistStep * (Math.random() * 0.2 + 0.9);
-	    rDist = Math.min(rDist, 1000);
-	    rDist = Math.max(rDist, 800);
-	    if (rDist <= 800 || rDist >= 1000) {
-	        rDist *= -1;
-	    }
-	
-	    gDist += gDistStep * (Math.random() * 0.2 + 0.9);
-	    gDist = Math.min(gDist, 1000);
-	    gDist = Math.max(gDist, 800);
-	    if (gDist <= 800 || gDist >= 1000) {
-	        gDist *= -1;
-	    }
-	
-	    bDist += bDistStep * (Math.random() * 0.2 + 0.9);
-	    bDist = Math.min(bDist, 1000);
-	    bDist = Math.max(bDist, 800);
-	    if (bDist <= 800 || bDist >= 1000) {
-	        bDist *= -1;
-	    }
-	
-	    lights[0].color.r = rColor;
-	    // lights[0].intensity = Math.random() * 100;
-	    lights[0].distance = rDist;
-	
-	    lights[1].color.g = gColor;
-	    // lights[1].intensity = Math.random() * 100;
-	    lights[1].distance = gDist;
-	
-	    lights[2].color.b = bColor;
-	    // lights[2].intensity = Math.random() * 100;
-	    lights[2].distance = bDist;
-	}
-	
-	var lights = [new THREE.PointLight(0xFF0000), new THREE.PointLight(0x00FF00), new THREE.PointLight(0x0000FF)];
-	
-	exports.lights = lights;
-	deferred.resolve();
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.init = init;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libCubicbezier = __webpack_require__(27);
-	
-	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
-	
-	var _libUtil = __webpack_require__(15);
-	
-	var camera;
-	exports.camera = camera;
-	var controls;
-	exports.controls = controls;
-	var update = function update() {
-	    controls.update();
-	};
-	
-	exports.update = update;
-	var deferred = (0, _libPromise.defer)();
-	var end = function end() {
-	    return deferred.promise;
-	};
-	
-	exports.end = end;
-	
-	function init(_camera, _renderer) {
-	    exports.camera = camera = _camera;
-	    exports.controls = controls = new THREE.OrbitControls(_camera, _renderer.domElement);
-	    controls.enableDamping = true;
-	    controls.dampingFactor = 0.7;
-	    controls.enableZoom = true;
-	}
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(9);
-	
-	var _libCubicbezier = __webpack_require__(27);
-	
-	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
-	
-	var _libUtil = __webpack_require__(15);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	var pointMaterialDeferred = (0, _libPromise.defer)();
-	var pointMaterial = new THREE.MeshBasicMaterial({
-	    color: 0xFFFFFF,
-	    emissive: 0x000000,
-	    side: THREE.DoubleSide,
-	    fog: true
-	});
-	var pointHaloMaterial = new THREE.MeshPhongMaterial({
-	    color: 0xFFFFFF,
-	    emissive: 0x000000,
-	    opacity: 0.5,
-	    transparent: true,
-	    fog: true
-	});
-	pointMaterialDeferred.resolve();
-	
-	var lineMaterialDeferred = (0, _libPromise.defer)();
-	var lineMaterial = new THREE.MeshPhongMaterial({
-	    color: 0xFFFFFF,
-	    emissive: 0x000000,
-	    side: THREE.DoubleSide,
-	    fog: true
-	});
-	var lineHaloMaterial = new THREE.MeshLambertMaterial({
-	    color: 0xFFFFFF,
-	    emissive: 0x000000,
+	    linewidth: 2,
 	    opacity: 0.5,
 	    transparent: true,
 	    fog: true
@@ -42656,30 +41418,18 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	lineMaterialDeferred.resolve();
 	
 	var X_MIN = 0;
-	exports.X_MIN = X_MIN;
-	var X_MAX = 3;
-	exports.X_MAX = X_MAX;
+	var X_MAX = 8;
 	var Y_MIN = 0;
-	exports.Y_MIN = Y_MIN;
-	var Y_MAX = 3;
-	exports.Y_MAX = Y_MAX;
-	var Z_MIN = 0;
-	exports.Z_MIN = Z_MIN;
-	var Z_MAX = 3;
-	exports.Z_MAX = Z_MAX;
+	var Y_MAX = 20;
+	var Z_MIN = -7;
+	var Z_MAX = 0;
 	var X_INTER = 100;
-	exports.X_INTER = X_INTER;
-	var Y_INTER = 100;
-	exports.Y_INTER = Y_INTER;
-	var Z_INTER = 100;
-	exports.Z_INTER = Z_INTER;
+	var Y_INTER = 40;
+	var Z_INTER = 50;
 	var X_LENGTH = X_MAX - X_MIN + 1;
-	exports.X_LENGTH = X_LENGTH;
 	var Y_LENGTH = Y_MAX - Y_MIN + 1;
-	exports.Y_LENGTH = Y_LENGTH;
 	var Z_LENGTH = Z_MAX - Z_MIN + 1;
 	
-	exports.Z_LENGTH = Z_LENGTH;
 	var VEC = {
 	    ORIGIN: new THREE.Vector3(0, 0, 0),
 	    X_MIN: new THREE.Vector3(X_MIN * X_INTER, 0, 0),
@@ -42706,153 +41456,458 @@ THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
 	var points = [];
 	var lines = [];
 	
+	var PL_AMOUNT = 10; // 组合点的总数
+	var PL_POINTS = 100; // 组合点中点的个数
+	var PL_THETA = THREE.Math.degToRad(10); // 组合线条的角度
+	
+	function makePoint() {
+	    var pointGroup = new THREE.Group();
+	
+	    var pointGeometry = new THREE.Geometry();
+	    pointGeometry.vertices.push(VEC.ORIGIN.clone());
+	    var point = new THREE.Points(pointGeometry, pointMaterial);
+	    pointGroup.add(point);
+	
+	    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
+	    pointGroup.add(pointHalo);
+	
+	    return pointGroup;
+	}
+	
+	function makePointLine() {
+	    var x = 0;
+	    var group = new THREE.Group();
+	    for (var i = 0; i < PL_POINTS; i++) {
+	        var clonedPoint = makePoint();
+	        var _height = x * Math.tan(PL_THETA);
+	
+	        clonedPoint.position.set(x, _height - Math.random() * _height, 0);
+	        group.add(clonedPoint);
+	
+	        clonedPoint = makePoint();
+	        clonedPoint.position.set(x, -_height + Math.random() * _height, 0);
+	        group.add(clonedPoint);
+	
+	        x += Math.random() * 10;
+	    }
+	
+	    group.size = x;
+	
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = group.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var point = _step.value;
+	
+	            point.position.z = -(group.size - point.position.x) * Math.tan(PL_THETA);
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	                _iterator['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    return group;
+	}
+	
+	var POINT_FLOW_X_OFFSET = -0.15;
+	function pointFlow() {
+	    var originTheta = PL_THETA;
+	
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = points[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var pointGroup = _step2.value;
+	            var _iteratorNormalCompletion3 = true;
+	            var _didIteratorError3 = false;
+	            var _iteratorError3 = undefined;
+	
+	            try {
+	                for (var _iterator3 = pointGroup.children[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                    var point = _step3.value;
+	
+	                    var theta = Math.atan(point.position.y / point.position.x);
+	                    var x = point.position.x + POINT_FLOW_X_OFFSET;
+	                    point.position.x = x;
+	                    point.position.y = x * Math.tan(theta);
+	                    if (point.position.x < 0) {
+	                        point.position.x = pointGroup.size;
+	                        point.position.y = pointGroup.size * Math.tan(theta);
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError3 = true;
+	                _iteratorError3 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+	                        _iterator3['return']();
+	                    }
+	                } finally {
+	                    if (_didIteratorError3) {
+	                        throw _iteratorError3;
+	                    }
+	                }
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+	                _iterator2['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
+	            }
+	        }
+	    }
+	}
+	
+	function makeLine() {
+	    var lineGroup = new THREE.Group();
+	
+	    var lineGeometry = new THREE.Geometry();
+	    lineGeometry.vertices.push(VEC.Y_MIN.clone());
+	    lineGeometry.vertices.push(VEC.Y_MAX.clone());
+	    var line = new THREE.Line(lineGeometry, lineMaterial);
+	    lineGroup.add(line);
+	
+	    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+	    lineGroup.add(lineHalo);
+	
+	    return lineGroup;
+	}
+	
+	var LINE_CURVE_POINTS = 10;
+	function makeLineCurve(line, x, y) {
+	    var _geometry$vertices;
+	
+	    var z = line.position.z;
+	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, y + Y_INTER, z), new THREE.Vector3(0, y + Y_INTER / 2, z), new THREE.Vector3(x, y + Y_INTER / 2, z), new THREE.Vector3(x, y, z));
+	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x, y, z), new THREE.Vector3(x, y - Y_INTER / 2, z), new THREE.Vector3(0, y - Y_INTER / 2, z), new THREE.Vector3(0, y - Y_INTER, z));
+	
+	    var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
+	    var geometry = line.geometry;
+	    if (geometry.vertices.length > 2) {
+	        geometry.vertices.splice(1, geometry.vertices.length - 2);
+	    }
+	    (_geometry$vertices = geometry.vertices).splice.apply(_geometry$vertices, [1, 0].concat(_toConsumableArray(curvePoints)));
+	    geometry.verticesNeedUpdate = true;
+	}
+	
+	function lineRhythm(offsets) {
+	    var centerX = xSize() / 2;
+	    var centerY = ySize() / 2;
+	    var _iteratorNormalCompletion4 = true;
+	    var _didIteratorError4 = false;
+	    var _iteratorError4 = undefined;
+	
+	    try {
+	        for (var _iterator4 = lines[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	            var lineGroup = _step4.value;
+	
+	            var offset = offsets[lineGroup.position.z / Z_INTER - Z_MIN] || 1;
+	            var _iteratorNormalCompletion5 = true;
+	            var _didIteratorError5 = false;
+	            var _iteratorError5 = undefined;
+	
+	            try {
+	                for (var _iterator5 = lineGroup.children[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	                    var line = _step5.value;
+	
+	                    var xOffset = undefined;
+	                    if (lineGroup.position.x < centerX) {
+	                        xOffset = lineGroup.position.x / centerX * offset - offset / 3;
+	                    } else {
+	                        xOffset = (lineGroup.position.x - centerX) / centerX * offset;
+	                    }
+	                    if (xOffset > 0) {
+	                        makeLineCurve(line, line.position.x - xOffset, centerY);
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError5 = true;
+	                _iteratorError5 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion5 && _iterator5['return']) {
+	                        _iterator5['return']();
+	                    }
+	                } finally {
+	                    if (_didIteratorError5) {
+	                        throw _iteratorError5;
+	                    }
+	                }
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError4 = true;
+	        _iteratorError4 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion4 && _iterator4['return']) {
+	                _iterator4['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError4) {
+	                throw _iteratorError4;
+	            }
+	        }
+	    }
+	}
+	
+	window.lineRhythm = lineRhythm;
+	
 	(function callee$0$0() {
-	    var makePoint, makeLine, x, y, clonedLineGroup, z, i, clonedPointGroup;
+	    var r, clonedPointLineGroup, theta, x, z, clonedLineGroup, sign;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                makeLine = function makeLine(dir) {
-	                    var width = dir === 'X' ? xSize() : 1.5;
-	                    var height = dir === 'Y' ? ySize() : 1.5;
-	                    var depth = dir === 'Z' ? zSize() : 1.5;
-	                    var widthSegments = dir === 'X' ? xSize() : 10;
-	                    var heightSegments = dir === 'Y' ? ySize() : 10;
-	                    var depthSegments = dir === 'Z' ? zSize() : 10;
-	                    var lineGeometry = new THREE.BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments);
-	                    var lineGroup = new THREE.Group();
-	
-	                    var line = new THREE.Mesh(lineGeometry, lineMaterial);
-	                    lineGroup.add(line);
-	
-	                    // var lineHalo = new THREE.Mesh(lineGeometry.clone(), lineHaloMaterial);
-	                    // lineHalo.scale.x = dir === 'X' ? 1 : 2;
-	                    // lineHalo.scale.y = dir === 'Y' ? 1 : 2;
-	                    // lineHalo.scale.z = dir === 'Z' ? 1 : 2;
-	                    // lineGroup.add(lineHalo);
-	
-	                    return lineGroup;
-	                };
-	
-	                makePoint = function makePoint() {
-	                    var pointGeometry = new THREE.SphereGeometry(2, 32, 32);
-	                    var pointGroup = new THREE.Group();
-	                    var point = new THREE.Mesh(pointGeometry, pointMaterial);
-	                    pointGroup.add(point);
-	
-	                    var pointHalo = new THREE.Mesh(pointGeometry.clone(), pointHaloMaterial);
-	                    pointHalo.scale.set(1.2, 1.2, 1.2);
-	                    pointGroup.add(pointHalo);
-	
-	                    return pointGroup;
-	                };
-	
-	                context$1$0.next = 4;
+	                context$1$0.next = 2;
 	                return regeneratorRuntime.awrap(Promise.all([pointMaterialDeferred.promise, lineMaterialDeferred.promise]));
 	
-	            case 4:
+	            case 2:
 	
 	                exports.object = object = new THREE.Object3D();
 	
-	                for (x = X_MIN; x <= X_MAX; x++) {
-	                    for (y = Y_MIN; y <= Y_MAX; y++) {
-	                        clonedLineGroup = makeLine('Z');
+	                for (r = 0; r < PL_AMOUNT; r++) {
+	                    clonedPointLineGroup = makePointLine();
+	                    theta = Math.PI * 2 / PL_AMOUNT * r;
 	
-	                        clonedLineGroup.position.x = x * X_INTER;
-	                        clonedLineGroup.position.y = y * Y_INTER;
-	                        clonedLineGroup.position.z = zSize() / 2;
-	                        lines.push(clonedLineGroup);
-	                        object.add(clonedLineGroup);
-	                    }
+	                    clonedPointLineGroup.position.set(xSize() / 2 + (1 + Math.random()) * X_INTER / 2 * Math.cos(theta), ySize() / 2 + (1 + Math.random()) * Y_INTER / 2 * Math.sin(theta), -zSize() / 2);
+	                    clonedPointLineGroup.rotation.set(0, 0, theta);
+	                    points.push(clonedPointLineGroup);
+	                    object.add(clonedPointLineGroup);
 	                }
 	
 	                for (x = X_MIN; x <= X_MAX; x++) {
 	                    for (z = Z_MIN; z <= Z_MAX; z++) {
-	                        clonedLineGroup = makeLine('Y');
+	                        clonedLineGroup = makeLine();
 	
 	                        clonedLineGroup.position.x = x * X_INTER;
-	                        clonedLineGroup.position.y = ySize() / 2;
 	                        clonedLineGroup.position.z = z * Z_INTER;
+	                        if (x * X_INTER === xSize() / 2) {
+	                            sign = z % 2 === 0 ? 1 : -1;
+	
+	                            clonedLineGroup.position.x += sign * X_INTER / 2 / Z_LENGTH * z;
+	                            clonedLineGroup.position.z = (Z_MIN - z) * Z_INTER;
+	                        }
 	                        lines.push(clonedLineGroup);
 	                        object.add(clonedLineGroup);
 	                    }
 	                }
 	
-	                y = Y_MIN;
-	
-	            case 8:
-	                if (!(y <= Y_MAX)) {
-	                    context$1$0.next = 38;
-	                    break;
-	                }
-	
-	                z = Z_MIN;
-	
-	            case 10:
-	                if (!(z <= Z_MAX)) {
-	                    context$1$0.next = 35;
-	                    break;
-	                }
-	
-	                clonedLineGroup = makeLine('X');
-	
-	                clonedLineGroup.position.x = xSize() / 2;
-	                clonedLineGroup.position.y = y * Y_INTER;
-	                clonedLineGroup.position.z = z * Z_INTER;
-	                lines.push(clonedLineGroup);
-	                object.add(clonedLineGroup);
-	
-	                i = 0;
-	
-	            case 18:
-	                if (!(i <= Z_LENGTH)) {
-	                    context$1$0.next = 32;
-	                    break;
-	                }
-	
-	                if (!(y + 0.25 > Y_MAX || z + i / Z_LENGTH > Z_MAX)) {
-	                    context$1$0.next = 21;
-	                    break;
-	                }
-	
-	                return context$1$0.abrupt('continue', 29);
-	
-	            case 21:
-	                clonedPointGroup = makePoint();
-	
-	                clonedPointGroup.position.set((X_MIN + 1) * X_INTER, (y + 0.25) * Y_INTER, (z + i / Z_LENGTH) * Z_INTER);
-	                points.push(clonedPointGroup);
-	                object.add(clonedPointGroup);
-	
-	                clonedPointGroup = clonedPointGroup.clone();
-	                clonedPointGroup.position.x = (X_MAX - 1) * X_INTER;
-	                points.push(clonedPointGroup);
-	                object.add(clonedPointGroup);
-	
-	            case 29:
-	                i++;
-	                context$1$0.next = 18;
-	                break;
-	
-	            case 32:
-	                z++;
-	                context$1$0.next = 10;
-	                break;
-	
-	            case 35:
-	                y++;
-	                context$1$0.next = 8;
-	                break;
-	
-	            case 38:
-	
 	                deferred.resolve();
 	
-	            case 39:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, _this);
 	})();
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Start off by initializing a new context.
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	
+	audioContext.createGain = audioContext.createGain || audioContext.createGainNode;
+	audioContext.createDelay = audioContext.createDelay || audioContext.createDelayNode;
+	audioContext.createScriptProcessor = audioContext.createScriptProcessor || audioContext.createJavaScriptNode;
+	
+	var BufferLoader = (function () {
+	    function BufferLoader(audioContext, urlList, callback) {
+	        _classCallCheck(this, BufferLoader);
+	
+	        this.audioContext = audioContext;
+	        this.urlList = urlList;
+	        this.onload = callback;
+	        this.bufferList = new Array();
+	        this.loadCount = 0;
+	    }
+	
+	    // Interesting parameters to tweak!
+	
+	    _createClass(BufferLoader, [{
+	        key: "loadBuffer",
+	        value: function loadBuffer(url, index) {
+	            // Load buffer asynchronously
+	            var request = new XMLHttpRequest();
+	            request.open("GET", url, true);
+	            request.responseType = "arraybuffer";
+	
+	            var loader = this;
+	
+	            request.onload = function () {
+	                // Asynchronously decode the audio file data in request.response
+	                loader.audioContext.decodeAudioData(request.response, function (buffer) {
+	                    if (!buffer) {
+	                        alert('error decoding file data: ' + url);
+	                        return;
+	                    }
+	                    loader.bufferList[index] = buffer;
+	                    if (++loader.loadCount == loader.urlList.length) loader.onload(loader.bufferList);
+	                }, function (error) {
+	                    console.error('decodeAudioData error', error);
+	                });
+	            };
+	
+	            request.onerror = function () {
+	                alert('BufferLoader: XHR error');
+	            };
+	
+	            request.send();
+	        }
+	    }, {
+	        key: "load",
+	        value: function load() {
+	            for (var i = 0; i < this.urlList.length; ++i) this.loadBuffer(this.urlList[i], i);
+	        }
+	    }]);
+	
+	    return BufferLoader;
+	})();
+	
+	var SMOOTHING = 0.8;
+	var FFT_SIZE = 32; // 快速傅里叶变换
+	
+	var Visualizer = (function () {
+	    function Visualizer() {
+	        _classCallCheck(this, Visualizer);
+	
+	        var that = this;
+	        this.analyser = audioContext.createAnalyser();
+	
+	        this.analyser.connect(audioContext.destination);
+	        this.analyser.minDecibels = -140;
+	        this.analyser.maxDecibels = 0;
+	
+	        this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
+	        this.times = new Uint8Array(this.analyser.frequencyBinCount);
+	
+	        this.isPlaying = false;
+	        this.startTime = 0;
+	        this.startOffset = 0;
+	
+	        this.deferred = (0, _libPromise.defer)();
+	    }
+	
+	    _createClass(Visualizer, [{
+	        key: "ready",
+	        value: function ready() {
+	            return this.deferred.promise;
+	        }
+	    }, {
+	        key: "load",
+	        value: function load(path) {
+	            var that = this;
+	            var soundMap = {
+	                buffer: path
+	            };
+	            var names = [];
+	            var paths = [];
+	            for (var name in soundMap) {
+	                var path = soundMap[name];
+	                names.push(name);
+	                paths.push(path);
+	            }
+	            var bufferLoader = new BufferLoader(audioContext, paths, function (bufferList) {
+	                for (var i = 0; i < bufferList.length; i++) {
+	                    var buffer = bufferList[i];
+	                    var name = names[i];
+	                    that[name] = buffer;
+	                }
+	                that.togglePlayback();
+	                that.deferred.resolve();
+	            });
+	            bufferLoader.load();
+	
+	            return that.deferred.promise;
+	        }
+	    }, {
+	        key: "togglePlayback",
+	        value: function togglePlayback() {
+	            if (this.isPlaying) {
+	                // Stop playback
+	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
+	                this.startOffset += audioContext.currentTime - this.startTime;
+	                console.log('paused at', this.startOffset);
+	                // Save the position of the play head.
+	            } else {
+	                    this.startTime = audioContext.currentTime;
+	                    console.log('started at', this.startOffset);
+	                    this.source = audioContext.createBufferSource();
+	                    // Connect graph
+	                    this.source.connect(this.analyser);
+	                    this.source.buffer = this.buffer;
+	                    this.source.loop = true;
+	                    // Start playback, but make sure we stay in bound of the buffer.
+	                    this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
+	                }
+	            this.isPlaying = !this.isPlaying;
+	        }
+	    }, {
+	        key: "analysis",
+	        value: function analysis() {
+	            this.analyser.smoothingTimeConstant = SMOOTHING;
+	            this.analyser.fftSize = FFT_SIZE;
+	
+	            // Get the frequency data from the currently playing music
+	            this.analyser.getByteFrequencyData(this.freqs); // 频率数据
+	            this.analyser.getByteTimeDomainData(this.times); // 波形数据
+	        }
+	    }, {
+	        key: "getFrequencyValue",
+	        value: function getFrequencyValue(freq) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(freq / nyquist * this.freqs.length);
+	            return this.freqs[index];
+	        }
+	    }, {
+	        key: "getTimeValue",
+	        value: function getTimeValue(time) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(time / nyquist * this.times.length);
+	            return this.times[index];
+	        }
+	    }]);
+	
+	    return Visualizer;
+	})();
+	
+	exports["default"] = Visualizer;
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map

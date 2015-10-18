@@ -2,14 +2,14 @@ import './main.less';
 import {delay, waitForEvent} from './lib/promise';
 
 import * as prologue from './prologue';
-import * as chapter1 from './chapter1';
+// import * as chapter1 from './chapter1';
 import * as chapter2 from './chapter2';
-import * as chapter3 from './chapter3';
+// import * as chapter3 from './chapter3';
 
 var chapters = [
-    chapter1, 
+    // chapter1, 
     chapter2,
-    chapter3
+    // chapter3
 ];
 
 var matched;
@@ -19,7 +19,7 @@ if ((matched = location.search.match(/chapter=(\d+)/))) {
 }
 
 (async () => {
-    await prologue.ready();
+    // await prologue.ready();
 
     var lastChapter;
     for (var i = 0; i < chapters.length; i++) {

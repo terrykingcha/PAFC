@@ -14,8 +14,7 @@ export function resize() {
     var w = width();
     var h = height();
 
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
 }
 
 (async () => {
@@ -25,6 +24,7 @@ export function resize() {
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(w, h);
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setClearColor(COLOR, ALPHA);
     
     domElement = renderer.domElement;

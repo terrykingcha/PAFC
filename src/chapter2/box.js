@@ -9,215 +9,218 @@ export var ready = () => deferred.promise;
 
 export var object;
 
-var beating = false;
+// var beating = false;
 export function render(visualizer) {
     var time = Date.now() * 0.00005;
     var h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
     pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
     lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
 
-    if (visualizer && !beating) {
-        var freq = visualizer.freqs[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
-        var time = visualizer.times[parseInt(Math.random() * visualizer.analyser.frequencyBinCount)];
+    pointFlow();
+    lineRhythm([1,1,1,1,1,1,1]);
 
-        var x = parseInt(X_LENGTH * freq / 256);
-        var y = parseInt((Y_LENGTH - LINE_CURVE_DIST * 2) * time / 256) + LINE_CURVE_DIST;
 
-        beating = new Promise(function(resolve, reject) {
-            return beatAt(x, y).then(function() {
-                beating = false;
-                resolve();
-            });
-        });
+    if (visualizer && visualizer.isPlaying) {
+        var bitCount = visualizer.analyser.frequencyBinCount;
+        var freqs = visualizer.freqs.slice(0, Z_LENGTH);
+        var offsets = freqs.map((freq) => X_INTER * freq / 256);
+        lineRhythm(offsets);
     }
 }
 
-var pointMaterial;
-var pointHaloMaterial;
 var pointMaterialDeferred = defer();
-var pointMaterialLoader = new THREE.TextureLoader(manager);
-pointMaterialLoader.load(
-    'assets/images/disc.png',
-    function(texture) {
-        pointMaterial = new THREE.PointsMaterial({
-            size: 10, 
-            map: texture,
-            alphaTest: 0.5, 
-            transparent: true,
-            sizeAttenuation: false,
-            fog: true
-        });
-        pointHaloMaterial = new THREE.PointsMaterial({
-            size: 15,
-            opacity: 0.5,
-            map: texture,
-            transparent: true,
-            sizeAttenuation: false,
-            fog: true
-        });
-        pointMaterialDeferred.resolve();
-    },
-    onProgress, 
-    onError
-);
+var pointMaterial = new THREE.PointsMaterial({
+    size: 2, 
+    color: 0xFFFFFF,
+    alphaTest: 0.5, 
+    transparent: true,
+    sizeAttenuation: false,
+    fog: true
+});
+var pointHaloMaterial = new THREE.PointsMaterial({
+    size: 4,
+    opacity: 0.5,
+    transparent: true,
+    sizeAttenuation: false,
+    fog: true
+});
+pointMaterialDeferred.resolve();
 
 var lineMaterialDeferred = defer();
 var lineMaterial = new THREE.LineBasicMaterial({
-    linewidth: 3,
+    linewidth: 1,
     color: 0xFFFFFF,
     alphaTest: 0.5,
     transparent: true,
     fog: true
 });
 var lineHaloMaterial = new THREE.LineBasicMaterial({
-    linewidth: 10,
+    linewidth: 2,
     opacity: 0.5,
     transparent: true,
     fog: true
 });
 lineMaterialDeferred.resolve();
 
-const XYRatio = width() / height();
+const X_MIN = 0;
+const X_MAX = 8;
+const Y_MIN = 0;
+const Y_MAX = 20;
+const Z_MIN = -7;
+const Z_MAX = 0;
+const X_INTER = 100;
+const Y_INTER = 40;
+const Z_INTER = 50;
+const X_LENGTH = X_MAX - X_MIN + 1;
+const Y_LENGTH = Y_MAX - Y_MIN + 1;
+const Z_LENGTH = Z_MAX - Z_MIN + 1;
 
-export const X_MIN = 0;
-export const X_MAX = 40;
-export const Y_MIN = 0;
-export const Y_MAX = parseInt(X_MAX / XYRatio);
-export const Z_MIN = 0;
-export const Z_MAX = 2;
-export const X_INTER = 40;
-export const Y_INTER = 40;
-export const Z_INTER = 40;
-export const X_LENGTH = X_MAX - X_MIN + 1;
-export const Y_LENGTH = Y_MAX - Y_MIN + 1;
-export const Z_LENGTH = Z_MAX - Z_MIN + 1;
+const VEC = {
+    ORIGIN: new THREE.Vector3(0, 0, 0),
+    X_MIN: new THREE.Vector3(X_MIN * X_INTER, 0, 0),
+    X_MAX: new THREE.Vector3(X_MAX * Y_INTER, 0, 0),
+    Y_MIN: new THREE.Vector3(0, Y_MIN * Y_INTER, 0),
+    Y_MAX: new THREE.Vector3(0, Y_MAX * Y_INTER, 0),
+    Z_MIN: new THREE.Vector3(0, 0, Z_MIN * Z_INTER),
+    Z_MAX: new THREE.Vector3(0, 0, Z_MAX * Z_INTER)
+}
 
 export var xSize = () => (X_LENGTH - 1) * X_INTER;
 export var ySize = () => (Y_LENGTH - 1) * Y_INTER;
 export var zSize = () => (Z_LENGTH - 1) * Z_INTER;
 
-var points = {};
+var points = [];
 var lines = [];
 
-export const LINE_CURVE_DIST = 2;
-export function lineCurve(x, y, z) {
-    var cp = Math.random() * 0.4 + 0.3;
-    var curve1 = new THREE.CubicBezierCurve3(
-        new THREE.Vector3(0, (y - LINE_CURVE_DIST) * Y_INTER, z * Z_INTER),
-        new THREE.Vector3(0, (y - LINE_CURVE_DIST * (1 - cp) ) * Y_INTER, z * Z_INTER),
-        new THREE.Vector3(x * X_INTER, (y - LINE_CURVE_DIST * cp) * Y_INTER,  z * Z_INTER),
-        new THREE.Vector3(x * X_INTER, y * Y_INTER, z * Z_INTER)
-    );
-    var curve2 = new THREE.CubicBezierCurve3(
-        new THREE.Vector3(x * X_INTER, y * Y_INTER, z * Z_INTER),
-        new THREE.Vector3(x * X_INTER, (y + LINE_CURVE_DIST * cp) * Y_INTER, z * Z_INTER),
-        new THREE.Vector3(0, (y + LINE_CURVE_DIST * (1 - cp)) * Y_INTER,  z * Z_INTER),
-        new THREE.Vector3(0, (y + LINE_CURVE_DIST) * Y_INTER, z * Z_INTER)
-    );
+const PL_AMOUNT = 10;  // 组合点的总数
+const PL_POINTS = 100; // 组合点中点的个数
+const PL_THETA = THREE.Math.degToRad(10); // 组合线条的角度
 
-    var curvePoints = curve1.getPoints(1000).concat(curve2.getPoints(1000));
+function makePoint() {
+    var pointGroup = new THREE.Group();
 
-    return curvePoints;
+    var pointGeometry = new THREE.Geometry();
+    pointGeometry.vertices.push(VEC.ORIGIN.clone());
+    var point = new THREE.Points(pointGeometry, pointMaterial);
+    pointGroup.add(point);
+
+    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
+    pointGroup.add(pointHalo);
+
+    return pointGroup;
 }
 
-export function beatAt(x, y) {
-    var deferred = defer(); 
+function makePointLine() {
+    var x = 0;
+    var group = new THREE.Group();
+    for (let i = 0; i < PL_POINTS; i++) {
+        let clonedPoint = makePoint();
+        let height = x * Math.tan(PL_THETA);
 
-    var ticks = [];
+        clonedPoint.position.set(
+            x,
+            height - Math.random() * height,
+            0
+        );
+        group.add(clonedPoint);
 
-    lines.forEach(function(lineGroup) {
-        var originX = lineGroup.position.x / X_INTER;
-        var originZ = lineGroup.position.z / Z_INTER;
+        clonedPoint = makePoint();
+        clonedPoint.position.set(
+            x,
+            -height + Math.random() * height,
+            0
+        );
+        group.add(clonedPoint);
 
-        lineGroup.children.slice(1, 2).forEach(function(line) {
-            var geometry = line.geometry;
-            if (geometry.vertices.length > 2) {
-                geometry.vertices.splice(1, geometry.vertices.length - 2);
-            }
+        x += Math.random() * 10;
+    }
 
-            ticks.push({
-                tick(x1, x2) {
-                    var curvePoints = lineCurve(x2, y, 0);
-                    line.geometry = geometry.clone();
-                    line.geometry.vertices.splice(1, 0, ...curvePoints);
-                },
-                start: x - originX - (x - originX) / originX,
-                end: 0
-            });
+    group.size = x;
 
-            // geometry.vertices.splice(1, 0, ...curvePoints);
-            // geometry.verticesNeedUpdate = true;
-        });
-    });
+    for (let point of group.children) {
+        point.position.z = -(group.size - point.position.x) * Math.tan(PL_THETA);
+    }
+    return group;
+}
 
-    for (let originX in points) {
-        let kx = x + 0.5;
-        let offset = kx - originX;
-        let sign = Math.sign(offset);
-        let group = points[originX];
-        let y1 = y, y2 = y;
-        let step1 = offset / (y1 - Y_MIN);
-        let step2 = offset / (Y_MAX - y2);
+const POINT_FLOW_X_OFFSET = -0.15;
+function pointFlow() {
+    var originTheta = PL_THETA;
 
-        while (y1 >= Y_MIN || y2 <= Y_MAX) {
-            if (y1 >= Y_MIN) {
-                let point = group[y1];
-                let originY = point.position.y / Y_INTER;
-                ticks.push({
-                    tick(x1, x2) {
-                        point.position.x = x2[0] * X_INTER;
-                        point.position.y = x2[1] * X_INTER;
-                    },
-                    start: [kx - step1 * (y - y1), originY * (1 + Math.random() * 0.5)],
-                    end: [originX, originY]
-                });
-                y1--;  
-            }
-
-            if (y2 <= Y_MAX) {
-                let point = group[y2];
-                let originY = point.position.y / Y_INTER;
-                ticks.push({
-                    tick(x1, x2) {
-                        point.position.x = x2[0] * X_INTER;
-                        point.position.y = x2[1] * X_INTER;
-                    },
-                    start: [kx - step2 * (y2 - y), originY * (1 - Math.random() * 0.5)],
-                    end: [originX, originY]
-                });
-                y2++; 
+    for (let pointGroup of points) {
+        for (let point of pointGroup.children) {
+            let theta = Math.atan(point.position.y / point.position.x);
+            let x = point.position.x + POINT_FLOW_X_OFFSET;
+            point.position.x = x;
+            point.position.y = x * Math.tan(theta);
+            if (point.position.x < 0) {
+                point.position.x = pointGroup.size;
+                point.position.y = pointGroup.size * Math.tan(theta);
             }
         }
     }
-
-    var bezier = CubicBezier.easeInOut;
-    var i = 0;
-    requestAnimationFrame(function tween() {
-        if (i > 1) return deferred.resolve();
-        requestAnimationFrame(tween);
-        ticks.forEach(function(tick) {
-            var i1, i2;
-            if (tick.start instanceof Array && 
-                    tick.end instanceof Array) {
-                i1 = tick.start.map(function(start, idx) {
-                    var end = tick.end[idx];
-                    return start + (end - start) * i;
-                });
-                i2 = tick.start.map(function(start, idx) {
-                    var end = tick.end[idx];
-                    return start + (end - start) * bezier(i);
-                });
-            } else {
-                var i1 = tick.start + (tick.end - tick.start) * i;
-                var i2 = tick.start + (tick.end - tick.start) * bezier(i);
-            }
-            tick.tick(i1, i2);
-        });
-        i += 0.05;
-    });
-
-    return deferred.promise;
 }
+
+function makeLine() {
+    var lineGroup = new THREE.Group();
+
+    var lineGeometry = new THREE.Geometry();
+    lineGeometry.vertices.push(VEC.Y_MIN.clone());
+    lineGeometry.vertices.push(VEC.Y_MAX.clone());
+    var line = new THREE.Line(lineGeometry, lineMaterial);
+    lineGroup.add(line);
+
+    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+    lineGroup.add(lineHalo);
+
+    return lineGroup;
+}
+
+const LINE_CURVE_POINTS = 10;
+function makeLineCurve(line, x, y) {
+    var z = line.position.z;
+    var curve1 = new THREE.CubicBezierCurve3(
+        new THREE.Vector3(0, y + Y_INTER, z),
+        new THREE.Vector3(0, y + Y_INTER / 2, z),
+        new THREE.Vector3(x, y + Y_INTER / 2, z),
+        new THREE.Vector3(x, y, z)
+    );
+    var curve2 = new THREE.CubicBezierCurve3(
+        new THREE.Vector3(x, y, z),
+        new THREE.Vector3(x, y - Y_INTER / 2, z),
+        new THREE.Vector3(0, y - Y_INTER / 2,  z),
+        new THREE.Vector3(0, y - Y_INTER, z)
+    );
+
+    var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
+    var geometry = line.geometry;
+    if (geometry.vertices.length > 2) {
+        geometry.vertices.splice(1, geometry.vertices.length - 2);
+    }
+    geometry.vertices.splice(1, 0, ...curvePoints);
+    geometry.verticesNeedUpdate = true;
+}
+
+function lineRhythm(offsets) {
+    var centerX = xSize() / 2;
+    var centerY = ySize() / 2;
+    for (let lineGroup of lines) {
+        let offset = offsets[lineGroup.position.z / Z_INTER - Z_MIN] || 1;
+        for (let line of lineGroup.children) {
+            let xOffset;
+            if (lineGroup.position.x < centerX) {
+                xOffset = lineGroup.position.x / centerX * offset - offset / 3;
+            } else {
+                xOffset = (lineGroup.position.x - centerX) / centerX * offset;
+            }
+            if (xOffset > 0) {
+                makeLineCurve(line, line.position.x - xOffset, centerY);
+            }
+        }
+    }
+}
+
+window.lineRhythm = lineRhythm;
 
 (async () => {
     await Promise.all([
@@ -227,50 +230,33 @@ export function beatAt(x, y) {
 
     object = new THREE.Object3D();
 
-    var vec31 = new THREE.Vector3(0, 0, 0);
-    function makePoint() {
-        var pointGeometry = new THREE.Geometry();
-        pointGeometry.vertices.push(vec31.clone());
-        var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
-        var point = new THREE.Points(pointGeometry, pointMaterial);
-        var pointGroup = new THREE.Group();
-        pointGroup.add(pointHalo, point);
-        return pointGroup;
+    for (let r = 0; r < PL_AMOUNT; r++) {
+        let clonedPointLineGroup = makePointLine();
+        var theta = Math.PI * 2 / PL_AMOUNT * r;
+        clonedPointLineGroup.position.set(
+            xSize() / 2 + (1 + Math.random()) * X_INTER / 2 * Math.cos(theta),
+            ySize() / 2 + (1 + Math.random()) * Y_INTER / 2 * Math.sin(theta),
+            -zSize() / 2
+        );
+        clonedPointLineGroup.rotation.set(
+            0,
+            0,
+            theta
+        )
+        points.push(clonedPointLineGroup);
+        object.add(clonedPointLineGroup);
     }
-
-    var vec32 = new THREE.Vector3(0, Y_MIN, 0);
-    var vec33 = new THREE.Vector3(0, Y_MAX * Y_INTER, 0); 
-    function makeLine() {
-        var lineGeometry = new THREE.Geometry();
-        lineGeometry.vertices.push(vec32.clone());
-        lineGeometry.vertices.push(vec33.clone());
-        var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
-        var line = new THREE.Line(lineGeometry, lineMaterial);
-        var lineGroup = new THREE.Group();
-        lineGroup.add(lineHalo, line);
-        return lineGroup;
-    }
-
 
     for (let x = X_MIN; x <= X_MAX; x++) {
-        var xPoints = [];
-        var kx = x + 0.5;
-        points[kx] = xPoints;
-        for (let y = Y_MIN; y <= Y_MAX; y++) {
-            let clonedPointGroup = makePoint();
-            clonedPointGroup.position.set(
-                kx * X_INTER,
-                y * Y_INTER,
-                (parseInt(Math.random() * (Z_MAX - Z_MIN)) + Z_MIN) * Z_INTER
-            );
-            xPoints.push(clonedPointGroup);
-            object.add(clonedPointGroup);
-        }
-
         for (let z = Z_MIN; z <= Z_MAX; z++) {
             let clonedLineGroup = makeLine();
             clonedLineGroup.position.x = x * X_INTER;
             clonedLineGroup.position.z = z * Z_INTER;
+            if (x * X_INTER === xSize() / 2) {
+                let sign = z % 2 === 0 ? 1 : -1;
+                clonedLineGroup.position.x += sign * X_INTER / 2 / Z_LENGTH * z;
+                clonedLineGroup.position.z = (Z_MIN - z) * Z_INTER;
+            }
             lines.push(clonedLineGroup);
             object.add(clonedLineGroup);
         }
