@@ -40022,12 +40022,14 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var chapter1 = _interopRequireWildcard(_chapter1);
 	
-	// import * as chapter2 from './chapter2';
+	var _chapter2 = __webpack_require__(19);
+	
+	var chapter2 = _interopRequireWildcard(_chapter2);
+	
 	// import * as chapter3 from './chapter3';
 	
-	var chapters = [chapter1];
+	var chapters = [chapter1, chapter2];
 	
-	// chapter2,
 	// chapter3
 	var matched;
 	if (matched = location.search.match(/chapter=(\d+)/)) {
@@ -41477,6 +41479,1226 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	        }
 	    }, null, _this);
 	})();
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(20);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var _scene = __webpack_require__(22);
+	
+	var Scene = _interopRequireWildcard(_scene);
+	
+	var _camera = __webpack_require__(23);
+	
+	var Camera = _interopRequireWildcard(_camera);
+	
+	var _renderer = __webpack_require__(24);
+	
+	var Renderer = _interopRequireWildcard(_renderer);
+	
+	var _light = __webpack_require__(25);
+	
+	var Light = _interopRequireWildcard(_light);
+	
+	var _controls = __webpack_require__(26);
+	
+	var Controls = _interopRequireWildcard(_controls);
+	
+	var _box = __webpack_require__(28);
+	
+	var Box = _interopRequireWildcard(_box);
+	
+	var _visualizer = __webpack_require__(29);
+	
+	var _visualizer2 = _interopRequireDefault(_visualizer);
+	
+	var scene, camera, renderer, domElement, light, box, visualizer;
+	
+	var music = location.search.match(/music=(\d+)/);
+	if (music) {
+	    music = music[1];
+	} else {
+	    music = '01';
+	}
+	
+	var init = function init() {
+	    return regeneratorRuntime.async(function init$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Box.ready(), Light.ready()]));
+	
+	            case 2:
+	
+	                scene = Scene.scene;
+	                camera = Camera.camera;
+	                renderer = Renderer.renderer;
+	                domElement = Renderer.domElement;
+	                light = Light.light;
+	                box = Box.object;
+	                visualizer = new _visualizer2['default']();
+	                visualizer.load('./assets/sounds/' + music + '.mp3');
+	
+	                scene.add(camera);
+	                scene.add(light);
+	                scene.add(box);
+	
+	                box.position.set(Box.xSize() / -2, Box.ySize() / -2, 0);
+	                // camera.left = Box.xSize() / -2;
+	                // camera.right = Box.xSize() / 2;
+	                // camera.top = Box.ySize() / 2;
+	                // camera.bottom = Box.ySize() / -2;
+	                camera.position.set(0, 0, Box.xSize() / 2);
+	                light.position.set(0, 0, 100);
+	                Controls.init(camera, renderer);
+	
+	                context$1$0.next = 19;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 19:
+	                domElement.setAttribute('chapter', 'two');
+	                document.body.appendChild(domElement);
+	                window.addEventListener('resize', resize, false);
+	                window.scene = scene;
+	                window.camera = camera;
+	                window.renderer = renderer;
+	
+	            case 25:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.init = init;
+	function resize() {
+	    Renderer.resize();
+	    Camera.resize();
+	}
+	
+	function render() {
+	    visualizer.analysis();
+	    Box.render(visualizer);
+	    Camera.render();
+	    renderer.render(scene, camera);
+	}
+	
+	var requestFrameId;
+	var start = function start() {
+	    requestFrameId = requestAnimationFrame(start);
+	    render();
+	};
+	
+	exports.start = start;
+	var end = function end() {
+	    return Controls.end().then(function () {
+	        requestFrameId && cancelAnimationFrame(requestFrameId);
+	        window.removeEventListener('resize', resize);
+	    });
+	};
+	
+	exports.end = end;
+	var show = function show() {
+	    domElement.style.transition = 'opacity 0.4s ease-out 0s';
+	    domElement.style.opacity = 1;
+	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
+	};
+	
+	exports.show = show;
+	var hide = function hide() {
+	    domElement.style.transition = 'opacity 0.4s ease-in 0s';
+	    domElement.style.opacity = 0;
+	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
+	};
+	
+	exports.hide = hide;
+	var destory = function destory() {
+	    document.body.removeChild(domElement);
+	};
+	exports.destory = destory;
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(21);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	module.exports = "[chapter=\"two\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var COLOR = 0x000000;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var scene = new THREE.Scene();
+	exports.scene = scene;
+	scene.fog = new THREE.FogExp2(COLOR, 0.002);
+	
+	deferred.resolve();
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	exports.render = render;
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var FOV = 45;
+	var NEAR = 1;
+	var FAR = 10000;
+	var ORTH_NEAR = -500;
+	var ORTH_FAR = 1000;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var camera;
+	
+	exports.camera = camera;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    camera.updateProjectionMatrix();
+	}
+	
+	function render() {
+	    camera.updateProjectionMatrix();
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                // camera = new THREE.OrthographicCamera(w / -2,  w / 2, h / 2,  h / -2, ORTH_NEAR, ORTH_FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
+	                exports.camera = camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
+	                camera.position.set(X, Y, Z); //放置位置
+	                camera.updateProjectionMatrix();
+	
+	                deferred.resolve();
+	
+	            case 8:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var COLOR = 0x000000;
+	var ALPHA = 1;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var renderer;
+	exports.renderer = renderer;
+	var domElement;
+	
+	exports.domElement = domElement;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    renderer.setSize(w, h);
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.renderer = renderer = new THREE.WebGLRenderer();
+	                renderer.setSize(w, h);
+	                renderer.setPixelRatio(window.devicePixelRatio);
+	                renderer.setClearColor(COLOR, ALPHA);
+	
+	                exports.domElement = domElement = renderer.domElement;
+	
+	                deferred.resolve();
+	
+	            case 10:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var COLOR = 0xFFFFFF;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var light = new THREE.DirectionalLight(COLOR);
+	exports.light = light;
+	light.position.set(X, Y, Z);
+	
+	deferred.resolve();
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.init = init;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libCubicbezier = __webpack_require__(27);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _box = __webpack_require__(28);
+	
+	var Box = _interopRequireWildcard(_box);
+	
+	var camera;
+	
+	exports.camera = camera;
+	var deferred = (0, _libPromise.defer)();
+	var end = function end() {
+	    return deferred.promise;
+	};
+	
+	exports.end = end;
+	var start;
+	var step = 0.01;
+	function onMouseWheel(e) {
+	    e.preventDefault();
+	
+	    var offset = e.wheelDelta * step;
+	    var z = camera.position.z;
+	
+	    z += offset;
+	    z = Math.max(z, -Box.zSize());
+	    z = Math.min(z, start);
+	
+	    if (z <= -Box.zSize()) {
+	        document.removeEventListener('mousewheel', onMouseWheel);
+	        deferred.resolve();
+	    }
+	    camera.position.z = z;
+	}
+	
+	function init(_camera, _renderer) {
+	    exports.camera = camera = _camera;
+	    start = camera.position.z;
+	    document.addEventListener('mousewheel', onMouseWheel, false);
+	}
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	function cubicBezierFunction(p1x, p1y, p2x, p2y) {
+	    var ZERO_LIMIT = 1e-6;
+	    // Calculate the polynomial coefficients,
+	    // implicit first and last control points are (0,0) and (1,1).
+	    var ax = 3 * p1x - 3 * p2x + 1,
+	        bx = 3 * p2x - 6 * p1x,
+	        cx = 3 * p1x;
+	
+	    var ay = 3 * p1y - 3 * p2y + 1,
+	        by = 3 * p2y - 6 * p1y,
+	        cy = 3 * p1y;
+	
+	    function sampleCurveDerivativeX(t) {
+	        // `ax t^3 + bx t^2 + cx t' expanded using Horner 's rule.
+	        return (3 * ax * t + 2 * bx) * t + cx;
+	    }
+	
+	    function sampleCurveX(t) {
+	        return ((ax * t + bx) * t + cx) * t;
+	    }
+	
+	    function sampleCurveY(t) {
+	        return ((ay * t + by) * t + cy) * t;
+	    }
+	
+	    // Given an x value, find a parametric value it came from.
+	    function solveCurveX(x) {
+	        var t2 = x,
+	            derivative,
+	            x2;
+	
+	        // https://trac.webkit.org/browser/trunk/Source/WebCore/platform/animation
+	        // First try a few iterations of Newton's method -- normally very fast.
+	        // http://en.wikipedia.org/wiki/Newton's_method
+	        for (var i = 0; i < 8; i++) {
+	            // f(t)-x=0
+	            x2 = sampleCurveX(t2) - x;
+	            if (Math.abs(x2) < ZERO_LIMIT) {
+	                return t2;
+	            }
+	            derivative = sampleCurveDerivativeX(t2);
+	            // == 0, failure
+	            if (Math.abs(derivative) < ZERO_LIMIT) {
+	                break;
+	            }
+	            t2 -= x2 / derivative;
+	        }
+	
+	        // Fall back to the bisection method for reliability.
+	        // bisection
+	        // http://en.wikipedia.org/wiki/Bisection_method
+	        var t1 = 1,
+	            t0 = 0;
+	        t2 = x;
+	        while (t1 > t0) {
+	            x2 = sampleCurveX(t2) - x;
+	            if (Math.abs(x2) < ZERO_LIMIT) {
+	                return t2;
+	            }
+	            if (x2 > 0) {
+	                t1 = t2;
+	            } else {
+	                t0 = t2;
+	            }
+	            t2 = (t1 + t0) / 2;
+	        }
+	
+	        // Failure
+	        return t2;
+	    }
+	
+	    function solve(x) {
+	        return sampleCurveY(solveCurveX(x));
+	    }
+	
+	    return solve;
+	}
+	
+	/**
+	 * @namespace lib 
+	 */
+	
+	/**
+	 * @callback BezierFunction
+	 * @param {Number} x x坐标，0~1之间的数
+	 * @return {Number} y坐标
+	 */
+	
+	/**
+	 * 生成贝塞尔曲线函数
+	 * @method cubicbezier
+	 * @memberOf lib
+	 * @param {Number} p1x 第一个控制点x坐标
+	 * @param {Number} p1y 第一个控制点y坐标
+	 * @param {Number} p2x 第二个控制点x坐标
+	 * @param {Number} p2y 第二个控制点y坐标
+	 * @property {BezierFunction} linear 直线函数
+	 * @property {BezierFunction} ease ease函数
+	 * @property {BezierFunction} easeIn easeIn函数
+	 * @property {BezierFunction} easeOut easeOut函数
+	 * @property {BezierFunction} easeInOut easeInOut函数
+	 * @return {BezierFunction} 贝塞尔曲线函数
+	 */
+	exports["default"] = cubicBezierFunction;
+	
+	cubicBezierFunction.linear = cubicBezierFunction(0, 0, 1, 1);
+	cubicBezierFunction.ease = cubicBezierFunction(.25, .1, .25, 1);
+	cubicBezierFunction.easeIn = cubicBezierFunction(.42, 0, 1, 1);
+	cubicBezierFunction.easeOut = cubicBezierFunction(0, 0, .58, 1);
+	cubicBezierFunction.easeInOut = cubicBezierFunction(.42, 0, .58, 1);
+	module.exports = exports["default"];
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	exports.render = render;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(9);
+	
+	var _libCubicbezier = __webpack_require__(27);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(5);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	
+	function render(visualizer) {
+	    var time = Date.now() * 0.00005;
+	    var h = 360 * (1.0 + time) % 360 / 360;
+	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
+	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
+	
+	    pointFlow();
+	
+	    if (visualizer && visualizer.isPlaying) {
+	        var bitCount = visualizer.analyser.frequencyBinCount;
+	        var freqs = visualizer.freqs.slice(0, bitCount);
+	        var offsets = freqs.map(function (freq) {
+	            return X_INTER * freq / 256;
+	        });
+	        lineRhythm(offsets);
+	    }
+	}
+	
+	var pointMaterialDeferred = (0, _libPromise.defer)();
+	var pointMaterial = new THREE.PointsMaterial({
+	    size: 2,
+	    color: 0xFFFFFF,
+	    alphaTest: 0.5,
+	    transparent: true,
+	    sizeAttenuation: false,
+	    fog: true
+	});
+	var pointHaloMaterial = new THREE.PointsMaterial({
+	    size: 4,
+	    opacity: 0.5,
+	    transparent: true,
+	    sizeAttenuation: false,
+	    fog: true
+	});
+	pointMaterialDeferred.resolve();
+	
+	var lineMaterialDeferred = (0, _libPromise.defer)();
+	var lineMaterial = new THREE.LineBasicMaterial({
+	    linewidth: 1,
+	    color: 0xFFFFFF,
+	    opacity: 0.5,
+	    transparent: true,
+	    fog: true
+	});
+	var lineHaloMaterial = new THREE.LineBasicMaterial({
+	    linewidth: 2,
+	    opacity: 0.5,
+	    transparent: true,
+	    fog: true
+	});
+	lineMaterialDeferred.resolve();
+	
+	var X_MIN = 0;
+	var X_MAX = 8;
+	var Y_MIN = 0;
+	var Y_MAX = 20;
+	var Z_MIN = -7;
+	var Z_MAX = 0;
+	var X_INTER = 100;
+	var Y_INTER = 40;
+	var Z_INTER = 50;
+	var X_LENGTH = X_MAX - X_MIN + 1;
+	var Y_LENGTH = Y_MAX - Y_MIN + 1;
+	var Z_LENGTH = Z_MAX - Z_MIN + 1;
+	
+	var VEC = {
+	    ORIGIN: new THREE.Vector3(0, 0, 0),
+	    X_MIN: new THREE.Vector3(X_MIN * X_INTER, 0, 0),
+	    X_MAX: new THREE.Vector3(X_MAX * Y_INTER, 0, 0),
+	    Y_MIN: new THREE.Vector3(0, Y_MIN * Y_INTER, 0),
+	    Y_MAX: new THREE.Vector3(0, Y_MAX * Y_INTER, 0),
+	    Z_MIN: new THREE.Vector3(0, 0, Z_MIN * Z_INTER),
+	    Z_MAX: new THREE.Vector3(0, 0, Z_MAX * Z_INTER)
+	};
+	
+	var xSize = function xSize() {
+	    return (X_LENGTH - 1) * X_INTER;
+	};
+	exports.xSize = xSize;
+	var ySize = function ySize() {
+	    return (Y_LENGTH - 1) * Y_INTER;
+	};
+	exports.ySize = ySize;
+	var zSize = function zSize() {
+	    return (Z_LENGTH - 1) * Z_INTER;
+	};
+	
+	exports.zSize = zSize;
+	var points = [];
+	var lines = [];
+	
+	var PL_AMOUNT = 10; // 组合点的总数
+	var PL_POINTS = 100; // 组合点中点的个数
+	var PL_THETA = THREE.Math.degToRad(10); // 组合线条的角度
+	
+	function makePoint() {
+	    var pointGroup = new THREE.Group();
+	
+	    var pointGeometry = new THREE.Geometry();
+	    pointGeometry.vertices.push(VEC.ORIGIN.clone());
+	    var point = new THREE.Points(pointGeometry, pointMaterial);
+	    pointGroup.add(point);
+	
+	    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
+	    pointGroup.add(pointHalo);
+	
+	    return pointGroup;
+	}
+	
+	function makePointLine() {
+	    var x = 0;
+	    var group = new THREE.Group();
+	    for (var i = 0; i < PL_POINTS; i++) {
+	        var clonedPoint = makePoint();
+	        var _height = x * Math.tan(PL_THETA);
+	
+	        clonedPoint.position.set(x, _height - Math.random() * _height, 0);
+	        group.add(clonedPoint);
+	
+	        clonedPoint = makePoint();
+	        clonedPoint.position.set(x, -_height + Math.random() * _height, 0);
+	        group.add(clonedPoint);
+	
+	        x += Math.random() * 10;
+	    }
+	
+	    group.size = x;
+	
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = group.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var point = _step.value;
+	
+	            point.position.z = -(group.size - point.position.x) * Math.tan(PL_THETA);
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	                _iterator['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    return group;
+	}
+	
+	var POINT_FLOW_X_OFFSET = -0.15;
+	function pointFlow() {
+	    var originTheta = PL_THETA;
+	
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = points[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var pointGroup = _step2.value;
+	            var _iteratorNormalCompletion3 = true;
+	            var _didIteratorError3 = false;
+	            var _iteratorError3 = undefined;
+	
+	            try {
+	                for (var _iterator3 = pointGroup.children[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                    var point = _step3.value;
+	
+	                    var theta = Math.atan(point.position.y / point.position.x);
+	                    var x = point.position.x + POINT_FLOW_X_OFFSET;
+	                    point.position.x = x;
+	                    point.position.y = x * Math.tan(theta);
+	                    if (point.position.x < 0) {
+	                        point.position.x = pointGroup.size;
+	                        point.position.y = pointGroup.size * Math.tan(theta);
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError3 = true;
+	                _iteratorError3 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+	                        _iterator3['return']();
+	                    }
+	                } finally {
+	                    if (_didIteratorError3) {
+	                        throw _iteratorError3;
+	                    }
+	                }
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+	                _iterator2['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
+	            }
+	        }
+	    }
+	}
+	
+	function makeLine() {
+	    var lineGroup = new THREE.Group();
+	
+	    var lineGeometry = new THREE.Geometry();
+	    lineGeometry.vertices.push(VEC.Y_MIN.clone());
+	    lineGeometry.vertices.push(VEC.Y_MAX.clone());
+	    var line = new THREE.Line(lineGeometry, lineMaterial);
+	    line.scale.x = 0.5;
+	    lineGroup.add(line);
+	
+	    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+	    lineHalo.scale.x = 0.5;
+	    lineGroup.add(lineHalo);
+	
+	    return lineGroup;
+	}
+	
+	var LINE_CURVE_POINTS = 10;
+	var LINE_Y_OFFSET = Y_INTER * 1.2;
+	function getCurvePoints(x, y, z) {
+	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, y + LINE_Y_OFFSET, z), new THREE.Vector3(0, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y, z));
+	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x, y, z), new THREE.Vector3(x, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET, z));
+	
+	    var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
+	    return curvePoints;
+	}
+	
+	function duplicatePoints(points) {
+	    // for (var i = 1; i < points.length;) {
+	    //     if (points[i].y <= points[i - 1].y) {
+	    //         points.splice(i - 1, 2);
+	    //     } else {
+	    //         i++;
+	    //     }
+	    // }
+	}
+	
+	var lowYOffset = ySize() / 2 - LINE_Y_OFFSET * 2;
+	var midYOffset = ySize() / 2;
+	var highYOffset = ySize() / 2 + LINE_Y_OFFSET * 2;
+	
+	function lineRhythm(offsets) {
+	    var lows = offsets.slice(0, Z_LENGTH);
+	    var mids = offsets.slice(offsets.length / 2 - Z_LENGTH / 2, offsets.length / 2 + Z_LENGTH / 2);
+	    var highs = offsets.slice(offsets.length - Z_LENGTH, offsets.length);
+	    var centerX = xSize() / 2;
+	
+	    lowYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+	    midYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+	    highYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
+	
+	    var _iteratorNormalCompletion4 = true;
+	    var _didIteratorError4 = false;
+	    var _iteratorError4 = undefined;
+	
+	    try {
+	        var _loop = function () {
+	            var lineGroup = _step4.value;
+	
+	            var zPos = lineGroup.position.z / Z_INTER - Z_MIN;
+	            var lowXOffset = lows[zPos] || 1;
+	            var lowPoints = [];
+	            var midXOffset = mids[zPos] || 1;
+	            var midPoints = [];
+	            var highXOffset = highs[zPos] || 1;
+	            var highPoints = [];
+	            var firstLine = lineGroup.children[0];
+	            var zOffset = firstLine.position.z;
+	
+	            if (lineGroup.position.x < centerX) {
+	                var _map = [lowXOffset, midXOffset, highXOffset].map(function (o) {
+	                    return lineGroup.position.x / centerX * o;
+	                });
+	
+	                var _map2 = _slicedToArray(_map, 3);
+	
+	                lowXOffset = _map2[0];
+	                midXOffset = _map2[1];
+	                highXOffset = _map2[2];
+	            } else {
+	                var _map3 = [lowXOffset, midXOffset, highXOffset].map(function (o) {
+	                    return ((lineGroup.position.x - centerX) / centerX + 2) * o;
+	                });
+	
+	                var _map32 = _slicedToArray(_map3, 3);
+	
+	                lowXOffset = _map32[0];
+	                midXOffset = _map32[1];
+	                highXOffset = _map32[2];
+	            }
+	            if (lowXOffset > 0) {
+	                lowPoints = getCurvePoints(firstLine.position.x - lowXOffset, lowYOffset, zOffset);
+	            }
+	            if (midXOffset > 0) {
+	                midPoints = getCurvePoints(firstLine.position.x - midXOffset, midYOffset, zOffset);
+	            }
+	            if (highXOffset > 0) {
+	                highPoints = getCurvePoints(firstLine.position.x - highXOffset, highYOffset, zOffset);
+	            }
+	
+	            _iteratorNormalCompletion5 = true;
+	            _didIteratorError5 = false;
+	            _iteratorError5 = undefined;
+	
+	            try {
+	                for (_iterator5 = lineGroup.children[Symbol.iterator](); !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	                    var _geometry$vertices;
+	
+	                    var line = _step5.value;
+	
+	                    var geometry = line.geometry;
+	                    if (geometry.vertices.length > 2) {
+	                        geometry.vertices.splice(1, geometry.vertices.length - 2);
+	                    }
+	                    var _points = [].concat(_toConsumableArray(lowPoints), _toConsumableArray(midPoints), _toConsumableArray(highPoints));
+	                    duplicatePoints(_points);
+	                    (_geometry$vertices = geometry.vertices).splice.apply(_geometry$vertices, [1, 0].concat(_toConsumableArray(_points)));
+	                    geometry.verticesNeedUpdate = true;
+	                }
+	            } catch (err) {
+	                _didIteratorError5 = true;
+	                _iteratorError5 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion5 && _iterator5['return']) {
+	                        _iterator5['return']();
+	                    }
+	                } finally {
+	                    if (_didIteratorError5) {
+	                        throw _iteratorError5;
+	                    }
+	                }
+	            }
+	        };
+	
+	        for (var _iterator4 = lines[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	            var _iteratorNormalCompletion5;
+	
+	            var _didIteratorError5;
+	
+	            var _iteratorError5;
+	
+	            var _iterator5, _step5;
+	
+	            _loop();
+	        }
+	    } catch (err) {
+	        _didIteratorError4 = true;
+	        _iteratorError4 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion4 && _iterator4['return']) {
+	                _iterator4['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError4) {
+	                throw _iteratorError4;
+	            }
+	        }
+	    }
+	}
+	
+	(function callee$0$0() {
+	    var r, clonedPointLineGroup, theta, x, z, clonedLineGroup, sign;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Promise.all([pointMaterialDeferred.promise, lineMaterialDeferred.promise]));
+	
+	            case 2:
+	
+	                exports.object = object = new THREE.Object3D();
+	
+	                for (r = 0; r < PL_AMOUNT; r++) {
+	                    clonedPointLineGroup = makePointLine();
+	                    theta = Math.PI * 2 / PL_AMOUNT * r;
+	
+	                    clonedPointLineGroup.position.set(xSize() / 2 + (1 + Math.random()) * X_INTER / 2 * Math.cos(theta), ySize() / 2 + (1 + Math.random()) * Y_INTER / 2 * Math.sin(theta), -zSize() / 2);
+	                    clonedPointLineGroup.rotation.set(0, 0, theta);
+	                    points.push(clonedPointLineGroup);
+	                    object.add(clonedPointLineGroup);
+	                }
+	
+	                for (x = X_MIN; x <= X_MAX; x++) {
+	                    for (z = Z_MIN; z <= Z_MAX; z++) {
+	                        clonedLineGroup = makeLine();
+	
+	                        clonedLineGroup.position.x = x * X_INTER;
+	                        clonedLineGroup.position.z = z * Z_INTER;
+	                        if (x * X_INTER === xSize() / 2) {
+	                            sign = z % 2 === 0 ? 1 : -1;
+	
+	                            clonedLineGroup.position.x += sign * X_INTER / 2 / Z_LENGTH * z;
+	                            clonedLineGroup.position.z = (Z_MIN - z) * Z_INTER;
+	                        }
+	                        lines.push(clonedLineGroup);
+	                        object.add(clonedLineGroup);
+	                    }
+	                }
+	
+	                deferred.resolve();
+	
+	            case 6:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Start off by initializing a new context.
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	
+	audioContext.createGain = audioContext.createGain || audioContext.createGainNode;
+	audioContext.createDelay = audioContext.createDelay || audioContext.createDelayNode;
+	audioContext.createScriptProcessor = audioContext.createScriptProcessor || audioContext.createJavaScriptNode;
+	
+	var BufferLoader = (function () {
+	    function BufferLoader(audioContext, urlList, callback) {
+	        _classCallCheck(this, BufferLoader);
+	
+	        this.audioContext = audioContext;
+	        this.urlList = urlList;
+	        this.onload = callback;
+	        this.bufferList = new Array();
+	        this.loadCount = 0;
+	    }
+	
+	    // Interesting parameters to tweak!
+	
+	    _createClass(BufferLoader, [{
+	        key: "loadBuffer",
+	        value: function loadBuffer(url, index) {
+	            // Load buffer asynchronously
+	            var request = new XMLHttpRequest();
+	            request.open("GET", url, true);
+	            request.responseType = "arraybuffer";
+	
+	            var loader = this;
+	
+	            request.onload = function () {
+	                // Asynchronously decode the audio file data in request.response
+	                loader.audioContext.decodeAudioData(request.response, function (buffer) {
+	                    if (!buffer) {
+	                        alert('error decoding file data: ' + url);
+	                        return;
+	                    }
+	                    loader.bufferList[index] = buffer;
+	                    if (++loader.loadCount == loader.urlList.length) loader.onload(loader.bufferList);
+	                }, function (error) {
+	                    console.error('decodeAudioData error', error);
+	                });
+	            };
+	
+	            request.onerror = function () {
+	                alert('BufferLoader: XHR error');
+	            };
+	
+	            request.send();
+	        }
+	    }, {
+	        key: "load",
+	        value: function load() {
+	            for (var i = 0; i < this.urlList.length; ++i) this.loadBuffer(this.urlList[i], i);
+	        }
+	    }]);
+	
+	    return BufferLoader;
+	})();
+	
+	var SMOOTHING = 0.8;
+	var FFT_SIZE = 64; // 快速傅里叶变换
+	
+	var Visualizer = (function () {
+	    function Visualizer() {
+	        _classCallCheck(this, Visualizer);
+	
+	        var that = this;
+	        this.analyser = audioContext.createAnalyser();
+	
+	        this.analyser.connect(audioContext.destination);
+	        this.analyser.minDecibels = -140;
+	        this.analyser.maxDecibels = 0;
+	
+	        this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
+	        this.times = new Uint8Array(this.analyser.frequencyBinCount);
+	
+	        this.isPlaying = false;
+	        this.startTime = 0;
+	        this.startOffset = 0;
+	
+	        this.deferred = (0, _libPromise.defer)();
+	    }
+	
+	    _createClass(Visualizer, [{
+	        key: "ready",
+	        value: function ready() {
+	            return this.deferred.promise;
+	        }
+	    }, {
+	        key: "load",
+	        value: function load(path) {
+	            var that = this;
+	            var soundMap = {
+	                buffer: path
+	            };
+	            var names = [];
+	            var paths = [];
+	            for (var name in soundMap) {
+	                var path = soundMap[name];
+	                names.push(name);
+	                paths.push(path);
+	            }
+	            var bufferLoader = new BufferLoader(audioContext, paths, function (bufferList) {
+	                for (var i = 0; i < bufferList.length; i++) {
+	                    var buffer = bufferList[i];
+	                    var name = names[i];
+	                    that[name] = buffer;
+	                }
+	                that.togglePlayback();
+	                that.deferred.resolve();
+	            });
+	            bufferLoader.load();
+	
+	            return that.deferred.promise;
+	        }
+	    }, {
+	        key: "togglePlayback",
+	        value: function togglePlayback() {
+	            if (this.isPlaying) {
+	                // Stop playback
+	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
+	                this.startOffset += audioContext.currentTime - this.startTime;
+	                console.log('paused at', this.startOffset);
+	                // Save the position of the play head.
+	            } else {
+	                    this.startTime = audioContext.currentTime;
+	                    console.log('started at', this.startOffset);
+	                    this.source = audioContext.createBufferSource();
+	                    // Connect graph
+	                    this.source.connect(this.analyser);
+	                    this.source.buffer = this.buffer;
+	                    this.source.loop = true;
+	                    // Start playback, but make sure we stay in bound of the buffer.
+	                    this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
+	                }
+	            this.isPlaying = !this.isPlaying;
+	        }
+	    }, {
+	        key: "analysis",
+	        value: function analysis() {
+	            this.analyser.smoothingTimeConstant = SMOOTHING;
+	            this.analyser.fftSize = FFT_SIZE;
+	
+	            // Get the frequency data from the currently playing music
+	            this.analyser.getByteFrequencyData(this.freqs); // 频率数据
+	            this.analyser.getByteTimeDomainData(this.times); // 波形数据
+	        }
+	    }, {
+	        key: "getFrequencyValue",
+	        value: function getFrequencyValue(freq) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(freq / nyquist * this.freqs.length);
+	            return this.freqs[index];
+	        }
+	    }, {
+	        key: "getTimeValue",
+	        value: function getTimeValue(time) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(time / nyquist * this.times.length);
+	            return this.times[index];
+	        }
+	    }]);
+	
+	    return Visualizer;
+	})();
+	
+	exports["default"] = Visualizer;
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map
