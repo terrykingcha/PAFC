@@ -19,8 +19,6 @@ if (music) {
     music = '01';
 }
 
-console.log(music)
-
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),

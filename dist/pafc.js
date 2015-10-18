@@ -40785,6 +40785,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var scene, camera, renderer, domElement, light, box, visualizer;
 	
+	var music = location.search.match(/music=(\d+)/);
+	if (music) {
+	    music = music[1];
+	} else {
+	    music = '01';
+	}
+	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -40801,7 +40808,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                light = Light.light;
 	                box = Box.object;
 	                visualizer = new _visualizer2['default']();
-	                visualizer.load('./assets/sounds/sugar.mp3');
+	                visualizer.load('./assets/sounds/' + music + '.mp3');
 	
 	                scene.add(camera);
 	                scene.add(light);
@@ -40957,7 +40964,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.ready = ready;
 	var scene = new THREE.Scene();
 	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.0017);
+	scene.fog = new THREE.FogExp2(COLOR, 0.002);
 	
 	deferred.resolve();
 
@@ -41144,6 +41151,8 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	});
 	exports.init = init;
 	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _libPromise = __webpack_require__(4);
@@ -41154,6 +41163,10 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libUtil = __webpack_require__(16);
 	
+	var _box = __webpack_require__(17);
+	
+	var Box = _interopRequireWildcard(_box);
+	
 	var camera;
 	
 	exports.camera = camera;
@@ -41163,27 +41176,28 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	};
 	
 	exports.end = end;
-	var startZoom;
-	var stepZoom = 0.0005;
+	var start;
+	var step = 0.01;
 	function onMouseWheel(e) {
 	    e.preventDefault();
 	
-	    var offset = -e.wheelDelta * stepZoom;
-	    var zoom = camera.zoom;
+	    var offset = e.wheelDelta * step;
+	    var z = camera.position.z;
 	
-	    zoom += offset;
-	    zoom = Math.max(zoom, startZoom);
+	    z += offset;
+	    z = Math.max(z, -Box.zSize());
+	    z = Math.min(z, start);
 	
-	    if (zoom <= 0) {
+	    if (z <= -Box.zSize()) {
 	        document.removeEventListener('mousewheel', onMouseWheel);
 	        deferred.resolve();
 	    }
-	    camera.zoom = zoom;
+	    camera.position.z = z;
 	}
 	
 	function init(_camera, _renderer) {
 	    exports.camera = camera = _camera;
-	    startZoom = camera.zoom;
+	    start = camera.position.z;
 	    document.addEventListener('mousewheel', onMouseWheel, false);
 	}
 
@@ -41587,21 +41601,24 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    lineGeometry.vertices.push(VEC.Y_MIN.clone());
 	    lineGeometry.vertices.push(VEC.Y_MAX.clone());
 	    var line = new THREE.Line(lineGeometry, lineMaterial);
+	    line.scale.x = 0.5;
 	    lineGroup.add(line);
 	
 	    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
+	    lineHalo.scale.x = 0.5;
 	    lineGroup.add(lineHalo);
 	
 	    return lineGroup;
 	}
 	
 	var LINE_CURVE_POINTS = 10;
+	var LINE_Y_OFFSET = Y_INTER * 1.2;
 	function makeLineCurve(line, x, y) {
 	    var _geometry$vertices;
 	
 	    var z = line.position.z;
-	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, y + Y_INTER, z), new THREE.Vector3(0, y + Y_INTER / 2, z), new THREE.Vector3(x, y + Y_INTER / 2, z), new THREE.Vector3(x, y, z));
-	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x, y, z), new THREE.Vector3(x, y - Y_INTER / 2, z), new THREE.Vector3(0, y - Y_INTER / 2, z), new THREE.Vector3(0, y - Y_INTER, z));
+	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, y + LINE_Y_OFFSET, z), new THREE.Vector3(0, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y, z));
+	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x, y, z), new THREE.Vector3(x, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET, z));
 	
 	    var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
 	    var geometry = line.geometry;
@@ -41634,9 +41651,9 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	                    var xOffset = undefined;
 	                    if (lineGroup.position.x < centerX) {
-	                        xOffset = lineGroup.position.x / centerX * offset - offset / 3;
+	                        xOffset = lineGroup.position.x / centerX * offset;
 	                    } else {
-	                        xOffset = (lineGroup.position.x - centerX) / centerX * offset;
+	                        xOffset = (lineGroup.position.x - centerX) / centerX * offset + offset * 2;
 	                    }
 	                    if (xOffset > 0) {
 	                        makeLineCurve(line, line.position.x - xOffset, centerY);

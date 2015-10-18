@@ -179,7 +179,7 @@ function makeLine() {
 }
 
 const LINE_CURVE_POINTS = 10;
-const LINE_Y_OFFSET = Y_INTER * 1.5;
+const LINE_Y_OFFSET = Y_INTER * 1.2;
 function makeLineCurve(line, x, y) {
     var z = line.position.z;
     var curve1 = new THREE.CubicBezierCurve3(
@@ -212,9 +212,9 @@ function lineRhythm(offsets) {
         for (let line of lineGroup.children) {
             let xOffset;
             if (lineGroup.position.x < centerX) {
-                xOffset = lineGroup.position.x / centerX * offset - offset / 5;
+                xOffset = lineGroup.position.x / centerX * offset;
             } else {
-                xOffset = (lineGroup.position.x - centerX) / centerX * offset + offset;
+                xOffset = (lineGroup.position.x - centerX) / centerX * offset + offset * 2;
             }
             if (xOffset > 0) {
                 makeLineCurve(line, line.position.x - xOffset, centerY);
