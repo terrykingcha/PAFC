@@ -29,7 +29,7 @@ function animate() {
     if (zoomIn) {
         raduis -= xOffsetPercent * raduisStep;
     }
-    raduis = Math.min(raduis, 4);
+    raduis = Math.min(raduis, initRaduis);
     raduis = Math.max(raduis, 0);
 
     if (raduis < 0.75) {

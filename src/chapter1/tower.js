@@ -13,19 +13,22 @@ THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
 
 var loader = new THREE.OBJLoader(manager);
 loader.load(
-    'assets/obj/BeautifulGirl/Beautiful Girl.obj',
+    'assets/obj/building/pafc.obj',
     // 'assets/obj/BeautifulGirl/test.mtl',
     function (_object) {
         object = _object;
-        // console.log(object)
         object.traverse(function(mesh) {
             if (mesh instanceof THREE.Mesh) {
-                mesh.material.side = THREE.DoubleSide;
+                mesh.position.set(-8.5, 11.5, 14);
+                mesh.material = new THREE.MeshLambertMaterial({
+                    color: 0xFFFFFF,
+                    essive: 0xFFFFFF,
+                    side: THREE.DoubleSide
+                });
             }
         });
 
         object.scale.set(1, 1, 1);
-        object.rotation.set(-Math.PI / 2, 0, Math.PI);
         deferred.resolve();
     }, 
     onProgress, 

@@ -38,14 +38,14 @@ export var init = async () => {
     scene.add(tower);
     scene.add(sky);
 
-    camera.position.set(0, 0, 4);
+    camera.position.set(0, 0, 20);
     camera.lookAt(scene.position);
     plight.position.set(
         sky.geometry.parameters.radius * 0.4, 
         sky.geometry.parameters.radius * 0.4, 
         -sky.geometry.parameters.radius * 0.8
     );
-    tower.position.set(0, -1.2, 0);
+    tower.position.set(0, -14, 0);
     sky.position.set(0, 0, 0);
     Controls.init(camera);
 
