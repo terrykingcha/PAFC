@@ -11,8 +11,7 @@ import * as Tower from './tower';
 import * as Sky from './sky';
 
 var scene, camera, renderer, domElement, 
-    plight, dlight, alight, tower, 
-    sky;
+    light, tower, sky;
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
@@ -27,27 +26,24 @@ export var init = async () => {
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    plight = Light.pointLight;
-    dlight = Light.directionallight;
-    alight = Light.ambientlight;
+    light = Light.light;
     tower = Tower.object;
     sky = Sky.object;
 
     scene.add(camera);
-    scene.add(plight);
+    scene.add(light);
     scene.add(tower);
     scene.add(sky);
 
     camera.position.set(0, 0, 20);
     camera.lookAt(scene.position);
-    plight.position.set(
+    light.position.set(
         sky.geometry.parameters.radius * 0.4, 
         sky.geometry.parameters.radius * 0.4, 
         -sky.geometry.parameters.radius * 0.8
     );
-    tower.position.set(0, -14, 0);
+    tower.position.set(0, -4.5, 0)
     sky.position.set(0, 0, 0);
-    Controls.init(camera);
 
     var SkyDynamic = require('./skyDynamic');
     SkyDynamic.ready().then(function(obj) {
@@ -65,24 +61,29 @@ export var init = async () => {
     window.renderer = renderer;
 }
 
-
-function resize() {
+export function resize() {
     Renderer.resize();
     Camera.resize();
 }
 
-function render() {
+export function render() {
     renderer.render(scene, camera);
 }
 
+var starting;
 var requestFrameId;
 export var start = () => {
+    if (!starting) {
+        starting = true;
+        Controls.init(camera);
+    }
     requestFrameId = requestAnimationFrame(start);
     render();
 }
 
 export var end = () => {
     return Controls.end().then(function() {
+        starting = false;
         requestFrameId && cancelAnimationFrame(requestFrameId);
         window.removeEventListener('resize', resize);
     });

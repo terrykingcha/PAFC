@@ -17,7 +17,7 @@ var raduisStep;
 var xOffsetPercent = 0.5;
 var yOffsetPercent = 0;
 var requestFrameId;
-var zoomIn = false;
+var zoomIn = true;
 function animate() {
     requestFrameId = requestAnimationFrame(animate);
 
@@ -32,7 +32,7 @@ function animate() {
     raduis = Math.min(raduis, initRaduis);
     raduis = Math.max(raduis, 0);
 
-    if (raduis < 0.75) {
+    if (raduis < 1) {
         document.removeEventListener('mousewheel', onMouseWheel);
         document.removeEventListener('mouseenter', onMouseEnter);
         document.removeEventListener('mousemove', onMouseMove);
@@ -69,7 +69,7 @@ function parseXY(e) {
 }
 
 function onMouseEnter(e) {
-    zoomIn = true;
+    // zoomIn = true;
     parseXY(e);
 }
 
@@ -79,7 +79,7 @@ function onMouseMove(e) {
 
 function onMouseLeave(e) {
     parseXY(e);
-    zoomIn = false;
+    // zoomIn = false;
 }
 
 export function init(_camera) {

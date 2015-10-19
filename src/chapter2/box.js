@@ -253,14 +253,15 @@ function lineRhythm(offsets) {
         }
 
         for (let line of lineGroup.children) {
-            let geometry = line.geometry;
+            let geometry = line.geometry.clone();
             if (geometry.vertices.length > 2) {
                 geometry.vertices.splice(1, geometry.vertices.length - 2);
             }
             let points = [...lowPoints, ...midPoints, ...highPoints];
-            duplicatePoints(points);
+            // duplicatePoints(points);
             geometry.vertices.splice(1, 0, ...points);
             geometry.verticesNeedUpdate = true;
+            line.geometry = geometry;
         }
     }
 }

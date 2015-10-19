@@ -7,28 +7,35 @@ export var ready = () => deferred.promise;
 
 export var object;
 
-THREE.Loader.Handlers.add(/\.png$/i, new THREE.ImageLoader());
-THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
-THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
-
 var loader = new THREE.OBJLoader(manager);
 loader.load(
-    'assets/obj/building/pafc.obj',
-    // 'assets/obj/BeautifulGirl/test.mtl',
-    function (_object) {
-        object = _object;
-        object.traverse(function(mesh) {
-            if (mesh instanceof THREE.Mesh) {
-                mesh.position.set(-8.5, 11.5, 14);
-                mesh.material = new THREE.MeshLambertMaterial({
-                    color: 0xFFFFFF,
-                    essive: 0xFFFFFF,
-                    side: THREE.DoubleSide
-                });
-            }
-        });
+    'assets/obj/building/building2.obj',
+    function (obj) {
+        object = new THREE.Group();
 
-        object.scale.set(1, 1, 1);
+        var buildingMesh = obj.children[0];
+        buildingMesh.material = new THREE.MeshLambertMaterial({
+            color: 0xFFFFFF,
+            essive: 0xFFFFFF,
+            side: THREE.DoubleSide,
+            wireframe: true
+        });
+        buildingMesh.rotation.set(-Math.PI / 2, 0, 0);
+        buildingMesh.scale.set(0.1, 0.1, 0.1);
+        object.add(buildingMesh);
+
+        var buildingInnerMesh = new THREE.Mesh(
+            buildingMesh.geometry.clone(), 
+            new THREE.MeshLambertMaterial({
+                color: 0x000000,
+                essive: 0x000000,
+                side: THREE.DoubleSide,
+            })
+        );
+        buildingInnerMesh.rotation.set(-Math.PI / 2, 0, 0);
+        buildingInnerMesh.scale.set(0.1,0.1,0.1);
+        object.add(buildingInnerMesh);
+
         deferred.resolve();
     }, 
     onProgress, 
@@ -37,20 +44,17 @@ loader.load(
 
 // var loader = new THREE.JSONLoader(manager);
 // loader.load(
-//     'assets/obj/BeautifulGirl/Beautiful Girl.js',
+//     'assets/obj/building/building1.json',
 //     function (geometry, materials) {
-//         console.log(geometry, materials);
-//         object = new THREE.Mesh(geometry, 
-//             new THREE.MeshFaceMaterial(materials))
-//         // object = _object;
-//         object.traverse(function(mesh) {
-//             if (mesh instanceof THREE.Mesh) {
-//                 mesh.material.side = THREE.DoubleSide;
-//             }
-//         });
-
-//         object.scale.set(1, 1, 1);
-//         object.rotation.set(-Math.PI / 2, 0, Math.PI);
+//         object = new THREE.Mesh(geometry);
+//         object.material = new THREE.MeshFaceMaterial([
+//             new THREE.MeshLambertMaterial({
+//                 color: 0x000000,
+//                 emissive: 0x000000,
+//                 side: THREE.DoubleSide
+//             })
+//         ]);
+//         object.scale.set(50, 50, 50);
 //         deferred.resolve();
 //     }, 
 //     onProgress, 

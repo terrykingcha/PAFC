@@ -1,14 +1,7 @@
 import {defer} from '../lib/promise';
-import {width, height} from '../lib/env';
+import {width, height, time} from '../lib/env';
 import {requestAnimationFrame} from '../lib/util';
 import {manager, onProgress, onError} from '../prologue';
-
-var bgIndex = location.search.match(/bgi=(\d+)/);
-if (bgIndex) {
-    bgIndex = bgIndex[1] >> 0;
-} else {
-    bgIndex = 1;
-}
 
 var deferred = defer();
 export var ready = () => deferred.promise;
@@ -18,7 +11,7 @@ var skyMaterial;
 var skyMaterialDeferred = defer();
 var skyMaterialLoader = new THREE.TextureLoader(manager);
 skyMaterialLoader.load(
-    `assets/images/bg${bgIndex}d.png`,
+    `assets/images/${time()}_d.png`,
     function(texture) {
         skyMaterial = new THREE.MeshBasicMaterial({
             map: texture,
