@@ -1,28 +1,22 @@
 # PAFC
 
-[http://terrykingcha.github.io/PAFC/index.html](http://terrykingcha.github.io/PAFC/index.html)
+[http://pafc.g.jinbo.mobi/?cp=1](http://pafc.g.jinbo.mobi/?cp=1)
 
 ## 分场景URL
 
 ### 建筑物
 
+
 鼠标移动到屏幕左/右，可改变旋转的方向和速度。  
 鼠标移动到屏幕上，可改变仰视角度。
 
- - [清晨建筑物](http://terrykingcha.github.io/PAFC/index.html?chapter=1&bgi=1)
- - [白天建筑物](http://terrykingcha.github.io/PAFC/index.html?chapter=1&bgi=2)
- - [傍晚建筑物](http://terrykingcha.github.io/PAFC/index.html?chapter=1&bgi=3)
- - [晚上建筑物](http://terrykingcha.github.io/PAFC/index.html?chapter=1&bgi=4)
+ - [清晨建筑物](http://pafc.g.jinbo.mobi/?cp=1&time=drawn)
+ - [白天建筑物](http://pafc.g.jinbo.mobi/?cp=1&time=daylight)
+ - [傍晚建筑物](http://pafc.g.jinbo.mobi/?cp=1&time=sunset)
+ - [晚上建筑物](http://pafc.g.jinbo.mobi/?cp=1&time=night)
 
-### 平面线条
+**如果需要改变环境光，可以增加`plight=0xFF0000`参数，环境光值用16进制表示**
 
-滚轮滚动可拉近/拉远平面。
+### 其它测试场景
 
- - [无音乐特效](http://terrykingcha.github.io/PAFC/index.html?chapter=2)
-
-### 立方体
-
-滚轮滚动可拉近/拉远立方体。
-鼠标拖动可旋转立方体。    
-
- - [无音乐特效](http://terrykingcha.github.io/PAFC/index.html?chapter=3)
+- [立方体烘培动画](http://pafc.g.jinbo.mobi/?cp=2)
