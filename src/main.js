@@ -10,14 +10,14 @@ import * as chapter2 from './chapter2';
 // import * as chapter3 from './chapter3';
 
 var chapters = {
-    cp1: chapter1,
-    cp2: chapter2,
+    cp1: chapter1
+    ,cp2: chapter2
     // chapter2,
     // chapter3
 }
 
 var matched;
-var chapter;
+var chapter = chapters.cp1;
 if ((matched = location.search.match(/cp=(\d+)/))) {
     var no = matched[1] >> 0;
     chapter = chapters['cp' + no];
