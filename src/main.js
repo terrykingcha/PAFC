@@ -6,31 +6,33 @@ THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
 
 import * as prologue from './prologue';
 import * as chapter1 from './chapter1';
-// import * as chapter2 from './chapter2';
+import * as chapter2 from './chapter2';
 // import * as chapter3 from './chapter3';
 
-// var chapters = [
-//     chapter1,
-//     // chapter2,
-//     // chapter3
-// ];
+var chapters = {
+    cp1: chapter1,
+    cp2: chapter2,
+    // chapter2,
+    // chapter3
+}
 
-// var matched;
-// if ((matched = location.search.match(/chapter=(\d+)/))) {
-//     var no = matched[1] >> 0;
-//     chapters = chapters.slice(no - 1, no);
-// }
+var matched;
+var chapter;
+if ((matched = location.search.match(/cp=(\d+)/))) {
+    var no = matched[1] >> 0;
+    chapter = chapters['cp' + no];
+}
 
 (async () => {
     await prologue.ready();
 
-    await chapter1.init();
-    chapter1.show();
-    chapter1.render();
+    await chapter.init();
+    chapter.show();
+    chapter.render();
 
     await prologue.opening();
 
-    await chapter1.start();
+    await chapter.start();
     // var lastChapter;
     // for (var i = 0; i < chapters.length; i++) {
     //     let chapter = chapters[i];
