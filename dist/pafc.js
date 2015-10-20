@@ -39771,12 +39771,12 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var chapters = {
 	    cp1: chapter1,
 	    cp2: chapter2
+	    // chapter2,
+	    // chapter3
 	};
 	
-	// chapter2,
-	// chapter3
 	var matched;
-	var chapter;
+	var chapter = chapters.cp1;
 	if (matched = location.search.match(/cp=(\d+)/)) {
 	    var no = matched[1] >> 0;
 	    chapter = chapters['cp' + no];
@@ -41077,6 +41077,21 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    'sunset': 0xd5ab70,
 	    'night': 0xcdf1f1
 	};
+	
+	var bgTime;
+	if (bgTime = location.search.match(/time=([^=&]+)/)) {
+	    bgTime = bgTime[1];
+	} else {
+	    bgTime = (0, _libEnv.time)();
+	}
+	
+	var plight;
+	if (plight = location.search.match(/plight=([^=&]+)/)) {
+	    plight = Number(plight[1]);
+	} else {
+	    plight = COLOR[bgTime];
+	}
+	
 	var X = 0;
 	var Y = 0;
 	var Z = 0;
@@ -41087,7 +41102,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	};
 	
 	exports.ready = ready;
-	var light = new THREE.PointLight(COLOR[(0, _libEnv.time)()]);
+	var light = new THREE.PointLight(plight);
 	exports.light = light;
 	light.position.set(X, Y, Z);
 	
@@ -41290,6 +41305,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _prologue = __webpack_require__(5);
 	
+	var bgTime;
+	if (bgTime = location.search.match(/time=([^=&]+)/)) {
+	    bgTime = bgTime[1];
+	} else {
+	    bgTime = (0, _libEnv.time)();
+	}
+	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
 	    return deferred.promise;
@@ -41301,7 +41323,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var skyMaterial;
 	var skyMaterialDeferred = (0, _libPromise.defer)();
 	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	skyMaterialLoader.load('assets/images/' + (0, _libEnv.time)() + '.jpg', function (texture) {
+	skyMaterialLoader.load('assets/images/' + bgTime + '.jpg', function (texture) {
 	    skyMaterial = new THREE.MeshBasicMaterial({
 	        map: texture,
 	        side: THREE.BackSide

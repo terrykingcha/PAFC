@@ -2,6 +2,13 @@ import {defer} from '../lib/promise';
 import {width, height, time} from '../lib/env';
 import {manager, onProgress, onError} from '../prologue';
 
+var bgTime;
+if ((bgTime = location.search.match(/time=([^=&]+)/))) {
+    bgTime = bgTime[1];
+} else {
+    bgTime = time();
+}
+
 var deferred = defer();
 export var ready = () => deferred.promise;
 export var object;
@@ -10,7 +17,7 @@ var skyMaterial;
 var skyMaterialDeferred = defer();
 var skyMaterialLoader = new THREE.TextureLoader(manager);
 skyMaterialLoader.load(
-    `assets/images/${time()}.jpg`,
+    `assets/images/${bgTime}.jpg`,
     function(texture) {
         skyMaterial = new THREE.MeshBasicMaterial({
             map: texture,
