@@ -1,6 +1,7 @@
 import './nav.less';
 import {defer, domReady} from './lib/promise';
 import {find, findAll, on, show as visible} from './lib/dom';
+import {show as showMenu} from './menu';
 
 var $nav;
 export async function show() {
@@ -10,7 +11,7 @@ export async function show() {
     $nav::visible()
         ::find('.open')
         ::on('click', function(e) {
-            alert('open menu');
+            showMenu();
         });
 
     $nav::find('.music')

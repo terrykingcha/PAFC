@@ -39755,34 +39755,35 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _clock = __webpack_require__(10);
+	var _clock = __webpack_require__(12);
 	
 	var clock = _interopRequireWildcard(_clock);
 	
-	var _share = __webpack_require__(14);
+	var _share = __webpack_require__(16);
 	
 	var share = _interopRequireWildcard(_share);
 	
-	var _nav = __webpack_require__(17);
+	var _nav = __webpack_require__(19);
 	
 	var nav = _interopRequireWildcard(_nav);
 	
-	var _chapter1 = __webpack_require__(20);
+	var _menu = __webpack_require__(22);
+	
+	var menu = _interopRequireWildcard(_menu);
+	
+	var _chapter1 = __webpack_require__(25);
 	
 	var chapter1 = _interopRequireWildcard(_chapter1);
 	
-	var _chapter2 = __webpack_require__(31);
-	
-	var chapter2 = _interopRequireWildcard(_chapter2);
-	
+	// import * as chapter2 from './chapter2';
 	// import * as chapter3 from './chapter3';
 	
 	THREE.Loader.Handlers.add(/\.png$/i, new THREE.ImageLoader());
 	THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
 	
 	var chapters = {
-	    cp1: chapter1,
-	    cp2: chapter2
+	    cp1: chapter1
+	    // ,cp2: chapter2
 	    // chapter2,
 	    // chapter3
 	};
@@ -39818,17 +39819,15 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	            case 10:
 	                context$1$0.next = 12;
-	                return regeneratorRuntime.awrap(clock.ready());
+	                return regeneratorRuntime.awrap(Promise.all([clock.ready()]));
 	
 	            case 12:
 	                context$1$0.next = 14;
-	                return regeneratorRuntime.awrap(clock.show());
+	                return regeneratorRuntime.awrap(Promise.all([clock.show(), share.show(), nav.show()]));
 	
 	            case 14:
-	                clock.run();
 	
-	                share.show();
-	                nav.show();
+	                clock.run();
 	
 	                // await chapter.start();
 	                // var lastChapter;
@@ -39861,12 +39860,14 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                //     console.log('Chapter ' + i + ' End');
 	                // }
 	
-	            case 17:
+	            case 15:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, _this);
 	})();
+	
+	// menu.ready()
 
 /***/ },
 /* 1 */
@@ -40465,11 +40466,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	__webpack_require__(6);
 	
+	__webpack_require__(8);
+	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
-	var _libUtil = __webpack_require__(9);
+	var _libUtil = __webpack_require__(11);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -40510,7 +40513,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	            case 0:
 	                $loading = document.querySelector('#prologue .loading');
 	
-	                $loading.className += ' anime';
+	                $loading.className += ' fadeOut';
 	                context$1$0.next = 4;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(800));
 	
@@ -40530,27 +40533,28 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	                $titleEN.appendChild(titleENImg);
 	
-	                $titleSep.className += ' anime';
+	                $titleSep.style.display = 'block';
+	                $titleSep.className += ' fadeIn';
 	
-	                context$1$0.next = 15;
+	                context$1$0.next = 16;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
 	
-	            case 15:
+	            case 16:
 	
 	                titleSCImg.className += ' anime';
 	                titleENImg.className += ' anime';
 	
-	                context$1$0.next = 19;
+	                context$1$0.next = 20;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
 	
-	            case 19:
+	            case 20:
 	
-	                $title.className += ' anime';
+	                $title.className += ' fadeOut';
 	
-	                context$1$0.next = 22;
+	                context$1$0.next = 23;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
 	
-	            case 22:
+	            case 23:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40662,8 +40666,8 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -40676,10 +40680,42 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#prologue .loading {\n  display: none;\n  width: 90px;\n  height: 120px;\n}\n#prologue .loading canvas {\n  width: 90px;\n  height: 90px;\n}\n#prologue .loading span {\n  font-family: arial;\n  display: inline-block;\n  width: 90px;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n#prologue .loading.anime {\n  -webkit-animation: fadeOut 0.8s ease-out 0s;\n  -ms-animation: fadeOut 0.8s ease-out 0s;\n  animation: fadeOut 0.8s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title {\n  display: none;\n}\n#prologue .title.anime {\n  -webkit-animation: fadeOut 0.8s ease-out 0s;\n  -ms-animation: fadeOut 0.8s ease-out 0s;\n  animation: fadeOut 0.8s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .sc {\n  width: 200px;\n  height: 54px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .sc img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .sc img.anime {\n  display: block;\n  -webkit-animation: titleSCKF 0.5s ease-in 0s;\n  -ms-animation: titleSCKF 0.5s ease-in 0s;\n  animation: titleSCKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .sep {\n  display: none;\n  width: 200px;\n  height: 2px;\n  background-color: #FFF;\n  margin: 20px auto;\n}\n#prologue .title .sep.anime {\n  display: block;\n  -webkit-animation: fadeIn 0.6s ease-in 0s;\n  -ms-animation: fadeIn 0.6s ease-in 0s;\n  animation: fadeIn 0.6s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .en {\n  width: 698px;\n  height: 73px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .en img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .en img.anime {\n  display: block;\n  -webkit-animation: titleENKF 0.5s ease-in 0s;\n  -ms-animation: titleENKF 0.5s ease-in 0s;\n  animation: titleENKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.title-sep-anime {\n  display: block;\n  -webkit-animation: titleSepKF 0.4s ease-in 0;\n  -ms-animation: titleSepKF 0.4s ease-in 0;\n  animation: titleSepKF 0.4s ease-in 0;\n}\n@-webkit-keyframes titleSCKF {\n  0% {\n    -webkit-transform: translateY(100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleSCKF {\n  0% {\n    -ms-transform: translateY(100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleSCKF {\n  0% {\n    transform: translateY(100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n@-webkit-keyframes titleENKF {\n  0% {\n    -webkit-transform: translateY(-100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleENKF {\n  0% {\n    -ms-transform: translateY(-100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleENKF {\n  0% {\n    transform: translateY(-100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n@-webkit-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@-ms-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@-ms-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n"
 
 /***/ },
 /* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(9);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = "#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#prologue .loading {\n  display: none;\n  width: 90px;\n  height: 120px;\n}\n#prologue .loading canvas {\n  width: 90px;\n  height: 90px;\n}\n#prologue .loading span {\n  font-family: arial;\n  display: inline-block;\n  width: 90px;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n#prologue .title {\n  display: none;\n}\n#prologue .title .sc {\n  width: 200px;\n  height: 54px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .sc img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .sc img.anime {\n  display: block;\n  -webkit-animation: titleSCKF 0.5s ease-in 0s;\n  -ms-animation: titleSCKF 0.5s ease-in 0s;\n  animation: titleSCKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .sep {\n  display: none;\n  width: 200px;\n  height: 2px;\n  background-color: #FFF;\n  margin: 20px auto;\n}\n#prologue .title .en {\n  width: 698px;\n  height: 73px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .en img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .en img.anime {\n  display: block;\n  -webkit-animation: titleENKF 0.5s ease-in 0s;\n  -ms-animation: titleENKF 0.5s ease-in 0s;\n  animation: titleENKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.title-sep-anime {\n  display: block;\n  -webkit-animation: titleSepKF 0.4s ease-in 0;\n  -ms-animation: titleSepKF 0.4s ease-in 0;\n  animation: titleSepKF 0.4s ease-in 0;\n}\n@-webkit-keyframes titleSCKF {\n  0% {\n    -webkit-transform: translateY(100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleSCKF {\n  0% {\n    -ms-transform: translateY(100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleSCKF {\n  0% {\n    transform: translateY(100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n@-webkit-keyframes titleENKF {\n  0% {\n    -webkit-transform: translateY(-100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleENKF {\n  0% {\n    -ms-transform: translateY(-100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleENKF {\n  0% {\n    transform: translateY(-100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n"
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40718,7 +40754,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -40733,7 +40769,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.cancelAnimationFrame = cancelAnimationFrame;
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40749,11 +40785,11 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.show = show;
 	exports.run = run;
 	
-	__webpack_require__(11);
+	__webpack_require__(13);
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libDom = __webpack_require__(13);
+	var _libDom = __webpack_require__(15);
 	
 	var timestamp;
 	exports.timestamp = timestamp;
@@ -40843,13 +40879,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(12);
+	var content = __webpack_require__(14);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -40869,13 +40905,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 230px;\n  height: 100px;\n  top: 24px;\n  left: 50px;\n  overflow: hidden;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  width: 300px;\n  height: 100%;\n  text-align: right;\n  left: 0;\n  top: 0;\n  color: #FFF;\n  font-size: 120px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 30px;\n  color: #FFF;\n  right: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: right bottom;\n  -ms-transform-origin: right bottom;\n  transform-origin: right bottom;\n}\n"
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40894,6 +40930,11 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.hide = hide;
 	exports.matches = matches;
 	exports.on = on;
+	exports.off = off;
+	exports.addClass = addClass;
+	exports.removeClass = removeClass;
+	exports.toggleClass = toggleClass;
+	exports.hasClass = hasClass;
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
@@ -41005,9 +41046,69 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    dom.addEventListener(event, handler, false);
 	    return dom;
 	}
+	
+	function off() {
+	    var _parse$call9 = parse.call.apply(parse, [this, 2, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call92 = _slicedToArray(_parse$call9, 3);
+	
+	    var dom = _parse$call92[0];
+	    var event = _parse$call92[1];
+	    var handler = _parse$call92[2];
+	
+	    dom.removeEventListener(event, handler);
+	    return dom;
+	}
+	
+	function addClass() {
+	    var _parse$call10 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call102 = _slicedToArray(_parse$call10, 2);
+	
+	    var dom = _parse$call102[0];
+	    var className = _parse$call102[1];
+	
+	    dom.classList.add(className);
+	    return dom;
+	}
+	
+	function removeClass() {
+	    var _parse$call11 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call112 = _slicedToArray(_parse$call11, 2);
+	
+	    var dom = _parse$call112[0];
+	    var className = _parse$call112[1];
+	
+	    dom.classList.remove(className);
+	    return dom;
+	}
+	
+	function toggleClass() {
+	    var _parse$call12 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call122 = _slicedToArray(_parse$call12, 2);
+	
+	    var dom = _parse$call122[0];
+	    var className = _parse$call122[1];
+	
+	    dom.classList.toggle(className);
+	    return dom;
+	}
+	
+	function hasClass() {
+	    var _parse$call13 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call132 = _slicedToArray(_parse$call13, 2);
+	
+	    var dom = _parse$call132[0];
+	    var className = _parse$call132[1];
+	
+	    return dom.classList.contain(className);
+	}
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41017,11 +41118,11 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	});
 	exports.show = show;
 	
-	__webpack_require__(15);
+	__webpack_require__(17);
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libDom = __webpack_require__(13);
+	var _libDom = __webpack_require__(15);
 	
 	var $share;
 	
@@ -41049,13 +41150,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(16);
+	var content = __webpack_require__(18);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -41075,13 +41176,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #adadad;\n  font-size: 12px;\n  line-height: 24px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 24px;\n  height: 24px;\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-size: contain;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAfRJREFUeNq8VbtKA0EUnawpBEG2SSmsINarfVi3MGCntaDuF8T4A1HsjX5BVLD2UZoigr3G0jSuWKZI9AOMZ+SMXK4bNb4OHCaZnTl7750zd3P9ft9kodlsjmOYB4vgLDgNFsAO2AavwEuwEcfxU5ZGLkscwisYlsGS+Rzn4BFecPihOEQnMFTAMuiZr+MZ3ANreMnDO3EKb4GJ+T7qYNW9IC8eVIYU3gV7oA8uggH327mNt8hZ4/oQpbgAYzW3bsvCEiX2DEaiKLKu2AanPhDa5xiCo4xyjvN27hY8AR/BBXAsTdOzPO2W5YqUaV6o+U0VfcCsE5aqRr15jz7WaIEzGcL3FFgCb8Britt1q2KvRTHPC6KFYx6Mxr76b9dE/P3IMeA4m+fNk0iUcEhHyDOQzzbFvkCsnfZ4paW9XFrWXnfWt4zOpn0Mdjnn1rss61zvUPDYKxwOhK2O6f0lcbliRmajXROZVDJK2PHYhIw6jCo3naiStMSaSDlLo+2xuxlRCqNq2uXo4KssjXCKxJXHtulQFofjM6JJlZGv/B+KEklcWrc02DZLvHV11rAlXuYsdkP/p+JsqgPacGNQb+mx3qcUaomShKz3mvC0br+vvUW23J0Bpz4sbE9/7YqyC9YYvflhP6/975foz7+hv/31fxFgAItsvUUxToD+AAAAAElFTkSuQmCC);\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #EEE;\n  font-size: 12px;\n  line-height: 24px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 24px;\n  height: 24px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAXCAYAAABJXhw0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAl5JREFUeNrcWLFO40AQNSvXpzSUJ5mGOtCj4AJqqCMd5AuC+QFyP3DcfYEBiRIBLRRBoofQ0gCipCDcB1zu7emtNJrbxDZeFzDS0yaT3Xk7M7vjceYmk0nkk+Fw+AXDGrACLAOLwDzwAtwDN8A1cJmm6e+onpTmArxccz5H4MQ3DF1gvcQmLoBjOHP0TicqcwFHMx2BA18xZEAfMBU28wf4BezDoeeSa2pzAc//OUInvgO9GkckB/ZKOBOMyzkTix+yioZ/AmOgBWwACddb3W7B2uBc/zLCO5FXSPEVkCrdDtNtU9+bcWeCc9k7Y1idujMMW0MDYkzdqj2NgD2Xp0CbUctop0u7vuoUnMvajVn2fBXjkd5eKf1ARSphhHsk2Kc9a/dErW2My7B2axkBSx7DTzSwCdwBtzRu522JtdEUu41xxXwAacOpSK2UA/Xdzunw8xvHhOOyZ31jXDGfolJ6ynCb1UKeY/nbQKxLxNxFz+Ya4zJsBWSZc+myZe6BtbrDdNrL9kqdm+8imnO+k3mPI41xGfYzTg5FeTtlZdgUD6+UUbCR2RZRyzybfinQBeUybMoidXn2uOhMpXok5nRU1dFyX6ALymXYWUYixZE6l68cnbRURCNRRaTcFOiCchm2x0764jK16P2Cil5L1fy2SL2U6wJdUK6YPf4FHyyrvEgZDfbF5IT1fEmkd0dcRt1uX3r0jXFN67XGPLPnNDQSqW7zzG6LOq7b7Cq9Vm0u22vJNv7HlIpQVew7SVH3G4zLdb9GKfOahnPaKbOBoFyf7w3xU72zf+R/Uf4KMABM3DxBsEksmQAAAABJRU5ErkJggg==);\n}\n#share a.weibo:hover {\n  background-position: -27px 0;\n}\n"
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41091,11 +41192,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	});
 	exports.show = show;
 	
-	__webpack_require__(18);
+	__webpack_require__(20);
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libDom = __webpack_require__(13);
+	var _libDom = __webpack_require__(15);
+	
+	var _menu = __webpack_require__(22);
 	
 	var $nav;
 	
@@ -41112,7 +41215,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	                $nav = _libDom.find.call(document, '#nav');
 	                (_context = (_context = (_context = $nav, _libDom.show).call(_context), _libDom.find).call(_context, '.open'), _libDom.on).call(_context, 'click', function (e) {
-	                    alert('open menu');
+	                    (0, _menu.show)();
 	                });
 	
 	                (_context = (_context = $nav, _libDom.find).call(_context, '.music'), _libDom.on).call(_context, 'click', function (e) {
@@ -41127,13 +41230,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(19);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -41153,13 +41256,176 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
-	module.exports = "#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 22px;\n  height: 22px;\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-size: contain;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#nav a.open {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd1JREFUeNqslUsoRGEUx+8dj2FhQcmM5LWxw0pZaVbIo8gCNTayRqGUhYWykLBmRZlZWHmEzdySUqywUpKFt4WNwhTjdzgjcS+umVO/+bpzz/l/557v3nPMWCxm2JllWdksHVAP5eCDKJzBMaxDKBAI3NnFm1+FEcxg6YchFVqBXbiANCiACmiCdJiAKTZ4cBRGtFiFcmEE5gmIOjyRiHbBGNzKRviefhPGUTLZgRNow+nW+IMRJ0ksQSlUE3f2IayPvwX3UlNuPhkuTOPXIAtqpCwevdcHRdDuVlSMmEc96ELVMsxIJJKjjz+Aw9wPWcVUxPzBp5tlUsri0Z1e5KCMxG0BnkVThGth1en0XZYkqrWuE+FK2DaSZ6JVkcpPHpw71fS3/21qLlp5krG8Bd4kZvymJRlfQr5NvUy3b4WaH64l4yOoSmLGorUvwpvQoN9+QqYajbAhwiFIgWASsg2qVijeK4a56JW+Sw1v/pmtNKNDmEFjPN4rpkEEw9pQjH80obC2T9EyPHrS0qRboezdz/K5EBVfS2Nb4g3/a6MvYVnWMTQKs780+h71u3Js9J8CMnU0Depoko32dNZ5dTTJDGz+82iyGaad0lBUyK+35IM6kFcKFp2G6asAAwCDdMP4s5k+hgAAAABJRU5ErkJggg==);\n}\n#nav a.music {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAlhJREFUeNqclU2IjVEYx987jCEUozEzkq/FKAujUcpCuitjfOQrGRkWsmYKpSwsSJE0a2wYpjQ2PkLp3vKRUAorkizG5yUbwl24fv/xv9PpuG/3zpz6de59z/P8zznPec5zMqVSKanU8vn8dLpuWA2LoQWKMASv4SYMZLPZb5X8M7EwghPpeuGgha7BY3gP9TAb2mEdTICTcJoJfqYKIzrPQk1wGM7jUEzZkUR3wlEoaCJs3/4njKFW8hDewBaMCkkNDT8tYhAWwHL8hkaEvf278F0xZfB3Mopm/xswFVYqLHUe2wdzYVuaKM6ToAsuxGP4/PJBz7FWksnlco3e/n4MzlYS1CrsuN1C9SmT76Y7pbCMt8MfHVRgMNknvhR2wQaY4uEvgd2gU+6KP2k3J6SpUKyC69HpXwYZ98OOQHR4l8Hve7AiCEnRse6U8BK4H+1KlyILzVXO7Sl0RN+k1V5n53fR4NcaE+IVtEXfpNUsYWVBQzK2VvBlCtuwloQ/wKxocEaNwk0WD1srfFJWvIRl0aAKjNJsUZU4tzkcYZPWM634Nqzx3S+3rbDZGdHvG1luYdXq8AGG9WMt3NKKB+AY9MA5p80POnEH4wf0F4MLMi1Ir75otdIYJ81yrTjEn72quxh/TrvSTsFubHpSitEL6GP8eFlYTo98q7p898dShGYqxiNFyEV6Eyz8Z5dvGYWobPP23Vgu+HGhn0931c/QEThTpdDvsd3H1EIfxVJP0wE/TZroid+6Bj9NegPX1/w0VXhMlQWdFmr1kC7Uc6UUXEp7TP8KMAAcHutxTUjc1gAAAABJRU5ErkJggg==);\n}\n"
+	module.exports = "#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 22px;\n  height: 22px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#nav a.open {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAWCAYAAACCAs+RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAtBJREFUeNq0mDtoFFEUhncmJlHQQkGMIio2dtFKEAKylYoPUCxUiI1lChU0IFgKKUSMfSoFk8LKB2qzCxIQtFIrQSTFRjEBbYQ1G3TznfXfy0523jt74Mtsdu49/zlzH3Pues1msxRm1Wp1K5eLcAJGYQQaUIMv8BJmy+Xyr1IP9nd1tf0xlR4E9AYGB1tXb30iJLCRy3WYlKNn8A6+gfXaDQfhNAzBXbhPQvWcieTSg3pkIiSxT462w214SICNiBEzp5fhDiybEG0XMibRpadkwqxLDxa6EiEwy/wtfIXzBLWcJhj6WRBPYD8coV8tZRIBPQWXxgJ6JFJziWg6vYHfNkcJZiXLk1X/F7AFjiZNM00npwcrGWdkQI9k6r5uXIO9cCFrEmb0+aOFuke+kszp5UjCrEvPq1Qq2zS8NwhoJuapNxW0F9PmCpd7Nuy0+xkxGk6PJznTsWutt/bi9WIScnq+MvunhdarPbJY5TPK+qJniRyD51G7U8Yp1tDcPR7TrKXHaDQKSMTpWSKHYL5UnM1r34+yvuht4M8OWIxaE0nfh6yZRfmMslC9jjWR9H2onq9dY7jAJ5Tkqy96NiLfYVfIfPey7lqynfAj5n6oXsiTTrNrOT0bkc9wuMAnZL4+xNzvi54l8hpOqnbqyeTjFLyKadbS4/0xVEASTs9XaTwA4wU4Hpev2Zg2fdFr11q3+OeqnQNYA0s5R8OKuU/wAB9TCbWW04OlnEk4Pd5JU+1aa1oO51QAZk3C+sypgp1O0cXpqQDMal16vnYiq1bPwYH/cVVHMiRhbavqezbNAcuq1U49nQbTWkBPvkp+x3Zrx8kx2GxDRoATcRuA3bM2Gl7rMyYfqYwAAnowocUbt7ADejoCRx51N+noeVO1zFN4r7PzsI6eNrfPFHTUzaUXe9QN+fHhkgrAUb142i+0j9piHxf840OiXtSPD2sCDAAIikGi1qBGHQAAAABJRU5ErkJggg==);\n}\n#nav a.open:hover {\n  background-position: -28px 0;\n}\n#nav a.music {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAWCAYAAABEx1soAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABFJJREFUeNrUmU1IFGEcxne3zCSDPsgsosKDQQcrEyEwYiGo7DtLSrIOggYeKsi6dMxDRYTdFA+SkbHYpYwKxIUSog+K6lRpeNAituySbUq5PX95Znnn3ZndmUlp9oUfu+zM/ObZd2berwkmEomAVYlGowvxcQTsACWgEEyAYTAA7oOucDj8PeCuOPICV16/5g3qFYygc/FxGpyl6C54Bj6BHLACrAO7wRxwGVxF8HiGoJ68IJ6hYn2d11TBCLuaoiXgPLiOIBM2f0ykx8AFEJMTYd8hm7ApXoa2KileMGSTwfd5kxWMAHJFnoCP4CBOHnP4aEqIblAENuG4YW0Xk5chnBSTl4+ket6syDtVwXzMHoEf0tbgpOMu2z85/h6YD7Yoj5/JC8Zdtn8mr/H4ZVPeEDecAqvAYbuwCJUHKkGnvg3H/GJHsJKugO5NEzYPVIJOi20ZvUZe5CoCo2BQOjw9Lz7rQQK0uswrd+QoGGSHp+etB9IMtFrlDfb19S3i43AGJ263qlheDTmwhhWaY3MR6vBxRUJhn4DhBe02FWvysvOwKkkvzhGwyyuVyD/6CrxVvGvACzkOx5R5yJvRC8qs8s7mH5xkQ26ceB4b743gONgH8rn5q7JfN4c+t/mTXNVLdAZ0L4ojL9syGfo48ip55Y9+ABuI4Y3wewz7VnnIm9ELqqzySgVvAz1a7xvhHbYWLNWHdsr3x2CzIRYH/oC0Qdv52PRova8nLx0mr4u8+bygDdxnuvLaetW80gavB/3awdLAhy2kenkJSrXf+jk+9ItXOp42VGbbTHiJrTfEg0e0jd8c9prvQbH22widfvH+QeU2zISXd29ab4i9ZW7AW4lx/KcWw+UX7yw0A1tnwgsyeqUN/gyWaxsXuxhc6wPxZeALx6x+8E4NoVDJZeywptXL0YOtV+7gd6Bc2ygLGFGeOF0p5uOhFnG99pH3J8eykf/hlQp+CHZyrm6Uag47joIbnNmoV84opWzg1fn+LvDA8PLq/pOXDpPXJm8Te/BJZZvcmb18nJs85nXlVfOGON6U9qRWmZmNybIe6OUg+xDHh7/BAmW/FqDOhGrp6rLyooxxWS+tF6VFm2Gl9Rp58fUk76w6zVvNsWwFuOYhr2dvCMFkGngRNOOKFlhMg+NArvAJsBfcSrOI0iwuOpNeUGBxSJx3Tlov2+Nmukbt8uJ7hOPSc9inQ/Wy8hs41Y24zJv0gg4tb4pXz2ss9shA+SlnJ5Wcq3tZPJFg5criicnLubqXxZMCtmlxZfqeFXlDxl2KjwOcW+P80UIXYQvZEcix+7WFbJOXbwOcFpNXXcjOprwhJfQA2xKZAr5FkEatI0lZwJZ9uPghx1TQoReTFzRqHYnVArbJS4fedGVFXqtXRnl8VWL0nHfAcy4g53JBWt5N7XH5CsaT18ErI1/nDWZ46VnDhZASDpwDnJi8YQd10+NLxIxejy89fZf3rwADAEzR7xX1i3ojAAAAAElFTkSuQmCC);\n}\n#nav a.music:hover {\n  background-position: -22px 0;\n}\n#nav a.music.off {\n  background-position: -44px 0;\n}\n#nav a.music.off:hover {\n  background-position: -66px 0;\n}\n"
 
 /***/ },
-/* 20 */
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.show = show;
+	exports.hide = hide;
+	
+	__webpack_require__(6);
+	
+	__webpack_require__(23);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libDom = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(5);
+	
+	var $menu;
+	var isBindEvents = false;
+	
+	function show() {
+	    var _context;
+	
+	    var _context5, times;
+	
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                if (!$menu) {
+	                    $menu = _libDom.find.call(document, '#menu');
+	                }
+	
+	                (_context = (_context = (_context = $menu, _libDom.show).call(_context), _libDom.removeClass).call(_context, 'fadeOut'), _libDom.addClass).call(_context, 'fadeIn');
+	
+	                if (!isBindEvents) {
+	                    isBindEvents = true;
+	
+	                    times = (function () {
+	                        var _times = [];
+	                        var _iteratorNormalCompletion = true;
+	                        var _didIteratorError = false;
+	                        var _iteratorError = undefined;
+	
+	                        try {
+	                            for (var _iterator = new Array(8).fill(0).map(function (v, i) {
+	                                return i;
+	                            })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                                var j = _step.value;
+	
+	                                _times.push('t' + j * 3);
+	                            }
+	                        } catch (err) {
+	                            _didIteratorError = true;
+	                            _iteratorError = err;
+	                        } finally {
+	                            try {
+	                                if (!_iteratorNormalCompletion && _iterator['return']) {
+	                                    _iterator['return']();
+	                                }
+	                            } finally {
+	                                if (_didIteratorError) {
+	                                    throw _iteratorError;
+	                                }
+	                            }
+	                        }
+	
+	                        return _times;
+	                    })();
+	
+	                    times.forEach(function (t) {
+	                        var _context2;
+	
+	                        (_context2 = (_context2 = (_context2 = $menu, _libDom.find).call(_context2, '.trigger[for="' + t + '"]'), _libDom.on).call(_context2, 'mouseenter', function (e) {
+	                            var _context3;
+	
+	                            (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.hover.' + t), _libDom.removeClass).call(_context3, 'fadeOut'), _libDom.addClass).call(_context3, 'fadeIn');
+	
+	                            (_context3 = $menu, _libDom.find).call(_context3, '.symbol').className = 'symbol ' + t + ' fadeIn';
+	                        }), _libDom.on).call(_context2, 'mouseleave', function (e) {
+	                            var _context4;
+	
+	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeIn'), _libDom.addClass).call(_context4, 'fadeOut');
+	
+	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeOut';
+	                        });
+	                    });
+	
+	                    (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.close'), _libDom.on).call(_context5, 'click', function (e) {
+	                        hide();
+	                    });
+	                }
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hide() {
+	    var _context6;
+	
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                (_context6 = (_context6 = $menu, _libDom.removeClass).call(_context6, 'fadeIn'), _libDom.addClass).call(_context6, 'fadeOut');
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(400));
+	
+	            case 3:
+	
+	                (_context6 = $menu, _libDom.hide).call(_context6);
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(24);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover {\n  color: #FFF;\n}\n#menu .time-circle {\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n"
+
+/***/ },
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41175,37 +41441,37 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(21);
+	__webpack_require__(26);
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
-	var _scene = __webpack_require__(23);
+	var _scene = __webpack_require__(28);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(24);
+	var _camera = __webpack_require__(29);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(25);
+	var _renderer = __webpack_require__(30);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(26);
+	var _light = __webpack_require__(31);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _controls = __webpack_require__(27);
+	var _controls = __webpack_require__(32);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _tower = __webpack_require__(28);
+	var _tower = __webpack_require__(33);
 	
 	var Tower = _interopRequireWildcard(_tower);
 	
-	var _sky = __webpack_require__(29);
+	var _sky = __webpack_require__(34);
 	
 	var Sky = _interopRequireWildcard(_sky);
 	
@@ -41239,7 +41505,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                tower.position.set(0, -4.5, 0);
 	                sky.position.set(0, 0, 0);
 	
-	                SkyDynamic = __webpack_require__(30);
+	                SkyDynamic = __webpack_require__(35);
 	
 	                SkyDynamic.ready().then(function (obj) {
 	                    scene.add(obj);
@@ -41317,13 +41583,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.destory = destory;
 
 /***/ },
-/* 21 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(22);
+	var content = __webpack_require__(27);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -41343,13 +41609,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 22 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "[chapter=\"one\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
 
 /***/ },
-/* 23 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41371,7 +41637,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 24 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41386,7 +41652,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
 	var VIEW_ANGLE = 60;
 	var NEAR = 1;
@@ -41437,7 +41703,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 25 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41452,7 +41718,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 0;
@@ -41508,7 +41774,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 26 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41519,7 +41785,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
 	var COLOR = {
 	    'drawn': 0xb5905c,
@@ -41559,7 +41825,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 27 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41571,9 +41837,9 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
-	var _libUtil = __webpack_require__(9);
+	var _libUtil = __webpack_require__(11);
 	
 	var camera;
 	
@@ -41669,7 +41935,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 28 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41738,7 +42004,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	// );
 
 /***/ },
-/* 29 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41751,7 +42017,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
 	var _prologue = __webpack_require__(5);
 	
@@ -41808,7 +42074,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 30 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41821,9 +42087,9 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(8);
+	var _libEnv = __webpack_require__(10);
 	
-	var _libUtil = __webpack_require__(9);
+	var _libUtil = __webpack_require__(11);
 	
 	var _prologue = __webpack_require__(5);
 	
@@ -41881,1308 +42147,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	        }
 	    }, null, _this);
 	})();
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	exports.render = render;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	__webpack_require__(32);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(8);
-	
-	var _scene = __webpack_require__(34);
-	
-	var Scene = _interopRequireWildcard(_scene);
-	
-	var _camera = __webpack_require__(35);
-	
-	var Camera = _interopRequireWildcard(_camera);
-	
-	var _renderer = __webpack_require__(36);
-	
-	var Renderer = _interopRequireWildcard(_renderer);
-	
-	var _light = __webpack_require__(37);
-	
-	var Light = _interopRequireWildcard(_light);
-	
-	var _controls = __webpack_require__(38);
-	
-	var Controls = _interopRequireWildcard(_controls);
-	
-	var _box = __webpack_require__(40);
-	
-	var Box = _interopRequireWildcard(_box);
-	
-	var _box2 = __webpack_require__(41);
-	
-	var Box2 = _interopRequireWildcard(_box2);
-	
-	var _visualizer = __webpack_require__(42);
-	
-	var _visualizer2 = _interopRequireDefault(_visualizer);
-	
-	var scene, camera, renderer, domElement, light, box, box2, visualizer;
-	
-	var music = location.search.match(/music=(\d+)/);
-	if (music) {
-	    music = music[1];
-	} else {
-	    music = '01';
-	}
-	
-	var init = function init() {
-	    return regeneratorRuntime.async(function init$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Box.ready(), Box2.ready(), Light.ready()]));
-	
-	            case 2:
-	
-	                scene = Scene.scene;
-	                camera = Camera.camera;
-	                renderer = Renderer.renderer;
-	                domElement = Renderer.domElement;
-	                light = Light.light;
-	                box = Box.object;
-	                box2 = Box2.object;
-	                visualizer = new _visualizer2['default']();
-	                visualizer.load('./assets/sounds/' + music + '.mp3');
-	
-	                scene.add(camera);
-	                scene.add(light);
-	                // scene.add(box);
-	                scene.add(box2);
-	
-	                // box.position.set(Box.xSize() / -2, Box.ySize() / -2, 0);
-	                // camera.left = Box.xSize() / -2;
-	                // camera.right = Box.xSize() / 2;
-	                // camera.top = Box.ySize() / 2;
-	                // camera.bottom = Box.ySize() / -2;
-	                // camera.position.set(100, 0, Box.xSize() / 2);
-	                camera.position.set(100, 0, 1000);
-	
-	                light.position.set(0, 0, 100);
-	                Controls.init(camera, renderer);
-	
-	                context$1$0.next = 19;
-	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
-	
-	            case 19:
-	                domElement.setAttribute('chapter', 'two');
-	                document.body.appendChild(domElement);
-	                window.addEventListener('resize', resize, false);
-	                window.scene = scene;
-	                window.camera = camera;
-	                window.renderer = renderer;
-	
-	            case 25:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	};
-	
-	exports.init = init;
-	
-	function resize() {
-	    Renderer.resize();
-	    Camera.resize();
-	}
-	
-	function render() {
-	    // visualizer.analysis();
-	    // Box.render(visualizer);
-	    Box2.render();
-	    Camera.render();
-	    renderer.render(scene, camera);
-	}
-	
-	var requestFrameId;
-	var start = function start() {
-	    requestFrameId = requestAnimationFrame(start);
-	    render();
-	};
-	
-	exports.start = start;
-	var end = function end() {
-	    return Controls.end().then(function () {
-	        requestFrameId && cancelAnimationFrame(requestFrameId);
-	        window.removeEventListener('resize', resize);
-	    });
-	};
-	
-	exports.end = end;
-	var show = function show() {
-	    domElement.style.transition = 'opacity 0.4s ease-out 0s';
-	    domElement.style.opacity = 1;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
-	
-	exports.show = show;
-	var hide = function hide() {
-	    domElement.style.transition = 'opacity 0.4s ease-in 0s';
-	    domElement.style.opacity = 0;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
-	
-	exports.hide = hide;
-	var destory = function destory() {
-	    document.body.removeChild(domElement);
-	};
-	exports.destory = destory;
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(33);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
-				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	module.exports = "[chapter=\"two\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var COLOR = 0x000000;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	  return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var scene = new THREE.Scene();
-	exports.scene = scene;
-	// scene.fog = new THREE.FogExp2(COLOR, 0.002);
-	
-	deferred.resolve();
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	exports.render = render;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(8);
-	
-	var FOV = 45;
-	var NEAR = 1;
-	var FAR = 10000;
-	var ORTH_NEAR = -500;
-	var ORTH_FAR = 1000;
-	var X = 0;
-	var Y = 0;
-	var Z = 0;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var camera;
-	
-	exports.camera = camera;
-	
-	function resize() {
-	    var w = (0, _libEnv.width)();
-	    var h = (0, _libEnv.height)();
-	
-	    camera.updateProjectionMatrix();
-	}
-	
-	function render() {
-	    camera.updateProjectionMatrix();
-	}
-	
-	(function callee$0$0() {
-	    var w, h;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                w = (0, _libEnv.width)();
-	                h = (0, _libEnv.height)();
-	
-	                // camera = new THREE.OrthographicCamera(w / -2,  w / 2, h / 2,  h / -2, ORTH_NEAR, ORTH_FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
-	                exports.camera = camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
-	                camera.position.set(X, Y, Z); //放置位置
-	                camera.updateProjectionMatrix();
-	
-	                deferred.resolve();
-	
-	            case 8:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.resize = resize;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(8);
-	
-	var COLOR = 0x000000;
-	var ALPHA = 1;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var renderer;
-	exports.renderer = renderer;
-	var domElement;
-	
-	exports.domElement = domElement;
-	
-	function resize() {
-	    var w = (0, _libEnv.width)();
-	    var h = (0, _libEnv.height)();
-	
-	    renderer.setSize(w, h);
-	}
-	
-	(function callee$0$0() {
-	    var w, h;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                w = (0, _libEnv.width)();
-	                h = (0, _libEnv.height)();
-	
-	                exports.renderer = renderer = new THREE.WebGLRenderer();
-	                renderer.setSize(w, h);
-	                renderer.setPixelRatio(window.devicePixelRatio);
-	                renderer.setClearColor(COLOR, ALPHA);
-	
-	                exports.domElement = domElement = renderer.domElement;
-	
-	                deferred.resolve();
-	
-	            case 10:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var COLOR = 0xFFFFFF;
-	var X = 0;
-	var Y = 0;
-	var Z = 0;
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	  return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var light = new THREE.DirectionalLight(COLOR);
-	exports.light = light;
-	light.position.set(X, Y, Z);
-	
-	deferred.resolve();
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.init = init;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libCubicbezier = __webpack_require__(39);
-	
-	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
-	
-	var _libUtil = __webpack_require__(9);
-	
-	var _box = __webpack_require__(40);
-	
-	var Box = _interopRequireWildcard(_box);
-	
-	var camera;
-	
-	exports.camera = camera;
-	var deferred = (0, _libPromise.defer)();
-	var end = function end() {
-	    return deferred.promise;
-	};
-	
-	exports.end = end;
-	var start;
-	var step = 0.01;
-	function onMouseWheel(e) {
-	    e.preventDefault();
-	
-	    var offset = e.wheelDelta * step;
-	    var z = camera.position.z;
-	
-	    z += offset;
-	    z = Math.max(z, -Box.zSize());
-	    z = Math.min(z, start);
-	
-	    if (z <= -Box.zSize()) {
-	        document.removeEventListener('mousewheel', onMouseWheel);
-	        deferred.resolve();
-	    }
-	    camera.position.z = z;
-	}
-	
-	function init(_camera, _renderer) {
-	    exports.camera = camera = _camera;
-	    start = camera.position.z;
-	    document.addEventListener('mousewheel', onMouseWheel, false);
-	}
-
-/***/ },
-/* 39 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	function cubicBezierFunction(p1x, p1y, p2x, p2y) {
-	    var ZERO_LIMIT = 1e-6;
-	    // Calculate the polynomial coefficients,
-	    // implicit first and last control points are (0,0) and (1,1).
-	    var ax = 3 * p1x - 3 * p2x + 1,
-	        bx = 3 * p2x - 6 * p1x,
-	        cx = 3 * p1x;
-	
-	    var ay = 3 * p1y - 3 * p2y + 1,
-	        by = 3 * p2y - 6 * p1y,
-	        cy = 3 * p1y;
-	
-	    function sampleCurveDerivativeX(t) {
-	        // `ax t^3 + bx t^2 + cx t' expanded using Horner 's rule.
-	        return (3 * ax * t + 2 * bx) * t + cx;
-	    }
-	
-	    function sampleCurveX(t) {
-	        return ((ax * t + bx) * t + cx) * t;
-	    }
-	
-	    function sampleCurveY(t) {
-	        return ((ay * t + by) * t + cy) * t;
-	    }
-	
-	    // Given an x value, find a parametric value it came from.
-	    function solveCurveX(x) {
-	        var t2 = x,
-	            derivative,
-	            x2;
-	
-	        // https://trac.webkit.org/browser/trunk/Source/WebCore/platform/animation
-	        // First try a few iterations of Newton's method -- normally very fast.
-	        // http://en.wikipedia.org/wiki/Newton's_method
-	        for (var i = 0; i < 8; i++) {
-	            // f(t)-x=0
-	            x2 = sampleCurveX(t2) - x;
-	            if (Math.abs(x2) < ZERO_LIMIT) {
-	                return t2;
-	            }
-	            derivative = sampleCurveDerivativeX(t2);
-	            // == 0, failure
-	            if (Math.abs(derivative) < ZERO_LIMIT) {
-	                break;
-	            }
-	            t2 -= x2 / derivative;
-	        }
-	
-	        // Fall back to the bisection method for reliability.
-	        // bisection
-	        // http://en.wikipedia.org/wiki/Bisection_method
-	        var t1 = 1,
-	            t0 = 0;
-	        t2 = x;
-	        while (t1 > t0) {
-	            x2 = sampleCurveX(t2) - x;
-	            if (Math.abs(x2) < ZERO_LIMIT) {
-	                return t2;
-	            }
-	            if (x2 > 0) {
-	                t1 = t2;
-	            } else {
-	                t0 = t2;
-	            }
-	            t2 = (t1 + t0) / 2;
-	        }
-	
-	        // Failure
-	        return t2;
-	    }
-	
-	    function solve(x) {
-	        return sampleCurveY(solveCurveX(x));
-	    }
-	
-	    return solve;
-	}
-	
-	/**
-	 * @namespace lib 
-	 */
-	
-	/**
-	 * @callback BezierFunction
-	 * @param {Number} x x坐标，0~1之间的数
-	 * @return {Number} y坐标
-	 */
-	
-	/**
-	 * 生成贝塞尔曲线函数
-	 * @method cubicbezier
-	 * @memberOf lib
-	 * @param {Number} p1x 第一个控制点x坐标
-	 * @param {Number} p1y 第一个控制点y坐标
-	 * @param {Number} p2x 第二个控制点x坐标
-	 * @param {Number} p2y 第二个控制点y坐标
-	 * @property {BezierFunction} linear 直线函数
-	 * @property {BezierFunction} ease ease函数
-	 * @property {BezierFunction} easeIn easeIn函数
-	 * @property {BezierFunction} easeOut easeOut函数
-	 * @property {BezierFunction} easeInOut easeInOut函数
-	 * @return {BezierFunction} 贝塞尔曲线函数
-	 */
-	exports["default"] = cubicBezierFunction;
-	
-	cubicBezierFunction.linear = cubicBezierFunction(0, 0, 1, 1);
-	cubicBezierFunction.ease = cubicBezierFunction(.25, .1, .25, 1);
-	cubicBezierFunction.easeIn = cubicBezierFunction(.42, 0, 1, 1);
-	cubicBezierFunction.easeOut = cubicBezierFunction(0, 0, .58, 1);
-	cubicBezierFunction.easeInOut = cubicBezierFunction(.42, 0, .58, 1);
-	module.exports = exports["default"];
-
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-	
-	exports.render = render;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(8);
-	
-	var _libCubicbezier = __webpack_require__(39);
-	
-	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
-	
-	var _libUtil = __webpack_require__(9);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	
-	function render(visualizer) {
-	    var time = Date.now() * 0.00005;
-	    var h = 360 * (1.0 + time) % 360 / 360;
-	    pointHaloMaterial.color.setHSL(h, 0.5, 0.5);
-	    lineHaloMaterial.color.setHSL(h, 0.5, 0.5);
-	
-	    pointFlow();
-	
-	    if (visualizer && visualizer.isPlaying) {
-	        var bitCount = visualizer.analyser.frequencyBinCount;
-	        var freqs = visualizer.freqs.slice(0, bitCount);
-	        var offsets = freqs.map(function (freq) {
-	            return X_INTER * freq / 256;
-	        });
-	        lineRhythm(offsets);
-	    }
-	}
-	
-	var pointMaterialDeferred = (0, _libPromise.defer)();
-	var pointMaterial = new THREE.PointsMaterial({
-	    size: 2,
-	    color: 0xFFFFFF,
-	    alphaTest: 0.5,
-	    transparent: true,
-	    sizeAttenuation: false,
-	    fog: true
-	});
-	var pointHaloMaterial = new THREE.PointsMaterial({
-	    size: 4,
-	    opacity: 0.5,
-	    transparent: true,
-	    sizeAttenuation: false,
-	    fog: true
-	});
-	pointMaterialDeferred.resolve();
-	
-	var lineMaterialDeferred = (0, _libPromise.defer)();
-	var lineMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 1,
-	    color: 0xFFFFFF,
-	    opacity: 0.5,
-	    transparent: true,
-	    fog: true
-	});
-	var lineHaloMaterial = new THREE.LineBasicMaterial({
-	    linewidth: 2,
-	    opacity: 0.5,
-	    transparent: true,
-	    fog: true
-	});
-	lineMaterialDeferred.resolve();
-	
-	var X_MIN = 0;
-	var X_MAX = 8;
-	var Y_MIN = 0;
-	var Y_MAX = 20;
-	var Z_MIN = -7;
-	var Z_MAX = 0;
-	var X_INTER = 100;
-	var Y_INTER = 40;
-	var Z_INTER = 50;
-	var X_LENGTH = X_MAX - X_MIN + 1;
-	var Y_LENGTH = Y_MAX - Y_MIN + 1;
-	var Z_LENGTH = Z_MAX - Z_MIN + 1;
-	
-	var VEC = {
-	    ORIGIN: new THREE.Vector3(0, 0, 0),
-	    X_MIN: new THREE.Vector3(X_MIN * X_INTER, 0, 0),
-	    X_MAX: new THREE.Vector3(X_MAX * Y_INTER, 0, 0),
-	    Y_MIN: new THREE.Vector3(0, Y_MIN * Y_INTER, 0),
-	    Y_MAX: new THREE.Vector3(0, Y_MAX * Y_INTER, 0),
-	    Z_MIN: new THREE.Vector3(0, 0, Z_MIN * Z_INTER),
-	    Z_MAX: new THREE.Vector3(0, 0, Z_MAX * Z_INTER)
-	};
-	
-	var xSize = function xSize() {
-	    return (X_LENGTH - 1) * X_INTER;
-	};
-	exports.xSize = xSize;
-	var ySize = function ySize() {
-	    return (Y_LENGTH - 1) * Y_INTER;
-	};
-	exports.ySize = ySize;
-	var zSize = function zSize() {
-	    return (Z_LENGTH - 1) * Z_INTER;
-	};
-	
-	exports.zSize = zSize;
-	var points = [];
-	var lines = [];
-	
-	var PL_AMOUNT = 10; // 组合点的总数
-	var PL_POINTS = 100; // 组合点中点的个数
-	var PL_THETA = THREE.Math.degToRad(10); // 组合线条的角度
-	
-	function makePoint() {
-	    var pointGroup = new THREE.Group();
-	
-	    var pointGeometry = new THREE.Geometry();
-	    pointGeometry.vertices.push(VEC.ORIGIN.clone());
-	    var point = new THREE.Points(pointGeometry, pointMaterial);
-	    pointGroup.add(point);
-	
-	    var pointHalo = new THREE.Points(pointGeometry.clone(), pointHaloMaterial);
-	    pointGroup.add(pointHalo);
-	
-	    return pointGroup;
-	}
-	
-	function makePointLine() {
-	    var x = 0;
-	    var group = new THREE.Group();
-	    for (var i = 0; i < PL_POINTS; i++) {
-	        var clonedPoint = makePoint();
-	        var _height = x * Math.tan(PL_THETA);
-	
-	        clonedPoint.position.set(x, _height - Math.random() * _height, 0);
-	        group.add(clonedPoint);
-	
-	        clonedPoint = makePoint();
-	        clonedPoint.position.set(x, -_height + Math.random() * _height, 0);
-	        group.add(clonedPoint);
-	
-	        x += Math.random() * 10;
-	    }
-	
-	    group.size = x;
-	
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-	
-	    try {
-	        for (var _iterator = group.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var point = _step.value;
-	
-	            point.position.z = -(group.size - point.position.x) * Math.tan(PL_THETA);
-	        }
-	    } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion && _iterator['return']) {
-	                _iterator['return']();
-	            }
-	        } finally {
-	            if (_didIteratorError) {
-	                throw _iteratorError;
-	            }
-	        }
-	    }
-	
-	    return group;
-	}
-	
-	var POINT_FLOW_X_OFFSET = -0.15;
-	function pointFlow() {
-	    var originTheta = PL_THETA;
-	
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
-	
-	    try {
-	        for (var _iterator2 = points[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	            var pointGroup = _step2.value;
-	            var _iteratorNormalCompletion3 = true;
-	            var _didIteratorError3 = false;
-	            var _iteratorError3 = undefined;
-	
-	            try {
-	                for (var _iterator3 = pointGroup.children[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	                    var point = _step3.value;
-	
-	                    var theta = Math.atan(point.position.y / point.position.x);
-	                    var x = point.position.x + POINT_FLOW_X_OFFSET;
-	                    point.position.x = x;
-	                    point.position.y = x * Math.tan(theta);
-	                    if (point.position.x < 0) {
-	                        point.position.x = pointGroup.size;
-	                        point.position.y = pointGroup.size * Math.tan(theta);
-	                    }
-	                }
-	            } catch (err) {
-	                _didIteratorError3 = true;
-	                _iteratorError3 = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-	                        _iterator3['return']();
-	                    }
-	                } finally {
-	                    if (_didIteratorError3) {
-	                        throw _iteratorError3;
-	                    }
-	                }
-	            }
-	        }
-	    } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-	                _iterator2['return']();
-	            }
-	        } finally {
-	            if (_didIteratorError2) {
-	                throw _iteratorError2;
-	            }
-	        }
-	    }
-	}
-	
-	function makeLine() {
-	    var lineGroup = new THREE.Group();
-	
-	    var lineGeometry = new THREE.Geometry();
-	    lineGeometry.vertices.push(VEC.Y_MIN.clone());
-	    lineGeometry.vertices.push(VEC.Y_MAX.clone());
-	    var line = new THREE.Line(lineGeometry, lineMaterial);
-	    line.scale.x = 0.5;
-	    lineGroup.add(line);
-	
-	    var lineHalo = new THREE.Line(lineGeometry.clone(), lineHaloMaterial);
-	    lineHalo.scale.x = 0.5;
-	    lineGroup.add(lineHalo);
-	
-	    return lineGroup;
-	}
-	
-	var LINE_CURVE_POINTS = 10;
-	var LINE_Y_OFFSET = Y_INTER * 1.2;
-	function getCurvePoints(x, y, z) {
-	    var curve1 = new THREE.CubicBezierCurve3(new THREE.Vector3(0, y + LINE_Y_OFFSET, z), new THREE.Vector3(0, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y + LINE_Y_OFFSET / 2, z), new THREE.Vector3(x, y, z));
-	    var curve2 = new THREE.CubicBezierCurve3(new THREE.Vector3(x, y, z), new THREE.Vector3(x, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET / 2, z), new THREE.Vector3(0, y - LINE_Y_OFFSET, z));
-	
-	    var curvePoints = curve1.getPoints(LINE_CURVE_POINTS).concat(curve2.getPoints(LINE_CURVE_POINTS)).reverse();
-	    return curvePoints;
-	}
-	
-	function duplicatePoints(points) {
-	    // for (var i = 1; i < points.length;) {
-	    //     if (points[i].y <= points[i - 1].y) {
-	    //         points.splice(i - 1, 2);
-	    //     } else {
-	    //         i++;
-	    //     }
-	    // }
-	}
-	
-	var lowYOffset = ySize() / 2 - LINE_Y_OFFSET * 2;
-	var midYOffset = ySize() / 2;
-	var highYOffset = ySize() / 2 + LINE_Y_OFFSET * 2;
-	
-	function lineRhythm(offsets) {
-	    var lows = offsets.slice(0, Z_LENGTH);
-	    var mids = offsets.slice(offsets.length / 2 - Z_LENGTH / 2, offsets.length / 2 + Z_LENGTH / 2);
-	    var highs = offsets.slice(offsets.length - Z_LENGTH, offsets.length);
-	    var centerX = xSize() / 2;
-	
-	    lowYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
-	    midYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
-	    highYOffset += (Math.random() - 0.5) * (Math.random() * 11 > 5 ? 1 : -1);
-	
-	    var _iteratorNormalCompletion4 = true;
-	    var _didIteratorError4 = false;
-	    var _iteratorError4 = undefined;
-	
-	    try {
-	        var _loop = function () {
-	            var lineGroup = _step4.value;
-	
-	            var zPos = lineGroup.position.z / Z_INTER - Z_MIN;
-	            var lowXOffset = lows[zPos] || 1;
-	            var lowPoints = [];
-	            var midXOffset = mids[zPos] || 1;
-	            var midPoints = [];
-	            var highXOffset = highs[zPos] || 1;
-	            var highPoints = [];
-	            var firstLine = lineGroup.children[0];
-	            var zOffset = firstLine.position.z;
-	
-	            if (lineGroup.position.x < centerX) {
-	                var _map = [lowXOffset, midXOffset, highXOffset].map(function (o) {
-	                    return lineGroup.position.x / centerX * o;
-	                });
-	
-	                var _map2 = _slicedToArray(_map, 3);
-	
-	                lowXOffset = _map2[0];
-	                midXOffset = _map2[1];
-	                highXOffset = _map2[2];
-	            } else {
-	                var _map3 = [lowXOffset, midXOffset, highXOffset].map(function (o) {
-	                    return ((lineGroup.position.x - centerX) / centerX + 2) * o;
-	                });
-	
-	                var _map32 = _slicedToArray(_map3, 3);
-	
-	                lowXOffset = _map32[0];
-	                midXOffset = _map32[1];
-	                highXOffset = _map32[2];
-	            }
-	            if (lowXOffset > 0) {
-	                lowPoints = getCurvePoints(firstLine.position.x - lowXOffset, lowYOffset, zOffset);
-	            }
-	            if (midXOffset > 0) {
-	                midPoints = getCurvePoints(firstLine.position.x - midXOffset, midYOffset, zOffset);
-	            }
-	            if (highXOffset > 0) {
-	                highPoints = getCurvePoints(firstLine.position.x - highXOffset, highYOffset, zOffset);
-	            }
-	
-	            _iteratorNormalCompletion5 = true;
-	            _didIteratorError5 = false;
-	            _iteratorError5 = undefined;
-	
-	            try {
-	                for (_iterator5 = lineGroup.children[Symbol.iterator](); !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-	                    var _geometry$vertices;
-	
-	                    var line = _step5.value;
-	
-	                    var geometry = line.geometry.clone();
-	                    if (geometry.vertices.length > 2) {
-	                        geometry.vertices.splice(1, geometry.vertices.length - 2);
-	                    }
-	                    var _points = [].concat(_toConsumableArray(lowPoints), _toConsumableArray(midPoints), _toConsumableArray(highPoints));
-	                    // duplicatePoints(points);
-	                    (_geometry$vertices = geometry.vertices).splice.apply(_geometry$vertices, [1, 0].concat(_toConsumableArray(_points)));
-	                    geometry.verticesNeedUpdate = true;
-	                    line.geometry = geometry;
-	                }
-	            } catch (err) {
-	                _didIteratorError5 = true;
-	                _iteratorError5 = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion5 && _iterator5['return']) {
-	                        _iterator5['return']();
-	                    }
-	                } finally {
-	                    if (_didIteratorError5) {
-	                        throw _iteratorError5;
-	                    }
-	                }
-	            }
-	        };
-	
-	        for (var _iterator4 = lines[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-	            var _iteratorNormalCompletion5;
-	
-	            var _didIteratorError5;
-	
-	            var _iteratorError5;
-	
-	            var _iterator5, _step5;
-	
-	            _loop();
-	        }
-	    } catch (err) {
-	        _didIteratorError4 = true;
-	        _iteratorError4 = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion4 && _iterator4['return']) {
-	                _iterator4['return']();
-	            }
-	        } finally {
-	            if (_didIteratorError4) {
-	                throw _iteratorError4;
-	            }
-	        }
-	    }
-	}
-	
-	(function callee$0$0() {
-	    var r, clonedPointLineGroup, theta, x, z, clonedLineGroup, sign;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([pointMaterialDeferred.promise, lineMaterialDeferred.promise]));
-	
-	            case 2:
-	
-	                exports.object = object = new THREE.Object3D();
-	
-	                for (r = 0; r < PL_AMOUNT; r++) {
-	                    clonedPointLineGroup = makePointLine();
-	                    theta = Math.PI * 2 / PL_AMOUNT * r;
-	
-	                    clonedPointLineGroup.position.set(xSize() / 2 + (1 + Math.random()) * X_INTER / 2 * Math.cos(theta), ySize() / 2 + (1 + Math.random()) * Y_INTER / 2 * Math.sin(theta), -zSize() / 2);
-	                    clonedPointLineGroup.rotation.set(0, 0, theta);
-	                    points.push(clonedPointLineGroup);
-	                    object.add(clonedPointLineGroup);
-	                }
-	
-	                for (x = X_MIN; x <= X_MAX; x++) {
-	                    for (z = Z_MIN; z <= Z_MAX; z++) {
-	                        clonedLineGroup = makeLine();
-	
-	                        clonedLineGroup.position.x = x * X_INTER;
-	                        clonedLineGroup.position.z = z * Z_INTER;
-	                        if (x * X_INTER === xSize() / 2) {
-	                            sign = z % 2 === 0 ? 1 : -1;
-	
-	                            clonedLineGroup.position.x += sign * X_INTER / 2 / Z_LENGTH * z;
-	                            clonedLineGroup.position.z = (Z_MIN - z) * Z_INTER;
-	                        }
-	                        lines.push(clonedLineGroup);
-	                        object.add(clonedLineGroup);
-	                    }
-	                }
-	
-	                deferred.resolve();
-	
-	            case 6:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(8);
-	
-	var _libCubicbezier = __webpack_require__(39);
-	
-	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
-	
-	var _libUtil = __webpack_require__(9);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	var prevTime;
-	var render = function render() {
-	    if (!prevTime) {
-	        prevTime = Date.now();
-	        return;
-	    }
-	
-	    var time = Date.now();
-	    object.updateAnimation(time - prevTime);
-	    prevTime = time;
-	};
-	
-	exports.render = render;
-	function morphColorsToFaceColors(geometry) {
-	    if (geometry.morphColors && geometry.morphColors.length) {
-	        var colorMap = geometry.morphColors[0];
-	        for (var i = 0; i < colorMap.colors.length; i++) {
-	            geometry.faces[i].color = colorMap.colors[i];
-	        }
-	    }
-	}
-	
-	var loader = new THREE.JSONLoader(_prologue.manager);
-	loader.load('assets/obj/box01.js', function (geometry) {
-	    morphColorsToFaceColors(geometry);
-	
-	    var material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: 20, morphTargets: true, vertexColors: THREE.FaceColors, shading: THREE.FlatShading });
-	    exports.object = object = new THREE.MorphAnimMesh(geometry, material);
-	    object.duration = 5000;
-	    // object.setFrameRange(0, 50);
-	    // object.matrixAutoUpdate = false;
-	    // object.updateMatrix();
-	    deferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
-
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Start off by initializing a new context.
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-	
-	audioContext.createGain = audioContext.createGain || audioContext.createGainNode;
-	audioContext.createDelay = audioContext.createDelay || audioContext.createDelayNode;
-	audioContext.createScriptProcessor = audioContext.createScriptProcessor || audioContext.createJavaScriptNode;
-	
-	var BufferLoader = (function () {
-	    function BufferLoader(audioContext, urlList, callback) {
-	        _classCallCheck(this, BufferLoader);
-	
-	        this.audioContext = audioContext;
-	        this.urlList = urlList;
-	        this.onload = callback;
-	        this.bufferList = new Array();
-	        this.loadCount = 0;
-	    }
-	
-	    // Interesting parameters to tweak!
-	
-	    _createClass(BufferLoader, [{
-	        key: "loadBuffer",
-	        value: function loadBuffer(url, index) {
-	            // Load buffer asynchronously
-	            var request = new XMLHttpRequest();
-	            request.open("GET", url, true);
-	            request.responseType = "arraybuffer";
-	
-	            var loader = this;
-	
-	            request.onload = function () {
-	                // Asynchronously decode the audio file data in request.response
-	                loader.audioContext.decodeAudioData(request.response, function (buffer) {
-	                    if (!buffer) {
-	                        alert('error decoding file data: ' + url);
-	                        return;
-	                    }
-	                    loader.bufferList[index] = buffer;
-	                    if (++loader.loadCount == loader.urlList.length) loader.onload(loader.bufferList);
-	                }, function (error) {
-	                    console.error('decodeAudioData error', error);
-	                });
-	            };
-	
-	            request.onerror = function () {
-	                alert('BufferLoader: XHR error');
-	            };
-	
-	            request.send();
-	        }
-	    }, {
-	        key: "load",
-	        value: function load() {
-	            for (var i = 0; i < this.urlList.length; ++i) this.loadBuffer(this.urlList[i], i);
-	        }
-	    }]);
-	
-	    return BufferLoader;
-	})();
-	
-	var SMOOTHING = 0.8;
-	var FFT_SIZE = 64; // 快速傅里叶变换
-	
-	var Visualizer = (function () {
-	    function Visualizer() {
-	        _classCallCheck(this, Visualizer);
-	
-	        var that = this;
-	        this.analyser = audioContext.createAnalyser();
-	
-	        this.analyser.connect(audioContext.destination);
-	        this.analyser.minDecibels = -140;
-	        this.analyser.maxDecibels = 0;
-	
-	        this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
-	        this.times = new Uint8Array(this.analyser.frequencyBinCount);
-	
-	        this.isPlaying = false;
-	        this.startTime = 0;
-	        this.startOffset = 0;
-	
-	        this.deferred = (0, _libPromise.defer)();
-	    }
-	
-	    _createClass(Visualizer, [{
-	        key: "ready",
-	        value: function ready() {
-	            return this.deferred.promise;
-	        }
-	    }, {
-	        key: "load",
-	        value: function load(path) {
-	            var that = this;
-	            var soundMap = {
-	                buffer: path
-	            };
-	            var names = [];
-	            var paths = [];
-	            for (var name in soundMap) {
-	                var path = soundMap[name];
-	                names.push(name);
-	                paths.push(path);
-	            }
-	            var bufferLoader = new BufferLoader(audioContext, paths, function (bufferList) {
-	                for (var i = 0; i < bufferList.length; i++) {
-	                    var buffer = bufferList[i];
-	                    var name = names[i];
-	                    that[name] = buffer;
-	                }
-	                that.togglePlayback();
-	                that.deferred.resolve();
-	            });
-	            bufferLoader.load();
-	
-	            return that.deferred.promise;
-	        }
-	    }, {
-	        key: "togglePlayback",
-	        value: function togglePlayback() {
-	            if (this.isPlaying) {
-	                // Stop playback
-	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
-	                this.startOffset += audioContext.currentTime - this.startTime;
-	                console.log('paused at', this.startOffset);
-	                // Save the position of the play head.
-	            } else {
-	                    this.startTime = audioContext.currentTime;
-	                    console.log('started at', this.startOffset);
-	                    this.source = audioContext.createBufferSource();
-	                    // Connect graph
-	                    this.source.connect(this.analyser);
-	                    this.source.buffer = this.buffer;
-	                    this.source.loop = true;
-	                    // Start playback, but make sure we stay in bound of the buffer.
-	                    this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
-	                }
-	            this.isPlaying = !this.isPlaying;
-	        }
-	    }, {
-	        key: "analysis",
-	        value: function analysis() {
-	            this.analyser.smoothingTimeConstant = SMOOTHING;
-	            this.analyser.fftSize = FFT_SIZE;
-	
-	            // Get the frequency data from the currently playing music
-	            this.analyser.getByteFrequencyData(this.freqs); // 频率数据
-	            this.analyser.getByteTimeDomainData(this.times); // 波形数据
-	        }
-	    }, {
-	        key: "getFrequencyValue",
-	        value: function getFrequencyValue(freq) {
-	            var nyquist = audioContext.sampleRate / 2;
-	            var index = Math.round(freq / nyquist * this.freqs.length);
-	            return this.freqs[index];
-	        }
-	    }, {
-	        key: "getTimeValue",
-	        value: function getTimeValue(time) {
-	            var nyquist = audioContext.sampleRate / 2;
-	            var index = Math.round(time / nyquist * this.times.length);
-	            return this.times[index];
-	        }
-	    }]);
-	
-	    return Visualizer;
-	})();
-	
-	exports["default"] = Visualizer;
-	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map

@@ -1,3 +1,4 @@
+import './common.less';
 import './prologue.less';
 import {defer, domReady, delay} from './lib/promise';
 import {width, height} from './lib/env';
@@ -39,7 +40,7 @@ var titleENImg = new THREE.ImageLoader(manager).load(
 
 export var opening = async () => {
     var $loading = document.querySelector('#prologue .loading');
-    $loading.className += ' anime';
+    $loading.className += ' fadeOut';
     await delay(800);
     $loading.style.display = 'none';
 
@@ -54,7 +55,8 @@ export var opening = async () => {
     var $titleEN = $title.querySelector('.en');
     $titleEN.appendChild(titleENImg);
 
-    $titleSep.className += ' anime';
+    $titleSep.style.display = 'block';
+    $titleSep.className += ' fadeIn';
 
     await delay(600);
 
@@ -63,7 +65,7 @@ export var opening = async () => {
 
     await delay(2000);
 
-    $title.className += ' anime';
+    $title.className += ' fadeOut';
 
     await delay(600);
 }

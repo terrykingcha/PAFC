@@ -65,3 +65,32 @@ export function on() {
     dom.addEventListener(event, handler, false);
     return dom;
 }
+
+export function off() {
+    var [dom, event, handler] = this::parse(2, false, ...arguments);
+    dom.removeEventListener(event, handler);
+    return dom;
+}
+
+export function addClass() {
+    var [dom, className] = this::parse(1, false, ...arguments);
+    dom.classList.add(className);
+    return dom;
+}
+
+export function removeClass() {
+    var [dom, className] = this::parse(1, false, ...arguments);
+    dom.classList.remove(className);
+    return dom;
+}
+
+export function toggleClass() {
+    var [dom, className] = this::parse(1, false, ...arguments);
+    dom.classList.toggle(className);
+    return dom;
+}
+
+export function hasClass() {
+    var [dom, className] = this::parse(1, false, ...arguments);
+    return dom.classList.contain(className);
+}

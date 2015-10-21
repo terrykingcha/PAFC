@@ -8,13 +8,14 @@ import * as prologue from './prologue';
 import * as clock from './clock';
 import * as share from './share';
 import * as nav from './nav';
+import * as menu from './menu';
 import * as chapter1 from './chapter1';
-import * as chapter2 from './chapter2';
+// import * as chapter2 from './chapter2';
 // import * as chapter3 from './chapter3';
 
 var chapters = {
     cp1: chapter1
-    ,cp2: chapter2
+    // ,cp2: chapter2
     // chapter2,
     // chapter3
 }
@@ -36,13 +37,18 @@ if ((matched = location.search.match(/cp=(\d+)/))) {
     await prologue.opening();
     await prologue.hide();
 
-    await clock.ready();
-    await clock.show();
+    await Promise.all([
+        clock.ready(),
+        // menu.ready()
+    ]);
+
+    await Promise.all([
+        clock.show(),
+        share.show(),
+        nav.show()
+    ]);
+
     clock.run();
-
-    share.show();
-    nav.show();
-
 
     // await chapter.start();
     // var lastChapter;
