@@ -14,19 +14,10 @@ export var manager = new THREE.LoadingManager();
 manager.onProgress = function (item, _loaded, _total) {
     loaded = _loaded;
     total = _total;
-    percent += 1 / total;
-    if (loaded === total) {
-        deferred.resolve();
-    }
+    percent = loaded / total;
 };
 
-var progressStep = 0.01;
 export function onProgress(xhr) {
-    if (loaded && total) {
-        percent += progressStep * loaded / total;
-    } else {
-        percent += progressStep;
-    }
 };
 
 export function onError(xhr) {
@@ -93,16 +84,13 @@ function loading() {
     if (percent < 1) {
         requestAnimationFrame(loading);
 
-        percent += 0.001;
+        percent += 0.0001;
         if (total && loaded < total) {
-            percent = Math.min(percent, 0.95);
-        } else if (total && loaded === total){
+            percent = Math.min(percent, (loaded + 1) / total * 0.95);
+        } else if (toatal && loaded === total) {
             percent = 1;
         }
-    } else {
-        percent = 1;
     }
-    console.log(percent);
 
     text.textContent = parseInt(percent * 100);
 
@@ -128,6 +116,10 @@ function loading() {
     ctx2d.strokeStyle = '#333';
     ctx2d.stroke();
     ctx2d.closePath();
+
+    if (loaded === total) {
+        deferred.resolve();
+    }
 }
 
 (async () => {
