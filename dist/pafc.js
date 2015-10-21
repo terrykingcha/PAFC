@@ -40578,7 +40578,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	        percent += 0.0001;
 	        if (total && loaded < total) {
 	            percent = Math.min(percent, (loaded + 1) / total * 0.95);
-	        } else if (toatal && loaded === total) {
+	        } else if (total && loaded === total) {
 	            percent = 1;
 	        }
 	    }
