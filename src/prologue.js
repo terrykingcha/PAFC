@@ -78,6 +78,11 @@ export var opening = async () => {
     await delay(600);
 }
 
+export function hide() {
+    var $prologue = document.querySelector('#prologue');
+    $prologue.style.display = 'none';
+}
+
 const DPR = window.devicePixelRatio;
 var text;
 var ctx2d;

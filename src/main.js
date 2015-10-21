@@ -5,6 +5,9 @@ THREE.Loader.Handlers.add(/\.png$/i, new THREE.ImageLoader());
 THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
 
 import * as prologue from './prologue';
+import * as clock from './clock';
+import * as share from './share';
+import * as nav from './nav';
 import * as chapter1 from './chapter1';
 import * as chapter2 from './chapter2';
 // import * as chapter3 from './chapter3';
@@ -31,8 +34,17 @@ if ((matched = location.search.match(/cp=(\d+)/))) {
     chapter.render();
 
     await prologue.opening();
+    await prologue.hide();
 
-    await chapter.start();
+    await clock.ready();
+    await clock.show();
+    clock.run();
+
+    share.show();
+    nav.show();
+
+
+    // await chapter.start();
     // var lastChapter;
     // for (var i = 0; i < chapters.length; i++) {
     //     let chapter = chapters[i];

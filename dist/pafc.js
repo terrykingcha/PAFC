@@ -39755,11 +39755,23 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _chapter1 = __webpack_require__(10);
+	var _clock = __webpack_require__(10);
+	
+	var clock = _interopRequireWildcard(_clock);
+	
+	var _share = __webpack_require__(14);
+	
+	var share = _interopRequireWildcard(_share);
+	
+	var _nav = __webpack_require__(17);
+	
+	var nav = _interopRequireWildcard(_nav);
+	
+	var _chapter1 = __webpack_require__(20);
 	
 	var chapter1 = _interopRequireWildcard(_chapter1);
 	
-	var _chapter2 = __webpack_require__(21);
+	var _chapter2 = __webpack_require__(31);
 	
 	var chapter2 = _interopRequireWildcard(_chapter2);
 	
@@ -39802,44 +39814,59 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	            case 8:
 	                context$1$0.next = 10;
-	                return regeneratorRuntime.awrap(chapter.start());
+	                return regeneratorRuntime.awrap(prologue.hide());
 	
 	            case 10:
+	                context$1$0.next = 12;
+	                return regeneratorRuntime.awrap(clock.ready());
+	
+	            case 12:
+	                context$1$0.next = 14;
+	                return regeneratorRuntime.awrap(clock.show());
+	
+	            case 14:
+	                clock.run();
+	
+	                share.show();
+	                nav.show();
+	
+	                // await chapter.start();
+	                // var lastChapter;
+	                // for (var i = 0; i < chapters.length; i++) {
+	                //     let chapter = chapters[i];
+	
+	                //     await chapter.init();
+	                //     console.log('Chapter ' + i + ' Init');
+	
+	                //     await delay(50);
+	
+	                //     if (lastChapter) {
+	                //         await Promise.all([
+	                //             lastChapter.hide(),
+	                //             chapter.show()
+	                //         ]);
+	                //         console.log('Chapter ' + (i - 1) + ' Hide',
+	                //             'Chapter ' + i + ' Show');
+	                //         await lastChapter.destory();
+	                //         lastChapter = chapter;
+	                //     } else {
+	                //         await chapter.show();
+	                //         console.log('Chapter ' + i + ' Show');
+	                //     }
+	
+	                //     await chapter.start();
+	                //     console.log('Chapter ' + i + ' Start');
+	
+	                //     await chapter.end();
+	                //     console.log('Chapter ' + i + ' End');
+	                // }
+	
+	            case 17:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, _this);
 	})();
-	
-	// var lastChapter;
-	// for (var i = 0; i < chapters.length; i++) {
-	//     let chapter = chapters[i];
-
-	//     await chapter.init();
-	//     console.log('Chapter ' + i + ' Init');
-
-	//     await delay(50);
-
-	//     if (lastChapter) {
-	//         await Promise.all([
-	//             lastChapter.hide(),
-	//             chapter.show()
-	//         ]);
-	//         console.log('Chapter ' + (i - 1) + ' Hide',
-	//             'Chapter ' + i + ' Show');
-	//         await lastChapter.destory();
-	//         lastChapter = chapter;
-	//     } else {
-	//         await chapter.show();
-	//         console.log('Chapter ' + i + ' Show');
-	//     }
-
-	//     await chapter.start();
-	//     console.log('Chapter ' + i + ' Start');
-
-	//     await chapter.end();
-	//     console.log('Chapter ' + i + ' End');
-	// }
 
 /***/ },
 /* 1 */
@@ -40434,6 +40461,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	exports.onProgress = onProgress;
 	exports.onError = onError;
+	exports.hide = hide;
 	
 	__webpack_require__(6);
 	
@@ -40542,6 +40570,12 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	};
 	
 	exports.opening = opening;
+	
+	function hide() {
+	    var $prologue = document.querySelector('#prologue');
+	    $prologue.style.display = 'none';
+	}
+	
 	var DPR = window.devicePixelRatio;
 	var text;
 	var ctx2d;
@@ -40717,6 +40751,432 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.now = now;
+	exports.getHours = getHours;
+	exports.getMinutes = getMinutes;
+	exports.f12 = f12;
+	exports.f24 = f24;
+	exports.show = show;
+	exports.run = run;
+	
+	__webpack_require__(11);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libDom = __webpack_require__(13);
+	
+	var timestamp;
+	exports.timestamp = timestamp;
+	var clientOffset;
+	
+	exports.clientOffset = clientOffset;
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	exports.timestamp = timestamp = Date.now();
+	exports.clientOffset = clientOffset = Date.now();
+	deferred.resolve();
+	
+	function now() {
+	    var offset = Date.now() - clientOffset;
+	    return timestamp + offset;
+	}
+	
+	function getHours() {
+	    var d = new Date();
+	    d.setTime(now());
+	    return d.getHours();
+	}
+	
+	function getMinutes() {
+	    var d = new Date();
+	    d.setTime(now());
+	    return d.getMinutes();
+	}
+	
+	function f12(h, m) {
+	    var f = {};
+	    h = h || getHours();
+	    m = m || getMinutes();
+	    f.hours = h > 12 ? h - 12 : h;
+	    f.minutes = m < 10 ? '0' + m : '' + m;
+	    f.ampm = h > 12 ? 'pm' : 'am';
+	    return f;
+	}
+	
+	function f24(h, m) {
+	    var f = {};
+	    h = h || getHours();
+	    m = m || getMinutes();
+	    f.hours = h < 10 ? '0' + h : '' + h;
+	    f.minutes = m < 10 ? '0' + m : '' + m;
+	    return f;
+	}
+	
+	var $clock;
+	
+	function show() {
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                $clock = _libDom.find.call(document, '#clock');
+	                $clock.style.display = 'block';
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function run() {
+	    var _context;
+	
+	    setTimeout(run, 60 * 1000);
+	
+	    var _f12 = f12();
+	
+	    var hours = _f12.hours;
+	    var minutes = _f12.minutes;
+	    var ampm = _f12.ampm;
+	
+	    (_context = (_context = $clock, _libDom.find).call(_context, '.time'), _libDom.text).call(_context, hours + ':' + minutes);
+	    (_context = (_context = $clock, _libDom.find).call(_context, '.ampm'), _libDom.text).call(_context, ampm);
+	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(12);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 230px;\n  height: 100px;\n  top: 24px;\n  left: 50px;\n  overflow: hidden;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  width: 300px;\n  height: 100%;\n  text-align: right;\n  left: 0;\n  top: 0;\n  color: #FFF;\n  font-size: 120px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 30px;\n  color: #FFF;\n  right: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: right bottom;\n  -ms-transform-origin: right bottom;\n  transform-origin: right bottom;\n}\n"
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	var _slice = Array.prototype.slice;
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	exports.find = find;
+	exports.findAll = findAll;
+	exports.text = text;
+	exports.show = show;
+	exports.hide = hide;
+	exports.matches = matches;
+	exports.on = on;
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
+	function parse(argsLength, isGeterSeter, dom) {
+	    for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+	        args[_key - 3] = arguments[_key];
+	    }
+	
+	    if (!isGeterSeter && args.length === argsLength - 1 || isGeterSeter && !(dom instanceof HTMLElement) || argsLength === 0) {
+	        args.unshift(dom);
+	        dom = this === window ? document : this;
+	    }
+	
+	    return [dom].concat(args);
+	}
+	
+	function find() {
+	    var _parse$call = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call2 = _slicedToArray(_parse$call, 2);
+	
+	    var dom = _parse$call2[0];
+	    var selector = _parse$call2[1];
+	
+	    return dom.querySelector(selector);
+	}
+	
+	function findAll() {
+	    var _parse$call3 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call32 = _slicedToArray(_parse$call3, 2);
+	
+	    var dom = _parse$call32[0];
+	    var selector = _parse$call32[1];
+	
+	    return dom.querySelectorAll(selector);
+	}
+	
+	function text() {
+	    var _parse$call4 = parse.call.apply(parse, [this, 1, true].concat(_slice.call(arguments)));
+	
+	    var _parse$call42 = _slicedToArray(_parse$call4, 2);
+	
+	    var dom = _parse$call42[0];
+	    var content = _parse$call42[1];
+	
+	    if (typeof content === 'undefined') {
+	        return dom.textContent;
+	    } else {
+	        dom.textContent = content;
+	        return dom;
+	    }
+	}
+	
+	function show() {
+	    var _parse$call5 = parse.call.apply(parse, [this, 0, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call52 = _slicedToArray(_parse$call5, 1);
+	
+	    var dom = _parse$call52[0];
+	
+	    dom.style.display = dom._originStyleDisplay || 'block';
+	    return dom;
+	}
+	
+	function hide() {
+	    var _parse$call6 = parse.call.apply(parse, [this, 0, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call62 = _slicedToArray(_parse$call6, 1);
+	
+	    var dom = _parse$call62[0];
+	
+	    dom._originStyleDisplay = dom.style.display;
+	    dom.style.display = 'none';
+	    return dom;
+	}
+	
+	function matches() {
+	    var _parse$call7 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call72 = _slicedToArray(_parse$call7, 3);
+	
+	    var dom = _parse$call72[0];
+	    var selector = _parse$call72[1];
+	    var parent = _parse$call72[2];
+	
+	    var m;
+	    if (parent === document) {
+	        m = dom.matches || dom.webkitMatchesSelector || dom.mozMatchesSelector || dom.msMatchesSelector;
+	    }
+	    if (!m || parent !== document) {
+	        m = function (s) {
+	            return [].concat(_toConsumableArray(parent.querySelectorAll(s))).indexOf(this) !== -1;
+	        };
+	    }
+	
+	    return m.call(dom, selector);
+	}
+	
+	function on() {
+	    var _parse$call8 = parse.call.apply(parse, [this, 2, false].concat(_slice.call(arguments)));
+	
+	    var _parse$call82 = _slicedToArray(_parse$call8, 3);
+	
+	    var dom = _parse$call82[0];
+	    var event = _parse$call82[1];
+	    var handler = _parse$call82[2];
+	
+	    dom.addEventListener(event, handler, false);
+	    return dom;
+	}
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.show = show;
+	
+	__webpack_require__(15);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libDom = __webpack_require__(13);
+	
+	var $share;
+	
+	function show() {
+	    var _context;
+	
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                $share = _libDom.find.call(document, '#share');
+	                (_context = (_context = (_context = $share, _libDom.show).call(_context), _libDom.find).call(_context, '.weibo'), _libDom.on).call(_context, 'click', function (e) {
+	                    alert('share weibo');
+	                });
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(16);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./share.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./share.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #adadad;\n  font-size: 12px;\n  line-height: 24px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 24px;\n  height: 24px;\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-size: contain;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXCAYAAADgKtSgAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAfRJREFUeNq8VbtKA0EUnawpBEG2SSmsINarfVi3MGCntaDuF8T4A1HsjX5BVLD2UZoigr3G0jSuWKZI9AOMZ+SMXK4bNb4OHCaZnTl7750zd3P9ft9kodlsjmOYB4vgLDgNFsAO2AavwEuwEcfxU5ZGLkscwisYlsGS+Rzn4BFecPihOEQnMFTAMuiZr+MZ3ANreMnDO3EKb4GJ+T7qYNW9IC8eVIYU3gV7oA8uggH327mNt8hZ4/oQpbgAYzW3bsvCEiX2DEaiKLKu2AanPhDa5xiCo4xyjvN27hY8AR/BBXAsTdOzPO2W5YqUaV6o+U0VfcCsE5aqRr15jz7WaIEzGcL3FFgCb8Britt1q2KvRTHPC6KFYx6Mxr76b9dE/P3IMeA4m+fNk0iUcEhHyDOQzzbFvkCsnfZ4paW9XFrWXnfWt4zOpn0Mdjnn1rss61zvUPDYKxwOhK2O6f0lcbliRmajXROZVDJK2PHYhIw6jCo3naiStMSaSDlLo+2xuxlRCqNq2uXo4KssjXCKxJXHtulQFofjM6JJlZGv/B+KEklcWrc02DZLvHV11rAlXuYsdkP/p+JsqgPacGNQb+mx3qcUaomShKz3mvC0br+vvUW23J0Bpz4sbE9/7YqyC9YYvflhP6/975foz7+hv/31fxFgAItsvUUxToD+AAAAAElFTkSuQmCC);\n}\n"
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.show = show;
+	
+	__webpack_require__(18);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libDom = __webpack_require__(13);
+	
+	var $nav;
+	
+	function show() {
+	    var _context;
+	
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                $nav = _libDom.find.call(document, '#nav');
+	                (_context = (_context = (_context = $nav, _libDom.show).call(_context), _libDom.find).call(_context, '.open'), _libDom.on).call(_context, 'click', function (e) {
+	                    alert('open menu');
+	                });
+	
+	                (_context = (_context = $nav, _libDom.find).call(_context, '.music'), _libDom.on).call(_context, 'click', function (e) {
+	                    alert('toggle music');
+	                });
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(19);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./nav.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./nav.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = "#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 22px;\n  height: 22px;\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-size: contain;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#nav a.open {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd1JREFUeNqslUsoRGEUx+8dj2FhQcmM5LWxw0pZaVbIo8gCNTayRqGUhYWykLBmRZlZWHmEzdySUqywUpKFt4WNwhTjdzgjcS+umVO/+bpzz/l/557v3nPMWCxm2JllWdksHVAP5eCDKJzBMaxDKBAI3NnFm1+FEcxg6YchFVqBXbiANCiACmiCdJiAKTZ4cBRGtFiFcmEE5gmIOjyRiHbBGNzKRviefhPGUTLZgRNow+nW+IMRJ0ksQSlUE3f2IayPvwX3UlNuPhkuTOPXIAtqpCwevdcHRdDuVlSMmEc96ELVMsxIJJKjjz+Aw9wPWcVUxPzBp5tlUsri0Z1e5KCMxG0BnkVThGth1en0XZYkqrWuE+FK2DaSZ6JVkcpPHpw71fS3/21qLlp5krG8Bd4kZvymJRlfQr5NvUy3b4WaH64l4yOoSmLGorUvwpvQoN9+QqYajbAhwiFIgWASsg2qVijeK4a56JW+Sw1v/pmtNKNDmEFjPN4rpkEEw9pQjH80obC2T9EyPHrS0qRboezdz/K5EBVfS2Nb4g3/a6MvYVnWMTQKs780+h71u3Js9J8CMnU0Depoko32dNZ5dTTJDGz+82iyGaad0lBUyK+35IM6kFcKFp2G6asAAwCDdMP4s5k+hgAAAABJRU5ErkJggg==);\n}\n#nav a.music {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAlhJREFUeNqclU2IjVEYx987jCEUozEzkq/FKAujUcpCuitjfOQrGRkWsmYKpSwsSJE0a2wYpjQ2PkLp3vKRUAorkizG5yUbwl24fv/xv9PpuG/3zpz6de59z/P8zznPec5zMqVSKanU8vn8dLpuWA2LoQWKMASv4SYMZLPZb5X8M7EwghPpeuGgha7BY3gP9TAb2mEdTICTcJoJfqYKIzrPQk1wGM7jUEzZkUR3wlEoaCJs3/4njKFW8hDewBaMCkkNDT8tYhAWwHL8hkaEvf278F0xZfB3Mopm/xswFVYqLHUe2wdzYVuaKM6ToAsuxGP4/PJBz7FWksnlco3e/n4MzlYS1CrsuN1C9SmT76Y7pbCMt8MfHVRgMNknvhR2wQaY4uEvgd2gU+6KP2k3J6SpUKyC69HpXwYZ98OOQHR4l8Hve7AiCEnRse6U8BK4H+1KlyILzVXO7Sl0RN+k1V5n53fR4NcaE+IVtEXfpNUsYWVBQzK2VvBlCtuwloQ/wKxocEaNwk0WD1srfFJWvIRl0aAKjNJsUZU4tzkcYZPWM634Nqzx3S+3rbDZGdHvG1luYdXq8AGG9WMt3NKKB+AY9MA5p80POnEH4wf0F4MLMi1Ir75otdIYJ81yrTjEn72quxh/TrvSTsFubHpSitEL6GP8eFlYTo98q7p898dShGYqxiNFyEV6Eyz8Z5dvGYWobPP23Vgu+HGhn0931c/QEThTpdDvsd3H1EIfxVJP0wE/TZroid+6Bj9NegPX1/w0VXhMlQWdFmr1kC7Uc6UUXEp7TP8KMAAcHutxTUjc1gAAAABJRU5ErkJggg==);\n}\n"
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
 	
 	var _this = this;
 	
@@ -40725,37 +41185,37 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(11);
+	__webpack_require__(21);
 	
 	var _libPromise = __webpack_require__(4);
 	
 	var _libEnv = __webpack_require__(8);
 	
-	var _scene = __webpack_require__(13);
+	var _scene = __webpack_require__(23);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(14);
+	var _camera = __webpack_require__(24);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(15);
+	var _renderer = __webpack_require__(25);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(16);
+	var _light = __webpack_require__(26);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _controls = __webpack_require__(17);
+	var _controls = __webpack_require__(27);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _tower = __webpack_require__(18);
+	var _tower = __webpack_require__(28);
 	
 	var Tower = _interopRequireWildcard(_tower);
 	
-	var _sky = __webpack_require__(19);
+	var _sky = __webpack_require__(29);
 	
 	var Sky = _interopRequireWildcard(_sky);
 	
@@ -40789,7 +41249,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                tower.position.set(0, -4.5, 0);
 	                sky.position.set(0, 0, 0);
 	
-	                SkyDynamic = __webpack_require__(20);
+	                SkyDynamic = __webpack_require__(30);
 	
 	                SkyDynamic.ready().then(function (obj) {
 	                    scene.add(obj);
@@ -40867,13 +41327,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.destory = destory;
 
 /***/ },
-/* 11 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(12);
+	var content = __webpack_require__(22);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -40893,13 +41353,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 12 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = "[chapter=\"one\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
 
 /***/ },
-/* 13 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40921,7 +41381,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 14 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40987,7 +41447,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 15 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41058,7 +41518,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 16 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41109,7 +41569,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 17 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41219,7 +41679,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 18 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41288,7 +41748,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	// );
 
 /***/ },
-/* 19 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41358,7 +41818,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 20 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41433,7 +41893,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 21 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41451,41 +41911,41 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(22);
+	__webpack_require__(32);
 	
 	var _libPromise = __webpack_require__(4);
 	
 	var _libEnv = __webpack_require__(8);
 	
-	var _scene = __webpack_require__(24);
+	var _scene = __webpack_require__(34);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(25);
+	var _camera = __webpack_require__(35);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(26);
+	var _renderer = __webpack_require__(36);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(27);
+	var _light = __webpack_require__(37);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _controls = __webpack_require__(28);
+	var _controls = __webpack_require__(38);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _box = __webpack_require__(30);
+	var _box = __webpack_require__(40);
 	
 	var Box = _interopRequireWildcard(_box);
 	
-	var _box2 = __webpack_require__(31);
+	var _box2 = __webpack_require__(41);
 	
 	var Box2 = _interopRequireWildcard(_box2);
 	
-	var _visualizer = __webpack_require__(32);
+	var _visualizer = __webpack_require__(42);
 	
 	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
@@ -41601,13 +42061,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.destory = destory;
 
 /***/ },
-/* 22 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(23);
+	var content = __webpack_require__(33);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -41627,13 +42087,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 23 */
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports = "[chapter=\"two\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
 
 /***/ },
-/* 24 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41659,7 +42119,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 25 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41734,7 +42194,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 26 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41802,7 +42262,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 27 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41831,7 +42291,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 28 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41847,13 +42307,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libCubicbezier = __webpack_require__(29);
+	var _libCubicbezier = __webpack_require__(39);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
 	var _libUtil = __webpack_require__(9);
 	
-	var _box = __webpack_require__(30);
+	var _box = __webpack_require__(40);
 	
 	var Box = _interopRequireWildcard(_box);
 	
@@ -41892,7 +42352,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 29 */
+/* 39 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42013,7 +42473,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	module.exports = exports["default"];
 
 /***/ },
-/* 30 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42036,7 +42496,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libEnv = __webpack_require__(8);
 	
-	var _libCubicbezier = __webpack_require__(29);
+	var _libCubicbezier = __webpack_require__(39);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
@@ -42481,7 +42941,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 31 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42496,7 +42956,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _libEnv = __webpack_require__(8);
 	
-	var _libCubicbezier = __webpack_require__(29);
+	var _libCubicbezier = __webpack_require__(39);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
@@ -42549,7 +43009,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}, _prologue.onProgress, _prologue.onError);
 
 /***/ },
-/* 32 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Start off by initializing a new context.
