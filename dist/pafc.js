@@ -40487,7 +40487,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    loaded = _loaded;
 	    total = _total;
 	    percent += 1 / total;
-	    console.log(item, _loaded, _total);
 	    if (loaded === total) {
 	        deferred.resolve();
 	    }
@@ -40589,13 +40588,14 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	        percent += 0.001;
 	        if (total && loaded < total) {
-	            percent = Math.min(percent, (loaded + 1) / total * 0.95);
+	            percent = Math.min(percent, 0.95);
 	        } else if (total && loaded === total) {
 	            percent = 1;
 	        }
 	    } else {
 	        percent = 1;
 	    }
+	    console.log(percent);
 	
 	    text.textContent = parseInt(percent * 100);
 	
