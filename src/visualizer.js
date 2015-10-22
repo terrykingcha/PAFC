@@ -1,6 +1,3 @@
-// Start off by initializing a new context.
-import {defer} from './lib/promise';
-
 var audioContext = new(window.AudioContext || window.webkitAudioContext)();
 
 audioContext.createGain = audioContext.createGain || 
@@ -64,7 +61,7 @@ const SMOOTHING = 0.8;
 const FFT_SIZE = 64; // 快速傅里叶变换
 
 export default class Visualizer {
-    constructor() {
+    constructor(loadManager) {
         var that = this;
         this.analyser = audioContext.createAnalyser();
 
@@ -79,11 +76,7 @@ export default class Visualizer {
         this.startTime = 0;
         this.startOffset = 0;
 
-        this.deferred = defer();
-    }
-
-    ready() {
-        return this.deferred.promise;
+        this.loadManager = loadManager;
     }
 
     load(path) {
@@ -98,28 +91,28 @@ export default class Visualizer {
             names.push(name);
             paths.push(path);
         }
-        var bufferLoader = new BufferLoader(audioContext, paths, function(bufferList) {
+
+        that.loadManager.itemStart(path);
+        var bufferLoader = new BufferLoader(
+            audioContext, paths, function(bufferList) {
             for (var i = 0; i < bufferList.length; i++) {
                 var buffer = bufferList[i];
                 var name = names[i];
                 that[name] = buffer;
             }
-            that.togglePlayback();
-            that.deferred.resolve();
+            that.loadManager.itemEnd(path);
         });
         bufferLoader.load();
-
-        return that.deferred.promise;
     }
 
-    togglePlayback() {
-        if (this.isPlaying) {
+    togglePlayback(play) {
+        if (!play && this.isPlaying) {
             // Stop playback
             this.source[this.source.stop ? 'stop' : 'noteOff'](0);
             this.startOffset += audioContext.currentTime - this.startTime;
             console.log('paused at', this.startOffset);
             // Save the position of the play head.
-        } else {
+        } else if (play && !this.isPlaying) {
             this.startTime = audioContext.currentTime;
             console.log('started at', this.startOffset);
             this.source = audioContext.createBufferSource();
@@ -130,7 +123,8 @@ export default class Visualizer {
             // Start playback, but make sure we stay in bound of the buffer.
             this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
         }
-        this.isPlaying = !this.isPlaying;
+
+        this.isPlaying = play;
     }
 
     analysis() {

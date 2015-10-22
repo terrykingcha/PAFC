@@ -9,9 +9,10 @@ import * as Light from './light';
 import * as Controls from './controls';
 import * as Box from './box';
 import * as Box2 from './box2';
+import * as Box3 from './box3';
 import Visualizer from '../visualizer';
 
-var scene, camera, renderer, domElement, light, box, box2, visualizer;
+var scene, camera, renderer, domElement, light, box, box2, box3, visualizer;
 
 var music = location.search.match(/music=(\d+)/);
 if (music) {
@@ -27,6 +28,7 @@ export var init = async () => {
         Renderer.ready(),
         Box.ready(),
         Box2.ready(),
+        Box3.ready(),
         Light.ready()
     ]);
 
@@ -37,13 +39,15 @@ export var init = async () => {
     light = Light.light;
     box = Box.object;
     box2 = Box2.object;
-    visualizer = new Visualizer();
-    visualizer.load(`./assets/sounds/${music}.mp3`);
+    box3 = Box3.object;
+    // visualizer = new Visualizer();
+    // visualizer.load(`./assets/sounds/${music}.mp3`);
 
     scene.add(camera);
     scene.add(light);
     // scene.add(box);
-    scene.add(box2);
+    // scene.add(box2);
+    scene.add(box3);
 
 
     // box.position.set(Box.xSize() / -2, Box.ySize() / -2, 0);
@@ -52,7 +56,7 @@ export var init = async () => {
     // camera.top = Box.ySize() / 2;
     // camera.bottom = Box.ySize() / -2;
     // camera.position.set(100, 0, Box.xSize() / 2);
-    camera.position.set(100, 0, 1000);
+    camera.position.set(100, 0, 500);
 
     light.position.set(0, 0, 100);
     Controls.init(camera, renderer);
@@ -75,7 +79,7 @@ export function resize() {
 export function render() {
     // visualizer.analysis();
     // Box.render(visualizer);
-    Box2.render();
+    Box3.render();
     Camera.render();
     renderer.render(scene, camera);
 }

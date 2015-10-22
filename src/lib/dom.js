@@ -92,5 +92,15 @@ export function toggleClass() {
 
 export function hasClass() {
     var [dom, className] = this::parse(1, false, ...arguments);
-    return dom.classList.contain(className);
+    return dom.classList.contains(className);
+}
+
+export function attr() {
+    var [dom, name, value] = this::parse(2, true, ...arguments);
+    if (typeof value === 'undefined') {
+        return dom.getAttribute(name);
+    } else {
+        dom.setAttribute(name, value);
+        return dom;
+    }
 }

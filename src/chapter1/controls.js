@@ -69,7 +69,6 @@ function parseXY(e) {
 }
 
 function onMouseEnter(e) {
-    // zoomIn = true;
     parseXY(e);
 }
 
@@ -79,7 +78,6 @@ function onMouseMove(e) {
 
 function onMouseLeave(e) {
     parseXY(e);
-    // zoomIn = false;
 }
 
 export function init(_camera) {

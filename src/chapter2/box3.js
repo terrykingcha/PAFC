@@ -43,10 +43,16 @@ function morphColorsToFaceColors(geometry) {
 }
 
 var loader = new THREE.JSONLoader(manager);
-loader.load('assets/obj/box01.js', function(geometry) {
+loader.load('assets/obj/sphere.js', function(geometry) {
     morphColorsToFaceColors(geometry);
 
-    var material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff, shininess: 20, morphTargets: true, vertexColors: THREE.FaceColors, shading: THREE.FlatShading } );
+    var material = new THREE.MeshPhongMaterial({ 
+        color: 0xffffff, 
+        specular: 0xffffff, 
+        morphTargets: true, 
+        vertexColors: THREE.FaceColors, 
+        wireframe: true
+    });
     object = new THREE.MorphAnimMesh(geometry, material);
     object.duration = 5000;
     deferred.resolve();

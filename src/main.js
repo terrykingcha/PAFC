@@ -9,9 +9,13 @@ import * as clock from './clock';
 import * as share from './share';
 import * as nav from './nav';
 import * as menu from './menu';
+import Visualizer from './visualizer';
 import * as chapter1 from './chapter1';
 // import * as chapter2 from './chapter2';
 // import * as chapter3 from './chapter3';
+
+var openingMusic = new Visualizer(prologue.manager);
+openingMusic.load('./assets/sounds/opening.mp3');
 
 var chapters = {
     cp1: chapter1
@@ -37,10 +41,7 @@ if ((matched = location.search.match(/cp=(\d+)/))) {
     await prologue.opening();
     await prologue.hide();
 
-    await Promise.all([
-        clock.ready(),
-        // menu.ready()
-    ]);
+    await clock.ready();
 
     await Promise.all([
         clock.show(),
@@ -48,9 +49,22 @@ if ((matched = location.search.match(/cp=(\d+)/))) {
         nav.show()
     ]);
 
+    openingMusic.togglePlayback(true);
     clock.run();
 
-    // await chapter.start();
+    share.onshare(function(type) {
+        console.log(type);
+    });
+
+    menu.onsymbol(function(symbol) {
+        console.log(symbol);
+    });
+
+    nav.onmusic(function(on) {
+        openingMusic.togglePlayback(on);
+    });
+
+    await chapter.start();
     // var lastChapter;
     // for (var i = 0; i < chapters.length; i++) {
     //     let chapter = chapters[i];
