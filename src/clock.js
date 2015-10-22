@@ -12,6 +12,20 @@ timestamp = Date.now();
 clientOffset = Date.now();
 deferred.resolve();
 
+export function state() {
+    var h = getHours();
+    
+    if (h >= 5 && h < 8) {
+        return 'dawn';
+    } else if (h >= 8 && h < 16) {
+        return 'daylight';
+    } else if (h >= 16 && h < 19) {
+        return 'sunset';
+    } else {
+        return 'night';
+    }
+}
+
 export function now() {
     var offset = Date.now() - clientOffset;
     return timestamp + offset;

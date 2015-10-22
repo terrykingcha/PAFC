@@ -35964,490 +35964,6 @@ THREE.MorphBlendMesh.prototype.update = function ( delta ) {
 };
 
 
-/*
- * @author Daosheng Mu / https://github.com/DaoshengMu/
- * @author mrdoob / http://mrdoob.com/
- */
-
-THREE.TGALoader = function ( manager ) {
-
-	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
-
-};
-
-// extend THREE.BinaryTextureLoader
-THREE.TGALoader.prototype = Object.create( THREE.BinaryTextureLoader.prototype );
-
-// reference from vthibault, https://github.com/vthibault/roBrowser/blob/master/src/Loaders/Targa.js
-THREE.TGALoader.prototype._parser = function ( buffer ) {
-
-	// TGA Constants
-	var TGA_TYPE_NO_DATA = 0,
-	TGA_TYPE_INDEXED = 1,
-	TGA_TYPE_RGB = 2,
-	TGA_TYPE_GREY = 3,
-	TGA_TYPE_RLE_INDEXED = 9,
-	TGA_TYPE_RLE_RGB = 10,
-	TGA_TYPE_RLE_GREY = 11,
-
-	TGA_ORIGIN_MASK = 0x30,
-	TGA_ORIGIN_SHIFT = 0x04,
-	TGA_ORIGIN_BL = 0x00,
-	TGA_ORIGIN_BR = 0x01,
-	TGA_ORIGIN_UL = 0x02,
-	TGA_ORIGIN_UR = 0x03;
-
-
-	if ( buffer.length < 19 )
-		console.error( 'THREE.TGALoader.parse: Not enough data to contain header.' );
-
-	var content = new Uint8Array( buffer ),
-		offset = 0,
-		header = {
-			id_length:       content[ offset ++ ],
-			colormap_type:   content[ offset ++ ],
-			image_type:      content[ offset ++ ],
-			colormap_index:  content[ offset ++ ] | content[ offset ++ ] << 8,
-			colormap_length: content[ offset ++ ] | content[ offset ++ ] << 8,
-			colormap_size:   content[ offset ++ ],
-
-			origin: [
-				content[ offset ++ ] | content[ offset ++ ] << 8,
-				content[ offset ++ ] | content[ offset ++ ] << 8
-			],
-			width:      content[ offset ++ ] | content[ offset ++ ] << 8,
-			height:     content[ offset ++ ] | content[ offset ++ ] << 8,
-			pixel_size: content[ offset ++ ],
-			flags:      content[ offset ++ ]
-		};
-
-	function tgaCheckHeader( header ) {
-
-		switch ( header.image_type ) {
-
-			// Check indexed type
-			case TGA_TYPE_INDEXED:
-			case TGA_TYPE_RLE_INDEXED:
-				if ( header.colormap_length > 256 || header.colormap_size !== 24 || header.colormap_type !== 1 ) {
-
-					console.error( 'THREE.TGALoader.parse.tgaCheckHeader: Invalid type colormap data for indexed type' );
-
-				}
-				break;
-
-			// Check colormap type
-			case TGA_TYPE_RGB:
-			case TGA_TYPE_GREY:
-			case TGA_TYPE_RLE_RGB:
-			case TGA_TYPE_RLE_GREY:
-				if ( header.colormap_type ) {
-
-					console.error( 'THREE.TGALoader.parse.tgaCheckHeader: Invalid type colormap data for colormap type' );
-
-				}
-				break;
-
-			// What the need of a file without data ?
-			case TGA_TYPE_NO_DATA:
-				console.error( 'THREE.TGALoader.parse.tgaCheckHeader: No data' );
-
-			// Invalid type ?
-			default:
-				console.error( 'THREE.TGALoader.parse.tgaCheckHeader: Invalid type " ' + header.image_type + '"' );
-
-		}
-
-		// Check image width and height
-		if ( header.width <= 0 || header.height <= 0 ) {
-
-			console.error( 'THREE.TGALoader.parse.tgaCheckHeader: Invalid image size' );
-
-		}
-
-		// Check image pixel size
-		if ( header.pixel_size !== 8  &&
-			header.pixel_size !== 16 &&
-			header.pixel_size !== 24 &&
-			header.pixel_size !== 32 ) {
-
-			console.error( 'THREE.TGALoader.parse.tgaCheckHeader: Invalid pixel size "' + header.pixel_size + '"' );
-
-		}
-
-	}
-
-	// Check tga if it is valid format
-	tgaCheckHeader( header );
-
-	if ( header.id_length + offset > buffer.length ) {
-
-		console.error( 'THREE.TGALoader.parse: No data' );
-
-	}
-
-	// Skip the needn't data
-	offset += header.id_length;
-
-	// Get targa information about RLE compression and palette
-	var use_rle = false,
-		use_pal = false,
-		use_grey = false;
-
-	switch ( header.image_type ) {
-
-		case TGA_TYPE_RLE_INDEXED:
-			use_rle = true;
-			use_pal = true;
-			break;
-
-		case TGA_TYPE_INDEXED:
-			use_pal = true;
-			break;
-
-		case TGA_TYPE_RLE_RGB:
-			use_rle = true;
-			break;
-
-		case TGA_TYPE_RGB:
-			break;
-
-		case TGA_TYPE_RLE_GREY:
-			use_rle = true;
-			use_grey = true;
-			break;
-
-		case TGA_TYPE_GREY:
-			use_grey = true;
-			break;
-
-	}
-
-	// Parse tga image buffer
-	function tgaParse( use_rle, use_pal, header, offset, data ) {
-
-		var pixel_data,
-			pixel_size,
-			pixel_total,
-			palettes;
-
-		pixel_size = header.pixel_size >> 3;
-		pixel_total = header.width * header.height * pixel_size;
-
-		 // Read palettes
-		 if ( use_pal ) {
-
-			 palettes = data.subarray( offset, offset += header.colormap_length * ( header.colormap_size >> 3 ) );
-
-		 }
-
-		 // Read RLE
-		 if ( use_rle ) {
-
-			 pixel_data = new Uint8Array( pixel_total );
-
-			var c, count, i;
-			var shift = 0;
-			var pixels = new Uint8Array( pixel_size );
-
-			while ( shift < pixel_total ) {
-
-				c     = data[ offset ++ ];
-				count = ( c & 0x7f ) + 1;
-
-				// RLE pixels.
-				if ( c & 0x80 ) {
-
-					// Bind pixel tmp array
-					for ( i = 0; i < pixel_size; ++ i ) {
-
-						pixels[ i ] = data[ offset ++ ];
-
-					}
-
-					// Copy pixel array
-					for ( i = 0; i < count; ++ i ) {
-
-						pixel_data.set( pixels, shift + i * pixel_size );
-
-					}
-
-					shift += pixel_size * count;
-
-				} else {
-
-					// Raw pixels.
-					count *= pixel_size;
-					for ( i = 0; i < count; ++ i ) {
-
-						pixel_data[ shift + i ] = data[ offset ++ ];
-
-					}
-					shift += count;
-
-				}
-
-			}
-
-		 } else {
-
-			// RAW Pixels
-			pixel_data = data.subarray(
-				 offset, offset += ( use_pal ? header.width * header.height : pixel_total )
-			);
-
-		 }
-
-		 return {
-			pixel_data: pixel_data,
-			palettes: palettes
-		 };
-
-	}
-
-	function tgaGetImageData8bits( imageData, y_start, y_step, y_end, x_start, x_step, x_end, image, palettes ) {
-
-		var colormap = palettes;
-		var color, i = 0, x, y;
-		var width = header.width;
-
-		for ( y = y_start; y !== y_end; y += y_step ) {
-
-			for ( x = x_start; x !== x_end; x += x_step, i ++ ) {
-
-				color = image[ i ];
-				imageData[ ( x + width * y ) * 4 + 3 ] = 255;
-				imageData[ ( x + width * y ) * 4 + 2 ] = colormap[ ( color * 3 ) + 0 ];
-				imageData[ ( x + width * y ) * 4 + 1 ] = colormap[ ( color * 3 ) + 1 ];
-				imageData[ ( x + width * y ) * 4 + 0 ] = colormap[ ( color * 3 ) + 2 ];
-
-			}
-
-		}
-
-		return imageData;
-
-	}
-
-	function tgaGetImageData16bits( imageData, y_start, y_step, y_end, x_start, x_step, x_end, image ) {
-
-		var color, i = 0, x, y;
-		var width = header.width;
-
-		for ( y = y_start; y !== y_end; y += y_step ) {
-
-			for ( x = x_start; x !== x_end; x += x_step, i += 2 ) {
-
-				color = image[ i + 0 ] + ( image[ i + 1 ] << 8 ); // Inversed ?
-				imageData[ ( x + width * y ) * 4 + 0 ] = ( color & 0x7C00 ) >> 7;
-				imageData[ ( x + width * y ) * 4 + 1 ] = ( color & 0x03E0 ) >> 2;
-				imageData[ ( x + width * y ) * 4 + 2 ] = ( color & 0x001F ) >> 3;
-				imageData[ ( x + width * y ) * 4 + 3 ] = ( color & 0x8000 ) ? 0 : 255;
-
-			}
-
-		}
-
-		return imageData;
-
-	}
-
-	function tgaGetImageData24bits( imageData, y_start, y_step, y_end, x_start, x_step, x_end, image ) {
-
-		var i = 0, x, y;
-		var width = header.width;
-
-		for ( y = y_start; y !== y_end; y += y_step ) {
-
-			for ( x = x_start; x !== x_end; x += x_step, i += 3 ) {
-
-				imageData[ ( x + width * y ) * 4 + 3 ] = 255;
-				imageData[ ( x + width * y ) * 4 + 2 ] = image[ i + 0 ];
-				imageData[ ( x + width * y ) * 4 + 1 ] = image[ i + 1 ];
-				imageData[ ( x + width * y ) * 4 + 0 ] = image[ i + 2 ];
-
-			}
-
-		}
-
-		return imageData;
-
-	}
-
-	function tgaGetImageData32bits( imageData, y_start, y_step, y_end, x_start, x_step, x_end, image ) {
-
-		var i = 0, x, y;
-		var width = header.width;
-
-		for ( y = y_start; y !== y_end; y += y_step ) {
-
-			for ( x = x_start; x !== x_end; x += x_step, i += 4 ) {
-
-				imageData[ ( x + width * y ) * 4 + 2 ] = image[ i + 0 ];
-				imageData[ ( x + width * y ) * 4 + 1 ] = image[ i + 1 ];
-				imageData[ ( x + width * y ) * 4 + 0 ] = image[ i + 2 ];
-				imageData[ ( x + width * y ) * 4 + 3 ] = image[ i + 3 ];
-
-			}
-
-		}
-
-		return imageData;
-
-	}
-
-	function tgaGetImageDataGrey8bits( imageData, y_start, y_step, y_end, x_start, x_step, x_end, image ) {
-
-		var color, i = 0, x, y;
-		var width = header.width;
-
-		for ( y = y_start; y !== y_end; y += y_step ) {
-
-			for ( x = x_start; x !== x_end; x += x_step, i ++ ) {
-
-				color = image[ i ];
-				imageData[ ( x + width * y ) * 4 + 0 ] = color;
-				imageData[ ( x + width * y ) * 4 + 1 ] = color;
-				imageData[ ( x + width * y ) * 4 + 2 ] = color;
-				imageData[ ( x + width * y ) * 4 + 3 ] = 255;
-
-			}
-
-		}
-
-		return imageData;
-
-	}
-
-	function tgaGetImageDataGrey16bits( imageData, y_start, y_step, y_end, x_start, x_step, x_end, image ) {
-
-		var i = 0, x, y;
-		var width = header.width;
-
-		for ( y = y_start; y !== y_end; y += y_step ) {
-
-			for ( x = x_start; x !== x_end; x += x_step, i += 2 ) {
-
-				imageData[ ( x + width * y ) * 4 + 0 ] = image[ i + 0 ];
-				imageData[ ( x + width * y ) * 4 + 1 ] = image[ i + 0 ];
-				imageData[ ( x + width * y ) * 4 + 2 ] = image[ i + 0 ];
-				imageData[ ( x + width * y ) * 4 + 3 ] = image[ i + 1 ];
-
-			}
-
-		}
-
-		return imageData;
-
-	}
-
-	function getTgaRGBA( width, height, image, palette ) {
-
-		var x_start,
-			y_start,
-			x_step,
-			y_step,
-			x_end,
-			y_end,
-			data = new Uint8Array( width * height * 4 );
-
-		switch ( ( header.flags & TGA_ORIGIN_MASK ) >> TGA_ORIGIN_SHIFT ) {
-			default:
-			case TGA_ORIGIN_UL:
-				x_start = 0;
-				x_step = 1;
-				x_end = width;
-				y_start = 0;
-				y_step = 1;
-				y_end = height;
-				break;
-
-			case TGA_ORIGIN_BL:
-				x_start = 0;
-				x_step = 1;
-				x_end = width;
-				y_start = height - 1;
-				y_step = - 1;
-				y_end = - 1;
-				break;
-
-			case TGA_ORIGIN_UR:
-				x_start = width - 1;
-				x_step = - 1;
-				x_end = - 1;
-				y_start = 0;
-				y_step = 1;
-				y_end = height;
-				break;
-
-			case TGA_ORIGIN_BR:
-				x_start = width - 1;
-				x_step = - 1;
-				x_end = - 1;
-				y_start = height - 1;
-				y_step = - 1;
-				y_end = - 1;
-				break;
-
-		}
-
-		if ( use_grey ) {
-
-			switch ( header.pixel_size ) {
-				case 8:
-					tgaGetImageDataGrey8bits( data, y_start, y_step, y_end, x_start, x_step, x_end, image );
-					break;
-				case 16:
-					tgaGetImageDataGrey16bits( data, y_start, y_step, y_end, x_start, x_step, x_end, image );
-					break;
-				default:
-					console.error( 'THREE.TGALoader.parse.getTgaRGBA: not support this format' );
-					break;
-			}
-
-		} else {
-
-			switch ( header.pixel_size ) {
-				case 8:
-					tgaGetImageData8bits( data, y_start, y_step, y_end, x_start, x_step, x_end, image, palette );
-					break;
-
-				case 16:
-					tgaGetImageData16bits( data, y_start, y_step, y_end, x_start, x_step, x_end, image );
-					break;
-
-				case 24:
-					tgaGetImageData24bits( data, y_start, y_step, y_end, x_start, x_step, x_end, image );
-					break;
-
-				case 32:
-					tgaGetImageData32bits( data, y_start, y_step, y_end, x_start, x_step, x_end, image );
-					break;
-
-				default:
-					console.error( 'THREE.TGALoader.parse.getTgaRGBA: not support this format' );
-					break;
-			}
-
-		}
-
-		// Load image data according to specific method
-		// var func = 'tgaGetImageData' + (use_grey ? 'Grey' : '') + (header.pixel_size) + 'bits';
-		// func(data, y_start, y_step, y_end, x_start, x_step, x_end, width, image, palette );
-		return data;
-
-	}
-
-	var result = tgaParse( use_rle, use_pal, header, offset, content );
-	var rgbaData = getTgaRGBA( header.width, header.height, result.pixel_data, result.palettes );
-
-	return {
-		width: header.width,
-		height: header.height,
-		data: rgbaData
-	};
-
-};
-
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -36828,2207 +36344,6 @@ THREE.OBJLoader.prototype = {
 		return container;
 
 	}
-
-};
-
-/**
- * Loads a Wavefront .mtl file specifying materials
- *
- * @author angelxuanchang
- */
-
-THREE.MTLLoader = function( manager ) {
-
-	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
-
-};
-
-THREE.MTLLoader.prototype = {
-
-	constructor: THREE.MTLLoader,
-
-	load: function ( url, onLoad, onProgress, onError ) {
-
-		var scope = this;
-
-		var loader = new THREE.XHRLoader( this.manager );
-		loader.setCrossOrigin( this.crossOrigin );
-		loader.load( url, function ( text ) {
-
-			onLoad( scope.parse( text ) );
-
-		}, onProgress, onError );
-
-	},
-
-	setBaseUrl: function( value ) {
-
-		this.baseUrl = value;
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-
-	},
-
-	setMaterialOptions: function ( value ) {
-
-		this.materialOptions = value;
-
-	},
-
-	/**
-	 * Parses loaded MTL file
-	 * @param text - Content of MTL file
-	 * @return {THREE.MTLLoader.MaterialCreator}
-	 */
-	parse: function ( text ) {
-
-		var lines = text.split( "\n" );
-		var info = {};
-		var delimiter_pattern = /\s+/;
-		var materialsInfo = {};
-
-		for ( var i = 0; i < lines.length; i ++ ) {
-
-			var line = lines[ i ];
-			line = line.trim();
-
-			if ( line.length === 0 || line.charAt( 0 ) === '#' ) {
-
-				// Blank line or comment ignore
-				continue;
-
-			}
-
-			var pos = line.indexOf( ' ' );
-
-			var key = ( pos >= 0 ) ? line.substring( 0, pos ) : line;
-			key = key.toLowerCase();
-
-			var value = ( pos >= 0 ) ? line.substring( pos + 1 ) : "";
-			value = value.trim();
-
-			if ( key === "newmtl" ) {
-
-				// New material
-
-				info = { name: value };
-				materialsInfo[ value ] = info;
-
-			} else if ( info ) {
-
-				if ( key === "ka" || key === "kd" || key === "ks" ) {
-
-					var ss = value.split( delimiter_pattern, 3 );
-					info[ key ] = [ parseFloat( ss[ 0 ] ), parseFloat( ss[ 1 ] ), parseFloat( ss[ 2 ] ) ];
-
-				} else {
-
-					info[ key ] = value;
-
-				}
-
-			}
-
-		}
-
-		var materialCreator = new THREE.MTLLoader.MaterialCreator( this.baseUrl, this.materialOptions );
-		materialCreator.setCrossOrigin( this.crossOrigin );
-		materialCreator.setManager( this.manager );
-		materialCreator.setMaterials( materialsInfo );
-		return materialCreator;
-
-	}
-
-};
-
-/**
- * Create a new THREE-MTLLoader.MaterialCreator
- * @param baseUrl - Url relative to which textures are loaded
- * @param options - Set of options on how to construct the materials
- *                  side: Which side to apply the material
- *                        THREE.FrontSide (default), THREE.BackSide, THREE.DoubleSide
- *                  wrap: What type of wrapping to apply for textures
- *                        THREE.RepeatWrapping (default), THREE.ClampToEdgeWrapping, THREE.MirroredRepeatWrapping
- *                  normalizeRGB: RGBs need to be normalized to 0-1 from 0-255
- *                                Default: false, assumed to be already normalized
- *                  ignoreZeroRGBs: Ignore values of RGBs (Ka,Kd,Ks) that are all 0's
- *                                  Default: false
- *                  invertTransparency: If transparency need to be inverted (inversion is needed if d = 0 is fully opaque)
- *                                      Default: false (d = 1 is fully opaque)
- * @constructor
- */
-
-THREE.MTLLoader.MaterialCreator = function( baseUrl, options ) {
-
-	this.baseUrl = baseUrl;
-	this.options = options;
-	this.materialsInfo = {};
-	this.materials = {};
-	this.materialsArray = [];
-	this.nameLookup = {};
-
-	this.side = ( this.options && this.options.side ) ? this.options.side : THREE.FrontSide;
-	this.wrap = ( this.options && this.options.wrap ) ? this.options.wrap : THREE.RepeatWrapping;
-
-};
-
-THREE.MTLLoader.MaterialCreator.prototype = {
-
-	constructor: THREE.MTLLoader.MaterialCreator,
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-
-	},
-
-	setManager: function ( value ) {
-
-		this.manager = value;
-
-	},
-
-	setMaterials: function( materialsInfo ) {
-
-		this.materialsInfo = this.convert( materialsInfo );
-		this.materials = {};
-		this.materialsArray = [];
-		this.nameLookup = {};
-
-	},
-
-	convert: function( materialsInfo ) {
-
-		if ( ! this.options ) return materialsInfo;
-
-		var converted = {};
-
-		for ( var mn in materialsInfo ) {
-
-			// Convert materials info into normalized form based on options
-
-			var mat = materialsInfo[ mn ];
-
-			var covmat = {};
-
-			converted[ mn ] = covmat;
-
-			for ( var prop in mat ) {
-
-				var save = true;
-				var value = mat[ prop ];
-				var lprop = prop.toLowerCase();
-
-				switch ( lprop ) {
-
-					case 'kd':
-					case 'ka':
-					case 'ks':
-
-						// Diffuse color (color under white light) using RGB values
-
-						if ( this.options && this.options.normalizeRGB ) {
-
-							value = [ value[ 0 ] / 255, value[ 1 ] / 255, value[ 2 ] / 255 ];
-
-						}
-
-						if ( this.options && this.options.ignoreZeroRGBs ) {
-
-							if ( value[ 0 ] === 0 && value[ 1 ] === 0 && value[ 1 ] === 0 ) {
-
-								// ignore
-
-								save = false;
-
-							}
-
-						}
-
-						break;
-
-					case 'd':
-
-						// According to MTL format (http://paulbourke.net/dataformats/mtl/):
-						//   d is dissolve for current material
-						//   factor of 1.0 is fully opaque, a factor of 0 is fully dissolved (completely transparent)
-
-						if ( this.options && this.options.invertTransparency ) {
-
-							value = 1 - value;
-
-						}
-
-						break;
-
-					default:
-
-						break;
-				}
-
-				if ( save ) {
-
-					covmat[ lprop ] = value;
-
-				}
-
-			}
-
-		}
-
-		return converted;
-
-	},
-
-	preload: function () {
-
-		for ( var mn in this.materialsInfo ) {
-
-			this.create( mn );
-
-		}
-
-	},
-
-	getIndex: function( materialName ) {
-
-		return this.nameLookup[ materialName ];
-
-	},
-
-	getAsArray: function() {
-
-		var index = 0;
-
-		for ( var mn in this.materialsInfo ) {
-
-			this.materialsArray[ index ] = this.create( mn );
-			this.nameLookup[ mn ] = index;
-			index ++;
-
-		}
-
-		return this.materialsArray;
-
-	},
-
-	create: function ( materialName ) {
-
-		if ( this.materials[ materialName ] === undefined ) {
-
-			this.createMaterial_( materialName );
-
-		}
-
-		return this.materials[ materialName ];
-
-	},
-
-	createMaterial_: function ( materialName ) {
-
-		// Create material
-
-		var mat = this.materialsInfo[ materialName ];
-		var params = {
-
-			name: materialName,
-			side: this.side
-
-		};
-
-		for ( var prop in mat ) {
-
-			var value = mat[ prop ];
-
-			switch ( prop.toLowerCase() ) {
-
-				// Ns is material specular exponent
-
-				case 'kd':
-
-					// Diffuse color (color under white light) using RGB values
-
-					params[ 'diffuse' ] = new THREE.Color().fromArray( value );
-
-					break;
-
-				case 'ka':
-
-					// Ambient color (color under shadow) using RGB values
-
-					break;
-
-				case 'ks':
-
-					// Specular color (color when light is reflected from shiny surface) using RGB values
-					params[ 'specular' ] = new THREE.Color().fromArray( value );
-
-					break;
-
-				case 'map_kd':
-
-					// Diffuse texture map
-
-					params[ 'map' ] = this.loadTexture( this.baseUrl + value );
-					params[ 'map' ].wrapS = this.wrap;
-					params[ 'map' ].wrapT = this.wrap;
-
-					break;
-
-				case 'ns':
-
-					// The specular exponent (defines the focus of the specular highlight)
-					// A high exponent results in a tight, concentrated highlight. Ns values normally range from 0 to 1000.
-
-					params[ 'shininess' ] = value;
-
-					break;
-
-				case 'd':
-
-					// According to MTL format (http://paulbourke.net/dataformats/mtl/):
-					//   d is dissolve for current material
-					//   factor of 1.0 is fully opaque, a factor of 0 is fully dissolved (completely transparent)
-
-					if ( value < 1 ) {
-
-						params[ 'transparent' ] = true;
-						params[ 'opacity' ] = value;
-
-					}
-
-					break;
-
-				case 'map_bump':
-				case 'bump':
-
-					// Bump texture map
-
-					if ( params[ 'bumpMap' ] ) break; // Avoid loading twice.
-
-					params[ 'bumpMap' ] = this.loadTexture( this.baseUrl + value );
-					params[ 'bumpMap' ].wrapS = this.wrap;
-					params[ 'bumpMap' ].wrapT = this.wrap;
-
-					break;
-
-				default:
-					break;
-
-			}
-
-		}
-
-		if ( params[ 'diffuse' ] ) {
-
-			params[ 'color' ] = params[ 'diffuse' ];
-
-		}
-
-		this.materials[ materialName ] = new THREE.MeshPhongMaterial( params );
-		return this.materials[ materialName ];
-
-	},
-
-
-	loadTexture: function ( url, mapping, onLoad, onProgress, onError ) {
-
-		var texture;
-		var loader = THREE.Loader.Handlers.get( url );
-		var manager = ( this.manager !== undefined ) ? this.manager : THREE.DefaultLoadingManager;
-
-		if ( loader !== null ) {
-
-			texture = loader.load( url, onLoad );
-
-		} else {
-
-			texture = new THREE.Texture();
-
-			loader = new THREE.ImageLoader( manager );
-			loader.setCrossOrigin( this.crossOrigin );
-			loader.load( url, function ( image ) {
-
-				texture.image = THREE.MTLLoader.ensurePowerOfTwo_( image );
-				texture.needsUpdate = true;
-
-				if ( onLoad ) onLoad( texture );
-
-			}, onProgress, onError );
-
-		}
-
-		if ( mapping !== undefined ) texture.mapping = mapping;
-
-		return texture;
-
-	}
-
-};
-
-THREE.MTLLoader.ensurePowerOfTwo_ = function ( image ) {
-
-	if ( ! THREE.Math.isPowerOfTwo( image.width ) || ! THREE.Math.isPowerOfTwo( image.height ) ) {
-
-		var canvas = document.createElement( "canvas" );
-		canvas.width = THREE.MTLLoader.nextHighestPowerOfTwo_( image.width );
-		canvas.height = THREE.MTLLoader.nextHighestPowerOfTwo_( image.height );
-
-		var ctx = canvas.getContext( "2d" );
-		ctx.drawImage( image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height );
-		return canvas;
-
-	}
-
-	return image;
-
-};
-
-THREE.MTLLoader.nextHighestPowerOfTwo_ = function( x ) {
-
-	-- x;
-
-	for ( var i = 1; i < 32; i <<= 1 ) {
-
-		x = x | x >> i;
-
-	}
-
-	return x + 1;
-
-};
-
-THREE.EventDispatcher.prototype.apply( THREE.MTLLoader.prototype );
-
-/**
- * Loads a Wavefront .obj file with materials
- *
- * @author mrdoob / http://mrdoob.com/
- * @author angelxuanchang
- */
-
-THREE.OBJMTLLoader = function ( manager ) {
-
-	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
-
-};
-
-THREE.OBJMTLLoader.prototype = {
-
-	constructor: THREE.OBJMTLLoader,
-
-	load: function ( url, mtlurl, onLoad, onProgress, onError ) {
-
-		var scope = this;
-
-		var mtlLoader = new THREE.MTLLoader( this.manager );
-		mtlLoader.setBaseUrl( url.substr( 0, url.lastIndexOf( "/" ) + 1 ) );
-		mtlLoader.setCrossOrigin( this.crossOrigin );
-		mtlLoader.load( mtlurl, function ( materials ) {
-
-			var materialsCreator = materials;
-			materialsCreator.preload();
-
-			var loader = new THREE.XHRLoader( scope.manager );
-			loader.setCrossOrigin( scope.crossOrigin );
-			loader.load( url, function ( text ) {
-
-				var object = scope.parse( text );
-
-				object.traverse( function ( object ) {
-
-					if ( object instanceof THREE.Mesh ) {
-
-						if ( object.material.name ) {
-
-							var material = materialsCreator.create( object.material.name );
-
-							if ( material ) object.material = material;
-
-						}
-
-					}
-
-				} );
-
-				onLoad( object );
-
-			}, onProgress, onError );
-
-		}, onProgress, onError );
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-
-	},
-
-	/**
-	 * Parses loaded .obj file
-	 * @param data - content of .obj file
-	 * @param mtllibCallback - callback to handle mtllib declaration (optional)
-	 * @return {THREE.Object3D} - Object3D (with default material)
-	 */
-
-	parse: function ( data, mtllibCallback ) {
-
-		function vector( x, y, z ) {
-
-			return new THREE.Vector3( x, y, z );
-
-		}
-
-		function uv( u, v ) {
-
-			return new THREE.Vector2( u, v );
-
-		}
-
-		function face3( a, b, c, normals ) {
-
-			return new THREE.Face3( a, b, c, normals );
-
-		}
-
-		var face_offset = 0;
-
-		function meshN( meshName, materialName ) {
-
-			if ( vertices.length > 0 ) {
-
-				geometry.vertices = vertices;
-
-				geometry.mergeVertices();
-				geometry.computeFaceNormals();
-				geometry.computeBoundingSphere();
-
-				object.add( mesh );
-
-				geometry = new THREE.Geometry();
-				mesh = new THREE.Mesh( geometry, material );
-
-			}
-
-			if ( meshName !== undefined ) mesh.name = meshName;
-
-			if ( materialName !== undefined ) {
-
-				material = new THREE.MeshLambertMaterial();
-				material.name = materialName;
-
-				mesh.material = material;
-
-			}
-
-		}
-
-		var group = new THREE.Group();
-		var object = group;
-
-		var geometry = new THREE.Geometry();
-		var material = new THREE.MeshLambertMaterial();
-		var mesh = new THREE.Mesh( geometry, material );
-
-		var vertices = [];
-		var normals = [];
-		var uvs = [];
-
-		function add_face( a, b, c, normals_inds ) {
-
-			if ( normals_inds === undefined ) {
-
-				geometry.faces.push( face3(
-					parseInt( a ) - ( face_offset + 1 ),
-					parseInt( b ) - ( face_offset + 1 ),
-					parseInt( c ) - ( face_offset + 1 )
-				) );
-
-			} else {
-
-				geometry.faces.push( face3(
-					parseInt( a ) - ( face_offset + 1 ),
-					parseInt( b ) - ( face_offset + 1 ),
-					parseInt( c ) - ( face_offset + 1 ),
-					[
-						normals[ parseInt( normals_inds[ 0 ] ) - 1 ].clone(),
-						normals[ parseInt( normals_inds[ 1 ] ) - 1 ].clone(),
-						normals[ parseInt( normals_inds[ 2 ] ) - 1 ].clone()
-					]
-				) );
-
-			}
-
-		}
-
-		function add_uvs( a, b, c ) {
-
-			geometry.faceVertexUvs[ 0 ].push( [
-				uvs[ parseInt( a ) - 1 ].clone(),
-				uvs[ parseInt( b ) - 1 ].clone(),
-				uvs[ parseInt( c ) - 1 ].clone()
-			] );
-
-		}
-
-		function handle_face_line( faces, uvs, normals_inds ) {
-
-			if ( faces[ 3 ] === undefined ) {
-
-				add_face( faces[ 0 ], faces[ 1 ], faces[ 2 ], normals_inds );
-
-				if ( ! ( uvs === undefined ) && uvs.length > 0 ) {
-
-					add_uvs( uvs[ 0 ], uvs[ 1 ], uvs[ 2 ] );
-
-				}
-
-			} else {
-
-				if ( ! ( normals_inds === undefined ) && normals_inds.length > 0 ) {
-
-					add_face( faces[ 0 ], faces[ 1 ], faces[ 3 ], [ normals_inds[ 0 ], normals_inds[ 1 ], normals_inds[ 3 ] ] );
-					add_face( faces[ 1 ], faces[ 2 ], faces[ 3 ], [ normals_inds[ 1 ], normals_inds[ 2 ], normals_inds[ 3 ] ] );
-
-				} else {
-
-					add_face( faces[ 0 ], faces[ 1 ], faces[ 3 ] );
-					add_face( faces[ 1 ], faces[ 2 ], faces[ 3 ] );
-
-				}
-
-				if ( ! ( uvs === undefined ) && uvs.length > 0 ) {
-
-					add_uvs( uvs[ 0 ], uvs[ 1 ], uvs[ 3 ] );
-					add_uvs( uvs[ 1 ], uvs[ 2 ], uvs[ 3 ] );
-
-				}
-
-			}
-
-		}
-
-
-		// v float float float
-
-		var vertex_pattern = /v( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
-
-		// vn float float float
-
-		var normal_pattern = /vn( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
-
-		// vt float float
-
-		var uv_pattern = /vt( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
-
-		// f vertex vertex vertex ...
-
-		var face_pattern1 = /f( +\d+)( +\d+)( +\d+)( +\d+)?/;
-
-		// f vertex/uv vertex/uv vertex/uv ...
-
-		var face_pattern2 = /f( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))?/;
-
-		// f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
-
-		var face_pattern3 = /f( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))?/;
-
-		// f vertex//normal vertex//normal vertex//normal ...
-
-		var face_pattern4 = /f( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))?/;
-
-		//
-
-		var lines = data.split( "\n" );
-
-		for ( var i = 0; i < lines.length; i ++ ) {
-
-			var line = lines[ i ];
-			line = line.trim();
-
-			var result;
-
-			if ( line.length === 0 || line.charAt( 0 ) === '#' ) {
-
-				continue;
-
-			} else if ( ( result = vertex_pattern.exec( line ) ) !== null ) {
-
-				// ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-				vertices.push( vector(
-					parseFloat( result[ 1 ] ),
-					parseFloat( result[ 2 ] ),
-					parseFloat( result[ 3 ] )
-				) );
-
-			} else if ( ( result = normal_pattern.exec( line ) ) !== null ) {
-
-				// ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-				normals.push( vector(
-					parseFloat( result[ 1 ] ),
-					parseFloat( result[ 2 ] ),
-					parseFloat( result[ 3 ] )
-				) );
-
-			} else if ( ( result = uv_pattern.exec( line ) ) !== null ) {
-
-				// ["vt 0.1 0.2", "0.1", "0.2"]
-
-				uvs.push( uv(
-					parseFloat( result[ 1 ] ),
-					parseFloat( result[ 2 ] )
-				) );
-
-			} else if ( ( result = face_pattern1.exec( line ) ) !== null ) {
-
-				// ["f 1 2 3", "1", "2", "3", undefined]
-
-				handle_face_line( [ result[ 1 ], result[ 2 ], result[ 3 ], result[ 4 ] ] );
-
-			} else if ( ( result = face_pattern2.exec( line ) ) !== null ) {
-
-				// ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
-
-				handle_face_line(
-					[ result[ 2 ], result[ 5 ], result[ 8 ], result[ 11 ] ], //faces
-					[ result[ 3 ], result[ 6 ], result[ 9 ], result[ 12 ] ] //uv
-				);
-
-			} else if ( ( result = face_pattern3.exec( line ) ) !== null ) {
-
-				// ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
-
-				handle_face_line(
-					[ result[ 2 ], result[ 6 ], result[ 10 ], result[ 14 ] ], //faces
-					[ result[ 3 ], result[ 7 ], result[ 11 ], result[ 15 ] ], //uv
-					[ result[ 4 ], result[ 8 ], result[ 12 ], result[ 16 ] ] //normal
-				);
-
-			} else if ( ( result = face_pattern4.exec( line ) ) !== null ) {
-
-				// ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
-
-				handle_face_line(
-					[ result[ 2 ], result[ 5 ], result[ 8 ], result[ 11 ] ], //faces
-					[ ], //uv
-					[ result[ 3 ], result[ 6 ], result[ 9 ], result[ 12 ] ] //normal
-				);
-
-			} else if ( /^o /.test( line ) ) {
-
-				// object
-
-				meshN();
-				face_offset = face_offset + vertices.length;
-				vertices = [];
-				object = new THREE.Object3D();
-				object.name = line.substring( 2 ).trim();
-				group.add( object );
-
-			} else if ( /^g /.test( line ) ) {
-
-				// group
-
-				meshN( line.substring( 2 ).trim(), undefined );
-
-			} else if ( /^usemtl /.test( line ) ) {
-
-				// material
-
-				meshN( undefined, line.substring( 7 ).trim() );
-
-			} else if ( /^mtllib /.test( line ) ) {
-
-				// mtl file
-
-				if ( mtllibCallback ) {
-
-					var mtlfile = line.substring( 7 );
-					mtlfile = mtlfile.trim();
-					mtllibCallback( mtlfile );
-
-				}
-
-			} else if ( /^s /.test( line ) ) {
-
-				// Smooth shading
-
-			} else {
-
-				console.log( "THREE.OBJMTLLoader: Unhandled line " + line );
-
-			}
-
-		}
-
-		//Add last object
-		meshN( undefined, undefined );
-
-		return group;
-
-	}
-
-};
-
-THREE.EventDispatcher.prototype.apply( THREE.OBJMTLLoader.prototype );
-
-/**
- * @author qiao / https://github.com/qiao
- * @author mrdoob / http://mrdoob.com
- * @author alteredq / http://alteredqualia.com/
- * @author WestLangley / http://github.com/WestLangley
- * @author erich666 / http://erichaines.com
- */
-/*global THREE, console */
-
-( function () {
-
-	function OrbitConstraint ( object ) {
-
-		this.object = object;
-
-		// "target" sets the location of focus, where the object orbits around
-		// and where it pans with respect to.
-		this.target = new THREE.Vector3();
-
-		// Limits to how far you can dolly in and out ( PerspectiveCamera only )
-		this.minDistance = 0;
-		this.maxDistance = Infinity;
-
-		// Limits to how far you can zoom in and out ( OrthographicCamera only )
-		this.minZoom = 0;
-		this.maxZoom = Infinity;
-
-		// How far you can orbit vertically, upper and lower limits.
-		// Range is 0 to Math.PI radians.
-		this.minPolarAngle = 0; // radians
-		this.maxPolarAngle = Math.PI; // radians
-
-		// How far you can orbit horizontally, upper and lower limits.
-		// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-		this.minAzimuthAngle = - Infinity; // radians
-		this.maxAzimuthAngle = Infinity; // radians
-
-		// Set to true to enable damping (inertia)
-		// If damping is enabled, you must call controls.update() in your animation loop
-		this.enableDamping = false;
-		this.dampingFactor = 0.25;
-
-		////////////
-		// internals
-
-		var scope = this;
-
-		var EPS = 0.000001;
-
-		// Current position in spherical coordinate system.
-		var theta;
-		var phi;
-
-		// Pending changes
-		var phiDelta = 0;
-		var thetaDelta = 0;
-		var scale = 1;
-		var panOffset = new THREE.Vector3();
-		var zoomChanged = false;
-
-		// API
-
-		this.getPolarAngle = function () {
-
-			return phi;
-
-		};
-
-		this.getAzimuthalAngle = function () {
-
-			return theta;
-
-		};
-
-		this.rotateLeft = function ( angle ) {
-
-			thetaDelta -= angle;
-
-		};
-
-		this.rotateUp = function ( angle ) {
-
-			phiDelta -= angle;
-
-		};
-
-		// pass in distance in world space to move left
-		this.panLeft = function() {
-
-			var v = new THREE.Vector3();
-
-			return function panLeft ( distance ) {
-
-				var te = this.object.matrix.elements;
-
-				// get X column of matrix
-				v.set( te[ 0 ], te[ 1 ], te[ 2 ] );
-				v.multiplyScalar( - distance );
-
-				panOffset.add( v );
-
-			};
-
-		}();
-
-		// pass in distance in world space to move up
-		this.panUp = function() {
-
-			var v = new THREE.Vector3();
-
-			return function panUp ( distance ) {
-
-				var te = this.object.matrix.elements;
-
-				// get Y column of matrix
-				v.set( te[ 4 ], te[ 5 ], te[ 6 ] );
-				v.multiplyScalar( distance );
-
-				panOffset.add( v );
-
-			};
-
-		}();
-
-		// pass in x,y of change desired in pixel space,
-		// right and down are positive
-		this.pan = function ( deltaX, deltaY, screenWidth, screenHeight ) {
-
-			if ( scope.object instanceof THREE.PerspectiveCamera ) {
-
-				// perspective
-				var position = scope.object.position;
-				var offset = position.clone().sub( scope.target );
-				var targetDistance = offset.length();
-
-				// half of the fov is center to top of screen
-				targetDistance *= Math.tan( ( scope.object.fov / 2 ) * Math.PI / 180.0 );
-
-				// we actually don't use screenWidth, since perspective camera is fixed to screen height
-				scope.panLeft( 2 * deltaX * targetDistance / screenHeight );
-				scope.panUp( 2 * deltaY * targetDistance / screenHeight );
-
-			} else if ( scope.object instanceof THREE.OrthographicCamera ) {
-
-				// orthographic
-				scope.panLeft( deltaX * ( scope.object.right - scope.object.left ) / screenWidth );
-				scope.panUp( deltaY * ( scope.object.top - scope.object.bottom ) / screenHeight );
-
-			} else {
-
-				// camera neither orthographic or perspective
-				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.' );
-
-			}
-
-		};
-
-		this.dollyIn = function ( dollyScale ) {
-
-			if ( scope.object instanceof THREE.PerspectiveCamera ) {
-
-				scale /= dollyScale;
-
-			} else if ( scope.object instanceof THREE.OrthographicCamera ) {
-
-				scope.object.zoom = Math.max( this.minZoom, Math.min( this.maxZoom, this.object.zoom * dollyScale ) );
-				scope.object.updateProjectionMatrix();
-				zoomChanged = true;
-
-			} else {
-
-				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
-
-			}
-
-		};
-
-		this.dollyOut = function ( dollyScale ) {
-
-			if ( scope.object instanceof THREE.PerspectiveCamera ) {
-
-				scale *= dollyScale;
-
-			} else if ( scope.object instanceof THREE.OrthographicCamera ) {
-
-				scope.object.zoom = Math.max( this.minZoom, Math.min( this.maxZoom, this.object.zoom / dollyScale ) );
-				scope.object.updateProjectionMatrix();
-				zoomChanged = true;
-
-			} else {
-
-				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
-
-			}
-
-		};
-
-		this.update = function() {
-
-			var offset = new THREE.Vector3();
-
-			// so camera.up is the orbit axis
-			var quat = new THREE.Quaternion().setFromUnitVectors( object.up, new THREE.Vector3( 0, 1, 0 ) );
-			var quatInverse = quat.clone().inverse();
-
-			var lastPosition = new THREE.Vector3();
-			var lastQuaternion = new THREE.Quaternion();
-
-			return function () {
-
-				var position = this.object.position;
-
-				offset.copy( position ).sub( this.target );
-
-				// rotate offset to "y-axis-is-up" space
-				offset.applyQuaternion( quat );
-
-				// angle from z-axis around y-axis
-
-				theta = Math.atan2( offset.x, offset.z );
-
-				// angle from y-axis
-
-				phi = Math.atan2( Math.sqrt( offset.x * offset.x + offset.z * offset.z ), offset.y );
-
-				theta += thetaDelta;
-				phi += phiDelta;
-
-				// restrict theta to be between desired limits
-				theta = Math.max( this.minAzimuthAngle, Math.min( this.maxAzimuthAngle, theta ) );
-
-				// restrict phi to be between desired limits
-				phi = Math.max( this.minPolarAngle, Math.min( this.maxPolarAngle, phi ) );
-
-				// restrict phi to be betwee EPS and PI-EPS
-				phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
-
-				var radius = offset.length() * scale;
-
-				// restrict radius to be between desired limits
-				radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
-
-				// move target to panned location
-				this.target.add( panOffset );
-
-				offset.x = radius * Math.sin( phi ) * Math.sin( theta );
-				offset.y = radius * Math.cos( phi );
-				offset.z = radius * Math.sin( phi ) * Math.cos( theta );
-
-				// rotate offset back to "camera-up-vector-is-up" space
-				offset.applyQuaternion( quatInverse );
-
-				position.copy( this.target ).add( offset );
-
-				this.object.lookAt( this.target );
-
-				if ( this.enableDamping === true ) {
-
-					thetaDelta *= ( 1 - this.dampingFactor );
-					phiDelta *= ( 1 - this.dampingFactor );
-
-				} else {
-
-					thetaDelta = 0;
-					phiDelta = 0;
-
-				}
-
-				scale = 1;
-				panOffset.set( 0, 0, 0 );
-
-				// update condition is:
-				// min(camera displacement, camera rotation in radians)^2 > EPS
-				// using small-angle approximation cos(x/2) = 1 - x^2 / 8
-
-				if ( zoomChanged ||
-					 lastPosition.distanceToSquared( this.object.position ) > EPS ||
-				    8 * ( 1 - lastQuaternion.dot( this.object.quaternion ) ) > EPS ) {
-
-					lastPosition.copy( this.object.position );
-					lastQuaternion.copy( this.object.quaternion );
-					zoomChanged = false;
-
-					return true;
-
-				}
-
-				return false;
-
-			};
-
-		}();
-
-	};
-
-
-	// This set of controls performs orbiting, dollying (zooming), and panning. It maintains
-	// the "up" direction as +Y, unlike the TrackballControls. Touch on tablet and phones is
-	// supported.
-	//
-	//    Orbit - left mouse / touch: one finger move
-	//    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
-	//    Pan - right mouse, or arrow keys / touch: three finter swipe
-
-	THREE.OrbitControls = function ( object, domElement ) {
-
-		var constraint = new OrbitConstraint( object );
-
-		this.domElement = ( domElement !== undefined ) ? domElement : document;
-
-		// API
-
-		Object.defineProperty( this, 'constraint', {
-
-			get: function() {
-
-				return constraint;
-
-			}
-
-		} );
-
-		this.getPolarAngle = function () {
-
-			return constraint.getPolarAngle();
-
-		};
-
-		this.getAzimuthalAngle = function () {
-
-			return constraint.getAzimuthalAngle();
-
-		};
-
-		// Set to false to disable this control
-		this.enabled = true;
-
-		// center is old, deprecated; use "target" instead
-		this.center = this.target;
-
-		// This option actually enables dollying in and out; left as "zoom" for
-		// backwards compatibility.
-		// Set to false to disable zooming
-		this.enableZoom = true;
-		this.zoomSpeed = 1.0;
-
-		// Set to false to disable rotating
-		this.enableRotate = true;
-		this.rotateSpeed = 1.0;
-
-		// Set to false to disable panning
-		this.enablePan = true;
-		this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
-
-		// Set to true to automatically rotate around the target
-		// If auto-rotate is enabled, you must call controls.update() in your animation loop
-		this.autoRotate = false;
-		this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-
-		// Set to false to disable use of the keys
-		this.enableKeys = true;
-
-		// The four arrow keys
-		this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
-
-		// Mouse buttons
-		this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
-
-		////////////
-		// internals
-
-		var scope = this;
-
-		var rotateStart = new THREE.Vector2();
-		var rotateEnd = new THREE.Vector2();
-		var rotateDelta = new THREE.Vector2();
-
-		var panStart = new THREE.Vector2();
-		var panEnd = new THREE.Vector2();
-		var panDelta = new THREE.Vector2();
-
-		var dollyStart = new THREE.Vector2();
-		var dollyEnd = new THREE.Vector2();
-		var dollyDelta = new THREE.Vector2();
-
-		var STATE = { NONE : - 1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
-
-		var state = STATE.NONE;
-
-		// for reset
-
-		this.target0 = this.target.clone();
-		this.position0 = this.object.position.clone();
-		this.zoom0 = this.object.zoom;
-
-		// events
-
-		var changeEvent = { type: 'change' };
-		var startEvent = { type: 'start' };
-		var endEvent = { type: 'end' };
-
-		// pass in x,y of change desired in pixel space,
-		// right and down are positive
-		function pan( deltaX, deltaY ) {
-
-			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-			constraint.pan( deltaX, deltaY, element.clientWidth, element.clientHeight );
-
-		}
-
-		this.update = function () {
-
-			if ( this.autoRotate && state === STATE.NONE ) {
-
-				constraint.rotateLeft( getAutoRotationAngle() );
-
-			}
-
-			if ( constraint.update() === true ) {
-
-				this.dispatchEvent( changeEvent );
-
-			}
-
-		};
-
-		this.reset = function () {
-
-			state = STATE.NONE;
-
-			this.target.copy( this.target0 );
-			this.object.position.copy( this.position0 );
-			this.object.zoom = this.zoom0;
-
-			this.object.updateProjectionMatrix();
-			this.dispatchEvent( changeEvent );
-
-			this.update();
-
-		};
-
-		function getAutoRotationAngle() {
-
-			return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-
-		}
-
-		function getZoomScale() {
-
-			return Math.pow( 0.95, scope.zoomSpeed );
-
-		}
-
-		function onMouseDown( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-
-			if ( event.button === scope.mouseButtons.ORBIT ) {
-
-				if ( scope.enableRotate === false ) return;
-
-				state = STATE.ROTATE;
-
-				rotateStart.set( event.clientX, event.clientY );
-
-			} else if ( event.button === scope.mouseButtons.ZOOM ) {
-
-				if ( scope.enableZoom === false ) return;
-
-				state = STATE.DOLLY;
-
-				dollyStart.set( event.clientX, event.clientY );
-
-			} else if ( event.button === scope.mouseButtons.PAN ) {
-
-				if ( scope.enablePan === false ) return;
-
-				state = STATE.PAN;
-
-				panStart.set( event.clientX, event.clientY );
-
-			}
-
-			if ( state !== STATE.NONE ) {
-
-				document.addEventListener( 'mousemove', onMouseMove, false );
-				document.addEventListener( 'mouseup', onMouseUp, false );
-				scope.dispatchEvent( startEvent );
-
-			}
-
-		}
-
-		function onMouseMove( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-
-			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-			if ( state === STATE.ROTATE ) {
-
-				if ( scope.enableRotate === false ) return;
-
-				rotateEnd.set( event.clientX, event.clientY );
-				rotateDelta.subVectors( rotateEnd, rotateStart );
-
-				// rotating across whole screen goes 360 degrees around
-				constraint.rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
-
-				// rotating up and down along whole screen attempts to go 360, but limited to 180
-				constraint.rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
-
-				rotateStart.copy( rotateEnd );
-
-			} else if ( state === STATE.DOLLY ) {
-
-				if ( scope.enableZoom === false ) return;
-
-				dollyEnd.set( event.clientX, event.clientY );
-				dollyDelta.subVectors( dollyEnd, dollyStart );
-
-				if ( dollyDelta.y > 0 ) {
-
-					constraint.dollyIn( getZoomScale() );
-
-				} else if ( dollyDelta.y < 0 ) {
-
-					constraint.dollyOut( getZoomScale() );
-
-				}
-
-				dollyStart.copy( dollyEnd );
-
-			} else if ( state === STATE.PAN ) {
-
-				if ( scope.enablePan === false ) return;
-
-				panEnd.set( event.clientX, event.clientY );
-				panDelta.subVectors( panEnd, panStart );
-
-				pan( panDelta.x, panDelta.y );
-
-				panStart.copy( panEnd );
-
-			}
-
-			if ( state !== STATE.NONE ) scope.update();
-
-		}
-
-		function onMouseUp( /* event */ ) {
-
-			if ( scope.enabled === false ) return;
-
-			document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
-			scope.dispatchEvent( endEvent );
-			state = STATE.NONE;
-
-		}
-
-		function onMouseWheel( event ) {
-
-			if ( scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE ) return;
-
-			event.preventDefault();
-			event.stopPropagation();
-
-			var delta = 0;
-
-			if ( event.wheelDelta !== undefined ) {
-
-				// WebKit / Opera / Explorer 9
-
-				delta = event.wheelDelta;
-
-			} else if ( event.detail !== undefined ) {
-
-				// Firefox
-
-				delta = - event.detail;
-
-			}
-
-			if ( delta > 0 ) {
-
-				constraint.dollyOut( getZoomScale() );
-
-			} else if ( delta < 0 ) {
-
-				constraint.dollyIn( getZoomScale() );
-
-			}
-
-			scope.update();
-			scope.dispatchEvent( startEvent );
-			scope.dispatchEvent( endEvent );
-
-		}
-
-		function onKeyDown( event ) {
-
-			if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
-
-			switch ( event.keyCode ) {
-
-				case scope.keys.UP:
-					pan( 0, scope.keyPanSpeed );
-					scope.update();
-					break;
-
-				case scope.keys.BOTTOM:
-					pan( 0, - scope.keyPanSpeed );
-					scope.update();
-					break;
-
-				case scope.keys.LEFT:
-					pan( scope.keyPanSpeed, 0 );
-					scope.update();
-					break;
-
-				case scope.keys.RIGHT:
-					pan( - scope.keyPanSpeed, 0 );
-					scope.update();
-					break;
-
-			}
-
-		}
-
-		function touchstart( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			switch ( event.touches.length ) {
-
-				case 1:	// one-fingered touch: rotate
-
-					if ( scope.enableRotate === false ) return;
-
-					state = STATE.TOUCH_ROTATE;
-
-					rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-					break;
-
-				case 2:	// two-fingered touch: dolly
-
-					if ( scope.enableZoom === false ) return;
-
-					state = STATE.TOUCH_DOLLY;
-
-					var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-					var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-					var distance = Math.sqrt( dx * dx + dy * dy );
-					dollyStart.set( 0, distance );
-					break;
-
-				case 3: // three-fingered touch: pan
-
-					if ( scope.enablePan === false ) return;
-
-					state = STATE.TOUCH_PAN;
-
-					panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-					break;
-
-				default:
-
-					state = STATE.NONE;
-
-			}
-
-			if ( state !== STATE.NONE ) scope.dispatchEvent( startEvent );
-
-		}
-
-		function touchmove( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-			event.stopPropagation();
-
-			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-			switch ( event.touches.length ) {
-
-				case 1: // one-fingered touch: rotate
-
-					if ( scope.enableRotate === false ) return;
-					if ( state !== STATE.TOUCH_ROTATE ) return;
-
-					rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-					rotateDelta.subVectors( rotateEnd, rotateStart );
-
-					// rotating across whole screen goes 360 degrees around
-					constraint.rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
-					// rotating up and down along whole screen attempts to go 360, but limited to 180
-					constraint.rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
-
-					rotateStart.copy( rotateEnd );
-
-					scope.update();
-					break;
-
-				case 2: // two-fingered touch: dolly
-
-					if ( scope.enableZoom === false ) return;
-					if ( state !== STATE.TOUCH_DOLLY ) return;
-
-					var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-					var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-					var distance = Math.sqrt( dx * dx + dy * dy );
-
-					dollyEnd.set( 0, distance );
-					dollyDelta.subVectors( dollyEnd, dollyStart );
-
-					if ( dollyDelta.y > 0 ) {
-
-						constraint.dollyOut( getZoomScale() );
-
-					} else if ( dollyDelta.y < 0 ) {
-
-						constraint.dollyIn( getZoomScale() );
-
-					}
-
-					dollyStart.copy( dollyEnd );
-
-					scope.update();
-					break;
-
-				case 3: // three-fingered touch: pan
-
-					if ( scope.enablePan === false ) return;
-					if ( state !== STATE.TOUCH_PAN ) return;
-
-					panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-					panDelta.subVectors( panEnd, panStart );
-
-					pan( panDelta.x, panDelta.y );
-
-					panStart.copy( panEnd );
-
-					scope.update();
-					break;
-
-				default:
-
-					state = STATE.NONE;
-
-			}
-
-		}
-
-		function touchend( /* event */ ) {
-
-			if ( scope.enabled === false ) return;
-
-			scope.dispatchEvent( endEvent );
-			state = STATE.NONE;
-
-		}
-
-		function contextmenu( event ) {
-
-			event.preventDefault();
-
-		}
-
-		this.dispose = function() {
-
-			this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
-			this.domElement.removeEventListener( 'mousedown', onMouseDown, false );
-			this.domElement.removeEventListener( 'mousewheel', onMouseWheel, false );
-			this.domElement.removeEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
-
-			this.domElement.removeEventListener( 'touchstart', touchstart, false );
-			this.domElement.removeEventListener( 'touchend', touchend, false );
-			this.domElement.removeEventListener( 'touchmove', touchmove, false );
-
-			document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
-
-			window.removeEventListener( 'keydown', onKeyDown, false );
-
-		}
-
-		this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-
-		this.domElement.addEventListener( 'mousedown', onMouseDown, false );
-		this.domElement.addEventListener( 'mousewheel', onMouseWheel, false );
-		this.domElement.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
-
-		this.domElement.addEventListener( 'touchstart', touchstart, false );
-		this.domElement.addEventListener( 'touchend', touchend, false );
-		this.domElement.addEventListener( 'touchmove', touchmove, false );
-
-		window.addEventListener( 'keydown', onKeyDown, false );
-
-		// force an update at start
-		this.update();
-
-	};
-
-	THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-	THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
-
-	Object.defineProperties( THREE.OrbitControls.prototype, {
-
-		object: {
-
-			get: function () {
-
-				return this.constraint.object;
-
-			}
-
-		},
-
-		target: {
-
-			get: function () {
-
-				return this.constraint.target;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: target is now immutable. Use target.set() instead.' );
-				this.constraint.target.copy( value );
-
-			}
-
-		},
-
-		minDistance : {
-
-			get: function () {
-
-				return this.constraint.minDistance;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.minDistance = value;
-
-			}
-
-		},
-
-		maxDistance : {
-
-			get: function () {
-
-				return this.constraint.maxDistance;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.maxDistance = value;
-
-			}
-
-		},
-
-		minZoom : {
-
-			get: function () {
-
-				return this.constraint.minZoom;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.minZoom = value;
-
-			}
-
-		},
-
-		maxZoom : {
-
-			get: function () {
-
-				return this.constraint.maxZoom;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.maxZoom = value;
-
-			}
-
-		},
-
-		minPolarAngle : {
-
-			get: function () {
-
-				return this.constraint.minPolarAngle;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.minPolarAngle = value;
-
-			}
-
-		},
-
-		maxPolarAngle : {
-
-			get: function () {
-
-				return this.constraint.maxPolarAngle;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.maxPolarAngle = value;
-
-			}
-
-		},
-
-		minAzimuthAngle : {
-
-			get: function () {
-
-				return this.constraint.minAzimuthAngle;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.minAzimuthAngle = value;
-
-			}
-
-		},
-
-		maxAzimuthAngle : {
-
-			get: function () {
-
-				return this.constraint.maxAzimuthAngle;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.maxAzimuthAngle = value;
-
-			}
-
-		},
-
-		enableDamping : {
-
-			get: function () {
-
-				return this.constraint.enableDamping;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.enableDamping = value;
-
-			}
-
-		},
-
-		dampingFactor : {
-
-			get: function () {
-
-				return this.constraint.dampingFactor;
-
-			},
-
-			set: function ( value ) {
-
-				this.constraint.dampingFactor = value;
-
-			}
-
-		},
-
-		// backward compatibility
-
-		noZoom: {
-
-			get: function () {
-
-				console.warn( 'THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.' );
-				return ! this.enableZoom;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.' );
-				this.enableZoom = ! value;
-
-			}
-
-		},
-
-		noRotate: {
-
-			get: function () {
-
-				console.warn( 'THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.' );
-				return ! this.enableRotate;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.' );
-				this.enableRotate = ! value;
-
-			}
-
-		},
-
-		noPan: {
-
-			get: function () {
-
-				console.warn( 'THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.' );
-				return ! this.enablePan;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.' );
-				this.enablePan = ! value;
-
-			}
-
-		},
-
-		noKeys: {
-
-			get: function () {
-
-				console.warn( 'THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.' );
-				return ! this.enableKeys;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.' );
-				this.enableKeys = ! value;
-
-			}
-
-		},
-
-		staticMoving : {
-
-			get: function () {
-
-				console.warn( 'THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
-				return ! this.constraint.enableDamping;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
-				this.constraint.enableDamping = ! value;
-
-			}
-
-		},
-
-		dynamicDampingFactor : {
-
-			get: function () {
-
-				console.warn( 'THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
-				return this.constraint.dampingFactor;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
-				this.constraint.dampingFactor = value;
-
-			}
-
-		}
-
-	} );
-
-}() );
-
-/**
- *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
- *
- *	A general perpose camera, for setting FOV, Lens Focal Length,
- *		and switching between perspective and orthographic views easily.
- *		Use this only if you do not wish to manage
- *		both a Orthographic and Perspective Camera
- *
- */
-
-
-THREE.CombinedCamera = function ( width, height, fov, near, far, orthoNear, orthoFar ) {
-
-	THREE.Camera.call( this );
-
-	this.fov = fov;
-
-	this.left = - width / 2;
-	this.right = width / 2;
-	this.top = height / 2;
-	this.bottom = - height / 2;
-
-	// We could also handle the projectionMatrix internally, but just wanted to test nested camera objects
-
-	this.cameraO = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 	orthoNear, orthoFar );
-	this.cameraP = new THREE.PerspectiveCamera( fov, width / height, near, far );
-
-	this.zoom = 1;
-
-	this.toPerspective();
-
-};
-
-THREE.CombinedCamera.prototype = Object.create( THREE.Camera.prototype );
-THREE.CombinedCamera.prototype.constructor = THREE.CombinedCamera;
-
-THREE.CombinedCamera.prototype.toPerspective = function () {
-
-	// Switches to the Perspective Camera
-
-	this.near = this.cameraP.near;
-	this.far = this.cameraP.far;
-
-	this.cameraP.fov =  this.fov / this.zoom ;
-
-	this.cameraP.updateProjectionMatrix();
-
-	this.projectionMatrix = this.cameraP.projectionMatrix;
-
-	this.inPerspectiveMode = true;
-	this.inOrthographicMode = false;
-
-};
-
-THREE.CombinedCamera.prototype.toOrthographic = function () {
-
-	// Switches to the Orthographic camera estimating viewport from Perspective
-
-	var fov = this.fov;
-	var aspect = this.cameraP.aspect;
-	var near = this.cameraP.near;
-	var far = this.cameraP.far;
-
-	// The size that we set is the mid plane of the viewing frustum
-
-	var hyperfocus = ( near + far ) / 2;
-
-	var halfHeight = Math.tan( fov * Math.PI / 180 / 2 ) * hyperfocus;
-	var planeHeight = 2 * halfHeight;
-	var planeWidth = planeHeight * aspect;
-	var halfWidth = planeWidth / 2;
-
-	halfHeight /= this.zoom;
-	halfWidth /= this.zoom;
-
-	this.cameraO.left = - halfWidth;
-	this.cameraO.right = halfWidth;
-	this.cameraO.top = halfHeight;
-	this.cameraO.bottom = - halfHeight;
-
-	// this.cameraO.left = -farHalfWidth;
-	// this.cameraO.right = farHalfWidth;
-	// this.cameraO.top = farHalfHeight;
-	// this.cameraO.bottom = -farHalfHeight;
-
-	// this.cameraO.left = this.left / this.zoom;
-	// this.cameraO.right = this.right / this.zoom;
-	// this.cameraO.top = this.top / this.zoom;
-	// this.cameraO.bottom = this.bottom / this.zoom;
-
-	this.cameraO.updateProjectionMatrix();
-
-	this.near = this.cameraO.near;
-	this.far = this.cameraO.far;
-	this.projectionMatrix = this.cameraO.projectionMatrix;
-
-	this.inPerspectiveMode = false;
-	this.inOrthographicMode = true;
-
-};
-
-
-THREE.CombinedCamera.prototype.setSize = function( width, height ) {
-
-	this.cameraP.aspect = width / height;
-	this.left = - width / 2;
-	this.right = width / 2;
-	this.top = height / 2;
-	this.bottom = - height / 2;
-
-};
-
-
-THREE.CombinedCamera.prototype.setFov = function( fov ) {
-
-	this.fov = fov;
-
-	if ( this.inPerspectiveMode ) {
-
-		this.toPerspective();
-
-	} else {
-
-		this.toOrthographic();
-
-	}
-
-};
-
-// For maintaining similar API with PerspectiveCamera
-
-THREE.CombinedCamera.prototype.updateProjectionMatrix = function() {
-
-	if ( this.inPerspectiveMode ) {
-
-		this.toPerspective();
-
-	} else {
-
-		this.toPerspective();
-		this.toOrthographic();
-
-	}
-
-};
-
-/*
-* Uses Focal Length (in mm) to estimate and set FOV
-* 35mm (fullframe) camera is used if frame size is not specified;
-* Formula based on http://www.bobatkins.com/photography/technical/field_of_view.html
-*/
-THREE.CombinedCamera.prototype.setLens = function ( focalLength, frameHeight ) {
-
-	if ( frameHeight === undefined ) frameHeight = 24;
-
-	var fov = 2 * THREE.Math.radToDeg( Math.atan( frameHeight / ( focalLength * 2 ) ) );
-
-	this.setFov( fov );
-
-	return fov;
-
-};
-
-
-THREE.CombinedCamera.prototype.setZoom = function( zoom ) {
-
-	this.zoom = zoom;
-
-	if ( this.inPerspectiveMode ) {
-
-		this.toPerspective();
-
-	} else {
-
-		this.toOrthographic();
-
-	}
-
-};
-
-THREE.CombinedCamera.prototype.toFrontView = function() {
-
-	this.rotation.x = 0;
-	this.rotation.y = 0;
-	this.rotation.z = 0;
-
-	// should we be modifing the matrix instead?
-
-	this.rotationAutoUpdate = false;
-
-};
-
-THREE.CombinedCamera.prototype.toBackView = function() {
-
-	this.rotation.x = 0;
-	this.rotation.y = Math.PI;
-	this.rotation.z = 0;
-	this.rotationAutoUpdate = false;
-
-};
-
-THREE.CombinedCamera.prototype.toLeftView = function() {
-
-	this.rotation.x = 0;
-	this.rotation.y = - Math.PI / 2;
-	this.rotation.z = 0;
-	this.rotationAutoUpdate = false;
-
-};
-
-THREE.CombinedCamera.prototype.toRightView = function() {
-
-	this.rotation.x = 0;
-	this.rotation.y = Math.PI / 2;
-	this.rotation.z = 0;
-	this.rotationAutoUpdate = false;
-
-};
-
-THREE.CombinedCamera.prototype.toTopView = function() {
-
-	this.rotation.x = - Math.PI / 2;
-	this.rotation.y = 0;
-	this.rotation.z = 0;
-	this.rotationAutoUpdate = false;
-
-};
-
-THREE.CombinedCamera.prototype.toBottomView = function() {
-
-	this.rotation.x = Math.PI / 2;
-	this.rotation.y = 0;
-	this.rotation.z = 0;
-	this.rotationAutoUpdate = false;
 
 };
 
@@ -39745,6 +37060,8 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _this = this;
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
 	__webpack_require__(1);
@@ -39771,103 +37088,197 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var menu = _interopRequireWildcard(_menu);
 	
-	var _chapter1 = __webpack_require__(25);
+	var _visualizer = __webpack_require__(25);
 	
-	var chapter1 = _interopRequireWildcard(_chapter1);
+	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
-	// import * as chapter2 from './chapter2';
-	// import * as chapter3 from './chapter3';
+	var _opening = __webpack_require__(26);
 	
-	THREE.Loader.Handlers.add(/\.png$/i, new THREE.ImageLoader());
-	THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
+	var opening = _interopRequireWildcard(_opening);
 	
-	var chapters = {
-	    cp1: chapter1
-	    // ,cp2: chapter2
-	    // chapter2,
-	    // chapter3
-	};
+	var _chapters = __webpack_require__(36);
 	
-	var matched;
-	var chapter = chapters.cp1;
-	if (matched = location.search.match(/cp=(\d+)/)) {
-	    var no = matched[1] >> 0;
-	    chapter = chapters['cp' + no];
+	var chapters = _interopRequireWildcard(_chapters);
+	
+	var currentMusic;
+	var openingMusic = new _visualizer2['default'](prologue.manager);
+	openingMusic.load('./assets/sounds/opening.mp3');
+	
+	var chapterMusics = new Array(8).fill(1).map(function (v, i) {
+	    var t = 't' + v * i * 3;
+	    var music = new _visualizer2['default'](prologue.manager);
+	    music.load('./assets/sounds/' + t + '.mp3');
+	    return music;
+	});
+	
+	var resizeHandler;
+	function resize() {
+	    window.addEventListener('resize', function () {
+	        resizeHandler && resizeHandler();
+	    });
+	}
+	
+	var renderHandler;
+	function tick() {
+	    requestAnimationFrame(tick);
+	    renderHandler && renderHandler();
 	}
 	
 	(function callee$0$0() {
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
+	                resize();
+	                tick();
+	
+	                context$1$0.next = 4;
 	                return regeneratorRuntime.awrap(prologue.ready());
 	
-	            case 2:
-	                context$1$0.next = 4;
-	                return regeneratorRuntime.awrap(chapter.init());
-	
 	            case 4:
-	                chapter.show();
-	                chapter.render();
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(Promise.all([opening.init(), chapters.init()]));
 	
-	                context$1$0.next = 8;
-	                return regeneratorRuntime.awrap(prologue.opening());
+	            case 6:
 	
-	            case 8:
+	                opening.show();
+	                opening.render();
+	
 	                context$1$0.next = 10;
-	                return regeneratorRuntime.awrap(prologue.hide());
+	                return regeneratorRuntime.awrap(prologue.opening());
 	
 	            case 10:
 	                context$1$0.next = 12;
-	                return regeneratorRuntime.awrap(Promise.all([clock.ready()]));
+	                return regeneratorRuntime.awrap(prologue.hide());
 	
 	            case 12:
 	                context$1$0.next = 14;
-	                return regeneratorRuntime.awrap(Promise.all([clock.show(), share.show(), nav.show()]));
+	                return regeneratorRuntime.awrap(Promise.all([clock.ready(), openingMusic.ready()]));
 	
 	            case 14:
+	                context$1$0.next = 16;
+	                return regeneratorRuntime.awrap(Promise.all([clock.show(), share.show(), nav.show()]));
+	
+	            case 16:
+	                context$1$0.next = 18;
+	                return regeneratorRuntime.awrap(opening.start());
+	
+	            case 18:
+	                resizeHandler = opening.resize.bind(opening);
+	                renderHandler = opening.render.bind(opening);
 	
 	                clock.run();
+	                currentMusic = openingMusic;
+	                openingMusic.togglePlayback(true);
 	
-	                // await chapter.start();
-	                // var lastChapter;
-	                // for (var i = 0; i < chapters.length; i++) {
-	                //     let chapter = chapters[i];
+	                share.onshare(function (type) {
+	                    console.log(type);
+	                });
 	
-	                //     await chapter.init();
-	                //     console.log('Chapter ' + i + ' Init');
+	                menu.onsymbol(function callee$1$0(symbol) {
+	                    var index, chapterMusic;
+	                    return regeneratorRuntime.async(function callee$1$0$(context$2$0) {
+	                        while (1) switch (context$2$0.prev = context$2$0.next) {
+	                            case 0:
+	                                index = symbol.substr(1) >> 0;
+	                                chapterMusic = chapterMusics[index / 3];
 	
-	                //     await delay(50);
+	                                if (!chapterMusic) {
+	                                    context$2$0.next = 11;
+	                                    break;
+	                                }
 	
-	                //     if (lastChapter) {
-	                //         await Promise.all([
-	                //             lastChapter.hide(),
-	                //             chapter.show()
-	                //         ]);
-	                //         console.log('Chapter ' + (i - 1) + ' Hide',
-	                //             'Chapter ' + i + ' Show');
-	                //         await lastChapter.destory();
-	                //         lastChapter = chapter;
-	                //     } else {
-	                //         await chapter.show();
-	                //         console.log('Chapter ' + i + ' Show');
-	                //     }
+	                                currentMusic = chapterMusic;
 	
-	                //     await chapter.start();
-	                //     console.log('Chapter ' + i + ' Start');
+	                                context$2$0.next = 6;
+	                                return regeneratorRuntime.awrap(menu.hide());
 	
-	                //     await chapter.end();
-	                //     console.log('Chapter ' + i + ' End');
-	                // }
+	                            case 6:
+	                                if (!(opening.isEntering && chapters.isEntering)) {
+	                                    context$2$0.next = 9;
+	                                    break;
+	                                }
 	
-	            case 15:
+	                                context$2$0.next = 9;
+	                                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), chapters.leaving()]));
+	
+	                            case 9:
+	                                context$2$0.next = 11;
+	                                return regeneratorRuntime.awrap(opening.entering());
+	
+	                            case 11:
+	                            case 'end':
+	                                return context$2$0.stop();
+	                        }
+	                    }, null, this);
+	                });
+	
+	                nav.onmusic(function (on) {
+	                    currentMusic.togglePlayback(on);
+	                });
+	
+	                opening.onentering(function callee$1$0() {
+	                    return regeneratorRuntime.async(function callee$1$0$(context$2$0) {
+	                        while (1) switch (context$2$0.prev = context$2$0.next) {
+	                            case 0:
+	                                openingMusic.togglePlayback(false);
+	                                context$2$0.next = 3;
+	                                return regeneratorRuntime.awrap(chapters.entering(currentMusic));
+	
+	                            case 3:
+	                            case 'end':
+	                                return context$2$0.stop();
+	                        }
+	                    }, null, this);
+	                });
+	
+	                opening.onleaving(function callee$1$0() {
+	                    return regeneratorRuntime.async(function callee$1$0$(context$2$0) {
+	                        while (1) switch (context$2$0.prev = context$2$0.next) {
+	                            case 0:
+	                                resizeHandler = opening.resize.bind(opening);
+	                                renderHandler = opening.render.bind(opening);
+	
+	                            case 2:
+	                            case 'end':
+	                                return context$2$0.stop();
+	                        }
+	                    }, null, this);
+	                });
+	
+	                chapters.onentering(function callee$1$0() {
+	                    return regeneratorRuntime.async(function callee$1$0$(context$2$0) {
+	                        while (1) switch (context$2$0.prev = context$2$0.next) {
+	                            case 0:
+	                                resizeHandler = chapters.resize.bind(chapters);
+	                                renderHandler = chapters.render.bind(chapters);
+	
+	                            case 2:
+	                            case 'end':
+	                                return context$2$0.stop();
+	                        }
+	                    }, null, this);
+	                });
+	
+	                chapters.onleaving(function callee$1$0() {
+	                    return regeneratorRuntime.async(function callee$1$0$(context$2$0) {
+	                        while (1) switch (context$2$0.prev = context$2$0.next) {
+	                            case 0:
+	                                resizeHandler = opening.resize.bind(opening);
+	                                renderHandler = opening.render.bind(opening);
+	
+	                            case 2:
+	                            case 'end':
+	                                return context$2$0.stop();
+	                        }
+	                    }, null, this);
+	                });
+	
+	            case 30:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, _this);
 	})();
-	
-	// menu.ready()
 
 /***/ },
 /* 1 */
@@ -40725,7 +38136,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	});
 	exports.width = width;
 	exports.height = height;
-	exports.time = time;
 	
 	var _promise = __webpack_require__(4);
 	
@@ -40735,22 +38145,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	function height() {
 	    return window.innerHeight;
-	}
-	
-	var d = new Date();
-	
-	function time() {
-	    var h = d.getHours();
-	
-	    if (h >= 5 && h < 8) {
-	        return 'dawn';
-	    } else if (h >= 8 && h < 16) {
-	        return 'daylight';
-	    } else if (h >= 16 && h < 19) {
-	        return 'sunset';
-	    } else {
-	        return 'night';
-	    }
 	}
 
 /***/ },
@@ -40777,6 +38171,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.state = state;
 	exports.now = now;
 	exports.getHours = getHours;
 	exports.getMinutes = getMinutes;
@@ -40805,6 +38200,20 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.timestamp = timestamp = Date.now();
 	exports.clientOffset = clientOffset = Date.now();
 	deferred.resolve();
+	
+	function state() {
+	    var h = getHours();
+	
+	    if (h >= 5 && h < 8) {
+	        return 'dawn';
+	    } else if (h >= 8 && h < 16) {
+	        return 'daylight';
+	    } else if (h >= 16 && h < 19) {
+	        return 'sunset';
+	    } else {
+	        return 'night';
+	    }
+	}
 	
 	function now() {
 	    var offset = Date.now() - clientOffset;
@@ -40935,6 +38344,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	exports.removeClass = removeClass;
 	exports.toggleClass = toggleClass;
 	exports.hasClass = hasClass;
+	exports.attr = attr;
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
@@ -41104,7 +38514,24 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    var dom = _parse$call132[0];
 	    var className = _parse$call132[1];
 	
-	    return dom.classList.contain(className);
+	    return dom.classList.contains(className);
+	}
+	
+	function attr() {
+	    var _parse$call14 = parse.call.apply(parse, [this, 2, true].concat(_slice.call(arguments)));
+	
+	    var _parse$call142 = _slicedToArray(_parse$call14, 3);
+	
+	    var dom = _parse$call142[0];
+	    var name = _parse$call142[1];
+	    var value = _parse$call142[2];
+	
+	    if (typeof value === 'undefined') {
+	        return dom.getAttribute(name);
+	    } else {
+	        dom.setAttribute(name, value);
+	        return dom;
+	    }
 	}
 
 /***/ },
@@ -41116,6 +38543,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.onshare = onshare;
 	exports.show = show;
 	
 	__webpack_require__(17);
@@ -41123,6 +38551,14 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var _libPromise = __webpack_require__(4);
 	
 	var _libDom = __webpack_require__(15);
+	
+	var shareHandlers = [];
+	
+	function onshare(handler) {
+	    if (shareHandlers.indexOf(handler) < 0) {
+	        shareHandlers.push(handler);
+	    }
+	}
 	
 	var $share;
 	
@@ -41139,7 +38575,9 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	                $share = _libDom.find.call(document, '#share');
 	                (_context = (_context = (_context = $share, _libDom.show).call(_context), _libDom.find).call(_context, '.weibo'), _libDom.on).call(_context, 'click', function (e) {
-	                    alert('share weibo');
+	                    shareHandlers.forEach(function (h) {
+	                        return h('weibo');
+	                    });
 	                });
 	
 	            case 4:
@@ -41190,6 +38628,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.onmusic = onmusic;
 	exports.show = show;
 	
 	__webpack_require__(20);
@@ -41200,11 +38639,20 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _menu = __webpack_require__(22);
 	
+	var musicToggleHandlers = [];
+	
+	function onmusic(handler) {
+	    if (musicToggleHandlers.indexOf(handler) < 0) {
+	        musicToggleHandlers.push(handler);
+	    }
+	}
+	
 	var $nav;
 	
 	function show() {
 	    var _context;
 	
+	    var $music;
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -41218,11 +38666,17 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                    (0, _menu.show)();
 	                });
 	
-	                (_context = (_context = $nav, _libDom.find).call(_context, '.music'), _libDom.on).call(_context, 'click', function (e) {
-	                    alert('toggle music');
+	                $music = (_context = $nav, _libDom.find).call(_context, '.music');
+	
+	                _libDom.on.call($music, 'click', function (e) {
+	                    _libDom.toggleClass.call($music, 'off');
+	                    var on = !_libDom.hasClass.call($music, 'off');
+	                    musicToggleHandlers.forEach(function (h) {
+	                        return h(on);
+	                    });
 	                });
 	
-	            case 5:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41270,6 +38724,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.onsymbol = onsymbol;
 	exports.show = show;
 	exports.hide = hide;
 	
@@ -41282,6 +38737,14 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var _libDom = __webpack_require__(15);
 	
 	var _prologue = __webpack_require__(5);
+	
+	var symbolClickHandlers = [];
+	
+	function onsymbol(handler) {
+	    if (symbolClickHandlers.indexOf(handler) < 0) {
+	        symbolClickHandlers.push(handler);
+	    }
+	}
 	
 	var $menu;
 	var isBindEvents = false;
@@ -41343,7 +38806,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                    times.forEach(function (t) {
 	                        var _context2;
 	
-	                        (_context2 = (_context2 = (_context2 = $menu, _libDom.find).call(_context2, '.trigger[for="' + t + '"]'), _libDom.on).call(_context2, 'mouseenter', function (e) {
+	                        (_context2 = (_context2 = (_context2 = (_context2 = $menu, _libDom.find).call(_context2, '.trigger[for="' + t + '"]'), _libDom.on).call(_context2, 'mouseenter', function (e) {
 	                            var _context3;
 	
 	                            (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.hover.' + t), _libDom.removeClass).call(_context3, 'fadeOut'), _libDom.addClass).call(_context3, 'fadeIn');
@@ -41355,7 +38818,29 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeIn'), _libDom.addClass).call(_context4, 'fadeOut');
 	
 	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeOut';
+	                        }), _libDom.on).call(_context2, 'click', function (e) {
+	                            symbolClickHandlers.forEach(function (h) {
+	                                return h(t);
+	                            });
 	                        });
+	                    });
+	
+	                    (_context5 = (_context5 = $menu, _libDom.find).call(_context5, 'ul'), _libDom.on).call(_context5, 'click', function (e) {
+	                        var target = e.target;
+	                        if (target.tagName.toUpperCase() === 'A' && !_libDom.hasClass.call(target, 'cur')) {
+	                            var _context6;
+	
+	                            var lastTarget = (_context6 = $menu, _libDom.find).call(_context6, 'ul .cur');
+	
+	                            _libDom.removeClass.call(lastTarget, 'cur');
+	                            _libDom.addClass.call(target, 'cur');
+	
+	                            var lastActive = (_context6 = $menu, _libDom.find).call(_context6, '.' + _libDom.attr.call(lastTarget, 'for'));
+	                            var active = (_context6 = $menu, _libDom.find).call(_context6, '.' + _libDom.attr.call(target, 'for'));
+	
+	                            _libDom.hide.call(lastActive);
+	                            _libDom.show.call(active);
+	                        }
 	                    });
 	
 	                    (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.close'), _libDom.on).call(_context5, 'click', function (e) {
@@ -41371,19 +38856,19 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 	
 	function hide() {
-	    var _context6;
+	    var _context7;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context6 = (_context6 = $menu, _libDom.removeClass).call(_context6, 'fadeIn'), _libDom.addClass).call(_context6, 'fadeOut');
+	                (_context7 = (_context7 = $menu, _libDom.removeClass).call(_context7, 'fadeIn'), _libDom.addClass).call(_context7, 'fadeOut');
 	
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(400));
 	
 	            case 3:
 	
-	                (_context6 = $menu, _libDom.hide).call(_context6);
+	                (_context7 = $menu, _libDom.hide).call(_context7);
 	
 	            case 4:
 	            case 'end':
@@ -41422,10 +38907,197 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 /* 24 */
 /***/ function(module, exports) {
 
-	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover {\n  color: #FFF;\n}\n#menu .time-circle {\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n"
+	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover,\n#menu ul li a.cur {\n  color: #FFF;\n}\n#menu .time-circle {\n  display: none;\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle.cur {\n  display: block;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n#menu .project-video {\n  display: none;\n}\n#menu .project-video.cur {\n  display: block;\n}\n#menu .project-about {\n  display: none;\n}\n#menu .project-about.cur {\n  display: block;\n}\n"
 
 /***/ },
 /* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	
+	audioContext.createGain = audioContext.createGain || audioContext.createGainNode;
+	audioContext.createDelay = audioContext.createDelay || audioContext.createDelayNode;
+	audioContext.createScriptProcessor = audioContext.createScriptProcessor || audioContext.createJavaScriptNode;
+	
+	var BufferLoader = (function () {
+	    function BufferLoader(audioContext, urlList, callback) {
+	        _classCallCheck(this, BufferLoader);
+	
+	        this.audioContext = audioContext;
+	        this.urlList = urlList;
+	        this.onload = callback;
+	        this.bufferList = new Array();
+	        this.loadCount = 0;
+	    }
+	
+	    // Interesting parameters to tweak!
+	
+	    _createClass(BufferLoader, [{
+	        key: "loadBuffer",
+	        value: function loadBuffer(url, index) {
+	            // Load buffer asynchronously
+	            var request = new XMLHttpRequest();
+	            request.open("GET", url, true);
+	            request.responseType = "arraybuffer";
+	
+	            var loader = this;
+	
+	            request.onload = function () {
+	                // Asynchronously decode the audio file data in request.response
+	                loader.audioContext.decodeAudioData(request.response, function (buffer) {
+	                    if (!buffer) {
+	                        alert('error decoding file data: ' + url);
+	                        return;
+	                    }
+	                    loader.bufferList[index] = buffer;
+	                    if (++loader.loadCount == loader.urlList.length) loader.onload(loader.bufferList);
+	                }, function (error) {
+	                    console.error('decodeAudioData error', error);
+	                });
+	            };
+	
+	            request.onerror = function () {
+	                alert('BufferLoader: XHR error');
+	            };
+	
+	            request.send();
+	        }
+	    }, {
+	        key: "load",
+	        value: function load() {
+	            for (var i = 0; i < this.urlList.length; ++i) this.loadBuffer(this.urlList[i], i);
+	        }
+	    }]);
+	
+	    return BufferLoader;
+	})();
+	
+	var SMOOTHING = 0.8;
+	var FFT_SIZE = 64; // 快速傅里叶变换
+	
+	var Visualizer = (function () {
+	    function Visualizer(loadManager) {
+	        _classCallCheck(this, Visualizer);
+	
+	        var that = this;
+	        this.analyser = audioContext.createAnalyser();
+	
+	        this.analyser.connect(audioContext.destination);
+	        this.analyser.minDecibels = -140;
+	        this.analyser.maxDecibels = 0;
+	
+	        this.freqs = new Uint8Array(this.analyser.frequencyBinCount);
+	        this.times = new Uint8Array(this.analyser.frequencyBinCount);
+	
+	        this.isPlaying = false;
+	        this.startTime = 0;
+	        this.startOffset = 0;
+	
+	        this.deferred = (0, _libPromise.defer)();
+	        this.loadManager = loadManager;
+	    }
+	
+	    _createClass(Visualizer, [{
+	        key: "ready",
+	        value: function ready() {
+	            return this.deferred.promise;
+	        }
+	    }, {
+	        key: "load",
+	        value: function load(path) {
+	            var that = this;
+	            var soundMap = {
+	                buffer: path
+	            };
+	            var names = [];
+	            var paths = [];
+	            for (var name in soundMap) {
+	                var path = soundMap[name];
+	                names.push(name);
+	                paths.push(path);
+	            }
+	
+	            that.loadManager.itemStart(path);
+	            var bufferLoader = new BufferLoader(audioContext, paths, function (bufferList) {
+	                for (var i = 0; i < bufferList.length; i++) {
+	                    var buffer = bufferList[i];
+	                    var name = names[i];
+	                    that[name] = buffer;
+	                }
+	                that.loadManager.itemEnd(path);
+	                that.deferred.resolve();
+	            });
+	            bufferLoader.load();
+	        }
+	    }, {
+	        key: "togglePlayback",
+	        value: function togglePlayback(play) {
+	            if (!play && this.isPlaying) {
+	                // Stop playback
+	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
+	                this.startOffset += audioContext.currentTime - this.startTime;
+	                console.debug('paused at', this.startOffset);
+	                // Save the position of the play head.
+	            } else if (play && !this.isPlaying) {
+	                    this.startTime = audioContext.currentTime;
+	                    console.debug('started at', this.startOffset);
+	                    this.source = audioContext.createBufferSource();
+	                    // Connect graph
+	                    this.source.connect(this.analyser);
+	                    this.source.buffer = this.buffer;
+	                    this.source.loop = true;
+	                    // Start playback, but make sure we stay in bound of the buffer.
+	                    this.source[this.source.start ? 'start' : 'noteOn'](0, this.startOffset % this.buffer.duration);
+	                }
+	
+	            this.isPlaying = play;
+	        }
+	    }, {
+	        key: "analysis",
+	        value: function analysis() {
+	            this.analyser.smoothingTimeConstant = SMOOTHING;
+	            this.analyser.fftSize = FFT_SIZE;
+	
+	            // Get the frequency data from the currently playing music
+	            this.analyser.getByteFrequencyData(this.freqs); // 频率数据
+	            this.analyser.getByteTimeDomainData(this.times); // 波形数据
+	        }
+	    }, {
+	        key: "getFrequencyValue",
+	        value: function getFrequencyValue(freq) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(freq / nyquist * this.freqs.length);
+	            return this.freqs[index];
+	        }
+	    }, {
+	        key: "getTimeValue",
+	        value: function getTimeValue(time) {
+	            var nyquist = audioContext.sampleRate / 2;
+	            var index = Math.round(time / nyquist * this.times.length);
+	            return this.times[index];
+	        }
+	    }]);
+	
+	    return Visualizer;
+	})();
+	
+	exports["default"] = Visualizer;
+	module.exports = exports["default"];
+
+/***/ },
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41438,46 +39110,48 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	exports.resize = resize;
 	exports.render = render;
+	exports.onentering = onentering;
+	exports.onleaving = onleaving;
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(26);
+	__webpack_require__(27);
 	
 	var _libPromise = __webpack_require__(4);
 	
 	var _libEnv = __webpack_require__(10);
 	
-	var _scene = __webpack_require__(28);
+	var _scene = __webpack_require__(29);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(29);
+	var _camera = __webpack_require__(30);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(30);
+	var _renderer = __webpack_require__(31);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(31);
+	var _light = __webpack_require__(32);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _controls = __webpack_require__(32);
+	var _controls = __webpack_require__(33);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _tower = __webpack_require__(33);
+	var _tower = __webpack_require__(34);
 	
 	var Tower = _interopRequireWildcard(_tower);
 	
-	var _sky = __webpack_require__(34);
+	var _sky = __webpack_require__(35);
 	
 	var Sky = _interopRequireWildcard(_sky);
 	
-	var scene, camera, renderer, domElement, light, tower, sky;
+	var scene, camera, renderer, domElement, light, tower, sky, mouse, raycaster;
+	
 	var init = function init() {
-	    var SkyDynamic;
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -41493,6 +39167,8 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                light = Light.light;
 	                tower = Tower.object;
 	                sky = Sky.object;
+	                mouse = new THREE.Vector2(-100, -100);
+	                raycaster = new THREE.Raycaster();
 	
 	                scene.add(camera);
 	                scene.add(light);
@@ -41505,26 +39181,42 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	                tower.position.set(0, -4.5, 0);
 	                sky.position.set(0, 0, 0);
 	
-	                SkyDynamic = __webpack_require__(35);
+	                Controls.init(camera);
 	
-	                SkyDynamic.ready().then(function (obj) {
-	                    scene.add(obj);
-	                    obj.position.set(0, 0, 0);
-	                    obj.scale.set(0.95, 0.95, 0.95);
-	                });
+	                domElement.setAttribute('scene', 'opening');
 	
-	                context$1$0.next = 22;
+	                window.addEventListener('mousemove', function (e) {
+	                    e.preventDefault();
+	                    if (!starting) return;
+	
+	                    mouse.x = e.clientX / (0, _libEnv.width)() * 2 - 1;
+	                    mouse.y = -(e.clientY / (0, _libEnv.height)()) * 2 + 1;
+	                }, false);
+	
+	                window.addEventListener('mousedown', function (e) {
+	                    e.preventDefault();
+	                    if (!starting) return;
+	
+	                    mouse.x = e.clientX / (0, _libEnv.width)() * 2 - 1;
+	                    mouse.y = -(e.clientY / (0, _libEnv.height)()) * 2 + 1;
+	
+	                    var intersects = raycaster.intersectObjects(tower.children);
+	                    if (intersects.length > 0) {
+	                        entering();
+	                    }
+	                }, false);
+	
+	                context$1$0.next = 26;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 22:
-	                domElement.setAttribute('chapter', 'one');
+	            case 26:
 	                document.body.appendChild(domElement);
-	                window.addEventListener('resize', resize, false);
-	                window.scene = scene;
-	                window.camera = camera;
-	                window.renderer = renderer;
 	
-	            case 28:
+	                // window.scene = scene;
+	                // window.camera = camera;
+	                // window.renderer = renderer;
+	
+	            case 27:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41538,58 +39230,168 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    Camera.resize();
 	}
 	
+	function highlightTower() {
+	    raycaster.setFromCamera(mouse, camera);
+	
+	    var intersects = raycaster.intersectObjects(tower.children);
+	    var color;
+	
+	    if (intersects.length > 0) {
+	        color = 0xFFFFFF;
+	        domElement.style.cursor = 'pointer';
+	    } else {
+	        color = 0x000000;
+	        domElement.style.cursor = 'default';
+	    }
+	}
+	
 	function render() {
+	    highlightTower();
 	    renderer.render(scene, camera);
 	}
 	
 	var starting;
-	var requestFrameId;
 	var start = function start() {
-	    if (!starting) {
-	        starting = true;
-	        Controls.init(camera);
-	    }
-	    requestFrameId = requestAnimationFrame(start);
-	    render();
+	    return regeneratorRuntime.async(function start$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	                Controls.rotation();
+	
+	            case 2:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
 	};
 	
 	exports.start = start;
-	var end = function end() {
-	    return Controls.end().then(function () {
-	        starting = false;
-	        requestFrameId && cancelAnimationFrame(requestFrameId);
-	        window.removeEventListener('resize', resize);
-	    });
+	var isEntering;
+	
+	exports.isEntering = isEntering;
+	var onenteringHandlers = [];
+	
+	function onentering(handler) {
+	    if (onenteringHandlers.indexOf(handler) < 0) {
+	        onenteringHandlers.push(handler);
+	    }
+	}
+	
+	var entering = function entering() {
+	    return regeneratorRuntime.async(function entering$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = false;
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(Controls.flyIn());
+	
+	            case 3:
+	                context$1$0.next = 5;
+	                return regeneratorRuntime.awrap(hide());
+	
+	            case 5:
+	                exports.isEntering = isEntering = true;
+	                onenteringHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
 	};
 	
-	exports.end = end;
+	exports.entering = entering;
+	var onleavingHandlers = [];
+	
+	function onleaving(handler) {
+	    if (onleavingHandlers.indexOf(handler) < 0) {
+	        onleavingHandlers.push(handler);
+	    }
+	}
+	
+	var leaving = function leaving() {
+	    return regeneratorRuntime.async(function leaving$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(show());
+	
+	            case 3:
+	                context$1$0.next = 5;
+	                return regeneratorRuntime.awrap(Controls.flyOut());
+	
+	            case 5:
+	                exports.isEntering = isEntering = false;
+	                onleavingHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.leaving = leaving;
 	var show = function show() {
-	    domElement.style.transition = 'opacity 0.4s ease-out 0s';
-	    domElement.style.opacity = 1;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.display = 'block';
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(50));
+	
+	            case 3:
+	
+	                domElement.style.transition = 'opacity 0.4s ease-out 0s';
+	                domElement.style.opacity = 1;
+	
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
 	};
 	
 	exports.show = show;
 	var hide = function hide() {
-	    domElement.style.transition = 'opacity 0.4s ease-in 0s';
-	    domElement.style.opacity = 0;
-	    return (0, _libPromise.waitForEvent)(domElement, 'transitionend');
-	};
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.transition = 'opacity 0.4s ease-in 0s';
+	                domElement.style.opacity = 0;
 	
-	exports.hide = hide;
-	var destory = function destory() {
-	    document.body.removeChild(domElement);
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 4:
+	
+	                domElement.style.display = 'none';
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
 	};
-	exports.destory = destory;
+	exports.hide = hide;
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(27);
+	var content = __webpack_require__(28);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -41609,13 +39411,13 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	}
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "[chapter=\"one\"] {\n  position: absolute;\n  opacity: 0;\n}\n"
+	module.exports = "[scene=\"opening\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41637,7 +39439,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	deferred.resolve();
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41703,7 +39505,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41774,7 +39576,7 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	})();
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41783,9 +39585,15 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    value: true
 	});
 	
+	var _this = this;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _clock = __webpack_require__(12);
+	
+	var Clock = _interopRequireWildcard(_clock);
 	
 	var COLOR = {
 	    'drawn': 0xb5905c,
@@ -41794,18 +39602,14 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    'night': 0xcdf1f1
 	};
 	
-	var bgTime;
-	if (bgTime = location.search.match(/time=([^=&]+)/)) {
-	    bgTime = bgTime[1];
-	} else {
-	    bgTime = (0, _libEnv.time)();
+	var testState;
+	if (testState = location.search.match(/time=([^=&]+)/)) {
+	    testState = testState[1];
 	}
 	
-	var plight;
-	if (plight = location.search.match(/plight=([^=&]+)/)) {
-	    plight = Number(plight[1]);
-	} else {
-	    plight = COLOR[bgTime];
+	var testPlight;
+	if (testPlight = location.search.match(/plight=([^=&]+)/)) {
+	    testPlight = Number(testPlight[1]);
 	}
 	
 	var X = 0;
@@ -41818,14 +39622,35 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	};
 	
 	exports.ready = ready;
-	var light = new THREE.PointLight(plight);
-	exports.light = light;
-	light.position.set(X, Y, Z);
+	var light;
 	
-	deferred.resolve();
+	exports.light = light;
+	(function callee$0$0() {
+	    var state, color;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Clock.ready());
+	
+	            case 2:
+	                state = Clock.state();
+	                color = testPlight || COLOR[state];
+	
+	                exports.light = light = new THREE.PointLight(color);
+	                light.position.set(X, Y, Z);
+	
+	                deferred.resolve();
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41833,6 +39658,9 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.rotation = rotation;
+	exports.flyIn = flyIn;
+	exports.flyOut = flyOut;
 	exports.init = init;
 	
 	var _libPromise = __webpack_require__(4);
@@ -41843,99 +39671,87 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var camera;
 	
-	exports.camera = camera;
-	var deferred = (0, _libPromise.defer)();
-	var end = function end() {
-	    return deferred.promise;
-	};
-	
-	exports.end = end;
-	var lat = 5;
-	var latStep = 0.1;
 	var lon = 90;
-	var lonStep = 0.3;
+	var lonStep = 0.1;
 	var initRaduis;
 	var raduis;
-	var raduisStep;
-	var xOffsetPercent = 0.5;
-	var yOffsetPercent = 0;
 	var requestFrameId;
-	var zoomIn = true;
-	function animate() {
-	    requestFrameId = (0, _libUtil.requestAnimationFrame)(animate);
+	var isRotation = false;
 	
-	    if (typeof raduis === 'undefined') {
-	        raduis = initRaduis;
-	        raduisStep = initRaduis / ((360 + 45) / lonStep);
-	    }
+	function rotation() {
+	    (0, _libUtil.requestAnimationFrame)(rotation);
 	
-	    if (zoomIn) {
-	        raduis -= xOffsetPercent * raduisStep;
-	    }
-	    raduis = Math.min(raduis, initRaduis);
-	    raduis = Math.max(raduis, 0);
-	
-	    if (raduis < 1) {
-	        document.removeEventListener('mousewheel', onMouseWheel);
-	        document.removeEventListener('mouseenter', onMouseEnter);
-	        document.removeEventListener('mousemove', onMouseMove);
-	        document.removeEventListener('mouseleave', onMouseLeave);
-	        (0, _libUtil.cancelAnimationFrame)(requestFrameId);
-	        deferred.resolve();
-	    } else {
-	        lon += xOffsetPercent * lonStep;
-	        lat += yOffsetPercent * latStep;
-	        lat = Math.min(lat, 5);
-	        lat = Math.max(lat, 0);
+	    if (isRotation) {
+	        lon += lonStep;
 	        var theta = THREE.Math.degToRad(lon);
-	        var phi = THREE.Math.degToRad(lat);
 	        camera.position.x = raduis * Math.cos(theta);
-	        camera.position.y = raduis * Math.sin(phi);
 	        camera.position.z = raduis * Math.sin(theta);
 	        camera.lookAt(new THREE.Vector3(0, 0, 0));
+	        camera.updateProjectionMatrix();
+	        camera.updateMatrixWorld();
 	    }
-	    camera.updateProjectionMatrix();
 	}
 	
 	function onMouseWheel(e) {
 	    e.preventDefault();
+	
+	    if (isRotation) {
+	        raduis += e.wheelDelta * 0.001;
+	        raduis = Math.min(raduis, initRaduis);
+	        raduis = Math.max(raduis, 2.5);
+	    }
 	}
 	
-	function parseXY(e) {
-	    var screenX = e.screenX;
-	    var screenY = e.screenY;
-	    var halfScreenWidth = (0, _libEnv.width)() / 2;
-	    var halfScreenHeight = (0, _libEnv.height)() / 2;
-	    xOffsetPercent = (screenX - halfScreenWidth) / halfScreenWidth;
-	    yOffsetPercent = (screenY - halfScreenHeight) / halfScreenHeight;
+	var flyInDeferred;
+	
+	function flyIn() {
+	    flyInDeferred = flyInDeferred || (0, _libPromise.defer)();
+	
+	    lonStep += 0.02;
+	    raduis -= 0.2;
+	    raduis = Math.max(raduis, 0);
+	
+	    if (raduis <= 1) {
+	        isRotation = false;
+	        lonStep = 0.1;
+	        flyInDeferred.resolve();
+	        flyInDeferred = null;
+	    } else {
+	        (0, _libUtil.requestAnimationFrame)(flyIn);
+	        return flyInDeferred.promise;
+	    }
 	}
 	
-	function onMouseEnter(e) {
-	    // zoomIn = true;
-	    parseXY(e);
-	}
+	var flyOutDeferred;
 	
-	function onMouseMove(e) {
-	    parseXY(e);
-	}
+	function flyOut() {
+	    flyOutDeferred = flyOutDeferred || (0, _libPromise.defer)();
 	
-	function onMouseLeave(e) {
-	    parseXY(e);
-	    // zoomIn = false;
+	    isRotation = true;
+	    lonStep += 0.02;
+	    raduis += 0.2;
+	    raduis = Math.min(raduis, initRaduis);
+	
+	    if (raduis >= initRaduis) {
+	        lonStep = 0.1;
+	        flyOutDeferred.resolve();
+	        flyOutDeferred = null;
+	    } else {
+	        (0, _libUtil.requestAnimationFrame)(flyOut);
+	        return flyOutDeferred.promise;
+	    }
 	}
 	
 	function init(_camera) {
-	    exports.camera = camera = _camera;
-	    initRaduis = camera.position.z;
+	    camera = _camera;
+	    raduis = initRaduis = camera.position.z;
+	
 	    document.addEventListener('mousewheel', onMouseWheel, false);
-	    document.addEventListener('mouseenter', onMouseEnter, false);
-	    document.addEventListener('mousemove', onMouseMove, false);
-	    document.addEventListener('mouseleave', onMouseLeave, false);
-	    animate();
+	    isRotation = true;
 	}
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41964,7 +39780,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	    var buildingMesh = obj.children[0];
 	    buildingMesh.material = new THREE.MeshLambertMaterial({
 	        color: 0xFFFFFF,
-	        essive: 0xFFFFFF,
 	        side: THREE.DoubleSide,
 	        wireframe: true
 	    });
@@ -41974,7 +39789,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	    var buildingInnerMesh = new THREE.Mesh(buildingMesh.geometry.clone(), new THREE.MeshLambertMaterial({
 	        color: 0x000000,
-	        essive: 0x000000,
 	        side: THREE.DoubleSide
 	    }));
 	    buildingInnerMesh.rotation.set(-Math.PI / 2, 0, 0);
@@ -41983,95 +39797,6 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	    deferred.resolve();
 	}, _prologue.onProgress, _prologue.onError);
-	
-	// var loader = new THREE.JSONLoader(manager);
-	// loader.load(
-	//     'assets/obj/building/building1.json',
-	//     function (geometry, materials) {
-	//         object = new THREE.Mesh(geometry);
-	//         object.material = new THREE.MeshFaceMaterial([
-	//             new THREE.MeshLambertMaterial({
-	//                 color: 0x000000,
-	//                 emissive: 0x000000,
-	//                 side: THREE.DoubleSide
-	//             })
-	//         ]);
-	//         object.scale.set(50, 50, 50);
-	//         deferred.resolve();
-	//     },
-	//     onProgress,
-	//     onError
-	// );
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(10);
-	
-	var _prologue = __webpack_require__(5);
-	
-	var bgTime;
-	if (bgTime = location.search.match(/time=([^=&]+)/)) {
-	    bgTime = bgTime[1];
-	} else {
-	    bgTime = (0, _libEnv.time)();
-	}
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	var skyMaterial;
-	var skyMaterialDeferred = (0, _libPromise.defer)();
-	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	skyMaterialLoader.load('assets/images/' + bgTime + '.jpg', function (texture) {
-	    skyMaterial = new THREE.MeshBasicMaterial({
-	        map: texture,
-	        side: THREE.BackSide
-	    });
-	    skyMaterialDeferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
-	
-	(function callee$0$0() {
-	    var windowW, windowH, imageW, imageH, ratio, shpereGeometry;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(skyMaterialDeferred.promise);
-	
-	            case 2:
-	                windowW = (0, _libEnv.width)();
-	                windowH = (0, _libEnv.height)();
-	                imageW = skyMaterial.map.image.width;
-	                imageH = skyMaterial.map.image.height;
-	                ratio = Math.max(windowW / windowH, imageW / imageH);
-	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64);
-	
-	                exports.object = object = new THREE.Mesh(shpereGeometry, skyMaterial);
-	                deferred.resolve();
-	
-	            case 10:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
 
 /***/ },
 /* 35 */
@@ -42085,13 +39810,22 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	
 	var _this = this;
 	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
 	var _libPromise = __webpack_require__(4);
 	
 	var _libEnv = __webpack_require__(10);
 	
-	var _libUtil = __webpack_require__(11);
-	
 	var _prologue = __webpack_require__(5);
+	
+	var _clock = __webpack_require__(12);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	var testState;
+	if (testState = location.search.match(/time=([^=&]+)/)) {
+	    testState = testState[1];
+	}
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -42101,52 +39835,677 @@ THREE.CombinedCamera.prototype.toBottomView = function() {
 	var object;
 	
 	exports.object = object;
-	var skyMaterial;
-	var skyMaterialDeferred = (0, _libPromise.defer)();
-	var skyMaterialLoader = new THREE.TextureLoader(_prologue.manager);
-	skyMaterialLoader.load('assets/images/' + (0, _libEnv.time)() + '_d.png', function (texture) {
-	    skyMaterial = new THREE.MeshBasicMaterial({
-	        map: texture,
-	        transparent: true,
-	        side: THREE.BackSide
-	    });
-	    skyMaterialDeferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
+	var materials = {
+	    drawn: false,
+	    daylight: false,
+	    sunset: false,
+	    night: false
+	};
 	
-	var rotateY = 0;
-	var radians = THREE.Math.degToRad(0.02);
-	function animate() {
-	    (0, _libUtil.requestAnimationFrame)(animate);
-	    object.rotation.y = rotateY;
-	    rotateY -= radians;
+	var _loop = function (state) {
+	    materials[state] = new Promise(function (resolve, reject) {
+	        var loader = new THREE.TextureLoader(_prologue.manager);
+	        loader.load('assets/images/' + state + '.jpg', function (texture) {
+	            var material = new THREE.MeshBasicMaterial({
+	                map: texture,
+	                side: THREE.BackSide
+	            });
+	            resolve(material);
+	        }, _prologue.onProgress, _prologue.onError);
+	    });
+	};
+	
+	for (var state in materials) {
+	    _loop(state);
 	}
 	
 	(function callee$0$0() {
-	    var windowW, windowH, imageW, imageH, ratio, shpereGeometry;
+	    var state, material, windowW, windowH, imageW, imageH, ratio, geometry;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(skyMaterialDeferred.promise);
+	                return regeneratorRuntime.awrap(Clock.ready());
 	
 	            case 2:
+	                state = testState || Clock.state();
+	                context$1$0.next = 5;
+	                return regeneratorRuntime.awrap(materials[state]);
+	
+	            case 5:
+	                material = context$1$0.sent;
 	                windowW = (0, _libEnv.width)();
 	                windowH = (0, _libEnv.height)();
-	                imageW = skyMaterial.map.image.width;
-	                imageH = skyMaterial.map.image.height;
+	                imageW = material.map.image.width;
+	                imageH = material.map.image.height;
 	                ratio = Math.max(windowW / windowH, imageW / imageH);
-	                shpereGeometry = new THREE.SphereGeometry(50, 64, 64);
+	                geometry = new THREE.SphereGeometry(50, 64, 64);
 	
-	                exports.object = object = new THREE.Mesh(shpereGeometry, skyMaterial);
-	                deferred.resolve(object);
-	                animate();
+	                exports.object = object = new THREE.Mesh(geometry, material);
+	                deferred.resolve();
 	
-	            case 11:
+	            case 14:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, _this);
 	})();
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	exports.render = render;
+	exports.onentering = onentering;
+	exports.onleaving = onleaving;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(37);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(10);
+	
+	var _scene = __webpack_require__(39);
+	
+	var Scene = _interopRequireWildcard(_scene);
+	
+	var _camera = __webpack_require__(40);
+	
+	var Camera = _interopRequireWildcard(_camera);
+	
+	var _renderer = __webpack_require__(41);
+	
+	var Renderer = _interopRequireWildcard(_renderer);
+	
+	var _light = __webpack_require__(42);
+	
+	var Light = _interopRequireWildcard(_light);
+	
+	var _controls = __webpack_require__(43);
+	
+	var Controls = _interopRequireWildcard(_controls);
+	
+	var scene, camera, renderer, domElement, light, visualizer;
+	
+	var init = function init() {
+	    return regeneratorRuntime.async(function init$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready()]));
+	
+	            case 2:
+	
+	                scene = Scene.scene;
+	                camera = Camera.camera;
+	                renderer = Renderer.renderer;
+	                domElement = Renderer.domElement;
+	                light = Light.light;
+	
+	                scene.add(camera);
+	                scene.add(light);
+	
+	                light.position.set(0, 0, 100);
+	                // Controls.init(camera, renderer);
+	
+	                context$1$0.next = 12;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 12:
+	                domElement.setAttribute('scene', 'chapters');
+	                document.body.appendChild(domElement);
+	
+	                // window.scene = scene;
+	                // window.camera = camera;
+	                // window.renderer = renderer;
+	
+	            case 14:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.init = init;
+	
+	function resize() {
+	    Renderer.resize();
+	    Camera.resize();
+	}
+	
+	function render() {
+	    Camera.render();
+	    renderer.render(scene, camera);
+	}
+	
+	var starting;
+	var start = function start() {
+	    return regeneratorRuntime.async(function start$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	
+	            case 1:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.start = start;
+	var isEntering;
+	
+	exports.isEntering = isEntering;
+	var onenteringHandlers = [];
+	
+	function onentering(handler) {
+	    if (onenteringHandlers.indexOf(handler) < 0) {
+	        onenteringHandlers.push(handler);
+	    }
+	}
+	
+	var entering = function entering(_visualizer) {
+	    return regeneratorRuntime.async(function entering$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                visualizer = _visualizer;
+	                starting = false;
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(show());
+	
+	            case 4:
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(visualizer.ready());
+	
+	            case 6:
+	                exports.isEntering = isEntering = true;
+	                onenteringHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	                visualizer.togglePlayback(true);
+	
+	            case 9:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.entering = entering;
+	var onleavingHandlers = [];
+	
+	function onleaving(handler) {
+	    if (onleavingHandlers.indexOf(handler) < 0) {
+	        onleavingHandlers.push(handler);
+	    }
+	}
+	
+	var leaving = function leaving() {
+	    return regeneratorRuntime.async(function leaving$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(hide());
+	
+	            case 3:
+	                exports.isEntering = isEntering = false;
+	                onleavingHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	                visualizer.togglePlayback(false);
+	
+	            case 6:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.leaving = leaving;
+	var show = function show() {
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.display = 'block';
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(50));
+	
+	            case 3:
+	
+	                domElement.style.transition = 'opacity 0.4s ease-out 0s';
+	                domElement.style.opacity = 1;
+	
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.show = show;
+	var hide = function hide() {
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.transition = 'opacity 0.4s ease-in 0s';
+	                domElement.style.opacity = 0;
+	
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 4:
+	
+	                domElement.style.display = 'none';
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	exports.hide = hide;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(38);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var COLOR = 0x000000;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var scene = new THREE.Scene();
+	exports.scene = scene;
+	// scene.fog = new THREE.FogExp2(COLOR, 0.002);
+	
+	deferred.resolve();
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	exports.render = render;
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(10);
+	
+	var FOV = 45;
+	var NEAR = 1;
+	var FAR = 10000;
+	var ORTH_NEAR = -500;
+	var ORTH_FAR = 1000;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var camera;
+	
+	exports.camera = camera;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    camera.updateProjectionMatrix();
+	}
+	
+	function render() {
+	    camera.updateProjectionMatrix();
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                // camera = new THREE.OrthographicCamera(w / -2,  w / 2, h / 2,  h / -2, ORTH_NEAR, ORTH_FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
+	                exports.camera = camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
+	                camera.position.set(X, Y, Z); //放置位置
+	                camera.updateProjectionMatrix();
+	
+	                deferred.resolve();
+	
+	            case 8:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(10);
+	
+	var COLOR = 0x000000;
+	var ALPHA = 1;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var renderer;
+	exports.renderer = renderer;
+	var domElement;
+	
+	exports.domElement = domElement;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    renderer.setSize(w, h);
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.renderer = renderer = new THREE.WebGLRenderer();
+	                renderer.setSize(w, h);
+	                renderer.setPixelRatio(window.devicePixelRatio);
+	                renderer.setClearColor(COLOR, ALPHA);
+	
+	                exports.domElement = domElement = renderer.domElement;
+	
+	                deferred.resolve();
+	
+	            case 10:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var COLOR = 0xFFFFFF;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var light = new THREE.DirectionalLight(COLOR);
+	exports.light = light;
+	light.position.set(X, Y, Z);
+	
+	deferred.resolve();
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.init = init;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libCubicbezier = __webpack_require__(44);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(11);
+	
+	var camera;
+	
+	exports.camera = camera;
+	var deferred = (0, _libPromise.defer)();
+	var end = function end() {
+	    return deferred.promise;
+	};
+	
+	exports.end = end;
+	
+	function init(_camera, _renderer) {
+	    exports.camera = camera = _camera;
+	}
+
+/***/ },
+/* 44 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	function cubicBezierFunction(p1x, p1y, p2x, p2y) {
+	    var ZERO_LIMIT = 1e-6;
+	    // Calculate the polynomial coefficients,
+	    // implicit first and last control points are (0,0) and (1,1).
+	    var ax = 3 * p1x - 3 * p2x + 1,
+	        bx = 3 * p2x - 6 * p1x,
+	        cx = 3 * p1x;
+	
+	    var ay = 3 * p1y - 3 * p2y + 1,
+	        by = 3 * p2y - 6 * p1y,
+	        cy = 3 * p1y;
+	
+	    function sampleCurveDerivativeX(t) {
+	        // `ax t^3 + bx t^2 + cx t' expanded using Horner 's rule.
+	        return (3 * ax * t + 2 * bx) * t + cx;
+	    }
+	
+	    function sampleCurveX(t) {
+	        return ((ax * t + bx) * t + cx) * t;
+	    }
+	
+	    function sampleCurveY(t) {
+	        return ((ay * t + by) * t + cy) * t;
+	    }
+	
+	    // Given an x value, find a parametric value it came from.
+	    function solveCurveX(x) {
+	        var t2 = x,
+	            derivative,
+	            x2;
+	
+	        // https://trac.webkit.org/browser/trunk/Source/WebCore/platform/animation
+	        // First try a few iterations of Newton's method -- normally very fast.
+	        // http://en.wikipedia.org/wiki/Newton's_method
+	        for (var i = 0; i < 8; i++) {
+	            // f(t)-x=0
+	            x2 = sampleCurveX(t2) - x;
+	            if (Math.abs(x2) < ZERO_LIMIT) {
+	                return t2;
+	            }
+	            derivative = sampleCurveDerivativeX(t2);
+	            // == 0, failure
+	            if (Math.abs(derivative) < ZERO_LIMIT) {
+	                break;
+	            }
+	            t2 -= x2 / derivative;
+	        }
+	
+	        // Fall back to the bisection method for reliability.
+	        // bisection
+	        // http://en.wikipedia.org/wiki/Bisection_method
+	        var t1 = 1,
+	            t0 = 0;
+	        t2 = x;
+	        while (t1 > t0) {
+	            x2 = sampleCurveX(t2) - x;
+	            if (Math.abs(x2) < ZERO_LIMIT) {
+	                return t2;
+	            }
+	            if (x2 > 0) {
+	                t1 = t2;
+	            } else {
+	                t0 = t2;
+	            }
+	            t2 = (t1 + t0) / 2;
+	        }
+	
+	        // Failure
+	        return t2;
+	    }
+	
+	    function solve(x) {
+	        return sampleCurveY(solveCurveX(x));
+	    }
+	
+	    return solve;
+	}
+	
+	/**
+	 * @namespace lib 
+	 */
+	
+	/**
+	 * @callback BezierFunction
+	 * @param {Number} x x坐标，0~1之间的数
+	 * @return {Number} y坐标
+	 */
+	
+	/**
+	 * 生成贝塞尔曲线函数
+	 * @method cubicbezier
+	 * @memberOf lib
+	 * @param {Number} p1x 第一个控制点x坐标
+	 * @param {Number} p1y 第一个控制点y坐标
+	 * @param {Number} p2x 第二个控制点x坐标
+	 * @param {Number} p2y 第二个控制点y坐标
+	 * @property {BezierFunction} linear 直线函数
+	 * @property {BezierFunction} ease ease函数
+	 * @property {BezierFunction} easeIn easeIn函数
+	 * @property {BezierFunction} easeOut easeOut函数
+	 * @property {BezierFunction} easeInOut easeInOut函数
+	 * @return {BezierFunction} 贝塞尔曲线函数
+	 */
+	exports["default"] = cubicBezierFunction;
+	
+	cubicBezierFunction.linear = cubicBezierFunction(0, 0, 1, 1);
+	cubicBezierFunction.ease = cubicBezierFunction(.25, .1, .25, 1);
+	cubicBezierFunction.easeIn = cubicBezierFunction(.42, 0, 1, 1);
+	cubicBezierFunction.easeOut = cubicBezierFunction(0, 0, .58, 1);
+	cubicBezierFunction.easeInOut = cubicBezierFunction(.42, 0, .58, 1);
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map

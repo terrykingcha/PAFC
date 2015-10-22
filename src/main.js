@@ -1,47 +1,60 @@
 import './main.less';
 import {delay, waitForEvent} from './lib/promise';
 
-THREE.Loader.Handlers.add(/\.png$/i, new THREE.ImageLoader());
-THREE.Loader.Handlers.add(/\.tag$/i, new THREE.TGALoader());
-
 import * as prologue from './prologue';
 import * as clock from './clock';
 import * as share from './share';
 import * as nav from './nav';
 import * as menu from './menu';
 import Visualizer from './visualizer';
-import * as chapter1 from './chapter1';
-// import * as chapter2 from './chapter2';
-// import * as chapter3 from './chapter3';
+import * as opening from './opening';
+import * as chapters from './chapters';
 
+var currentMusic;
 var openingMusic = new Visualizer(prologue.manager);
 openingMusic.load('./assets/sounds/opening.mp3');
 
-var chapters = {
-    cp1: chapter1
-    // ,cp2: chapter2
-    // chapter2,
-    // chapter3
+var chapterMusics = new Array(8).fill(1).map(function(v, i) {
+    var t = 't' + v * i * 3;
+    var music = new Visualizer(prologue.manager);
+    music.load(`./assets/sounds/${t}.mp3`);
+    return music;
+});
+
+var resizeHandler;
+function resize() {
+    window.addEventListener('resize', function() {
+        resizeHandler && resizeHandler();
+    });
 }
 
-var matched;
-var chapter = chapters.cp1;
-if ((matched = location.search.match(/cp=(\d+)/))) {
-    var no = matched[1] >> 0;
-    chapter = chapters['cp' + no];
+var renderHandler;
+function tick() {
+    requestAnimationFrame(tick);
+    renderHandler && renderHandler();
 }
 
 (async () => {
+    resize();
+    tick();
+
     await prologue.ready();
 
-    await chapter.init();
-    chapter.show();
-    chapter.render();
+    await Promise.all([
+        opening.init(),
+        chapters.init()
+    ]);
+
+    opening.show();
+    opening.render();
 
     await prologue.opening();
     await prologue.hide();
 
-    await clock.ready();
+    await Promise.all([
+        clock.ready(),
+        openingMusic.ready()
+    ]);
 
     await Promise.all([
         clock.show(),
@@ -49,49 +62,60 @@ if ((matched = location.search.match(/cp=(\d+)/))) {
         nav.show()
     ]);
 
-    openingMusic.togglePlayback(true);
+    await opening.start();
+    resizeHandler = ::opening.resize;
+    renderHandler = ::opening.render;
+
     clock.run();
+    currentMusic = openingMusic;
+    openingMusic.togglePlayback(true);
 
     share.onshare(function(type) {
         console.log(type);
     });
 
-    menu.onsymbol(function(symbol) {
-        console.log(symbol);
+    menu.onsymbol(async function(symbol) {
+        var index = symbol.substr(1) >> 0;
+        var chapterMusic = chapterMusics[index / 3];
+
+        if (chapterMusic) {
+            currentMusic = chapterMusic;
+
+            await menu.hide();
+
+            if (opening.isEntering && 
+                    chapters.isEntering) {
+                await Promise.all([
+                    opening.leaving(),
+                    chapters.leaving()
+                ]);
+            }
+
+            await opening.entering();
+        }
     });
 
     nav.onmusic(function(on) {
-        openingMusic.togglePlayback(on);
+        currentMusic.togglePlayback(on);
     });
 
-    await chapter.start();
-    // var lastChapter;
-    // for (var i = 0; i < chapters.length; i++) {
-    //     let chapter = chapters[i];
+    opening.onentering(async function() {
+        openingMusic.togglePlayback(false);
+        await chapters.entering(currentMusic);
+    });
 
-    //     await chapter.init();
-    //     console.log('Chapter ' + i + ' Init');
+    opening.onleaving(async function() {
+        resizeHandler = ::opening.resize;
+        renderHandler = ::opening.render;
+    });
 
-    //     await delay(50);
+    chapters.onentering(async function() {
+        resizeHandler = ::chapters.resize;
+        renderHandler = ::chapters.render;
+    });
 
-    //     if (lastChapter) {
-    //         await Promise.all([
-    //             lastChapter.hide(),
-    //             chapter.show()
-    //         ]);
-    //         console.log('Chapter ' + (i - 1) + ' Hide', 
-    //             'Chapter ' + i + ' Show');
-    //         await lastChapter.destory();
-    //         lastChapter = chapter;
-    //     } else {
-    //         await chapter.show();
-    //         console.log('Chapter ' + i + ' Show');
-    //     }
-
-    //     await chapter.start();
-    //     console.log('Chapter ' + i + ' Start');
-
-    //     await chapter.end();
-    //     console.log('Chapter ' + i + ' End');
-    // }
+    chapters.onleaving(async function() {
+        resizeHandler = ::opening.resize;
+        renderHandler = ::opening.render;
+    });
 })();

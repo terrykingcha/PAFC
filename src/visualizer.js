@@ -1,3 +1,5 @@
+import {defer} from './lib/promise';
+
 var audioContext = new(window.AudioContext || window.webkitAudioContext)();
 
 audioContext.createGain = audioContext.createGain || 
@@ -76,7 +78,12 @@ export default class Visualizer {
         this.startTime = 0;
         this.startOffset = 0;
 
+        this.deferred = defer();
         this.loadManager = loadManager;
+    }
+
+    ready () {
+        return this.deferred.promise;
     }
 
     load(path) {
@@ -101,6 +108,7 @@ export default class Visualizer {
                 that[name] = buffer;
             }
             that.loadManager.itemEnd(path);
+            that.deferred.resolve();
         });
         bufferLoader.load();
     }
@@ -110,11 +118,11 @@ export default class Visualizer {
             // Stop playback
             this.source[this.source.stop ? 'stop' : 'noteOff'](0);
             this.startOffset += audioContext.currentTime - this.startTime;
-            console.log('paused at', this.startOffset);
+            console.debug('paused at', this.startOffset);
             // Save the position of the play head.
         } else if (play && !this.isPlaying) {
             this.startTime = audioContext.currentTime;
-            console.log('started at', this.startOffset);
+            console.debug('started at', this.startOffset);
             this.source = audioContext.createBufferSource();
             // Connect graph
             this.source.connect(this.analyser);
