@@ -21,6 +21,27 @@ export function onsymbol(handler) {
     }
 }
 
+var $video;
+var videoEl = document.createElement('video');
+videoEl.autoplay = false;
+videoEl.autobuffer = true;
+videoEl.controls = true;
+videoEl.crossorigin = 'use-credentials';
+videoEl.src = './assets/videos/project.mp4';
+function toggleVideo(isPlayback) {
+    if (!videoEl.parentNode) {
+        var rect = $video.getBoundingClientRect();
+        videoEl.width = rect.width;
+        videoEl.height = rect.height;
+        $video.appendChild(videoEl);
+    }
+    if (isPlayback) {
+        videoEl.play();
+    } else {
+        videoEl.pause();
+    }
+}
+
 var $menu;
 var isBindEvents = false;
 export async function show() {
@@ -28,6 +49,9 @@ export async function show() {
 
     if (!$menu) {
         $menu = document::find('#menu');
+    }
+    if (!$video) {
+        $video = $menu::find('.project-video');
     }
 
     $menu::visible()
@@ -71,8 +95,16 @@ export async function show() {
                     var lastActive = $menu::find('.' + lastTarget::attr('for'));
                     var active = $menu::find('.' + target::attr('for'));
 
-                    lastActive::hidden();
-                    active::visible();
+                    lastActive::removeClass('cur');
+                    active::addClass('cur');
+
+                    if (lastTarget::attr('for') === 'project-video') {
+                        toggleVideo(false);
+                    }
+
+                    if (target::attr('for') === 'project-video') {
+                        toggleVideo(true);
+                    }
                 }
             }); 
 

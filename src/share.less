@@ -11,26 +11,58 @@
         color: #EEE;
         font-size: 12px;
         line-height: 24px;
+        margin-right: 8px;
     }
 
     a {
         display: inline-block;
-        margin: 0 10px;
+        margin: 0 2px;
         width: 24px;
         height: 24px;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);
         background-repeat: no-repeat;
-        background-position: 0 0;
+        background-position: -1000px -1000px;
         vertical-align: middle;
         font-size: 0;
         line-height: 0;
         cursor: pointer;
 
         &.weibo {
-            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAXCAYAAABJXhw0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAl5JREFUeNrcWLFO40AQNSvXpzSUJ5mGOtCj4AJqqCMd5AuC+QFyP3DcfYEBiRIBLRRBoofQ0gCipCDcB1zu7emtNJrbxDZeFzDS0yaT3Xk7M7vjceYmk0nkk+Fw+AXDGrACLAOLwDzwAtwDN8A1cJmm6e+onpTmArxccz5H4MQ3DF1gvcQmLoBjOHP0TicqcwFHMx2BA18xZEAfMBU28wf4BezDoeeSa2pzAc//OUInvgO9GkckB/ZKOBOMyzkTix+yioZ/AmOgBWwACddb3W7B2uBc/zLCO5FXSPEVkCrdDtNtU9+bcWeCc9k7Y1idujMMW0MDYkzdqj2NgD2Xp0CbUctop0u7vuoUnMvajVn2fBXjkd5eKf1ARSphhHsk2Kc9a/dErW2My7B2axkBSx7DTzSwCdwBtzRu522JtdEUu41xxXwAacOpSK2UA/Xdzunw8xvHhOOyZ31jXDGfolJ6ynCb1UKeY/nbQKxLxNxFz+Ya4zJsBWSZc+myZe6BtbrDdNrL9kqdm+8imnO+k3mPI41xGfYzTg5FeTtlZdgUD6+UUbCR2RZRyzybfinQBeUybMoidXn2uOhMpXok5nRU1dFyX6ALymXYWUYixZE6l68cnbRURCNRRaTcFOiCchm2x0764jK16P2Cil5L1fy2SL2U6wJdUK6YPf4FHyyrvEgZDfbF5IT1fEmkd0dcRt1uX3r0jXFN67XGPLPnNDQSqW7zzG6LOq7b7Cq9Vm0u22vJNv7HlIpQVew7SVH3G4zLdb9GKfOahnPaKbOBoFyf7w3xU72zf+R/Uf4KMABM3DxBsEksmQAAAABJRU5ErkJggg==);
+            background-position: 0 0;
         
             &:hover {
-                background-position: -27px 0;
+                background-position: 0 -24px;
+            }
+        }
+
+        &.weixin {
+            background-position: -24px 0;
+        
+            &:hover {
+                background-position: -24px -24px;
+            }
+        }
+
+        &.facebook {
+            background-position: -48px 0;
+        
+            &:facebook {
+                background-position: -48px -24px;
             }
         }
     }
+}
+
+#weixin_code {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-image: url(./assets/images/weixin_code.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: rgba(0, 0, 0, 0.8);
 }

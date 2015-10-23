@@ -15,8 +15,9 @@ export async function show() {
 
     $share = document::find('#share');
     $share::visible()
-        ::find('.weibo')
         ::on('click', function(e) {
-            shareHandlers.forEach((h) => h('weibo'));
+            if (e.target.tagName.toUpperCase() === 'A') {
+                shareHandlers.forEach((h) => h(e.target.className));
+            }
         });
 }

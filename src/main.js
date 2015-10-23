@@ -1,5 +1,6 @@
 import './main.less';
 import {delay, waitForEvent} from './lib/promise';
+import {find, show, hide, on, off} from './lib/dom';
 
 import * as prologue from './prologue';
 import * as clock from './clock';
@@ -71,7 +72,14 @@ function tick() {
     openingMusic.togglePlayback(true);
 
     share.onshare(function(type) {
-        console.log(type);
+        if (type === 'weixin') {
+            var $weixinCode = document::find('#weixin_code');
+            $weixinCode::show()
+                ::on('click', function handler() {
+                    $weixinCode::hide();
+                    $weixinCode::off('click', handler);
+                });
+        }
     });
 
     menu.onsymbol(async function(symbol) {
