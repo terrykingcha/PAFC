@@ -2,11 +2,16 @@ import {defer} from '../lib/promise';
 import CubicBezier from '../lib/cubicbezier';
 import {requestAnimationFrame, cancelAnimationFrame} from '../lib/util';
 
-export var camera;
+export var controls;
+
+export var render = () => controls.update();
 
 var deferred = defer();
-export var end = () => deferred.promise;
 
-export function init(_camera, _renderer) {
-    camera = _camera;
+export function init(camera, renderer) {
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = false;
+    deferred.resolve();
 }

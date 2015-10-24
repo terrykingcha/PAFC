@@ -15,12 +15,12 @@ deferred.resolve();
 export function state() {
     var h = getHours();
     
-    if (h >= 5 && h < 8) {
+    if (h >= 6 && h < 18) {
         return 'dawn';
-    } else if (h >= 8 && h < 16) {
-        return 'daylight';
-    } else if (h >= 16 && h < 19) {
-        return 'sunset';
+    // } else if (h >= 8 && h < 16) {
+        // return 'daylight';
+    // } else if (h >= 16 && h < 19) {
+        // return 'sunset';
     } else {
         return 'night';
     }

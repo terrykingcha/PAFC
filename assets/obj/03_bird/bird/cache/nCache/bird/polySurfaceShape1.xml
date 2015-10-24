@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Autodesk_Cache_File>
+  <cacheType Type="OneFilePerFrame" Format="mcx"/>
+  <time Range="240-13680"/>
+  <cacheTimePerFrame TimePerFrame="240"/>
+  <cacheVersion Version="2.0"/>
+  <extra>C:/Users/vivi/Desktop/bird/bird.mb</extra>
+  <extra>maya 2015</extra>
+  <extra>vivi</extra>
+  <Channels>
+    <channel0 ChannelName="polySurfaceShape1" ChannelType="FloatVectorArray" ChannelInterpretation="positions" SamplingType="Regular" SamplingRate="240" StartTime="240" EndTime="13680"/>
+  </Channels>
+</Autodesk_Cache_File>

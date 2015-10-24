@@ -14,7 +14,7 @@ var scene,
     camera, 
     renderer, 
     domElement, 
-    light, 
+    light1, light2, light3, light4,
     tower, 
     sky, 
     mouse, 
@@ -34,23 +34,45 @@ export var init = async () => {
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    light = Light.light;
+    light1 = Light.light1;
+    light2 = Light.light2;
+    light3 = Light.light3;
+    light4 = Light.light4;
     tower = Tower.object;
     sky = Sky.object;
     mouse = new THREE.Vector2(-100, -100);
     raycaster = new THREE.Raycaster();
 
     scene.add(camera);
-    scene.add(light);
+    scene.add(light1);
+    scene.add(light2);
+    scene.add(light3);
+    scene.add(light4);
     scene.add(tower);
     scene.add(sky);
 
     camera.position.set(0, 0, 20);
     camera.lookAt(scene.position);
-    light.position.set(
-        sky.geometry.parameters.radius * 0.4, 
-        sky.geometry.parameters.radius * 0.4, 
-        -sky.geometry.parameters.radius * 0.8
+    var radius = sky.geometry.parameters.radius;
+    light1.position.set(
+        0,
+        radius, 
+        -radius
+    );
+    light2.position.set(
+        0, 
+        radius, 
+        radius
+    );
+    light3.position.set(
+        radius, 
+        radius, 
+        0
+    );
+    light4.position.set(
+        -radius, 
+        radius, 
+        0
     );
     tower.position.set(0, -4.5, 0)
     sky.position.set(0, 0, 0);
@@ -74,7 +96,7 @@ export var init = async () => {
         mouse.x = (e.clientX / width()) * 2 - 1;
         mouse.y = - (e.clientY / height()) * 2 + 1;
 
-        var intersects = raycaster.intersectObjects(tower.children);    
+        var intersects = raycaster.intersectObject(tower.children[2]);    
         if (intersects.length > 0) {
             entering();
         }
@@ -96,16 +118,18 @@ export function resize() {
 function highlightTower() {
     raycaster.setFromCamera(mouse, camera);
 
-    var intersects = raycaster.intersectObjects(tower.children);    
+    var intersects = raycaster.intersectObject(tower.children[2]);    
     var color;
 
     if (intersects.length > 0) {
-        color = 0xFFFFFF;
+        color = 0x282930;
         domElement.style.cursor = 'pointer';
     } else {
         color = 0x000000;
         domElement.style.cursor = 'default';
     }
+
+    tower.children[1].material.emissive.setHex(color);
 }
 
 export function render() {
