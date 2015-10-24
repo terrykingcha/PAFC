@@ -37068,11 +37068,13 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _prologue = __webpack_require__(5);
+	var _libDom = __webpack_require__(5);
+	
+	var _prologue = __webpack_require__(6);
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _clock = __webpack_require__(12);
+	var _clock = __webpack_require__(13);
 	
 	var clock = _interopRequireWildcard(_clock);
 	
@@ -37171,7 +37173,15 @@ THREE.OBJLoader.prototype = {
 	                openingMusic.togglePlayback(true);
 	
 	                share.onshare(function (type) {
-	                    console.log(type);
+	                    if (type === 'weixin') {
+	                        var _context;
+	
+	                        var $weixinCode = _libDom.find.call(document, '#weixin_code');
+	                        (_context = _libDom.show.call($weixinCode), _libDom.on).call(_context, 'click', function handler() {
+	                            _libDom.hide.call($weixinCode);
+	                            _libDom.off.call($weixinCode, 'click', handler);
+	                        });
+	                    }
 	                });
 	
 	                menu.onsymbol(function callee$1$0(symbol) {
@@ -37861,466 +37871,6 @@ THREE.OBJLoader.prototype = {
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.onProgress = onProgress;
-	exports.onError = onError;
-	exports.hide = hide;
-	
-	__webpack_require__(6);
-	
-	__webpack_require__(8);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(10);
-	
-	var _libUtil = __webpack_require__(11);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var loaded = 0;
-	var total = 0;
-	var percent = 0;
-	
-	var manager = new THREE.LoadingManager();
-	exports.manager = manager;
-	manager.onProgress = function (item, _loaded, _total) {
-	    loaded = _loaded;
-	    total = _total;
-	    percent = loaded / total;
-	};
-	
-	function onProgress(xhr) {}
-	
-	;
-	
-	function onError(xhr) {}
-	
-	var titleSCImg = new THREE.ImageLoader(manager).load('assets/images/title_c.png', function (image) {
-	    titleSCImg = image;
-	}, onProgress, onError);
-	
-	var titleENImg = new THREE.ImageLoader(manager).load('assets/images/title_e.png', function (image) {
-	    titleENImg = image;
-	}, onProgress, onError);
-	
-	var opening = function opening() {
-	    var $loading, $title, $titleSC, $titleSep, $titleEN;
-	    return regeneratorRuntime.async(function opening$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                $loading = document.querySelector('#prologue .loading');
-	
-	                $loading.className += ' fadeOut';
-	                context$1$0.next = 4;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(800));
-	
-	            case 4:
-	                $loading.style.display = 'none';
-	
-	                $title = document.querySelector('#prologue .title');
-	
-	                $title.style.display = 'block';
-	
-	                $titleSC = $title.querySelector('.sc');
-	
-	                $titleSC.appendChild(titleSCImg);
-	
-	                $titleSep = $title.querySelector('.sep');
-	                $titleEN = $title.querySelector('.en');
-	
-	                $titleEN.appendChild(titleENImg);
-	
-	                $titleSep.style.display = 'block';
-	                $titleSep.className += ' fadeIn';
-	
-	                context$1$0.next = 16;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
-	
-	            case 16:
-	
-	                titleSCImg.className += ' anime';
-	                titleENImg.className += ' anime';
-	
-	                context$1$0.next = 20;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
-	
-	            case 20:
-	
-	                $title.className += ' fadeOut';
-	
-	                context$1$0.next = 23;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
-	
-	            case 23:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	};
-	
-	exports.opening = opening;
-	
-	function hide() {
-	    var $prologue = document.querySelector('#prologue');
-	    $prologue.style.display = 'none';
-	}
-	
-	var DPR = window.devicePixelRatio;
-	var text;
-	var ctx2d;
-	var canvasWidth;
-	var canvasHeight;
-	var radius;
-	var lineWidth;
-	function loading() {
-	    if (percent < 1) {
-	        (0, _libUtil.requestAnimationFrame)(loading);
-	
-	        percent += 0.0001;
-	        if (total && loaded < total) {
-	            percent = Math.min(percent, (loaded + 1) / total * 0.95);
-	        } else if (total && loaded === total) {
-	            percent = 1;
-	        }
-	    }
-	
-	    text.textContent = parseInt(percent * 100);
-	
-	    ctx2d.clearRect(0, 0, canvasWidth, canvasHeight);
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.7, -Math.PI * 0.5, Math.PI * 1.5, false);
-	    ctx2d.lineWidth = lineWidth;
-	    ctx2d.strokeStyle = '#FFF';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.95, -Math.PI * 0.5, Math.PI * 1.5 * percent, false);
-	    ctx2d.lineWidth = lineWidth;
-	    ctx2d.strokeStyle = '#FFF';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.95, Math.PI * 1.5 * percent, Math.PI * 1.5, false);
-	    ctx2d.lineWidth = lineWidth;
-	    ctx2d.strokeStyle = '#333';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    if (loaded === total) {
-	        deferred.resolve();
-	    }
-	}
-	
-	(function callee$0$0() {
-	    var $loading, canvas, rect;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                $loading = document.querySelector('#prologue .loading');
-	
-	                $loading.style.display = 'block';
-	
-	                canvas = document.querySelector('#prologue canvas');
-	                rect = canvas.getBoundingClientRect();
-	
-	                canvasWidth = canvas.width = rect.width * DPR;
-	                canvasHeight = canvas.height = rect.height * DPR;
-	                ctx2d = canvas.getContext('2d');
-	                radius = canvasWidth / 2;
-	                lineWidth = 2;
-	
-	                text = document.querySelector('#prologue span');
-	
-	                loading();
-	
-	            case 13:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(7);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@-ms-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n"
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(9);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = "#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#prologue .loading {\n  display: none;\n  width: 90px;\n  height: 120px;\n}\n#prologue .loading canvas {\n  width: 90px;\n  height: 90px;\n}\n#prologue .loading span {\n  font-family: arial;\n  display: inline-block;\n  width: 90px;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n#prologue .title {\n  display: none;\n}\n#prologue .title .sc {\n  width: 200px;\n  height: 54px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .sc img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .sc img.anime {\n  display: block;\n  -webkit-animation: titleSCKF 0.5s ease-in 0s;\n  -ms-animation: titleSCKF 0.5s ease-in 0s;\n  animation: titleSCKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .sep {\n  display: none;\n  width: 200px;\n  height: 2px;\n  background-color: #FFF;\n  margin: 20px auto;\n}\n#prologue .title .en {\n  width: 698px;\n  height: 73px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .en img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .en img.anime {\n  display: block;\n  -webkit-animation: titleENKF 0.5s ease-in 0s;\n  -ms-animation: titleENKF 0.5s ease-in 0s;\n  animation: titleENKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.title-sep-anime {\n  display: block;\n  -webkit-animation: titleSepKF 0.4s ease-in 0;\n  -ms-animation: titleSepKF 0.4s ease-in 0;\n  animation: titleSepKF 0.4s ease-in 0;\n}\n@-webkit-keyframes titleSCKF {\n  0% {\n    -webkit-transform: translateY(100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleSCKF {\n  0% {\n    -ms-transform: translateY(100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleSCKF {\n  0% {\n    transform: translateY(100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n@-webkit-keyframes titleENKF {\n  0% {\n    -webkit-transform: translateY(-100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleENKF {\n  0% {\n    -ms-transform: translateY(-100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleENKF {\n  0% {\n    transform: translateY(-100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n"
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.width = width;
-	exports.height = height;
-	
-	var _promise = __webpack_require__(4);
-	
-	function width() {
-	    return window.innerWidth;
-	}
-	
-	function height() {
-	    return window.innerHeight;
-	}
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-	
-	exports.requestAnimationFrame = requestAnimationFrame;
-	var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-	exports.cancelAnimationFrame = cancelAnimationFrame;
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.state = state;
-	exports.now = now;
-	exports.getHours = getHours;
-	exports.getMinutes = getMinutes;
-	exports.f12 = f12;
-	exports.f24 = f24;
-	exports.show = show;
-	exports.run = run;
-	
-	__webpack_require__(13);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libDom = __webpack_require__(15);
-	
-	var timestamp;
-	exports.timestamp = timestamp;
-	var clientOffset;
-	
-	exports.clientOffset = clientOffset;
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	exports.timestamp = timestamp = Date.now();
-	exports.clientOffset = clientOffset = Date.now();
-	deferred.resolve();
-	
-	function state() {
-	    var h = getHours();
-	
-	    if (h >= 5 && h < 8) {
-	        return 'dawn';
-	    } else if (h >= 8 && h < 16) {
-	        return 'daylight';
-	    } else if (h >= 16 && h < 19) {
-	        return 'sunset';
-	    } else {
-	        return 'night';
-	    }
-	}
-	
-	function now() {
-	    var offset = Date.now() - clientOffset;
-	    return timestamp + offset;
-	}
-	
-	function getHours() {
-	    var d = new Date();
-	    d.setTime(now());
-	    return d.getHours();
-	}
-	
-	function getMinutes() {
-	    var d = new Date();
-	    d.setTime(now());
-	    return d.getMinutes();
-	}
-	
-	function f12(h, m) {
-	    var f = {};
-	    h = h || getHours();
-	    m = m || getMinutes();
-	    f.hours = h > 12 ? h - 12 : h;
-	    f.minutes = m < 10 ? '0' + m : '' + m;
-	    f.ampm = h > 12 ? 'pm' : 'am';
-	    return f;
-	}
-	
-	function f24(h, m) {
-	    var f = {};
-	    h = h || getHours();
-	    m = m || getMinutes();
-	    f.hours = h < 10 ? '0' + h : '' + h;
-	    f.minutes = m < 10 ? '0' + m : '' + m;
-	    return f;
-	}
-	
-	var $clock;
-	
-	function show() {
-	    return regeneratorRuntime.async(function show$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	
-	                $clock = _libDom.find.call(document, '#clock');
-	                $clock.style.display = 'block';
-	
-	            case 4:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	function run() {
-	    var _context;
-	
-	    setTimeout(run, 60 * 1000);
-	
-	    var _f12 = f12();
-	
-	    var hours = _f12.hours;
-	    var minutes = _f12.minutes;
-	    var ampm = _f12.ampm;
-	
-	    (_context = (_context = $clock, _libDom.find).call(_context, '.time'), _libDom.text).call(_context, hours + ':' + minutes);
-	    (_context = (_context = $clock, _libDom.find).call(_context, '.ampm'), _libDom.text).call(_context, ampm);
-	}
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(14);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 230px;\n  height: 100px;\n  top: 24px;\n  left: 50px;\n  overflow: hidden;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  width: 300px;\n  height: 100%;\n  text-align: right;\n  left: 0;\n  top: 0;\n  color: #FFF;\n  font-size: 120px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 30px;\n  color: #FFF;\n  right: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: right bottom;\n  -ms-transform-origin: right bottom;\n  transform-origin: right bottom;\n}\n"
-
-/***/ },
-/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38535,6 +38085,466 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.onProgress = onProgress;
+	exports.onError = onError;
+	exports.hide = hide;
+	
+	__webpack_require__(7);
+	
+	__webpack_require__(9);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libEnv = __webpack_require__(11);
+	
+	var _libUtil = __webpack_require__(12);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var loaded = 0;
+	var total = 0;
+	var percent = 0;
+	
+	var manager = new THREE.LoadingManager();
+	exports.manager = manager;
+	manager.onProgress = function (item, _loaded, _total) {
+	    loaded = _loaded;
+	    total = _total;
+	    percent = loaded / total;
+	};
+	
+	function onProgress(xhr) {}
+	
+	;
+	
+	function onError(xhr) {}
+	
+	var titleSCImg = new THREE.ImageLoader(manager).load('assets/images/title_c.png', function (image) {
+	    titleSCImg = image;
+	}, onProgress, onError);
+	
+	var titleENImg = new THREE.ImageLoader(manager).load('assets/images/title_e.png', function (image) {
+	    titleENImg = image;
+	}, onProgress, onError);
+	
+	var opening = function opening() {
+	    var $loading, $title, $titleSC, $titleSep, $titleEN;
+	    return regeneratorRuntime.async(function opening$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                $loading = document.querySelector('#prologue .loading');
+	
+	                $loading.className += ' fadeOut';
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(800));
+	
+	            case 4:
+	                $loading.style.display = 'none';
+	
+	                $title = document.querySelector('#prologue .title');
+	
+	                $title.style.display = 'block';
+	
+	                $titleSC = $title.querySelector('.sc');
+	
+	                $titleSC.appendChild(titleSCImg);
+	
+	                $titleSep = $title.querySelector('.sep');
+	                $titleEN = $title.querySelector('.en');
+	
+	                $titleEN.appendChild(titleENImg);
+	
+	                $titleSep.style.display = 'block';
+	                $titleSep.className += ' fadeIn';
+	
+	                context$1$0.next = 16;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
+	
+	            case 16:
+	
+	                titleSCImg.className += ' anime';
+	                titleENImg.className += ' anime';
+	
+	                context$1$0.next = 20;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
+	
+	            case 20:
+	
+	                $title.className += ' fadeOut';
+	
+	                context$1$0.next = 23;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
+	
+	            case 23:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.opening = opening;
+	
+	function hide() {
+	    var $prologue = document.querySelector('#prologue');
+	    $prologue.style.display = 'none';
+	}
+	
+	var DPR = window.devicePixelRatio;
+	var text;
+	var ctx2d;
+	var canvasWidth;
+	var canvasHeight;
+	var radius;
+	var lineWidth;
+	function loading() {
+	    if (percent < 1) {
+	        (0, _libUtil.requestAnimationFrame)(loading);
+	
+	        percent += 0.0001;
+	        if (total && loaded < total) {
+	            percent = Math.min(percent, (loaded + 1) / total * 0.95);
+	        } else if (total && loaded === total) {
+	            percent = 1;
+	        }
+	    }
+	
+	    text.textContent = parseInt(percent * 100);
+	
+	    ctx2d.clearRect(0, 0, canvasWidth, canvasHeight);
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.7, -Math.PI * 0.5, Math.PI * 1.5, false);
+	    ctx2d.lineWidth = lineWidth;
+	    ctx2d.strokeStyle = '#FFF';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.95, -Math.PI * 0.5, Math.PI * 1.5 * percent, false);
+	    ctx2d.lineWidth = lineWidth;
+	    ctx2d.strokeStyle = '#FFF';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.95, Math.PI * 1.5 * percent, Math.PI * 1.5, false);
+	    ctx2d.lineWidth = lineWidth;
+	    ctx2d.strokeStyle = '#333';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	
+	    if (loaded === total) {
+	        deferred.resolve();
+	    }
+	}
+	
+	(function callee$0$0() {
+	    var $loading, canvas, rect;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                $loading = document.querySelector('#prologue .loading');
+	
+	                $loading.style.display = 'block';
+	
+	                canvas = document.querySelector('#prologue canvas');
+	                rect = canvas.getBoundingClientRect();
+	
+	                canvasWidth = canvas.width = rect.width * DPR;
+	                canvasHeight = canvas.height = rect.height * DPR;
+	                ctx2d = canvas.getContext('2d');
+	                radius = canvasWidth / 2;
+	                lineWidth = 2;
+	
+	                text = document.querySelector('#prologue span');
+	
+	                loading();
+	
+	            case 13:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(8);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@-ms-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n"
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(10);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = "#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#prologue .loading {\n  display: none;\n  width: 90px;\n  height: 120px;\n}\n#prologue .loading canvas {\n  width: 90px;\n  height: 90px;\n}\n#prologue .loading span {\n  font-family: arial;\n  display: inline-block;\n  width: 90px;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n#prologue .title {\n  display: none;\n}\n#prologue .title .sc {\n  width: 200px;\n  height: 54px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .sc img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .sc img.anime {\n  display: block;\n  -webkit-animation: titleSCKF 0.5s ease-in 0s;\n  -ms-animation: titleSCKF 0.5s ease-in 0s;\n  animation: titleSCKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .sep {\n  display: none;\n  width: 200px;\n  height: 2px;\n  background-color: #FFF;\n  margin: 20px auto;\n}\n#prologue .title .en {\n  width: 698px;\n  height: 73px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .en img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .en img.anime {\n  display: block;\n  -webkit-animation: titleENKF 0.5s ease-in 0s;\n  -ms-animation: titleENKF 0.5s ease-in 0s;\n  animation: titleENKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.title-sep-anime {\n  display: block;\n  -webkit-animation: titleSepKF 0.4s ease-in 0;\n  -ms-animation: titleSepKF 0.4s ease-in 0;\n  animation: titleSepKF 0.4s ease-in 0;\n}\n@-webkit-keyframes titleSCKF {\n  0% {\n    -webkit-transform: translateY(100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleSCKF {\n  0% {\n    -ms-transform: translateY(100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleSCKF {\n  0% {\n    transform: translateY(100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n@-webkit-keyframes titleENKF {\n  0% {\n    -webkit-transform: translateY(-100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleENKF {\n  0% {\n    -ms-transform: translateY(-100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleENKF {\n  0% {\n    transform: translateY(-100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n"
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.width = width;
+	exports.height = height;
+	
+	var _promise = __webpack_require__(4);
+	
+	function width() {
+	    return window.innerWidth;
+	}
+	
+	function height() {
+	    return window.innerHeight;
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+	
+	exports.requestAnimationFrame = requestAnimationFrame;
+	var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
+	exports.cancelAnimationFrame = cancelAnimationFrame;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.state = state;
+	exports.now = now;
+	exports.getHours = getHours;
+	exports.getMinutes = getMinutes;
+	exports.f12 = f12;
+	exports.f24 = f24;
+	exports.show = show;
+	exports.run = run;
+	
+	__webpack_require__(14);
+	
+	var _libPromise = __webpack_require__(4);
+	
+	var _libDom = __webpack_require__(5);
+	
+	var timestamp;
+	exports.timestamp = timestamp;
+	var clientOffset;
+	
+	exports.clientOffset = clientOffset;
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	exports.timestamp = timestamp = Date.now();
+	exports.clientOffset = clientOffset = Date.now();
+	deferred.resolve();
+	
+	function state() {
+	    var h = getHours();
+	
+	    if (h >= 5 && h < 8) {
+	        return 'dawn';
+	    } else if (h >= 8 && h < 16) {
+	        return 'daylight';
+	    } else if (h >= 16 && h < 19) {
+	        return 'sunset';
+	    } else {
+	        return 'night';
+	    }
+	}
+	
+	function now() {
+	    var offset = Date.now() - clientOffset;
+	    return timestamp + offset;
+	}
+	
+	function getHours() {
+	    var d = new Date();
+	    d.setTime(now());
+	    return d.getHours();
+	}
+	
+	function getMinutes() {
+	    var d = new Date();
+	    d.setTime(now());
+	    return d.getMinutes();
+	}
+	
+	function f12(h, m) {
+	    var f = {};
+	    h = h || getHours();
+	    m = m || getMinutes();
+	    f.hours = h > 12 ? h - 12 : h;
+	    f.minutes = m < 10 ? '0' + m : '' + m;
+	    f.ampm = h > 12 ? 'pm' : 'am';
+	    return f;
+	}
+	
+	function f24(h, m) {
+	    var f = {};
+	    h = h || getHours();
+	    m = m || getMinutes();
+	    f.hours = h < 10 ? '0' + h : '' + h;
+	    f.minutes = m < 10 ? '0' + m : '' + m;
+	    return f;
+	}
+	
+	var $clock;
+	
+	function show() {
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                $clock = _libDom.find.call(document, '#clock');
+	                $clock.style.display = 'block';
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function run() {
+	    var _context;
+	
+	    setTimeout(run, 60 * 1000);
+	
+	    var _f12 = f12();
+	
+	    var hours = _f12.hours;
+	    var minutes = _f12.minutes;
+	    var ampm = _f12.ampm;
+	
+	    (_context = (_context = $clock, _libDom.find).call(_context, '.time'), _libDom.text).call(_context, hours + ':' + minutes);
+	    (_context = (_context = $clock, _libDom.find).call(_context, '.ampm'), _libDom.text).call(_context, ampm);
+	}
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(15);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(3)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 230px;\n  height: 100px;\n  top: 24px;\n  left: 50px;\n  overflow: hidden;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  width: 300px;\n  height: 100%;\n  text-align: right;\n  left: 0;\n  top: 0;\n  color: #FFF;\n  font-size: 120px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 30px;\n  color: #FFF;\n  right: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: right bottom;\n  -ms-transform-origin: right bottom;\n  transform-origin: right bottom;\n}\n"
+
+/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -38550,7 +38560,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libDom = __webpack_require__(15);
+	var _libDom = __webpack_require__(5);
 	
 	var shareHandlers = [];
 	
@@ -38574,10 +38584,12 @@ THREE.OBJLoader.prototype = {
 	            case 2:
 	
 	                $share = _libDom.find.call(document, '#share');
-	                (_context = (_context = (_context = $share, _libDom.show).call(_context), _libDom.find).call(_context, '.weibo'), _libDom.on).call(_context, 'click', function (e) {
-	                    shareHandlers.forEach(function (h) {
-	                        return h('weibo');
-	                    });
+	                (_context = (_context = $share, _libDom.show).call(_context), _libDom.on).call(_context, 'click', function (e) {
+	                    if (e.target.tagName.toUpperCase() === 'A') {
+	                        shareHandlers.forEach(function (h) {
+	                            return h(e.target.className);
+	                        });
+	                    }
 	                });
 	
 	            case 4:
@@ -38617,7 +38629,7 @@ THREE.OBJLoader.prototype = {
 /* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #EEE;\n  font-size: 12px;\n  line-height: 24px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 24px;\n  height: 24px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAXCAYAAABJXhw0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAl5JREFUeNrcWLFO40AQNSvXpzSUJ5mGOtCj4AJqqCMd5AuC+QFyP3DcfYEBiRIBLRRBoofQ0gCipCDcB1zu7emtNJrbxDZeFzDS0yaT3Xk7M7vjceYmk0nkk+Fw+AXDGrACLAOLwDzwAtwDN8A1cJmm6e+onpTmArxccz5H4MQ3DF1gvcQmLoBjOHP0TicqcwFHMx2BA18xZEAfMBU28wf4BezDoeeSa2pzAc//OUInvgO9GkckB/ZKOBOMyzkTix+yioZ/AmOgBWwACddb3W7B2uBc/zLCO5FXSPEVkCrdDtNtU9+bcWeCc9k7Y1idujMMW0MDYkzdqj2NgD2Xp0CbUctop0u7vuoUnMvajVn2fBXjkd5eKf1ARSphhHsk2Kc9a/dErW2My7B2axkBSx7DTzSwCdwBtzRu522JtdEUu41xxXwAacOpSK2UA/Xdzunw8xvHhOOyZ31jXDGfolJ6ynCb1UKeY/nbQKxLxNxFz+Ya4zJsBWSZc+myZe6BtbrDdNrL9kqdm+8imnO+k3mPI41xGfYzTg5FeTtlZdgUD6+UUbCR2RZRyzybfinQBeUybMoidXn2uOhMpXok5nRU1dFyX6ALymXYWUYixZE6l68cnbRURCNRRaTcFOiCchm2x0764jK16P2Cil5L1fy2SL2U6wJdUK6YPf4FHyyrvEgZDfbF5IT1fEmkd0dcRt1uX3r0jXFN67XGPLPnNDQSqW7zzG6LOq7b7Cq9Vm0u22vJNv7HlIpQVew7SVH3G4zLdb9GKfOahnPaKbOBoFyf7w3xU72zf+R/Uf4KMABM3DxBsEksmQAAAABJRU5ErkJggg==);\n}\n#share a.weibo:hover {\n  background-position: -27px 0;\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #EEE;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:facebook {\n  background-position: -48px -24px;\n}\n#weixin_code {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
 /* 19 */
@@ -38635,7 +38647,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libDom = __webpack_require__(15);
+	var _libDom = __webpack_require__(5);
 	
 	var _menu = __webpack_require__(22);
 	
@@ -38728,15 +38740,15 @@ THREE.OBJLoader.prototype = {
 	exports.show = show;
 	exports.hide = hide;
 	
-	__webpack_require__(6);
+	__webpack_require__(7);
 	
 	__webpack_require__(23);
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libDom = __webpack_require__(15);
+	var _libDom = __webpack_require__(5);
 	
-	var _prologue = __webpack_require__(5);
+	var _prologue = __webpack_require__(6);
 	
 	var symbolClickHandlers = [];
 	
@@ -38746,13 +38758,34 @@ THREE.OBJLoader.prototype = {
 	    }
 	}
 	
+	var $video;
+	var videoEl = document.createElement('video');
+	videoEl.autoplay = false;
+	videoEl.autobuffer = true;
+	videoEl.controls = true;
+	videoEl.crossorigin = 'use-credentials';
+	videoEl.src = './assets/videos/project.mp4';
+	function toggleVideo(isPlayback) {
+	    if (!videoEl.parentNode) {
+	        var rect = $video.getBoundingClientRect();
+	        videoEl.width = rect.width;
+	        videoEl.height = rect.height;
+	        $video.appendChild(videoEl);
+	    }
+	    if (isPlayback) {
+	        videoEl.play();
+	    } else {
+	        videoEl.pause();
+	    }
+	}
+	
 	var $menu;
 	var isBindEvents = false;
 	
 	function show() {
-	    var _context;
+	    var _context2;
 	
-	    var _context5, times;
+	    var _context, _context6, times;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -38765,8 +38798,11 @@ THREE.OBJLoader.prototype = {
 	                if (!$menu) {
 	                    $menu = _libDom.find.call(document, '#menu');
 	                }
+	                if (!$video) {
+	                    $video = (_context = $menu, _libDom.find).call(_context, '.project-video');
+	                }
 	
-	                (_context = (_context = (_context = $menu, _libDom.show).call(_context), _libDom.removeClass).call(_context, 'fadeOut'), _libDom.addClass).call(_context, 'fadeIn');
+	                (_context2 = (_context2 = (_context2 = $menu, _libDom.show).call(_context2), _libDom.removeClass).call(_context2, 'fadeOut'), _libDom.addClass).call(_context2, 'fadeIn');
 	
 	                if (!isBindEvents) {
 	                    isBindEvents = true;
@@ -38804,51 +38840,59 @@ THREE.OBJLoader.prototype = {
 	                    })();
 	
 	                    times.forEach(function (t) {
-	                        var _context2;
+	                        var _context3;
 	
-	                        (_context2 = (_context2 = (_context2 = (_context2 = $menu, _libDom.find).call(_context2, '.trigger[for="' + t + '"]'), _libDom.on).call(_context2, 'mouseenter', function (e) {
-	                            var _context3;
-	
-	                            (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.hover.' + t), _libDom.removeClass).call(_context3, 'fadeOut'), _libDom.addClass).call(_context3, 'fadeIn');
-	
-	                            (_context3 = $menu, _libDom.find).call(_context3, '.symbol').className = 'symbol ' + t + ' fadeIn';
-	                        }), _libDom.on).call(_context2, 'mouseleave', function (e) {
+	                        (_context3 = (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.trigger[for="' + t + '"]'), _libDom.on).call(_context3, 'mouseenter', function (e) {
 	                            var _context4;
 	
-	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeIn'), _libDom.addClass).call(_context4, 'fadeOut');
+	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeOut'), _libDom.addClass).call(_context4, 'fadeIn');
 	
-	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeOut';
-	                        }), _libDom.on).call(_context2, 'click', function (e) {
+	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeIn';
+	                        }), _libDom.on).call(_context3, 'mouseleave', function (e) {
+	                            var _context5;
+	
+	                            (_context5 = (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.hover.' + t), _libDom.removeClass).call(_context5, 'fadeIn'), _libDom.addClass).call(_context5, 'fadeOut');
+	
+	                            (_context5 = $menu, _libDom.find).call(_context5, '.symbol').className = 'symbol ' + t + ' fadeOut';
+	                        }), _libDom.on).call(_context3, 'click', function (e) {
 	                            symbolClickHandlers.forEach(function (h) {
 	                                return h(t);
 	                            });
 	                        });
 	                    });
 	
-	                    (_context5 = (_context5 = $menu, _libDom.find).call(_context5, 'ul'), _libDom.on).call(_context5, 'click', function (e) {
+	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, 'ul'), _libDom.on).call(_context6, 'click', function (e) {
 	                        var target = e.target;
 	                        if (target.tagName.toUpperCase() === 'A' && !_libDom.hasClass.call(target, 'cur')) {
-	                            var _context6;
+	                            var _context7;
 	
-	                            var lastTarget = (_context6 = $menu, _libDom.find).call(_context6, 'ul .cur');
+	                            var lastTarget = (_context7 = $menu, _libDom.find).call(_context7, 'ul .cur');
 	
 	                            _libDom.removeClass.call(lastTarget, 'cur');
 	                            _libDom.addClass.call(target, 'cur');
 	
-	                            var lastActive = (_context6 = $menu, _libDom.find).call(_context6, '.' + _libDom.attr.call(lastTarget, 'for'));
-	                            var active = (_context6 = $menu, _libDom.find).call(_context6, '.' + _libDom.attr.call(target, 'for'));
+	                            var lastActive = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(lastTarget, 'for'));
+	                            var active = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(target, 'for'));
 	
-	                            _libDom.hide.call(lastActive);
-	                            _libDom.show.call(active);
+	                            _libDom.removeClass.call(lastActive, 'cur');
+	                            _libDom.addClass.call(active, 'cur');
+	
+	                            if (_libDom.attr.call(lastTarget, 'for') === 'project-video') {
+	                                toggleVideo(false);
+	                            }
+	
+	                            if (_libDom.attr.call(target, 'for') === 'project-video') {
+	                                toggleVideo(true);
+	                            }
 	                        }
 	                    });
 	
-	                    (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.close'), _libDom.on).call(_context5, 'click', function (e) {
+	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, '.close'), _libDom.on).call(_context6, 'click', function (e) {
 	                        hide();
 	                    });
 	                }
 	
-	            case 5:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38856,19 +38900,19 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context7;
+	    var _context8;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context7 = (_context7 = $menu, _libDom.removeClass).call(_context7, 'fadeIn'), _libDom.addClass).call(_context7, 'fadeOut');
+	                (_context8 = (_context8 = $menu, _libDom.removeClass).call(_context8, 'fadeIn'), _libDom.addClass).call(_context8, 'fadeOut');
 	
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(400));
 	
 	            case 3:
 	
-	                (_context7 = $menu, _libDom.hide).call(_context7);
+	                (_context8 = $menu, _libDom.hide).call(_context8);
 	
 	            case 4:
 	            case 'end':
@@ -38907,7 +38951,7 @@ THREE.OBJLoader.prototype = {
 /* 24 */
 /***/ function(module, exports) {
 
-	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover,\n#menu ul li a.cur {\n  color: #FFF;\n}\n#menu .time-circle {\n  display: none;\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle.cur {\n  display: block;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n#menu .project-video {\n  display: none;\n}\n#menu .project-video.cur {\n  display: block;\n}\n#menu .project-about {\n  display: none;\n}\n#menu .project-about.cur {\n  display: block;\n}\n"
+	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover,\n#menu ul li a.cur {\n  color: #FFF;\n}\n#menu .time-circle {\n  display: none;\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle.cur {\n  display: block;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n#menu .project-video {\n  display: none;\n  position: absolute;\n  width: 650px;\n  height: 325px;\n  top: 50%;\n  left: 50%;\n  margin-left: -325px;\n  margin-top: -162px;\n}\n#menu .project-video.cur {\n  display: block;\n}\n#menu .project-about {\n  display: none;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#menu .project-about.cur {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n"
 
 /***/ },
 /* 25 */
@@ -39119,7 +39163,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
 	var _scene = __webpack_require__(29);
 	
@@ -39454,7 +39498,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
 	var VIEW_ANGLE = 60;
 	var NEAR = 1;
@@ -39477,7 +39521,8 @@ THREE.OBJLoader.prototype = {
 	    var w = (0, _libEnv.width)();
 	    var h = (0, _libEnv.height)();
 	
-	    renderer.setSize(w, h);
+	    camera.aspect = w / h;
+	    camera.updateProjectionMatrix();
 	}
 	
 	(function callee$0$0() {
@@ -39520,7 +39565,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 0;
@@ -39541,8 +39586,7 @@ THREE.OBJLoader.prototype = {
 	    var w = (0, _libEnv.width)();
 	    var h = (0, _libEnv.height)();
 	
-	    camera.aspect = w / h;
-	    camera.updateProjectionMatrix();
+	    renderer.setSize(w, h);
 	}
 	
 	(function callee$0$0() {
@@ -39591,7 +39635,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _clock = __webpack_require__(12);
+	var _clock = __webpack_require__(13);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -39665,9 +39709,9 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
-	var _libUtil = __webpack_require__(11);
+	var _libUtil = __webpack_require__(12);
 	
 	var camera;
 	
@@ -39762,7 +39806,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _prologue = __webpack_require__(5);
+	var _prologue = __webpack_require__(6);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -39814,11 +39858,11 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
-	var _prologue = __webpack_require__(5);
+	var _prologue = __webpack_require__(6);
 	
-	var _clock = __webpack_require__(12);
+	var _clock = __webpack_require__(13);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -39914,7 +39958,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
 	var _scene = __webpack_require__(39);
 	
@@ -40196,7 +40240,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
 	var FOV = 45;
 	var NEAR = 1;
@@ -40270,7 +40314,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var _libEnv = __webpack_require__(10);
+	var _libEnv = __webpack_require__(11);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 1;
@@ -40370,7 +40414,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(11);
+	var _libUtil = __webpack_require__(12);
 	
 	var camera;
 	
