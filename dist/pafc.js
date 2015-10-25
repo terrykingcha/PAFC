@@ -41389,7 +41389,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(4);
 	
-	var COLOR = 0x000000;
+	var COLOR = 0x333333;
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
