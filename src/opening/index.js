@@ -98,7 +98,7 @@ export var init = async () => {
 
         var intersects = raycaster.intersectObject(tower.children[2]);    
         if (intersects.length > 0) {
-            entering();
+            ontowerclickHandlers.forEach((h) => h());
         }
     }, false);
 
@@ -113,6 +113,13 @@ export var init = async () => {
 export function resize() {
     Renderer.resize();
     Camera.resize();
+}
+
+var ontowerclickHandlers = [];
+export function ontowerclick(h) {
+    if (h && ontowerclickHandlers.indexOf(h) < 0) {
+        ontowerclickHandlers.push(h);
+    }
 }
 
 function highlightTower() {

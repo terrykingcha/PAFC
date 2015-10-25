@@ -1,15 +1,18 @@
 import './clock.less';
 import {defer, domReady} from './lib/promise';
 import {find, findAll, text} from './lib/dom';
+import {manager, onProgress, onError} from './prologue';
 
-export var timestamp;
-export var clientOffset;
+export var serverTime;
+export var clientTime;
 
 var deferred = defer();
 export var ready = () => deferred.promise;
 
-timestamp = Date.now();
-clientOffset = Date.now();
+manager.itemStart('server/clock');
+serverTime = Date.now();
+clientTime = Date.now();
+manager.itemEnd('server/clock');
 deferred.resolve();
 
 export function state() {
@@ -27,8 +30,8 @@ export function state() {
 }
 
 export function now() {
-    var offset = Date.now() - clientOffset;
-    return timestamp + offset;
+    var offset = Date.now() - clientTime;
+    return serverTime + offset;
 }
 
 export function getHours() {
@@ -63,9 +66,7 @@ export function f24(h,m) {
 }
 
 var $clock;
-export async function show() {
-    await domReady();
-
+export function show() {
     $clock = document::find('#clock');
     $clock.style.display = 'block';
 }
@@ -78,5 +79,4 @@ export function run() {
     $clock::find('.time')::text(`${hours}:${minutes}`);
     $clock::find('.ampm')::text(ampm);
 }
-
 

@@ -38,7 +38,7 @@ var titleENImg = new THREE.ImageLoader(manager).load(
     onError
 );
 
-export var opening = async () => {
+export var title = async () => {
     var $loading = document.querySelector('#prologue .loading');
     $loading.className += ' fadeOut';
     await delay(800);

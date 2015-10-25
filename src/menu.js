@@ -116,10 +116,13 @@ export async function show() {
 }
 
 export async function hide() {
-    $menu::removeClass('fadeIn')
-        ::addClass('fadeOut');
 
-    await delay(400);
+    if ($menu) {
+        $menu::removeClass('fadeIn')
+            ::addClass('fadeOut');
 
-    $menu::hidden();
+        await delay(400);
+
+        $menu::hidden();
+    }
 }

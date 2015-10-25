@@ -9,11 +9,17 @@ import * as nav from './nav';
 import * as menu from './menu';
 import Visualizer from './visualizer';
 import * as opening from './opening';
-import * as chapters from './chapters';
+import * as chapter1 from './chapter1';
 
-var currentMusic;
 var openingMusic = new Visualizer(prologue.manager);
 openingMusic.load('./assets/sounds/opening.mp3');
+openingMusic.ready().then(function() {
+    openingMusic.togglePlayback(true);
+});
+var currentMusic = openingMusic;
+
+var chapters = [chapter1];
+var currentChapter;
 
 var chapterMusics = new Array(8).fill(1).map(function(v, i) {
     var t = 't' + v * i * 3;
@@ -22,54 +28,73 @@ var chapterMusics = new Array(8).fill(1).map(function(v, i) {
     return music;
 });
 
-var resizeHandler;
+var resizeHandler = ::opening.resize;
 function resize() {
     window.addEventListener('resize', function() {
         resizeHandler && resizeHandler();
     });
 }
 
-var renderHandler;
+var renderHandler = ::opening.render;
 function tick() {
     requestAnimationFrame(tick);
     renderHandler && renderHandler();
 }
 
-(async () => {
-    resize();
-    tick();
+async function changeChapter(index) {
+    var chapter = chapters[index];
+    var chapterMusic = chapterMusics[index];
 
+    if (chapter && chapterMusic) {
+        openingMusic.togglePlayback(false);
+
+        currentMusic = chapterMusic;
+
+        await menu.hide();
+
+        resizeHandler = ::opening.resize;
+        renderHandler = ::opening.render;
+
+        if (currentChapter) {
+            await Promise.all([
+                opening.leaving(),
+                currentChapter.leaving()
+            ]);
+        }
+
+        await opening.entering();
+
+        currentChapter = chapter;
+        resizeHandler = ::chapter.resize;
+        renderHandler = ::chapter.render;
+
+        await chapter.entering(currentMusic);
+    }
+}
+
+(async () => {
     await prologue.ready();
 
     await Promise.all([
         opening.init(),
-        chapters.init()
+        ...chapters.map((c) => c.init())
     ]);
 
     opening.show();
     opening.render();
 
-    await prologue.opening();
+    await prologue.title();
     await prologue.hide();
 
-    await Promise.all([
-        clock.ready(),
-        openingMusic.ready()
-    ]);
-
-    await Promise.all([
-        clock.show(),
-        share.show(),
-        nav.show()
-    ]);
+    clock.show();
+    clock.run();
+    share.show();
+    nav.show();
 
     await opening.start();
-    resizeHandler = ::opening.resize;
-    renderHandler = ::opening.render;
 
-    clock.run();
-    currentMusic = openingMusic;
-    openingMusic.togglePlayback(true);
+    resize();
+    tick();
 
     share.onshare(function(type) {
         if (type === 'weixin') {
@@ -82,48 +107,16 @@ function tick() {
         }
     });
 
-    menu.onsymbol(async function(symbol) {
-        var index = symbol.substr(1) >> 0;
-        var chapterMusic = chapterMusics[index / 3];
-
-        if (chapterMusic) {
-            currentMusic = chapterMusic;
-
-            await menu.hide();
-
-            if (opening.isEntering && 
-                    chapters.isEntering) {
-                await Promise.all([
-                    opening.leaving(),
-                    chapters.leaving()
-                ]);
-            }
-
-            await opening.entering();
-        }
-    });
-
     nav.onmusic(function(on) {
         currentMusic.togglePlayback(on);
     });
 
-    opening.onentering(async function() {
-        openingMusic.togglePlayback(false);
-        await chapters.entering(currentMusic);
+    menu.onsymbol(function(symbol) {
+        var index = symbol.substr(1) >> 0 / 3;
+        changeChapter(index);
     });
 
-    opening.onleaving(async function() {
-        resizeHandler = ::opening.resize;
-        renderHandler = ::opening.render;
-    });
-
-    chapters.onentering(async function() {
-        resizeHandler = ::chapters.resize;
-        renderHandler = ::chapters.render;
-    });
-
-    chapters.onleaving(async function() {
-        resizeHandler = ::opening.resize;
-        renderHandler = ::opening.render;
+    opening.ontowerclick(function() {
+        changeChapter(0);
     });
 })();
