@@ -39519,7 +39519,7 @@ THREE.OBJLoader.prototype = {
 	    var h = getHours();
 	
 	    if (h >= 6 && h < 18) {
-	        return 'dawn';
+	        return 'drawn';
 	        // } else if (h >= 8 && h < 16) {
 	        // return 'daylight';
 	        // } else if (h >= 16 && h < 19) {

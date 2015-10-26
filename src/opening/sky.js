@@ -42,7 +42,6 @@ for (let state in materials) {
     await Clock.ready();
     var state = testState || Clock.state();
     var material = await materials[state];
-
     var windowW = width();
     var windowH = height();
     var imageW = material.map.image.width;
