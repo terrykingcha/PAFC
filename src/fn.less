@@ -1,0 +1,51 @@
+.fadeIn {
+    -webkit-animation: fadeIn 0.4s ease-in 0s;
+    -ms-animation: fadeIn 0.4s ease-in 0s;
+    animation: fadeIn 0.4s ease-in 0s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.fadeOut {
+    -webkit-animation: fadeOut 0.4s ease-out 0s;
+    -ms-animation: fadeOut 0.4s ease-out 0s;
+    animation: fadeOut 0.4s ease-out 0s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+.flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.flex-horizontal-center {
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.flex-vertical-center {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.transform(@value) {
+    -webkit-transform: @value;
+    -ms-transform: @value;
+    transform: @value;
+}
+
+.transition-transform(@value) {
+    -webkit-transition: -webkit-transform @value;
+    -ms-transition: -ms-transform @value;
+    transition: transform @value;
+}
+
+.transition(@value) {
+    -webkit-transition: @value;
+    -ms-transition: @value;
+    transition: @value; 
+}

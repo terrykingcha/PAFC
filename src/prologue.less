@@ -1,3 +1,5 @@
+@import "./fn";
+
 #prologue {
     z-index: 999;
     position: absolute;
@@ -7,195 +9,36 @@
     top: 0;
     bottom: 0;
     right: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
-    -ms-flex-pack: center;
-    -ms-flex-align: center;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
+    .flex();
+    .flex-horizontal-center();
+    .flex-vertical-center();
 
     .loading {
+        position: relative;
         display: none;
-        width: 90px;
-        height: 120px;
 
         canvas {
-            width: 90px;
-            height: 90px;
+            width: 136px;
+            height: 136px;
         }
 
-        span {
+        div {
+            position: absolute;
+            width: 136px;
+            height: 136px;
+            top: 0;
+            left: 0;
+            background: url(./assets/images/loading-logo.png) no-repeat center center;
+        }
+
+        p {
             font-family: arial;
-            display: inline-block;
-            width: 90px;
+            width: 100%;
             height: 30px;
             line-height: 30px;
             color: #FFF;
             font-size: 20px;
             text-align: center;
         }
-    }
-
-    .title {
-        display: none;
-
-        .sc {
-            width: 200px;
-            height: 54px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-
-            img {
-                display: none;
-                width: 100%;
-                height: 100%;
-                position: absolute;
-
-                &.anime {
-                    display: block;
-                    -webkit-animation: titleSCKF 0.5s ease-in 0s;
-                    -ms-animation: titleSCKF 0.5s ease-in 0s;
-                    animation: titleSCKF 0.5s ease-in 0s; 
-                    -webkit-animation-fill-mode: forwards;
-                    animation-fill-mode: forwards;
-                }
-            }
-        }
-
-        .sep {
-            display: none;
-            width: 200px;
-            height: 2px;
-            background-color: #FFF;
-            margin: 20px auto;
-        }
-
-        .en {
-            width: 698px;
-            height: 73px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-
-            img {
-                display: none;
-                width: 100%;
-                height: 100%;
-                position: absolute;
-
-                &.anime {
-                    display: block;
-                    -webkit-animation: titleENKF 0.5s ease-in 0s;
-                    -ms-animation: titleENKF 0.5s ease-in 0s;
-                    animation: titleENKF 0.5s ease-in 0s;
-                    -webkit-animation-fill-mode: forwards;
-                    animation-fill-mode: forwards; 
-                }
-            }
-        }
-    }
-}
-
-
-@-webkit-keyframes titleSepKF {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-@-ms-keyframes titleSepKF {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes titleSepKF {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-.title-sep-anime {
-    display: block;
-    -webkit-animation: titleSepKF 0.4s ease-in 0;
-    -ms-animation: titleSepKF 0.4s ease-in 0;
-    animation: titleSepKF 0.4s ease-in 0;
-}
-
-@-webkit-keyframes titleSCKF {
-    0% {
-        -webkit-transform: translateY(100%);
-    }
-
-    100% {
-        -webkit-transform: translateY(0);
-    }
-}
-
-@-ms-keyframes titleSCKF {
-    0% {
-        -ms-transform: translateY(100%);
-    }
-
-    100% {
-        -ms-transform: translateY(0);
-    }
-}
-
-@keyframes titleSCKF {
-    0% {
-        transform: translateY(100%);
-    }
-
-    100% {
-        transform: translateY(0);
-    }
-}
-
-
-@-webkit-keyframes titleENKF {
-    0% {
-        -webkit-transform: translateY(-100%);
-    }
-
-    100% {
-        -webkit-transform: translateY(0);
-    }
-}
-
-@-ms-keyframes titleENKF {
-    0% {
-        -ms-transform: translateY(-100%);
-    }
-
-    100% {
-        -ms-transform: translateY(0);
-    }
-}
-
-@keyframes titleENKF {
-    0% {
-        transform: translateY(-100%);
-    }
-
-    100% {
-        transform: translateY(0);
     }
 }

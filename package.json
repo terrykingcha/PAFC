@@ -39,6 +39,7 @@
     "style-loader": "^0.12.3",
     "through2": "^2.0.0",
     "url-loader": "^0.5.6",
-    "webpack": "^1.12.0"
+    "webpack": "^1.12.0",
+    "zepto": "0.0.4"
   }
 }

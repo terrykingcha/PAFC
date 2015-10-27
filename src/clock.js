@@ -1,7 +1,7 @@
 import './clock.less';
 import {defer, domReady} from './lib/promise';
-import {find, findAll, text} from './lib/dom';
 import {manager, onProgress, onError} from './prologue';
+import * as Category from './category';
 
 export var serverTime;
 export var clientTime;
@@ -19,14 +19,16 @@ export function state() {
     var h = getHours();
     
     if (h >= 6 && h < 18) {
-        return 'drawn';
-    // } else if (h >= 8 && h < 16) {
-        // return 'daylight';
-    // } else if (h >= 16 && h < 19) {
-        // return 'sunset';
+        return 'daylight';
     } else {
         return 'night';
     }
+}
+
+export function section() {
+    var h = getHours();
+    var index = h % (24 / Category.length);
+    return index; 
 }
 
 export function now() {
@@ -65,18 +67,33 @@ export function f24(h,m) {
     return f;
 }
 
-var $clock;
 export function show() {
-    $clock = document::find('#clock');
-    $clock.style.display = 'block';
+    document::$find('#clock')::$show();
 }
 
 export function run() {
     setTimeout(run, 60 * 1000);
 
     var {hours, minutes, ampm} = f12();
+    var $clock = document::$find('#clock');
 
-    $clock::find('.time')::text(`${hours}:${minutes}`);
-    $clock::find('.ampm')::text(ampm);
+    $clock::$find('.category')::$text(Category.get(section()));
+    $clock::$find('.ampm')::$text(ampm);
+    $clock::$find('.time')::$text(`${hours}:${minutes}`);
 }
+
+function template() {
+    return `
+        <div id="clock">
+            <span class="category"></span>
+            <span class="ampm"></span>
+            <span class="time"></span>
+        </div>
+    `;
+}
+
+(async () => {
+    await domReady();
+    document.body::$append(template());
+})();
 

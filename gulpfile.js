@@ -42,7 +42,6 @@ function getComboSrc() {
 
 gulp.task('dist', ['webpack'], function() {
     var srcPaths = getComboSrc();
-    console.log(srcPaths);
     return gulp.src(srcPaths)
         .pipe(concat('pafc.js'))
         // .pipe(uglifyjs())

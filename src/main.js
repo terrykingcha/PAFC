@@ -1,8 +1,9 @@
+import './common.less';
 import './main.less';
-import {delay, waitForEvent} from './lib/promise';
-import {find, show, hide, on, off} from './lib/dom';
+import './lib/zepto';
 
 import * as prologue from './prologue';
+import * as title from './title';
 import * as clock from './clock';
 import * as share from './share';
 import * as nav from './nav';
@@ -11,22 +12,24 @@ import Visualizer from './visualizer';
 import * as opening from './opening';
 import * as chapter1 from './chapter1';
 
+
+var chapters = [chapter1];
+var currentChapter;
+
 var openingMusic = new Visualizer(prologue.manager);
 openingMusic.load('./assets/sounds/opening.mp3');
 openingMusic.ready().then(function() {
     openingMusic.togglePlayback(true);
 });
-var currentMusic = openingMusic;
 
-var chapters = [chapter1];
-var currentChapter;
-
-var chapterMusics = new Array(8).fill(1).map(function(v, i) {
-    var t = 't' + v * i * 3;
+var chapterMusics = [];
+for (let i = 1; i <= 6; i++) {
     var music = new Visualizer(prologue.manager);
-    music.load(`./assets/sounds/${t}.mp3`);
-    return music;
-});
+    music.load(`./assets/sounds/c${i}.mp3`);
+    chapterMusics.push(music);
+}
+
+var currentMusic = openingMusic;
 
 var resizeHandler = ::opening.resize;
 function resize() {
@@ -77,14 +80,18 @@ async function changeChapter(index) {
 
     await Promise.all([
         opening.init(),
-        ...chapters.map((c) => c.init())
+        // ...chapters.map((c) => c.init())
     ]);
 
-    opening.show();
     opening.render();
 
-    await prologue.title();
-    await prologue.hide();
+    await Promise.all([
+        prologue.hide(),
+        opening.show()
+    ]);
+
+    await title.show();
+    await title.hide();
 
     clock.show();
     clock.run();
@@ -96,27 +103,16 @@ async function changeChapter(index) {
     resize();
     tick();
 
-    share.onshare(function(type) {
-        if (type === 'weixin') {
-            var $weixinCode = document::find('#weixin_code');
-            $weixinCode::show()
-                ::on('click', function handler() {
-                    $weixinCode::hide();
-                    $weixinCode::off('click', handler);
-                });
-        }
-    });
+    // nav.onmusic(function(on) {
+    //     currentMusic.togglePlayback(on);
+    // });
 
-    nav.onmusic(function(on) {
-        currentMusic.togglePlayback(on);
-    });
+    // menu.onsymbol(function(symbol) {
+    //     var index = symbol.substr(1) >> 0 / 3;
+    //     changeChapter(index);
+    // });
 
-    menu.onsymbol(function(symbol) {
-        var index = symbol.substr(1) >> 0 / 3;
-        changeChapter(index);
-    });
-
-    opening.ontowerclick(function() {
-        changeChapter(0);
-    });
+    // opening.ontowerclick(function() {
+    //     changeChapter(1);
+    // });
 })();

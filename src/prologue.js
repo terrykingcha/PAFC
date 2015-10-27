@@ -1,7 +1,6 @@
-import './common.less';
 import './prologue.less';
-import {defer, domReady, delay} from './lib/promise';
-import {width, height} from './lib/env';
+import {defer, domReady, pageLoad, delay} from './lib/promise';
+import {width, height, dpr} from './lib/env';
 import {requestAnimationFrame} from './lib/util';
 
 var deferred = defer();
@@ -18,127 +17,90 @@ manager.onProgress = function (item, _loaded, _total) {
     percent = loaded / total;
 };
 
-export function onProgress(xhr) {
-};
+export function onProgress(xhr) {};
 
-export function onError(xhr) {
+export function onError(xhr) {}
+
+export async function hide() {
+    var $prologue = document::$find('#prologue')::$addClass('fadeOut');
+    await delay(450);
+    $prologue::$remove();
 }
 
-var titleSCImg = new THREE.ImageLoader(manager).load(
-    'assets/images/title_c.png',
-    (image) => {titleSCImg = image},
-    onProgress,
-    onError
-);
+const LINE_WIDTH = 2;
+function renderPercent({
+    canvas,
+    ctx2d
+}) {
+    var {width, height} = canvas;
+    var radius = width / 2;
 
-var titleENImg = new THREE.ImageLoader(manager).load(
-    'assets/images/title_e.png',
-    (image) => {titleENImg = image},
-    onProgress,
-    onError
-);
-
-export var title = async () => {
-    var $loading = document.querySelector('#prologue .loading');
-    $loading.className += ' fadeOut';
-    await delay(800);
-    $loading.style.display = 'none';
-
-    var $title = document.querySelector('#prologue .title');
-    $title.style.display = 'block';
-
-    var $titleSC = $title.querySelector('.sc');
-    $titleSC.appendChild(titleSCImg);
-
-    var $titleSep = $title.querySelector('.sep');
-
-    var $titleEN = $title.querySelector('.en');
-    $titleEN.appendChild(titleENImg);
-
-    $titleSep.style.display = 'block';
-    $titleSep.className += ' fadeIn';
-
-    await delay(600);
-
-    titleSCImg.className += ' anime';
-    titleENImg.className += ' anime';
-
-    await delay(2000);
-
-    $title.className += ' fadeOut';
-
-    await delay(600);
-}
-
-export function hide() {
-    var $prologue = document.querySelector('#prologue');
-    $prologue.style.display = 'none';
-}
-
-const DPR = window.devicePixelRatio;
-var text;
-var ctx2d;
-var canvasWidth;
-var canvasHeight;
-var radius;
-var lineWidth;
-function loading() {
-    if (percent < 1) {
-        requestAnimationFrame(loading);
-
-        percent += 0.0001;
-        if (total && loaded < total) {
-            percent = Math.min(percent, (loaded + 1) / total * 0.95);
-        } else if (total && loaded === total) {
-            percent = 1;
-        }
-    }
-
-    text.textContent = parseInt(percent * 100);
-
-    ctx2d.clearRect(0, 0, canvasWidth, canvasHeight);
-
-    ctx2d.beginPath();
-    ctx2d.arc(radius, radius, radius * 0.7, -Math.PI *0.5, Math.PI * 1.5, false);
-    ctx2d.lineWidth = lineWidth;
-    ctx2d.strokeStyle = '#FFF';
-    ctx2d.stroke();
-    ctx2d.closePath();
+    ctx2d.clearRect(0, 0, width, height);
 
     ctx2d.beginPath();
     ctx2d.arc(radius, radius, radius * 0.95, -Math.PI *0.5, Math.PI * 1.5 * percent, false);
-    ctx2d.lineWidth = lineWidth;
+    ctx2d.lineWidth = LINE_WIDTH;
     ctx2d.strokeStyle = '#FFF';
     ctx2d.stroke();
     ctx2d.closePath();
 
     ctx2d.beginPath();
     ctx2d.arc(radius, radius, radius * 0.95,  Math.PI * 1.5 * percent, Math.PI * 1.5, false);
-    ctx2d.lineWidth = lineWidth;
+    ctx2d.lineWidth = LINE_WIDTH;
     ctx2d.strokeStyle = '#333';
     ctx2d.stroke();
     ctx2d.closePath();
+}
 
-    if (loaded === total) {
-        deferred.resolve();
-    }
+function template() {
+    return `
+        <div id="prologue">
+            <div class="loading">
+                <canvas></canvas>
+                <div></div>
+                <p></p>
+            </div>
+        </div>
+    `;
 }
 
 (async () => {
     await domReady();
 
-    var $loading = document.querySelector('#prologue .loading');
-    $loading.style.display = 'block';
+    document.body::$append(template());
 
-    var canvas = document.querySelector('#prologue canvas');
-    var rect = canvas.getBoundingClientRect();
-    canvasWidth = canvas.width = rect.width * DPR;
-    canvasHeight = canvas.height = rect.height * DPR;
-    ctx2d = canvas.getContext('2d');
-    radius = canvasWidth / 2;
-    lineWidth = 2;
+    var $loading = document::$find('#prologue .loading')::$show();
+    var $percent = document::$find('#prologue p');
 
-    text = document.querySelector('#prologue span');
+    var canvas = document::$find('#prologue canvas');
+    var {width, height} = canvas.getBoundingClientRect();
 
-    loading();
+    canvas.width = width * dpr();
+    canvas.height = height * dpr();
+    
+    var ctx2d = canvas.getContext('2d');
+
+    void function checkPercent() {
+        if (percent < 1) {
+            requestAnimationFrame(checkPercent);
+
+            percent += 0.0001;
+            if (total && loaded < total) {
+                percent = Math.min(percent, (loaded + 1) / total * 0.95);
+            } else if (total && loaded === total) {
+                percent = 1;
+            }
+        }
+
+        $percent::$text(parseInt(percent * 100));
+
+        renderPercent({
+            canvas,
+            ctx2d
+        });
+
+        if (loaded && total && loaded === total) {
+            deferred.resolve();
+        }
+    }();
 })();
