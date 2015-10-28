@@ -38182,60 +38182,65 @@ THREE.OBJLoader.prototype = {
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
-	__webpack_require__(1);
+	__webpack_require__(2);
 	
-	var _libPromise = __webpack_require__(4);
+	__webpack_require__(5);
 	
-	var _libDom = __webpack_require__(5);
+	__webpack_require__(7);
 	
-	var _prologue = __webpack_require__(6);
+	var _prologue = __webpack_require__(9);
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _clock = __webpack_require__(13);
+	var _title = __webpack_require__(15);
+	
+	var title = _interopRequireWildcard(_title);
+	
+	var _clock = __webpack_require__(18);
 	
 	var clock = _interopRequireWildcard(_clock);
 	
-	var _share = __webpack_require__(16);
+	var _share = __webpack_require__(24);
 	
 	var share = _interopRequireWildcard(_share);
 	
-	var _nav = __webpack_require__(19);
+	var _nav = __webpack_require__(27);
 	
 	var nav = _interopRequireWildcard(_nav);
 	
-	var _menu = __webpack_require__(22);
+	var _category = __webpack_require__(21);
 	
-	var menu = _interopRequireWildcard(_menu);
+	var category = _interopRequireWildcard(_category);
 	
-	var _visualizer = __webpack_require__(25);
+	var _visualizer = __webpack_require__(34);
 	
 	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
-	var _opening = __webpack_require__(26);
+	var _opening = __webpack_require__(35);
 	
 	var opening = _interopRequireWildcard(_opening);
 	
-	var _chapter1 = __webpack_require__(36);
+	var _chapter1 = __webpack_require__(45);
 	
 	var chapter1 = _interopRequireWildcard(_chapter1);
+	
+	var chapters = [chapter1];
+	var currentChapter;
 	
 	var openingMusic = new _visualizer2['default'](prologue.manager);
 	openingMusic.load('./assets/sounds/opening.mp3');
 	openingMusic.ready().then(function () {
 	    openingMusic.togglePlayback(true);
 	});
-	var currentMusic = openingMusic;
 	
-	var chapters = [chapter1];
-	var currentChapter;
-	
-	var chapterMusics = new Array(8).fill(1).map(function (v, i) {
-	    var t = 't' + v * i * 3;
+	var chapterMusics = [];
+	for (var i = 1; i <= 6; i++) {
 	    var music = new _visualizer2['default'](prologue.manager);
-	    music.load('./assets/sounds/' + t + '.mp3');
-	    return music;
-	});
+	    music.load('./assets/sounds/c' + i + '.mp3');
+	    chapterMusics.push(music);
+	}
+	
+	var currentMusic = openingMusic;
 	
 	var resizeHandler = opening.resize.bind(opening);
 	function resize() {
@@ -38255,11 +38260,11 @@ THREE.OBJLoader.prototype = {
 	    return regeneratorRuntime.async(function changeChapter$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                chapter = chapters[index];
-	                chapterMusic = chapterMusics[index];
+	                chapter = chapters[index - 1];
+	                chapterMusic = chapterMusics[index - 1];
 	
 	                if (!(chapter && chapterMusic)) {
-	                    context$1$0.next = 19;
+	                    context$1$0.next = 18;
 	                    break;
 	                }
 	
@@ -38267,36 +38272,60 @@ THREE.OBJLoader.prototype = {
 	
 	                currentMusic = chapterMusic;
 	
-	                context$1$0.next = 7;
-	                return regeneratorRuntime.awrap(menu.hide());
-	
-	            case 7:
-	
 	                resizeHandler = opening.resize.bind(opening);
 	                renderHandler = opening.render.bind(opening);
 	
 	                if (!currentChapter) {
-	                    context$1$0.next = 12;
+	                    context$1$0.next = 10;
 	                    break;
 	                }
 	
-	                context$1$0.next = 12;
+	                context$1$0.next = 10;
 	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
 	
-	            case 12:
-	                context$1$0.next = 14;
+	            case 10:
+	                context$1$0.next = 12;
 	                return regeneratorRuntime.awrap(opening.entering());
 	
-	            case 14:
+	            case 12:
 	
 	                currentChapter = chapter;
 	                resizeHandler = chapter.resize.bind(chapter);
 	                renderHandler = chapter.render.bind(chapter);
 	
-	                context$1$0.next = 19;
+	                context$1$0.next = 17;
 	                return regeneratorRuntime.awrap(chapter.entering(currentMusic));
 	
-	            case 19:
+	            case 17:
+	
+	                nav.enable('index');
+	
+	            case 18:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function backToIndex() {
+	    return regeneratorRuntime.async(function backToIndex$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                currentMusic.togglePlayback(false);
+	                openingMusic.togglePlayback(true);
+	                currentMusic = openingMusic;
+	
+	                resizeHandler = opening.resize.bind(opening);
+	                renderHandler = opening.render.bind(opening);
+	
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
+	
+	            case 7:
+	
+	                nav.disable('index');
+	
+	            case 8:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38318,57 +38347,59 @@ THREE.OBJLoader.prototype = {
 	
 	            case 4:
 	
-	                opening.show();
 	                opening.render();
 	
-	                context$1$0.next = 8;
-	                return regeneratorRuntime.awrap(prologue.title());
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(Promise.all([prologue.hide(), opening.show()]));
 	
-	            case 8:
-	                context$1$0.next = 10;
-	                return regeneratorRuntime.awrap(prologue.hide());
+	            case 7:
+	                context$1$0.next = 9;
+	                return regeneratorRuntime.awrap(title.show());
 	
-	            case 10:
+	            case 9:
+	                context$1$0.next = 11;
+	                return regeneratorRuntime.awrap(title.hide());
+	
+	            case 11:
 	
 	                clock.show();
 	                clock.run();
 	                share.show();
+	
+	                nav.disable('index');
+	                nav.disable('video');
 	                nav.show();
 	
-	                context$1$0.next = 16;
+	                context$1$0.next = 19;
 	                return regeneratorRuntime.awrap(opening.start());
 	
-	            case 16:
+	            case 19:
 	
 	                resize();
 	                tick();
 	
-	                share.onshare(function (type) {
-	                    if (type === 'weixin') {
-	                        var _context;
-	
-	                        var $weixinCode = _libDom.find.call(document, '#weixin_code');
-	                        (_context = _libDom.show.call($weixinCode), _libDom.on).call(_context, 'click', function handler() {
-	                            _libDom.hide.call($weixinCode);
-	                            _libDom.off.call($weixinCode, 'click', handler);
-	                        });
+	                nav.on('change', function (e, newValue, oldValue) {
+	                    if (newValue === 'index') {
+	                        backToIndex();
+	                    } else if (newValue === 'category') {
+	                        category.show();
+	                    } else if (newValue === 'music') {
+	                        currentMusic.togglePlayback();
 	                    }
 	                });
 	
-	                nav.onmusic(function (on) {
-	                    currentMusic.togglePlayback(on);
-	                });
-	
-	                menu.onsymbol(function (symbol) {
-	                    var index = symbol.substr(1) >> 0 / 3;
-	                    changeChapter(index);
+	                category.on('change', function (e, newValue, oldValue) {
+	                    category.hide();
+	                    if (newValue !== oldValue) {
+	                        changeChapter(newValue);
+	                    }
 	                });
 	
 	                opening.ontowerclick(function () {
-	                    changeChapter(0);
+	                    changeChapter(1);
 	                });
 	
-	            case 22:
+	            case 24:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38376,23 +38407,24 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(2);
+	var content = __webpack_require__(3);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
+	var update = __webpack_require__(4)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./main.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./main.less");
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -38402,13 +38434,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
-	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n}\n"
+	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\np {\n  margin: 0;\n  padding: 0;\n}\n.fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@-ms-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n"
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -38633,7 +38665,300 @@ THREE.OBJLoader.prototype = {
 
 
 /***/ },
-/* 4 */
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(6);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./main.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./main.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n}\n"
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	__webpack_require__(8);
+	
+	var Zepto = window.Zepto;
+	var originFn = Zepto.fn;
+	
+	function isUndef() {
+	    return typeof this === 'undefined';
+	}
+	
+	function isNull() {
+	    return typeof this == null;
+	}
+	
+	var fn = {};
+	
+	exports.fn = fn;
+	
+	var _loop = function (_name) {
+	    var value = originFn[value];
+	    fn[_name] = window['$' + _name] = function () {
+	        var _Zepto2;
+	
+	        if (isUndef.call(this)) {
+	            throw new Error('Uncaught TypeError: Cannot read property \'' + _name + '\' of undefined');
+	        } else if (isNull.call(this)) {
+	            throw new Error('Uncaught TypeError: Cannot read property \'' + _name + '\' of null');
+	        }
+	        var r = (_Zepto2 = Zepto(this))[_name].apply(_Zepto2, arguments);
+	        if (r && r.__proto__ === originFn && r.length === 1) {
+	            if (r.length === 1) {
+	                return r[0];
+	            } else {
+	                return Array.from(r);
+	            }
+	        } else {
+	            return r;
+	        }
+	    };
+	};
+	
+	for (var _name in originFn) {
+	    _loop(_name);
+	}
+	
+	fn.findAll = window.$findAll = function () {
+	    var _Zepto;
+	
+	    if (isUndef.call(this)) {
+	        throw new Error('Uncaught TypeError: Cannot read property \'findAll\' of undefined');
+	    } else if (isNull.call(this)) {
+	        throw new Error('Uncaught TypeError: Cannot read property \'findAll\' of null');
+	    }
+	    return Array.from((_Zepto = Zepto(this)).find.apply(_Zepto, arguments));
+	};
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	/* Zepto v1.0-1-ga3cab6c - polyfill zepto detect event ajax form fx - zeptojs.com/license */
+	(function(a){String.prototype.trim===a&&(String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"")}),Array.prototype.reduce===a&&(Array.prototype.reduce=function(b){if(this===void 0||this===null)throw new TypeError;var c=Object(this),d=c.length>>>0,e=0,f;if(typeof b!="function")throw new TypeError;if(d==0&&arguments.length==1)throw new TypeError;if(arguments.length>=2)f=arguments[1];else do{if(e in c){f=c[e++];break}if(++e>=d)throw new TypeError}while(!0);while(e<d)e in c&&(f=b.call(a,f,c[e],e,c)),e++;return f})})();var Zepto=function(){function E(a){return a==null?String(a):y[z.call(a)]||"object"}function F(a){return E(a)=="function"}function G(a){return a!=null&&a==a.window}function H(a){return a!=null&&a.nodeType==a.DOCUMENT_NODE}function I(a){return E(a)=="object"}function J(a){return I(a)&&!G(a)&&a.__proto__==Object.prototype}function K(a){return a instanceof Array}function L(a){return typeof a.length=="number"}function M(a){return g.call(a,function(a){return a!=null})}function N(a){return a.length>0?c.fn.concat.apply([],a):a}function O(a){return a.replace(/::/g,"/").replace(/([A-Z]+)([A-Z][a-z])/g,"$1_$2").replace(/([a-z\d])([A-Z])/g,"$1_$2").replace(/_/g,"-").toLowerCase()}function P(a){return a in j?j[a]:j[a]=new RegExp("(^|\\s)"+a+"(\\s|$)")}function Q(a,b){return typeof b=="number"&&!l[O(a)]?b+"px":b}function R(a){var b,c;return i[a]||(b=h.createElement(a),h.body.appendChild(b),c=k(b,"").getPropertyValue("display"),b.parentNode.removeChild(b),c=="none"&&(c="block"),i[a]=c),i[a]}function S(a){return"children"in a?f.call(a.children):c.map(a.childNodes,function(a){if(a.nodeType==1)return a})}function T(c,d,e){for(b in d)e&&(J(d[b])||K(d[b]))?(J(d[b])&&!J(c[b])&&(c[b]={}),K(d[b])&&!K(c[b])&&(c[b]=[]),T(c[b],d[b],e)):d[b]!==a&&(c[b]=d[b])}function U(b,d){return d===a?c(b):c(b).filter(d)}function V(a,b,c,d){return F(b)?b.call(a,c,d):b}function W(a,b,c){c==null?a.removeAttribute(b):a.setAttribute(b,c)}function X(b,c){var d=b.className,e=d&&d.baseVal!==a;if(c===a)return e?d.baseVal:d;e?d.baseVal=c:b.className=c}function Y(a){var b;try{return a?a=="true"||(a=="false"?!1:a=="null"?null:isNaN(b=Number(a))?/^[\[\{]/.test(a)?c.parseJSON(a):a:b):a}catch(d){return a}}function Z(a,b){b(a);for(var c in a.childNodes)Z(a.childNodes[c],b)}var a,b,c,d,e=[],f=e.slice,g=e.filter,h=window.document,i={},j={},k=h.defaultView.getComputedStyle,l={"column-count":1,columns:1,"font-weight":1,"line-height":1,opacity:1,"z-index":1,zoom:1},m=/^\s*<(\w+|!)[^>]*>/,n=/<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,o=/^(?:body|html)$/i,p=["val","css","html","text","data","width","height","offset"],q=["after","prepend","before","append"],r=h.createElement("table"),s=h.createElement("tr"),t={tr:h.createElement("tbody"),tbody:r,thead:r,tfoot:r,td:s,th:s,"*":h.createElement("div")},u=/complete|loaded|interactive/,v=/^\.([\w-]+)$/,w=/^#([\w-]*)$/,x=/^[\w-]+$/,y={},z=y.toString,A={},B,C,D=h.createElement("div");return A.matches=function(a,b){if(!a||a.nodeType!==1)return!1;var c=a.webkitMatchesSelector||a.mozMatchesSelector||a.oMatchesSelector||a.matchesSelector;if(c)return c.call(a,b);var d,e=a.parentNode,f=!e;return f&&(e=D).appendChild(a),d=~A.qsa(e,b).indexOf(a),f&&D.removeChild(a),d},B=function(a){return a.replace(/-+(.)?/g,function(a,b){return b?b.toUpperCase():""})},C=function(a){return g.call(a,function(b,c){return a.indexOf(b)==c})},A.fragment=function(b,d,e){b.replace&&(b=b.replace(n,"<$1></$2>")),d===a&&(d=m.test(b)&&RegExp.$1),d in t||(d="*");var g,h,i=t[d];return i.innerHTML=""+b,h=c.each(f.call(i.childNodes),function(){i.removeChild(this)}),J(e)&&(g=c(h),c.each(e,function(a,b){p.indexOf(a)>-1?g[a](b):g.attr(a,b)})),h},A.Z=function(a,b){return a=a||[],a.__proto__=c.fn,a.selector=b||"",a},A.isZ=function(a){return a instanceof A.Z},A.init=function(b,d){if(!b)return A.Z();if(F(b))return c(h).ready(b);if(A.isZ(b))return b;var e;if(K(b))e=M(b);else if(I(b))e=[J(b)?c.extend({},b):b],b=null;else if(m.test(b))e=A.fragment(b.trim(),RegExp.$1,d),b=null;else{if(d!==a)return c(d).find(b);e=A.qsa(h,b)}return A.Z(e,b)},c=function(a,b){return A.init(a,b)},c.extend=function(a){var b,c=f.call(arguments,1);return typeof a=="boolean"&&(b=a,a=c.shift()),c.forEach(function(c){T(a,c,b)}),a},A.qsa=function(a,b){var c;return H(a)&&w.test(b)?(c=a.getElementById(RegExp.$1))?[c]:[]:a.nodeType!==1&&a.nodeType!==9?[]:f.call(v.test(b)?a.getElementsByClassName(RegExp.$1):x.test(b)?a.getElementsByTagName(b):a.querySelectorAll(b))},c.contains=function(a,b){return a!==b&&a.contains(b)},c.type=E,c.isFunction=F,c.isWindow=G,c.isArray=K,c.isPlainObject=J,c.isEmptyObject=function(a){var b;for(b in a)return!1;return!0},c.inArray=function(a,b,c){return e.indexOf.call(b,a,c)},c.camelCase=B,c.trim=function(a){return a.trim()},c.uuid=0,c.support={},c.expr={},c.map=function(a,b){var c,d=[],e,f;if(L(a))for(e=0;e<a.length;e++)c=b(a[e],e),c!=null&&d.push(c);else for(f in a)c=b(a[f],f),c!=null&&d.push(c);return N(d)},c.each=function(a,b){var c,d;if(L(a)){for(c=0;c<a.length;c++)if(b.call(a[c],c,a[c])===!1)return a}else for(d in a)if(b.call(a[d],d,a[d])===!1)return a;return a},c.grep=function(a,b){return g.call(a,b)},window.JSON&&(c.parseJSON=JSON.parse),c.each("Boolean Number String Function Array Date RegExp Object Error".split(" "),function(a,b){y["[object "+b+"]"]=b.toLowerCase()}),c.fn={forEach:e.forEach,reduce:e.reduce,push:e.push,sort:e.sort,indexOf:e.indexOf,concat:e.concat,map:function(a){return c(c.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return c(f.apply(this,arguments))},ready:function(a){return u.test(h.readyState)?a(c):h.addEventListener("DOMContentLoaded",function(){a(c)},!1),this},get:function(b){return b===a?f.call(this):this[b>=0?b:b+this.length]},toArray:function(){return this.get()},size:function(){return this.length},remove:function(){return this.each(function(){this.parentNode!=null&&this.parentNode.removeChild(this)})},each:function(a){return e.every.call(this,function(b,c){return a.call(b,c,b)!==!1}),this},filter:function(a){return F(a)?this.not(this.not(a)):c(g.call(this,function(b){return A.matches(b,a)}))},add:function(a,b){return c(C(this.concat(c(a,b))))},is:function(a){return this.length>0&&A.matches(this[0],a)},not:function(b){var d=[];if(F(b)&&b.call!==a)this.each(function(a){b.call(this,a)||d.push(this)});else{var e=typeof b=="string"?this.filter(b):L(b)&&F(b.item)?f.call(b):c(b);this.forEach(function(a){e.indexOf(a)<0&&d.push(a)})}return c(d)},has:function(a){return this.filter(function(){return I(a)?c.contains(this,a):c(this).find(a).size()})},eq:function(a){return a===-1?this.slice(a):this.slice(a,+a+1)},first:function(){var a=this[0];return a&&!I(a)?a:c(a)},last:function(){var a=this[this.length-1];return a&&!I(a)?a:c(a)},find:function(a){var b,d=this;return typeof a=="object"?b=c(a).filter(function(){var a=this;return e.some.call(d,function(b){return c.contains(b,a)})}):this.length==1?b=c(A.qsa(this[0],a)):b=this.map(function(){return A.qsa(this,a)}),b},closest:function(a,b){var d=this[0],e=!1;typeof a=="object"&&(e=c(a));while(d&&!(e?e.indexOf(d)>=0:A.matches(d,a)))d=d!==b&&!H(d)&&d.parentNode;return c(d)},parents:function(a){var b=[],d=this;while(d.length>0)d=c.map(d,function(a){if((a=a.parentNode)&&!H(a)&&b.indexOf(a)<0)return b.push(a),a});return U(b,a)},parent:function(a){return U(C(this.pluck("parentNode")),a)},children:function(a){return U(this.map(function(){return S(this)}),a)},contents:function(){return this.map(function(){return f.call(this.childNodes)})},siblings:function(a){return U(this.map(function(a,b){return g.call(S(b.parentNode),function(a){return a!==b})}),a)},empty:function(){return this.each(function(){this.innerHTML=""})},pluck:function(a){return c.map(this,function(b){return b[a]})},show:function(){return this.each(function(){this.style.display=="none"&&(this.style.display=null),k(this,"").getPropertyValue("display")=="none"&&(this.style.display=R(this.nodeName))})},replaceWith:function(a){return this.before(a).remove()},wrap:function(a){var b=F(a);if(this[0]&&!b)var d=c(a).get(0),e=d.parentNode||this.length>1;return this.each(function(f){c(this).wrapAll(b?a.call(this,f):e?d.cloneNode(!0):d)})},wrapAll:function(a){if(this[0]){c(this[0]).before(a=c(a));var b;while((b=a.children()).length)a=b.first();c(a).append(this)}return this},wrapInner:function(a){var b=F(a);return this.each(function(d){var e=c(this),f=e.contents(),g=b?a.call(this,d):a;f.length?f.wrapAll(g):e.append(g)})},unwrap:function(){return this.parent().each(function(){c(this).replaceWith(c(this).children())}),this},clone:function(){return this.map(function(){return this.cloneNode(!0)})},hide:function(){return this.css("display","none")},toggle:function(b){return this.each(function(){var d=c(this);(b===a?d.css("display")=="none":b)?d.show():d.hide()})},prev:function(a){return c(this.pluck("previousElementSibling")).filter(a||"*")},next:function(a){return c(this.pluck("nextElementSibling")).filter(a||"*")},html:function(b){return b===a?this.length>0?this[0].innerHTML:null:this.each(function(a){var d=this.innerHTML;c(this).empty().append(V(this,b,a,d))})},text:function(b){return b===a?this.length>0?this[0].textContent:null:this.each(function(){this.textContent=b})},attr:function(c,d){var e;return typeof c=="string"&&d===a?this.length==0||this[0].nodeType!==1?a:c=="value"&&this[0].nodeName=="INPUT"?this.val():!(e=this[0].getAttribute(c))&&c in this[0]?this[0][c]:e:this.each(function(a){if(this.nodeType!==1)return;if(I(c))for(b in c)W(this,b,c[b]);else W(this,c,V(this,d,a,this.getAttribute(c)))})},removeAttr:function(a){return this.each(function(){this.nodeType===1&&W(this,a)})},prop:function(b,c){return c===a?this[0]&&this[0][b]:this.each(function(a){this[b]=V(this,c,a,this[b])})},data:function(b,c){var d=this.attr("data-"+O(b),c);return d!==null?Y(d):a},val:function(b){return b===a?this[0]&&(this[0].multiple?c(this[0]).find("option").filter(function(a){return this.selected}).pluck("value"):this[0].value):this.each(function(a){this.value=V(this,b,a,this.value)})},offset:function(a){if(a)return this.each(function(b){var d=c(this),e=V(this,a,b,d.offset()),f=d.offsetParent().offset(),g={top:e.top-f.top,left:e.left-f.left};d.css("position")=="static"&&(g.position="relative"),d.css(g)});if(this.length==0)return null;var b=this[0].getBoundingClientRect();return{left:b.left+window.pageXOffset,top:b.top+window.pageYOffset,width:Math.round(b.width),height:Math.round(b.height)}},css:function(a,c){if(arguments.length<2&&typeof a=="string")return this[0]&&(this[0].style[B(a)]||k(this[0],"").getPropertyValue(a));var d="";if(E(a)=="string")!c&&c!==0?this.each(function(){this.style.removeProperty(O(a))}):d=O(a)+":"+Q(a,c);else for(b in a)!a[b]&&a[b]!==0?this.each(function(){this.style.removeProperty(O(b))}):d+=O(b)+":"+Q(b,a[b])+";";return this.each(function(){this.style.cssText+=";"+d})},index:function(a){return a?this.indexOf(c(a)[0]):this.parent().children().indexOf(this[0])},hasClass:function(a){return e.some.call(this,function(a){return this.test(X(a))},P(a))},addClass:function(a){return this.each(function(b){d=[];var e=X(this),f=V(this,a,b,e);f.split(/\s+/g).forEach(function(a){c(this).hasClass(a)||d.push(a)},this),d.length&&X(this,e+(e?" ":"")+d.join(" "))})},removeClass:function(b){return this.each(function(c){if(b===a)return X(this,"");d=X(this),V(this,b,c,d).split(/\s+/g).forEach(function(a){d=d.replace(P(a)," ")}),X(this,d.trim())})},toggleClass:function(b,d){return this.each(function(e){var f=c(this),g=V(this,b,e,X(this));g.split(/\s+/g).forEach(function(b){(d===a?!f.hasClass(b):d)?f.addClass(b):f.removeClass(b)})})},scrollTop:function(){if(!this.length)return;return"scrollTop"in this[0]?this[0].scrollTop:this[0].scrollY},position:function(){if(!this.length)return;var a=this[0],b=this.offsetParent(),d=this.offset(),e=o.test(b[0].nodeName)?{top:0,left:0}:b.offset();return d.top-=parseFloat(c(a).css("margin-top"))||0,d.left-=parseFloat(c(a).css("margin-left"))||0,e.top+=parseFloat(c(b[0]).css("border-top-width"))||0,e.left+=parseFloat(c(b[0]).css("border-left-width"))||0,{top:d.top-e.top,left:d.left-e.left}},offsetParent:function(){return this.map(function(){var a=this.offsetParent||h.body;while(a&&!o.test(a.nodeName)&&c(a).css("position")=="static")a=a.offsetParent;return a})}},c.fn.detach=c.fn.remove,["width","height"].forEach(function(b){c.fn[b]=function(d){var e,f=this[0],g=b.replace(/./,function(a){return a[0].toUpperCase()});return d===a?G(f)?f["inner"+g]:H(f)?f.documentElement["offset"+g]:(e=this.offset())&&e[b]:this.each(function(a){f=c(this),f.css(b,V(this,d,a,f[b]()))})}}),q.forEach(function(a,b){var d=b%2;c.fn[a]=function(){var a,e=c.map(arguments,function(b){return a=E(b),a=="object"||a=="array"||b==null?b:A.fragment(b)}),f,g=this.length>1;return e.length<1?this:this.each(function(a,h){f=d?h:h.parentNode,h=b==0?h.nextSibling:b==1?h.firstChild:b==2?h:null,e.forEach(function(a){if(g)a=a.cloneNode(!0);else if(!f)return c(a).remove();Z(f.insertBefore(a,h),function(a){a.nodeName!=null&&a.nodeName.toUpperCase()==="SCRIPT"&&(!a.type||a.type==="text/javascript")&&!a.src&&window.eval.call(window,a.innerHTML)})})})},c.fn[d?a+"To":"insert"+(b?"Before":"After")]=function(b){return c(b)[a](this),this}}),A.Z.prototype=c.fn,A.uniq=C,A.deserializeValue=Y,c.zepto=A,c}();window.Zepto=Zepto,"$"in window||(window.$=Zepto),function(a){function b(a){var b=this.os={},c=this.browser={},d=a.match(/WebKit\/([\d.]+)/),e=a.match(/(Android)\s+([\d.]+)/),f=a.match(/(iPad).*OS\s([\d_]+)/),g=!f&&a.match(/(iPhone\sOS)\s([\d_]+)/),h=a.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),i=h&&a.match(/TouchPad/),j=a.match(/Kindle\/([\d.]+)/),k=a.match(/Silk\/([\d._]+)/),l=a.match(/(BlackBerry).*Version\/([\d.]+)/),m=a.match(/(BB10).*Version\/([\d.]+)/),n=a.match(/(RIM\sTablet\sOS)\s([\d.]+)/),o=a.match(/PlayBook/),p=a.match(/Chrome\/([\d.]+)/)||a.match(/CriOS\/([\d.]+)/),q=a.match(/Firefox\/([\d.]+)/);if(c.webkit=!!d)c.version=d[1];e&&(b.android=!0,b.version=e[2]),g&&(b.ios=b.iphone=!0,b.version=g[2].replace(/_/g,".")),f&&(b.ios=b.ipad=!0,b.version=f[2].replace(/_/g,".")),h&&(b.webos=!0,b.version=h[2]),i&&(b.touchpad=!0),l&&(b.blackberry=!0,b.version=l[2]),m&&(b.bb10=!0,b.version=m[2]),n&&(b.rimtabletos=!0,b.version=n[2]),o&&(c.playbook=!0),j&&(b.kindle=!0,b.version=j[1]),k&&(c.silk=!0,c.version=k[1]),!k&&b.android&&a.match(/Kindle Fire/)&&(c.silk=!0),p&&(c.chrome=!0,c.version=p[1]),q&&(c.firefox=!0,c.version=q[1]),b.tablet=!!(f||o||e&&!a.match(/Mobile/)||q&&a.match(/Tablet/)),b.phone=!b.tablet&&!!(e||g||h||l||m||p&&a.match(/Android/)||p&&a.match(/CriOS\/([\d.]+)/)||q&&a.match(/Mobile/))}b.call(a,navigator.userAgent),a.__detect=b}(Zepto),function(a){function g(a){return a._zid||(a._zid=d++)}function h(a,b,d,e){b=i(b);if(b.ns)var f=j(b.ns);return(c[g(a)]||[]).filter(function(a){return a&&(!b.e||a.e==b.e)&&(!b.ns||f.test(a.ns))&&(!d||g(a.fn)===g(d))&&(!e||a.sel==e)})}function i(a){var b=(""+a).split(".");return{e:b[0],ns:b.slice(1).sort().join(" ")}}function j(a){return new RegExp("(?:^| )"+a.replace(" "," .* ?")+"(?: |$)")}function k(b,c,d){a.type(b)!="string"?a.each(b,d):b.split(/\s/).forEach(function(a){d(a,c)})}function l(a,b){return a.del&&(a.e=="focus"||a.e=="blur")||!!b}function m(a){return f[a]||a}function n(b,d,e,h,j,n){var o=g(b),p=c[o]||(c[o]=[]);k(d,e,function(c,d){var e=i(c);e.fn=d,e.sel=h,e.e in f&&(d=function(b){var c=b.relatedTarget;if(!c||c!==this&&!a.contains(this,c))return e.fn.apply(this,arguments)}),e.del=j&&j(d,c);var g=e.del||d;e.proxy=function(a){var c=g.apply(b,[a].concat(a.data));return c===!1&&(a.preventDefault(),a.stopPropagation()),c},e.i=p.length,p.push(e),b.addEventListener(m(e.e),e.proxy,l(e,n))})}function o(a,b,d,e,f){var i=g(a);k(b||"",d,function(b,d){h(a,b,d,e).forEach(function(b){delete c[i][b.i],a.removeEventListener(m(b.e),b.proxy,l(b,f))})})}function t(b){var c,d={originalEvent:b};for(c in b)!r.test(c)&&b[c]!==undefined&&(d[c]=b[c]);return a.each(s,function(a,c){d[a]=function(){return this[c]=p,b[a].apply(b,arguments)},d[c]=q}),d}function u(a){if(!("defaultPrevented"in a)){a.defaultPrevented=!1;var b=a.preventDefault;a.preventDefault=function(){this.defaultPrevented=!0,b.call(this)}}}var b=a.zepto.qsa,c={},d=1,e={},f={mouseenter:"mouseover",mouseleave:"mouseout"};e.click=e.mousedown=e.mouseup=e.mousemove="MouseEvents",a.event={add:n,remove:o},a.proxy=function(b,c){if(a.isFunction(b)){var d=function(){return b.apply(c,arguments)};return d._zid=g(b),d}if(typeof c=="string")return a.proxy(b[c],b);throw new TypeError("expected function")},a.fn.bind=function(a,b){return this.each(function(){n(this,a,b)})},a.fn.unbind=function(a,b){return this.each(function(){o(this,a,b)})},a.fn.one=function(a,b){return this.each(function(c,d){n(this,a,b,null,function(a,b){return function(){var c=a.apply(d,arguments);return o(d,b,a),c}})})};var p=function(){return!0},q=function(){return!1},r=/^([A-Z]|layer[XY]$)/,s={preventDefault:"isDefaultPrevented",stopImmediatePropagation:"isImmediatePropagationStopped",stopPropagation:"isPropagationStopped"};a.fn.delegate=function(b,c,d){return this.each(function(e,f){n(f,c,d,b,function(c){return function(d){var e,g=a(d.target).closest(b,f).get(0);if(g)return e=a.extend(t(d),{currentTarget:g,liveFired:f}),c.apply(g,[e].concat([].slice.call(arguments,1)))}})})},a.fn.undelegate=function(a,b,c){return this.each(function(){o(this,b,c,a)})},a.fn.live=function(b,c){return a(document.body).delegate(this.selector,b,c),this},a.fn.die=function(b,c){return a(document.body).undelegate(this.selector,b,c),this},a.fn.on=function(b,c,d){return!c||a.isFunction(c)?this.bind(b,c||d):this.delegate(c,b,d)},a.fn.off=function(b,c,d){return!c||a.isFunction(c)?this.unbind(b,c||d):this.undelegate(c,b,d)},a.fn.trigger=function(b,c){if(typeof b=="string"||a.isPlainObject(b))b=a.Event(b);return u(b),b.data=c,this.each(function(){"dispatchEvent"in this&&this.dispatchEvent(b)})},a.fn.triggerHandler=function(b,c){var d,e;return this.each(function(f,g){d=t(typeof b=="string"?a.Event(b):b),d.data=c,d.target=g,a.each(h(g,b.type||b),function(a,b){e=b.proxy(d);if(d.isImmediatePropagationStopped())return!1})}),e},"focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select keydown keypress keyup error".split(" ").forEach(function(b){a.fn[b]=function(a){return a?this.bind(b,a):this.trigger(b)}}),["focus","blur"].forEach(function(b){a.fn[b]=function(a){return a?this.bind(b,a):this.each(function(){try{this[b]()}catch(a){}}),this}}),a.Event=function(a,b){typeof a!="string"&&(b=a,a=b.type);var c=document.createEvent(e[a]||"Events"),d=!0;if(b)for(var f in b)f=="bubbles"?d=!!b[f]:c[f]=b[f];return c.initEvent(a,d,!0,null,null,null,null,null,null,null,null,null,null,null,null),c.isDefaultPrevented=function(){return this.defaultPrevented},c}}(Zepto),function($){function triggerAndReturn(a,b,c){var d=$.Event(b);return $(a).trigger(d,c),!d.defaultPrevented}function triggerGlobal(a,b,c,d){if(a.global)return triggerAndReturn(b||document,c,d)}function ajaxStart(a){a.global&&$.active++===0&&triggerGlobal(a,null,"ajaxStart")}function ajaxStop(a){a.global&&!--$.active&&triggerGlobal(a,null,"ajaxStop")}function ajaxBeforeSend(a,b){var c=b.context;if(b.beforeSend.call(c,a,b)===!1||triggerGlobal(b,c,"ajaxBeforeSend",[a,b])===!1)return!1;triggerGlobal(b,c,"ajaxSend",[a,b])}function ajaxSuccess(a,b,c){var d=c.context,e="success";c.success.call(d,a,e,b),triggerGlobal(c,d,"ajaxSuccess",[b,c,a]),ajaxComplete(e,b,c)}function ajaxError(a,b,c,d){var e=d.context;d.error.call(e,c,b,a),triggerGlobal(d,e,"ajaxError",[c,d,a]),ajaxComplete(b,c,d)}function ajaxComplete(a,b,c){var d=c.context;c.complete.call(d,b,a),triggerGlobal(c,d,"ajaxComplete",[b,c]),ajaxStop(c)}function empty(){}function mimeToDataType(a){return a&&(a=a.split(";",2)[0]),a&&(a==htmlType?"html":a==jsonType?"json":scriptTypeRE.test(a)?"script":xmlTypeRE.test(a)&&"xml")||"text"}function appendQuery(a,b){return(a+"&"+b).replace(/[&?]{1,2}/,"?")}function serializeData(a){a.processData&&a.data&&$.type(a.data)!="string"&&(a.data=$.param(a.data,a.traditional)),a.data&&(!a.type||a.type.toUpperCase()=="GET")&&(a.url=appendQuery(a.url,a.data))}function parseArguments(a,b,c,d){var e=!$.isFunction(b);return{url:a,data:e?b:undefined,success:e?$.isFunction(c)?c:undefined:b,dataType:e?d||c:c}}function serialize(a,b,c,d){var e,f=$.isArray(b);$.each(b,function(b,g){e=$.type(g),d&&(b=c?d:d+"["+(f?"":b)+"]"),!d&&f?a.add(g.name,g.value):e=="array"||!c&&e=="object"?serialize(a,g,c,b):a.add(b,g)})}var jsonpID=0,document=window.document,key,name,rscript=/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,scriptTypeRE=/^(?:text|application)\/javascript/i,xmlTypeRE=/^(?:text|application)\/xml/i,jsonType="application/json",htmlType="text/html",blankRE=/^\s*$/;$.active=0,$.ajaxJSONP=function(a){if("type"in a){var b="jsonp"+ ++jsonpID,c=document.createElement("script"),d=function(){clearTimeout(g),$(c).remove(),delete window[b]},e=function(c){d();if(!c||c=="timeout")window[b]=empty;ajaxError(null,c||"abort",f,a)},f={abort:e},g;return ajaxBeforeSend(f,a)===!1?(e("abort"),!1):(window[b]=function(b){d(),ajaxSuccess(b,f,a)},c.onerror=function(){e("error")},c.src=a.url.replace(/=\?/,"="+b),$("head").append(c),a.timeout>0&&(g=setTimeout(function(){e("timeout")},a.timeout)),f)}return $.ajax(a)},$.ajaxSettings={type:"GET",beforeSend:empty,success:empty,error:empty,complete:empty,context:null,global:!0,xhr:function(){return new window.XMLHttpRequest},accepts:{script:"text/javascript, application/javascript",json:jsonType,xml:"application/xml, text/xml",html:htmlType,text:"text/plain"},crossDomain:!1,timeout:0,processData:!0,cache:!0},$.ajax=function(options){var settings=$.extend({},options||{});for(key in $.ajaxSettings)settings[key]===undefined&&(settings[key]=$.ajaxSettings[key]);ajaxStart(settings),settings.crossDomain||(settings.crossDomain=/^([\w-]+:)?\/\/([^\/]+)/.test(settings.url)&&RegExp.$2!=window.location.host),settings.url||(settings.url=window.location.toString()),serializeData(settings),settings.cache===!1&&(settings.url=appendQuery(settings.url,"_="+Date.now()));var dataType=settings.dataType,hasPlaceholder=/=\?/.test(settings.url);if(dataType=="jsonp"||hasPlaceholder)return hasPlaceholder||(settings.url=appendQuery(settings.url,"callback=?")),$.ajaxJSONP(settings);var mime=settings.accepts[dataType],baseHeaders={},protocol=/^([\w-]+:)\/\//.test(settings.url)?RegExp.$1:window.location.protocol,xhr=settings.xhr(),abortTimeout;settings.crossDomain||(baseHeaders["X-Requested-With"]="XMLHttpRequest"),mime&&(baseHeaders.Accept=mime,mime.indexOf(",")>-1&&(mime=mime.split(",",2)[0]),xhr.overrideMimeType&&xhr.overrideMimeType(mime));if(settings.contentType||settings.contentType!==!1&&settings.data&&settings.type.toUpperCase()!="GET")baseHeaders["Content-Type"]=settings.contentType||"application/x-www-form-urlencoded";settings.headers=$.extend(baseHeaders,settings.headers||{}),xhr.onreadystatechange=function(){if(xhr.readyState==4){xhr.onreadystatechange=empty,clearTimeout(abortTimeout);var result,error=!1;if(xhr.status>=200&&xhr.status<300||xhr.status==304||xhr.status==0&&protocol=="file:"){dataType=dataType||mimeToDataType(xhr.getResponseHeader("content-type")),result=xhr.responseText;try{dataType=="script"?(1,eval)(result):dataType=="xml"?result=xhr.responseXML:dataType=="json"&&(result=blankRE.test(result)?null:$.parseJSON(result))}catch(e){error=e}error?ajaxError(error,"parsererror",xhr,settings):ajaxSuccess(result,xhr,settings)}else ajaxError(null,xhr.status?"error":"abort",xhr,settings)}};var async="async"in settings?settings.async:!0;xhr.open(settings.type,settings.url,async);for(name in settings.headers)xhr.setRequestHeader(name,settings.headers[name]);return ajaxBeforeSend(xhr,settings)===!1?(xhr.abort(),!1):(settings.timeout>0&&(abortTimeout=setTimeout(function(){xhr.onreadystatechange=empty,xhr.abort(),ajaxError(null,"timeout",xhr,settings)},settings.timeout)),xhr.send(settings.data?settings.data:null),xhr)},$.get=function(a,b,c,d){return $.ajax(parseArguments.apply(null,arguments))},$.post=function(a,b,c,d){var e=parseArguments.apply(null,arguments);return e.type="POST",$.ajax(e)},$.getJSON=function(a,b,c){var d=parseArguments.apply(null,arguments);return d.dataType="json",$.ajax(d)},$.fn.load=function(a,b,c){if(!this.length)return this;var d=this,e=a.split(/\s/),f,g=parseArguments(a,b,c),h=g.success;return e.length>1&&(g.url=e[0],f=e[1]),g.success=function(a){d.html(f?$("<div>").html(a.replace(rscript,"")).find(f):a),h&&h.apply(d,arguments)},$.ajax(g),this};var escape=encodeURIComponent;$.param=function(a,b){var c=[];return c.add=function(a,b){this.push(escape(a)+"="+escape(b))},serialize(c,a,b),c.join("&").replace(/%20/g,"+")}}(Zepto),function(a){a.fn.serializeArray=function(){var b=[],c;return a(Array.prototype.slice.call(this.get(0).elements)).each(function(){c=a(this);var d=c.attr("type");this.nodeName.toLowerCase()!="fieldset"&&!this.disabled&&d!="submit"&&d!="reset"&&d!="button"&&(d!="radio"&&d!="checkbox"||this.checked)&&b.push({name:c.attr("name"),value:c.val()})}),b},a.fn.serialize=function(){var a=[];return this.serializeArray().forEach(function(b){a.push(encodeURIComponent(b.name)+"="+encodeURIComponent(b.value))}),a.join("&")},a.fn.submit=function(b){if(b)this.bind("submit",b);else if(this.length){var c=a.Event("submit");this.eq(0).trigger(c),c.defaultPrevented||this.get(0).submit()}return this}}(Zepto),function(a,b){function s(a){return t(a.replace(/([a-z])([A-Z])/,"$1-$2"))}function t(a){return a.toLowerCase()}function u(a){return d?d+a:t(a)}var c="",d,e,f,g={Webkit:"webkit",Moz:"",O:"o",ms:"MS"},h=window.document,i=h.createElement("div"),j=/^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,k,l,m,n,o,p,q,r={};a.each(g,function(a,e){if(i.style[a+"TransitionProperty"]!==b)return c="-"+t(a)+"-",d=e,!1}),k=c+"transform",r[l=c+"transition-property"]=r[m=c+"transition-duration"]=r[n=c+"transition-timing-function"]=r[o=c+"animation-name"]=r[p=c+"animation-duration"]=r[q=c+"animation-timing-function"]="",a.fx={off:d===b&&i.style.transitionProperty===b,speeds:{_default:400,fast:200,slow:600},cssPrefix:c,transitionEnd:u("TransitionEnd"),animationEnd:u("AnimationEnd")},a.fn.animate=function(b,c,d,e){return a.isPlainObject(c)&&(d=c.easing,e=c.complete,c=c.duration),c&&(c=(typeof c=="number"?c:a.fx.speeds[c]||a.fx.speeds._default)/1e3),this.anim(b,c,d,e)},a.fn.anim=function(c,d,e,f){var g,h={},i,t="",u=this,v,w=a.fx.transitionEnd;d===b&&(d=.4),a.fx.off&&(d=0);if(typeof c=="string")h[o]=c,h[p]=d+"s",h[q]=e||"linear",w=a.fx.animationEnd;else{i=[];for(g in c)j.test(g)?t+=g+"("+c[g]+") ":(h[g]=c[g],i.push(s(g)));t&&(h[k]=t,i.push(k)),d>0&&typeof c=="object"&&(h[l]=i.join(", "),h[m]=d+"s",h[n]=e||"linear")}return v=function(b){if(typeof b!="undefined"){if(b.target!==b.currentTarget)return;a(b.target).unbind(w,v)}a(this).css(r),f&&f.call(this)},d>0&&this.bind(w,v),this.size()&&this.get(0).clientLeft,this.css(h),d<=0&&setTimeout(function(){u.each(function(){v.call(this)})},0),this},i=null}(Zepto)
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.onProgress = onProgress;
+	exports.onError = onError;
+	exports.hide = hide;
+	
+	__webpack_require__(10);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _libEnv = __webpack_require__(13);
+	
+	var _libUtil = __webpack_require__(14);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var loaded = 0;
+	var total = 0;
+	var percent = 0;
+	
+	var manager = new THREE.LoadingManager();
+	exports.manager = manager;
+	manager.onProgress = function (item, _loaded, _total) {
+	    loaded = _loaded;
+	    total = _total;
+	    percent = loaded / total;
+	};
+	
+	function onProgress(xhr) {}
+	
+	;
+	
+	function onError(xhr) {}
+	
+	function hide() {
+	    var _context;
+	
+	    var $prologue;
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                $prologue = (_context = $find.call(document, '#prologue'), $addClass).call(_context, 'fadeOut');
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
+	
+	            case 3:
+	                $remove.call($prologue);
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	var LINE_WIDTH = 2;
+	function renderPercent(_ref) {
+	    var canvas = _ref.canvas;
+	    var ctx2d = _ref.ctx2d;
+	    var width = canvas.width;
+	    var height = canvas.height;
+	
+	    var radius = width / 2;
+	
+	    ctx2d.clearRect(0, 0, width, height);
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.95, -Math.PI * 0.5, Math.PI * 1.5 * percent, false);
+	    ctx2d.lineWidth = LINE_WIDTH;
+	    ctx2d.strokeStyle = '#FFF';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.95, Math.PI * 1.5 * percent, Math.PI * 1.5, false);
+	    ctx2d.lineWidth = LINE_WIDTH;
+	    ctx2d.strokeStyle = '#333';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	}
+	
+	function template() {
+	    return '\n        <div id="prologue">\n            <div class="loading">\n                <canvas></canvas>\n                <div></div>\n                <p></p>\n            </div>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context2;
+	
+	    var $loading, $percent, canvas, _canvas$getBoundingClientRect, width, height, ctx2d;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                (_context2 = document.body, $append).call(_context2, template());
+	
+	                $loading = (_context2 = $find.call(document, '#prologue .loading'), $show).call(_context2);
+	                $percent = $find.call(document, '#prologue p');
+	                canvas = $find.call(document, '#prologue canvas');
+	                _canvas$getBoundingClientRect = canvas.getBoundingClientRect();
+	                width = _canvas$getBoundingClientRect.width;
+	                height = _canvas$getBoundingClientRect.height;
+	
+	                canvas.width = width * (0, _libEnv.dpr)();
+	                canvas.height = height * (0, _libEnv.dpr)();
+	
+	                ctx2d = canvas.getContext('2d');
+	
+	                void (function checkPercent() {
+	                    if (percent < 1) {
+	                        (0, _libUtil.requestAnimationFrame)(checkPercent);
+	
+	                        percent += 0.0001;
+	                        if (total && loaded < total) {
+	                            percent = Math.min(percent, (loaded + 1) / total * 0.95);
+	                        } else if (total && loaded === total) {
+	                            percent = 1;
+	                        }
+	                    }
+	
+	                    $text.call($percent, parseInt(percent * 100));
+	
+	                    renderPercent({
+	                        canvas: canvas,
+	                        ctx2d: ctx2d
+	                    });
+	
+	                    if (loaded && total && loaded === total) {
+	                        deferred.resolve();
+	                    }
+	                })();
+	
+	            case 13:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(11);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n}\n#prologue .loading canvas {\n  width: 136px;\n  height: 136px;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 136px;\n  height: 136px;\n  top: 0;\n  left: 0;\n  background: url(assets/images/loading-logo.png) no-repeat center center;\n}\n#prologue .loading p {\n  font-family: arial;\n  width: 100%;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n"
+
+/***/ },
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38955,7 +39280,1134 @@ THREE.OBJLoader.prototype = {
 	module.exports = exports['default'];
 
 /***/ },
-/* 5 */
+/* 13 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.width = width;
+	exports.height = height;
+	exports.dpr = dpr;
+	
+	function width() {
+	    return window.innerWidth;
+	}
+	
+	function height() {
+	    return window.innerHeight;
+	}
+	
+	function dpr() {
+	    return window.devicePixelRatio;
+	}
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+	
+	exports.requestAnimationFrame = requestAnimationFrame;
+	var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
+	exports.cancelAnimationFrame = cancelAnimationFrame;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.show = show;
+	exports.hide = hide;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(16);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _prologue = __webpack_require__(9);
+	
+	var _clock = __webpack_require__(18);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	function show() {
+	    var _context;
+	
+	    var state, images, $titleWrap;
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Clock.ready());
+	
+	            case 2:
+	                state = Clock.state();
+	                images = titleImages[state === 'daylight' ? 'black' : 'white'];
+	                $titleWrap = (_context = $find.call(document, '#title .wrap'), $append).call(_context, images);
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
+	
+	            case 7:
+	
+	                $addClass.call($titleWrap, 'anim');
+	
+	                context$1$0.next = 10;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
+	
+	            case 10:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hide() {
+	    var _context2;
+	
+	    var $title;
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                $title = (_context2 = $find.call(document, '#title'), $addClass).call(_context2, 'fadeOut');
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
+	
+	            case 3:
+	                $remove.call($title);
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	var titleImages = {
+	    white: new Array(4),
+	    black: new Array(4)
+	};
+	
+	var _loop = function (i) {
+	    var _loop2 = function (k) {
+	        new THREE.ImageLoader(_prologue.manager).load('assets/images/title_' + k + '_' + i + '.png', function (image) {
+	            titleImages[k][i - 1] = image;
+	        }, _prologue.onProgress, _prologue.onError);
+	    };
+	
+	    for (var k in titleImages) {
+	        _loop2(k);
+	    }
+	};
+	
+	for (var i = 1; i <= 4; i++) {
+	    _loop(i);
+	}
+	
+	function template() {
+	    return '\n        <div id="title">\n            <div class="wrap"></div>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context3;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                (_context3 = document.body, $append).call(_context3, template());
+	
+	            case 3:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(17);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./title.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./title.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title .wrap {\n  width: 569px;\n  height: 432px;\n  position: relative;\n  overflow: hidden;\n}\n#title .wrap img {\n  position: absolute;\n  left: 0;\n  width: 100%;\n  vertical-align: middle;\n  border: 0;\n  font-size: 0;\n  -webkit-transform: translateX(-100%);\n  -ms-transform: translateX(-100%);\n  transform: translateX(-100%);\n}\n#title .wrap.anim img:nth-child(1) {\n  -webkit-transition: -webkit-transform 0.8s ease 0s;\n  -ms-transition: -ms-transform 0.8s ease 0s;\n  transition: transform 0.8s ease 0s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(2) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.2s;\n  -ms-transition: -ms-transform 0.8s ease 0.2s;\n  transition: transform 0.8s ease 0.2s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(3) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.4s;\n  -ms-transition: -ms-transform 0.8s ease 0.4s;\n  transition: transform 0.8s ease 0.4s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(4) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.6s;\n  -ms-transition: -ms-transform 0.8s ease 0.6s;\n  transition: transform 0.8s ease 0.6s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap img:nth-child(1) {\n  top: 0;\n  height: 37px;\n}\n#title .wrap img:nth-child(2) {\n  top: 67px;\n  height: 106px;\n}\n#title .wrap img:nth-child(3) {\n  top: 201px;\n  height: 64px;\n}\n#title .wrap img:nth-child(4) {\n  top: 292px;\n  height: 140px;\n}\n"
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.state = state;
+	exports.section = section;
+	exports.now = now;
+	exports.getHours = getHours;
+	exports.getMinutes = getMinutes;
+	exports.f12 = f12;
+	exports.f24 = f24;
+	exports.show = show;
+	exports.run = run;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(19);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _prologue = __webpack_require__(9);
+	
+	var _category = __webpack_require__(21);
+	
+	var Category = _interopRequireWildcard(_category);
+	
+	var serverTime;
+	exports.serverTime = serverTime;
+	var clientTime;
+	
+	exports.clientTime = clientTime;
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	_prologue.manager.itemStart('server/clock');
+	exports.serverTime = serverTime = Date.now();
+	exports.clientTime = clientTime = Date.now();
+	_prologue.manager.itemEnd('server/clock');
+	deferred.resolve();
+	
+	function state() {
+	    var h = getHours();
+	
+	    if (h >= 6 && h < 18) {
+	        return 'daylight';
+	    } else {
+	        return 'night';
+	    }
+	}
+	
+	function section() {
+	    var h = getHours();
+	    var index = h % (24 / Category.length);
+	    return index;
+	}
+	
+	function now() {
+	    var offset = Date.now() - clientTime;
+	    return serverTime + offset;
+	}
+	
+	function getHours() {
+	    var d = new Date();
+	    d.setTime(now());
+	    return d.getHours();
+	}
+	
+	function getMinutes() {
+	    var d = new Date();
+	    d.setTime(now());
+	    return d.getMinutes();
+	}
+	
+	function f12(h, m) {
+	    var f = {};
+	    h = h || getHours();
+	    m = m || getMinutes();
+	    f.hours = h > 12 ? h - 12 : h;
+	    f.minutes = m < 10 ? '0' + m : '' + m;
+	    f.ampm = h > 12 ? 'pm' : 'am';
+	    return f;
+	}
+	
+	function f24(h, m) {
+	    var f = {};
+	    h = h || getHours();
+	    m = m || getMinutes();
+	    f.hours = h < 10 ? '0' + h : '' + h;
+	    f.minutes = m < 10 ? '0' + m : '' + m;
+	    return f;
+	}
+	
+	function show() {
+	    var _context;
+	
+	    (_context = $find.call(document, '#clock'), $show).call(_context);
+	}
+	
+	function run() {
+	    var _context2;
+	
+	    setTimeout(run, 60 * 1000);
+	
+	    var _f12 = f12();
+	
+	    var hours = _f12.hours;
+	    var minutes = _f12.minutes;
+	    var ampm = _f12.ampm;
+	
+	    var $clock = $find.call(document, '#clock');
+	
+	    (_context2 = $find.call($clock, '.category'), $text).call(_context2, Category.get(section()));
+	    (_context2 = $find.call($clock, '.ampm'), $text).call(_context2, ampm);
+	    (_context2 = $find.call($clock, '.time'), $text).call(_context2, hours + ':' + minutes);
+	}
+	
+	function template() {
+	    return '\n        <div id="clock">\n            <span class="category"></span>\n            <span class="ampm"></span>\n            <span class="time"></span>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context3;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                (_context3 = document.body, $append).call(_context3, template());
+	
+	            case 3:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(20);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 240px;\n  height: 127px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 60px;\n  width: 32px;\n  height: 32px;\n  line-height: 32px;\n  font-size: 22px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  border-radius: 16px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 32px;\n  color: #FFF;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  left: 50px;\n  top: 0;\n  color: #FFF;\n  font-size: 150px;\n  -webkit-transform: scaleX(0.5);\n  -ms-transform: scaleX(0.5);\n  transform: scaleX(0.5);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n"
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	var _slice = Array.prototype.slice;
+	exports.get = get;
+	exports.on = on;
+	exports.off = off;
+	exports.show = show;
+	exports.hide = hide;
+	
+	__webpack_require__(22);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _prologue = __webpack_require__(9);
+	
+	var categorys = ['雾', '云', '日', '雷', '雨', '星'];
+	
+	var length = categorys.length;
+	
+	exports.length = length;
+	var images = ['circle.png', 'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png'];
+	images = images.map(function (image) {
+	    var loader = new THREE.ImageLoader(_prologue.manager);
+	
+	    return new Promise(function (resolve, reject) {
+	        loader.load('./assets/images/' + image, function (img) {
+	            resolve(img);
+	        }, _prologue.onProgress, _prologue.onError);
+	    });
+	});
+	
+	function get(index) {
+	    return categorys[index];
+	}
+	
+	var $category;
+	var $circle;
+	
+	function on() {
+	    var _context, _ref;
+	
+	    (_ref = (_context = $category, $on)).call.apply(_ref, [_context].concat(_slice.call(arguments)));
+	}
+	
+	function off() {
+	    var _context2, _ref2;
+	
+	    (_ref2 = (_context2 = $category, $off)).call.apply(_ref2, [_context2].concat(_slice.call(arguments)));
+	}
+	
+	function bindCategoryEvents() {
+	    var _context3;
+	
+	    var _$circle$getBoundingClientRect = $circle.getBoundingClientRect();
+	
+	    var circleWidth = _$circle$getBoundingClientRect.width;
+	    var circleHeight = _$circle$getBoundingClientRect.height;
+	    var circleLeft = _$circle$getBoundingClientRect.left;
+	    var circleTop = _$circle$getBoundingClientRect.top;
+	
+	    var centerX = circleLeft + circleWidth / 2;
+	    var centerY = circleTop + circleHeight / 2;
+	
+	    function parse(e) {
+	        var relX = e.pageX - centerX;
+	        var relY = centerY - e.pageY;
+	        var radius = Math.sqrt(relX * relX + relY * relY);
+	        var rad;
+	        if (relX > 0 && relY > 0) {
+	            rad = Math.atan(relX / relY);
+	        } else if (relX > 0 && relY < 0) {
+	            rad = Math.PI / 2 + Math.atan(-relY / relX);
+	        } else if (relX < 0 && relY < 0) {
+	            rad = Math.PI + Math.atan(relX / relY);
+	        } else {
+	            rad = Math.PI * 1.5 + Math.atan(-relY / relX);
+	        }
+	        return {
+	            radius: radius,
+	            rad: rad
+	        };
+	    }
+	
+	    var changed;
+	    (_context3 = (_context3 = $circle, $on).call(_context3, 'mousemove mouseleave mousedown mouseup', function (e) {
+	        var _context4;
+	
+	        var eventName = e.type;
+	        (_context4 = $circle, $findAll).call(_context4, 'img').forEach(function (img) {
+	            return $removeClass.call(img, 'hover');
+	        });
+	
+	        if (eventName === 'mouseleave' || eventName === 'mouseup') return;
+	
+	        var _parse = parse(e);
+	
+	        var radius = _parse.radius;
+	        var rad = _parse.rad;
+	
+	        if (radius <= circleWidth / 2 && radius <= circleHeight / 2) {
+	            var _context5;
+	
+	            var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
+	            (_context5 = (_context5 = $circle, $find).call(_context5, '.c' + index), $addClass).call(_context5, 'hover');
+	
+	            if (eventName === 'mousemove') return;
+	
+	            (_context5 = $circle, $trigger).call(_context5, 'change', [index, changed]);
+	            changed = index;
+	        }
+	    }), $on).call(_context3, 'mouseleave', function (e) {
+	        var _context6;
+	
+	        (_context6 = $circle, $findAll).call(_context6, 'img').forEach(function (img) {
+	            return $removeClass.call(img, 'hover');
+	        });
+	    });
+	}
+	
+	function bindBackEvents() {
+	    var _context7;
+	
+	    (_context7 = (_context7 = $category, $find).call(_context7, '.back'), $on).call(_context7, 'click', hide);
+	}
+	
+	var isBoundEvents = false;
+	
+	function show() {
+	    var _context8;
+	
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                (_context8 = $category, $show).call(_context8);
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
+	
+	            case 3:
+	                (_context8 = $category, $addClass).call(_context8, 'fadeIn');
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
+	
+	            case 6:
+	
+	                if (!isBoundEvents) {
+	                    isBoundEvents = true;
+	                    bindBackEvents();
+	                    bindCategoryEvents();
+	                }
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hide() {
+	    var _context9;
+	
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                (_context9 = (_context9 = $category, $removeClass).call(_context9, 'fadeIn'), $addClass).call(_context9, 'fadeOut');
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
+	
+	            case 3:
+	                (_context9 = (_context9 = $category, $removeClass).call(_context9, 'fadeOut'), $hide).call(_context9);
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function template() {
+	    return '\n        <div id="category">\n            <a class="back">Back</a>\n            <div class="circle"></div>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context10;
+	
+	    var imgs;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                $category = (_context10 = (_context10 = document.body, $append).call(_context10, template()), $find).call(_context10, '#category');
+	                $circle = (_context10 = $category, $find).call(_context10, '.circle');
+	
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(Promise.all(images));
+	
+	            case 6:
+	                imgs = context$1$0.sent;
+	
+	                imgs.forEach(function (image, i) {
+	                    var _context11;
+	
+	                    if ($attr.call(image, 'src').indexOf('circle.png') > -1) {
+	                        return;
+	                    }
+	                    $addClass.call(image, 'c' + i);
+	                    (_context11 = $circle, $append).call(_context11, image);
+	                });
+	
+	            case 8:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(23);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./category.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./category.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n"
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.show = show;
+	
+	__webpack_require__(25);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	function sharing(type) {
+	    if (type === 'weixin') {
+	        var _context;
+	
+	        var $weixinCode = $find.call(document, '#share-weixin');
+	
+	        (_context = $show.call($weixinCode), $on).call(_context, 'click', function handler() {
+	            $off.call($weixinCode, 'click', handler);
+	            $hide.call($weixinCode);
+	        });
+	    }
+	}
+	
+	var $share;
+	
+	function show() {
+	    var _context2;
+	
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                (_context2 = (_context2 = $find.call(document, '#share'), $show).call(_context2), $on).call(_context2, 'click', 'a', function (e) {
+	                    var type = this.className;
+	                    sharing(type);
+	                });
+	
+	            case 1:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function template() {
+	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 PAFC, All Rights Reserved</span>\n            <a class="weibo"></a>\n            <a class="weixin"></a>\n            <a class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context3;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                (_context3 = document.body, $append).call(_context3, template());
+	
+	            case 3:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(26);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./share.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./share.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #EEE;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:facebook {\n  background-position: -48px -24px;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	var _slice = Array.prototype.slice;
+	exports.onmusic = onmusic;
+	exports.enable = enable;
+	exports.disable = disable;
+	exports.on = on;
+	exports.off = off;
+	exports.show = show;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(28);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _menu = __webpack_require__(30);
+	
+	var _clock = __webpack_require__(18);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	var musicToggleHandlers = [];
+	
+	function onmusic(handler) {
+	    if (musicToggleHandlers.indexOf(handler) < 0) {
+	        musicToggleHandlers.push(handler);
+	    }
+	}
+	
+	function enable(className) {
+	    var _context;
+	
+	    (_context = (_context = document.body, $find).call(_context, '#nav .' + className), $show).call(_context);
+	}
+	
+	function disable(className) {
+	    var _context2;
+	
+	    (_context2 = (_context2 = document.body, $find).call(_context2, '#nav .' + className), $hide).call(_context2);
+	}
+	
+	var $nav;
+	
+	function on() {
+	    var _context3, _ref;
+	
+	    (_ref = (_context3 = $nav, $on)).call.apply(_ref, [_context3].concat(_slice.call(arguments)));
+	}
+	
+	function off() {
+	    var _context4, _ref2;
+	
+	    (_ref2 = (_context4 = $nav, $off)).call.apply(_ref2, [_context4].concat(_slice.call(arguments)));
+	}
+	
+	function show() {
+	    var _context5;
+	
+	    var state, changed;
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Clock.ready());
+	
+	            case 2:
+	                state = Clock.state();
+	
+	                (_context5 = (_context5 = (_context5 = $nav, $addClass).call(_context5, state === 'daylight' ? 'black' : 'white'), $show).call(_context5), $on).call(_context5, 'click', 'a', function () {
+	                    var _context6;
+	
+	                    (_context6 = $nav, $trigger).call(_context6, 'change', [$attr.call(this, 'class'), changed]);
+	                    changed = $attr.call(this, 'class');
+	                    if (changed === 'music') {
+	                        $attr.call(this, 'off') === 'off' ? $removeAttr.call(this, 'off') : $attr.call(this, 'off', 'off');
+	                    }
+	                });
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function template() {
+	    return '\n        <div id="nav">\n            <a class="index"></a>\n            <a class="video"></a>\n            <a class="category"></a>\n            <a class="music"></a>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context7;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                $nav = (_context7 = (_context7 = document.body, $append).call(_context7, template()), $find).call(_context7, '#nav');
+	
+	            case 3:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(29);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./nav.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./nav.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	module.exports = "#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav.black a {\n  background-image: url(assets/images/nav_black.png);\n}\n#nav.white a {\n  background-image: url(assets/images/nav_white.png);\n}\n#nav a {\n  display: inline-block;\n  margin: 0 9px;\n  width: 34px;\n  height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: -52px 0;\n}\n#nav a.category {\n  background-position: -102px 0;\n}\n#nav a.music {\n  background-position: -154px 0;\n}\n"
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.onsymbol = onsymbol;
+	exports.show = show;
+	exports.hide = hide;
+	
+	__webpack_require__(2);
+	
+	__webpack_require__(31);
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _libDom = __webpack_require__(33);
+	
+	var _prologue = __webpack_require__(9);
+	
+	var symbolClickHandlers = [];
+	
+	function onsymbol(handler) {
+	    if (symbolClickHandlers.indexOf(handler) < 0) {
+	        symbolClickHandlers.push(handler);
+	    }
+	}
+	
+	var $video;
+	var videoEl = document.createElement('video');
+	videoEl.autoplay = false;
+	videoEl.autobuffer = true;
+	videoEl.controls = true;
+	videoEl.crossorigin = 'use-credentials';
+	videoEl.src = './assets/videos/project.mp4';
+	function toggleVideo(isPlayback) {
+	    if (!videoEl.parentNode) {
+	        var rect = $video.getBoundingClientRect();
+	        videoEl.width = rect.width;
+	        videoEl.height = rect.height;
+	        $video.appendChild(videoEl);
+	    }
+	    if (isPlayback) {
+	        videoEl.play();
+	    } else {
+	        videoEl.pause();
+	    }
+	}
+	
+	var $menu;
+	var isBindEvents = false;
+	
+	function show() {
+	    var _context2;
+	
+	    var _context, _context6, times;
+	
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                if (!$menu) {
+	                    $menu = _libDom.find.call(document, '#menu');
+	                }
+	                if (!$video) {
+	                    $video = (_context = $menu, _libDom.find).call(_context, '.project-video');
+	                }
+	
+	                (_context2 = (_context2 = (_context2 = $menu, _libDom.show).call(_context2), _libDom.removeClass).call(_context2, 'fadeOut'), _libDom.addClass).call(_context2, 'fadeIn');
+	
+	                if (!isBindEvents) {
+	                    isBindEvents = true;
+	
+	                    times = (function () {
+	                        var _times = [];
+	                        var _iteratorNormalCompletion = true;
+	                        var _didIteratorError = false;
+	                        var _iteratorError = undefined;
+	
+	                        try {
+	                            for (var _iterator = new Array(8).fill(0).map(function (v, i) {
+	                                return i;
+	                            })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                                var j = _step.value;
+	
+	                                _times.push('t' + j * 3);
+	                            }
+	                        } catch (err) {
+	                            _didIteratorError = true;
+	                            _iteratorError = err;
+	                        } finally {
+	                            try {
+	                                if (!_iteratorNormalCompletion && _iterator['return']) {
+	                                    _iterator['return']();
+	                                }
+	                            } finally {
+	                                if (_didIteratorError) {
+	                                    throw _iteratorError;
+	                                }
+	                            }
+	                        }
+	
+	                        return _times;
+	                    })();
+	
+	                    times.forEach(function (t) {
+	                        var _context3;
+	
+	                        (_context3 = (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.trigger[for="' + t + '"]'), _libDom.on).call(_context3, 'mouseenter', function (e) {
+	                            var _context4;
+	
+	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeOut'), _libDom.addClass).call(_context4, 'fadeIn');
+	
+	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeIn';
+	                        }), _libDom.on).call(_context3, 'mouseleave', function (e) {
+	                            var _context5;
+	
+	                            (_context5 = (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.hover.' + t), _libDom.removeClass).call(_context5, 'fadeIn'), _libDom.addClass).call(_context5, 'fadeOut');
+	
+	                            (_context5 = $menu, _libDom.find).call(_context5, '.symbol').className = 'symbol ' + t + ' fadeOut';
+	                        }), _libDom.on).call(_context3, 'click', function (e) {
+	                            symbolClickHandlers.forEach(function (h) {
+	                                return h(t);
+	                            });
+	                        });
+	                    });
+	
+	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, 'ul'), _libDom.on).call(_context6, 'click', function (e) {
+	                        var target = e.target;
+	                        if (target.tagName.toUpperCase() === 'A' && !_libDom.hasClass.call(target, 'cur')) {
+	                            var _context7;
+	
+	                            var lastTarget = (_context7 = $menu, _libDom.find).call(_context7, 'ul .cur');
+	
+	                            _libDom.removeClass.call(lastTarget, 'cur');
+	                            _libDom.addClass.call(target, 'cur');
+	
+	                            var lastActive = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(lastTarget, 'for'));
+	                            var active = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(target, 'for'));
+	
+	                            _libDom.removeClass.call(lastActive, 'cur');
+	                            _libDom.addClass.call(active, 'cur');
+	
+	                            if (_libDom.attr.call(lastTarget, 'for') === 'project-video') {
+	                                toggleVideo(false);
+	                            }
+	
+	                            if (_libDom.attr.call(target, 'for') === 'project-video') {
+	                                toggleVideo(true);
+	                            }
+	                        }
+	                    });
+	
+	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, '.close'), _libDom.on).call(_context6, 'click', function (e) {
+	                        hide();
+	                    });
+	                }
+	
+	            case 6:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hide() {
+	    var _context8;
+	
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                if (!$menu) {
+	                    context$1$0.next = 5;
+	                    break;
+	                }
+	
+	                (_context8 = (_context8 = $menu, _libDom.removeClass).call(_context8, 'fadeIn'), _libDom.addClass).call(_context8, 'fadeOut');
+	
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(400));
+	
+	            case 4:
+	
+	                (_context8 = $menu, _libDom.hide).call(_context8);
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(32);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover,\n#menu ul li a.cur {\n  color: #FFF;\n}\n#menu .time-circle {\n  display: none;\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle.cur {\n  display: block;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n#menu .project-video {\n  display: none;\n  position: absolute;\n  width: 650px;\n  height: 325px;\n  top: 50%;\n  left: 50%;\n  margin-left: -325px;\n  margin-top: -162px;\n}\n#menu .project-video.cur {\n  display: block;\n}\n#menu .project-about {\n  display: none;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#menu .project-about.cur {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n"
+
+/***/ },
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39170,871 +40622,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.onProgress = onProgress;
-	exports.onError = onError;
-	exports.hide = hide;
-	
-	__webpack_require__(7);
-	
-	__webpack_require__(9);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libEnv = __webpack_require__(11);
-	
-	var _libUtil = __webpack_require__(12);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var loaded = 0;
-	var total = 0;
-	var percent = 0;
-	
-	var manager = new THREE.LoadingManager();
-	exports.manager = manager;
-	manager.onProgress = function (item, _loaded, _total) {
-	    loaded = _loaded;
-	    total = _total;
-	    percent = loaded / total;
-	};
-	
-	function onProgress(xhr) {}
-	
-	;
-	
-	function onError(xhr) {}
-	
-	var titleSCImg = new THREE.ImageLoader(manager).load('assets/images/title_c.png', function (image) {
-	    titleSCImg = image;
-	}, onProgress, onError);
-	
-	var titleENImg = new THREE.ImageLoader(manager).load('assets/images/title_e.png', function (image) {
-	    titleENImg = image;
-	}, onProgress, onError);
-	
-	var title = function title() {
-	    var $loading, $title, $titleSC, $titleSep, $titleEN;
-	    return regeneratorRuntime.async(function title$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                $loading = document.querySelector('#prologue .loading');
-	
-	                $loading.className += ' fadeOut';
-	                context$1$0.next = 4;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(800));
-	
-	            case 4:
-	                $loading.style.display = 'none';
-	
-	                $title = document.querySelector('#prologue .title');
-	
-	                $title.style.display = 'block';
-	
-	                $titleSC = $title.querySelector('.sc');
-	
-	                $titleSC.appendChild(titleSCImg);
-	
-	                $titleSep = $title.querySelector('.sep');
-	                $titleEN = $title.querySelector('.en');
-	
-	                $titleEN.appendChild(titleENImg);
-	
-	                $titleSep.style.display = 'block';
-	                $titleSep.className += ' fadeIn';
-	
-	                context$1$0.next = 16;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
-	
-	            case 16:
-	
-	                titleSCImg.className += ' anime';
-	                titleENImg.className += ' anime';
-	
-	                context$1$0.next = 20;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
-	
-	            case 20:
-	
-	                $title.className += ' fadeOut';
-	
-	                context$1$0.next = 23;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(600));
-	
-	            case 23:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	};
-	
-	exports.title = title;
-	
-	function hide() {
-	    var $prologue = document.querySelector('#prologue');
-	    $prologue.style.display = 'none';
-	}
-	
-	var DPR = window.devicePixelRatio;
-	var text;
-	var ctx2d;
-	var canvasWidth;
-	var canvasHeight;
-	var radius;
-	var lineWidth;
-	function loading() {
-	    if (percent < 1) {
-	        (0, _libUtil.requestAnimationFrame)(loading);
-	
-	        percent += 0.0001;
-	        if (total && loaded < total) {
-	            percent = Math.min(percent, (loaded + 1) / total * 0.95);
-	        } else if (total && loaded === total) {
-	            percent = 1;
-	        }
-	    }
-	
-	    text.textContent = parseInt(percent * 100);
-	
-	    ctx2d.clearRect(0, 0, canvasWidth, canvasHeight);
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.7, -Math.PI * 0.5, Math.PI * 1.5, false);
-	    ctx2d.lineWidth = lineWidth;
-	    ctx2d.strokeStyle = '#FFF';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.95, -Math.PI * 0.5, Math.PI * 1.5 * percent, false);
-	    ctx2d.lineWidth = lineWidth;
-	    ctx2d.strokeStyle = '#FFF';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.95, Math.PI * 1.5 * percent, Math.PI * 1.5, false);
-	    ctx2d.lineWidth = lineWidth;
-	    ctx2d.strokeStyle = '#333';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    if (loaded === total) {
-	        deferred.resolve();
-	    }
-	}
-	
-	(function callee$0$0() {
-	    var $loading, canvas, rect;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	                $loading = document.querySelector('#prologue .loading');
-	
-	                $loading.style.display = 'block';
-	
-	                canvas = document.querySelector('#prologue canvas');
-	                rect = canvas.getBoundingClientRect();
-	
-	                canvasWidth = canvas.width = rect.width * DPR;
-	                canvasHeight = canvas.height = rect.height * DPR;
-	                ctx2d = canvas.getContext('2d');
-	                radius = canvasWidth / 2;
-	                lineWidth = 2;
-	
-	                text = document.querySelector('#prologue span');
-	
-	                loading();
-	
-	            case 13:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(8);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./common.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes fadeIn {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-webkit-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@-ms-keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n@keyframes fadeOut {\n  0% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n  }\n}\n"
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(10);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	module.exports = "#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#prologue .loading {\n  display: none;\n  width: 90px;\n  height: 120px;\n}\n#prologue .loading canvas {\n  width: 90px;\n  height: 90px;\n}\n#prologue .loading span {\n  font-family: arial;\n  display: inline-block;\n  width: 90px;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n#prologue .title {\n  display: none;\n}\n#prologue .title .sc {\n  width: 200px;\n  height: 54px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .sc img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .sc img.anime {\n  display: block;\n  -webkit-animation: titleSCKF 0.5s ease-in 0s;\n  -ms-animation: titleSCKF 0.5s ease-in 0s;\n  animation: titleSCKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#prologue .title .sep {\n  display: none;\n  width: 200px;\n  height: 2px;\n  background-color: #FFF;\n  margin: 20px auto;\n}\n#prologue .title .en {\n  width: 698px;\n  height: 73px;\n  margin: 0 auto;\n  overflow: hidden;\n  position: relative;\n}\n#prologue .title .en img {\n  display: none;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n}\n#prologue .title .en img.anime {\n  display: block;\n  -webkit-animation: titleENKF 0.5s ease-in 0s;\n  -ms-animation: titleENKF 0.5s ease-in 0s;\n  animation: titleENKF 0.5s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n@-webkit-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@-ms-keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n@keyframes titleSepKF {\n  0% {\n    opacity: 0;\n  }\n  100% {\n    opacity: 1;\n  }\n}\n.title-sep-anime {\n  display: block;\n  -webkit-animation: titleSepKF 0.4s ease-in 0;\n  -ms-animation: titleSepKF 0.4s ease-in 0;\n  animation: titleSepKF 0.4s ease-in 0;\n}\n@-webkit-keyframes titleSCKF {\n  0% {\n    -webkit-transform: translateY(100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleSCKF {\n  0% {\n    -ms-transform: translateY(100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleSCKF {\n  0% {\n    transform: translateY(100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n@-webkit-keyframes titleENKF {\n  0% {\n    -webkit-transform: translateY(-100%);\n  }\n  100% {\n    -webkit-transform: translateY(0);\n  }\n}\n@-ms-keyframes titleENKF {\n  0% {\n    -ms-transform: translateY(-100%);\n  }\n  100% {\n    -ms-transform: translateY(0);\n  }\n}\n@keyframes titleENKF {\n  0% {\n    transform: translateY(-100%);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n"
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.width = width;
-	exports.height = height;
-	
-	var _promise = __webpack_require__(4);
-	
-	function width() {
-	    return window.innerWidth;
-	}
-	
-	function height() {
-	    return window.innerHeight;
-	}
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
-	
-	exports.requestAnimationFrame = requestAnimationFrame;
-	var cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.msCancelAnimationFrame;
-	exports.cancelAnimationFrame = cancelAnimationFrame;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.state = state;
-	exports.now = now;
-	exports.getHours = getHours;
-	exports.getMinutes = getMinutes;
-	exports.f12 = f12;
-	exports.f24 = f24;
-	exports.show = show;
-	exports.run = run;
-	
-	__webpack_require__(14);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libDom = __webpack_require__(5);
-	
-	var _prologue = __webpack_require__(6);
-	
-	var serverTime;
-	exports.serverTime = serverTime;
-	var clientTime;
-	
-	exports.clientTime = clientTime;
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	_prologue.manager.itemStart('server/clock');
-	exports.serverTime = serverTime = Date.now();
-	exports.clientTime = clientTime = Date.now();
-	_prologue.manager.itemEnd('server/clock');
-	deferred.resolve();
-	
-	function state() {
-	    var h = getHours();
-	
-	    if (h >= 6 && h < 18) {
-	        return 'drawn';
-	        // } else if (h >= 8 && h < 16) {
-	        // return 'daylight';
-	        // } else if (h >= 16 && h < 19) {
-	        // return 'sunset';
-	    } else {
-	            return 'night';
-	        }
-	}
-	
-	function now() {
-	    var offset = Date.now() - clientTime;
-	    return serverTime + offset;
-	}
-	
-	function getHours() {
-	    var d = new Date();
-	    d.setTime(now());
-	    return d.getHours();
-	}
-	
-	function getMinutes() {
-	    var d = new Date();
-	    d.setTime(now());
-	    return d.getMinutes();
-	}
-	
-	function f12(h, m) {
-	    var f = {};
-	    h = h || getHours();
-	    m = m || getMinutes();
-	    f.hours = h > 12 ? h - 12 : h;
-	    f.minutes = m < 10 ? '0' + m : '' + m;
-	    f.ampm = h > 12 ? 'pm' : 'am';
-	    return f;
-	}
-	
-	function f24(h, m) {
-	    var f = {};
-	    h = h || getHours();
-	    m = m || getMinutes();
-	    f.hours = h < 10 ? '0' + h : '' + h;
-	    f.minutes = m < 10 ? '0' + m : '' + m;
-	    return f;
-	}
-	
-	var $clock;
-	
-	function show() {
-	    $clock = _libDom.find.call(document, '#clock');
-	    $clock.style.display = 'block';
-	}
-	
-	function run() {
-	    var _context;
-	
-	    setTimeout(run, 60 * 1000);
-	
-	    var _f12 = f12();
-	
-	    var hours = _f12.hours;
-	    var minutes = _f12.minutes;
-	    var ampm = _f12.ampm;
-	
-	    (_context = (_context = $clock, _libDom.find).call(_context, '.time'), _libDom.text).call(_context, hours + ':' + minutes);
-	    (_context = (_context = $clock, _libDom.find).call(_context, '.ampm'), _libDom.text).call(_context, ampm);
-	}
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(15);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./clock.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 230px;\n  height: 100px;\n  top: 24px;\n  left: 50px;\n  overflow: hidden;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  width: 300px;\n  height: 100%;\n  text-align: right;\n  left: 0;\n  top: 0;\n  color: #FFF;\n  font-size: 120px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 30px;\n  color: #FFF;\n  right: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: right bottom;\n  -ms-transform-origin: right bottom;\n  transform-origin: right bottom;\n}\n"
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.onshare = onshare;
-	exports.show = show;
-	
-	__webpack_require__(17);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libDom = __webpack_require__(5);
-	
-	var shareHandlers = [];
-	
-	function onshare(handler) {
-	    if (shareHandlers.indexOf(handler) < 0) {
-	        shareHandlers.push(handler);
-	    }
-	}
-	
-	var $share;
-	
-	function show() {
-	    var _context;
-	
-	    return regeneratorRuntime.async(function show$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	
-	                $share = _libDom.find.call(document, '#share');
-	                (_context = (_context = $share, _libDom.show).call(_context), _libDom.on).call(_context, 'click', function (e) {
-	                    if (e.target.tagName.toUpperCase() === 'A') {
-	                        shareHandlers.forEach(function (h) {
-	                            return h(e.target.className);
-	                        });
-	                    }
-	                });
-	
-	            case 4:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(18);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./share.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./share.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #EEE;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:facebook {\n  background-position: -48px -24px;\n}\n#weixin_code {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.onmusic = onmusic;
-	exports.show = show;
-	
-	__webpack_require__(20);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libDom = __webpack_require__(5);
-	
-	var _menu = __webpack_require__(22);
-	
-	var musicToggleHandlers = [];
-	
-	function onmusic(handler) {
-	    if (musicToggleHandlers.indexOf(handler) < 0) {
-	        musicToggleHandlers.push(handler);
-	    }
-	}
-	
-	var $nav;
-	
-	function show() {
-	    var _context;
-	
-	    var $music;
-	    return regeneratorRuntime.async(function show$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	
-	                $nav = _libDom.find.call(document, '#nav');
-	                (_context = (_context = (_context = $nav, _libDom.show).call(_context), _libDom.find).call(_context, '.open'), _libDom.on).call(_context, 'click', function (e) {
-	                    (0, _menu.show)();
-	                });
-	
-	                $music = (_context = $nav, _libDom.find).call(_context, '.music');
-	
-	                _libDom.on.call($music, 'click', function (e) {
-	                    _libDom.toggleClass.call($music, 'off');
-	                    var on = !_libDom.hasClass.call($music, 'off');
-	                    musicToggleHandlers.forEach(function (h) {
-	                        return h(on);
-	                    });
-	                });
-	
-	            case 6:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(21);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./nav.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./nav.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	module.exports = "#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav a {\n  display: inline-block;\n  margin: 0 10px;\n  width: 22px;\n  height: 22px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#nav a.open {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAWCAYAAACCAs+RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAtBJREFUeNq0mDtoFFEUhncmJlHQQkGMIio2dtFKEAKylYoPUCxUiI1lChU0IFgKKUSMfSoFk8LKB2qzCxIQtFIrQSTFRjEBbYQ1G3TznfXfy0523jt74Mtsdu49/zlzH3Pues1msxRm1Wp1K5eLcAJGYQQaUIMv8BJmy+Xyr1IP9nd1tf0xlR4E9AYGB1tXb30iJLCRy3WYlKNn8A6+gfXaDQfhNAzBXbhPQvWcieTSg3pkIiSxT462w214SICNiBEzp5fhDiybEG0XMibRpadkwqxLDxa6EiEwy/wtfIXzBLWcJhj6WRBPYD8coV8tZRIBPQWXxgJ6JFJziWg6vYHfNkcJZiXLk1X/F7AFjiZNM00npwcrGWdkQI9k6r5uXIO9cCFrEmb0+aOFuke+kszp5UjCrEvPq1Qq2zS8NwhoJuapNxW0F9PmCpd7Nuy0+xkxGk6PJznTsWutt/bi9WIScnq+MvunhdarPbJY5TPK+qJniRyD51G7U8Yp1tDcPR7TrKXHaDQKSMTpWSKHYL5UnM1r34+yvuht4M8OWIxaE0nfh6yZRfmMslC9jjWR9H2onq9dY7jAJ5Tkqy96NiLfYVfIfPey7lqynfAj5n6oXsiTTrNrOT0bkc9wuMAnZL4+xNzvi54l8hpOqnbqyeTjFLyKadbS4/0xVEASTs9XaTwA4wU4Hpev2Zg2fdFr11q3+OeqnQNYA0s5R8OKuU/wAB9TCbWW04OlnEk4Pd5JU+1aa1oO51QAZk3C+sypgp1O0cXpqQDMal16vnYiq1bPwYH/cVVHMiRhbavqezbNAcuq1U49nQbTWkBPvkp+x3Zrx8kx2GxDRoATcRuA3bM2Gl7rMyYfqYwAAnowocUbt7ADejoCRx51N+noeVO1zFN4r7PzsI6eNrfPFHTUzaUXe9QN+fHhkgrAUb142i+0j9piHxf840OiXtSPD2sCDAAIikGi1qBGHQAAAABJRU5ErkJggg==);\n}\n#nav a.open:hover {\n  background-position: -28px 0;\n}\n#nav a.music {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAWCAYAAABEx1soAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABFJJREFUeNrUmU1IFGEcxne3zCSDPsgsosKDQQcrEyEwYiGo7DtLSrIOggYeKsi6dMxDRYTdFA+SkbHYpYwKxIUSog+K6lRpeNAituySbUq5PX95Znnn3ZndmUlp9oUfu+zM/ObZd2berwkmEomAVYlGowvxcQTsACWgEEyAYTAA7oOucDj8PeCuOPICV16/5g3qFYygc/FxGpyl6C54Bj6BHLACrAO7wRxwGVxF8HiGoJ68IJ6hYn2d11TBCLuaoiXgPLiOIBM2f0ykx8AFEJMTYd8hm7ApXoa2KileMGSTwfd5kxWMAHJFnoCP4CBOHnP4aEqIblAENuG4YW0Xk5chnBSTl4+ket6syDtVwXzMHoEf0tbgpOMu2z85/h6YD7Yoj5/JC8Zdtn8mr/H4ZVPeEDecAqvAYbuwCJUHKkGnvg3H/GJHsJKugO5NEzYPVIJOi20ZvUZe5CoCo2BQOjw9Lz7rQQK0uswrd+QoGGSHp+etB9IMtFrlDfb19S3i43AGJ263qlheDTmwhhWaY3MR6vBxRUJhn4DhBe02FWvysvOwKkkvzhGwyyuVyD/6CrxVvGvACzkOx5R5yJvRC8qs8s7mH5xkQ26ceB4b743gONgH8rn5q7JfN4c+t/mTXNVLdAZ0L4ojL9syGfo48ip55Y9+ABuI4Y3wewz7VnnIm9ELqqzySgVvAz1a7xvhHbYWLNWHdsr3x2CzIRYH/oC0Qdv52PRova8nLx0mr4u8+bygDdxnuvLaetW80gavB/3awdLAhy2kenkJSrXf+jk+9ItXOp42VGbbTHiJrTfEg0e0jd8c9prvQbH22widfvH+QeU2zISXd29ab4i9ZW7AW4lx/KcWw+UX7yw0A1tnwgsyeqUN/gyWaxsXuxhc6wPxZeALx6x+8E4NoVDJZeywptXL0YOtV+7gd6Bc2ygLGFGeOF0p5uOhFnG99pH3J8eykf/hlQp+CHZyrm6Uag47joIbnNmoV84opWzg1fn+LvDA8PLq/pOXDpPXJm8Te/BJZZvcmb18nJs85nXlVfOGON6U9qRWmZmNybIe6OUg+xDHh7/BAmW/FqDOhGrp6rLyooxxWS+tF6VFm2Gl9Rp58fUk76w6zVvNsWwFuOYhr2dvCMFkGngRNOOKFlhMg+NArvAJsBfcSrOI0iwuOpNeUGBxSJx3Tlov2+Nmukbt8uJ7hOPSc9inQ/Wy8hs41Y24zJv0gg4tb4pXz2ss9shA+SlnJ5Wcq3tZPJFg5criicnLubqXxZMCtmlxZfqeFXlDxl2KjwOcW+P80UIXYQvZEcix+7WFbJOXbwOcFpNXXcjOprwhJfQA2xKZAr5FkEatI0lZwJZ9uPghx1TQoReTFzRqHYnVArbJS4fedGVFXqtXRnl8VWL0nHfAcy4g53JBWt5N7XH5CsaT18ErI1/nDWZ46VnDhZASDpwDnJi8YQd10+NLxIxejy89fZf3rwADAEzR7xX1i3ojAAAAAElFTkSuQmCC);\n}\n#nav a.music:hover {\n  background-position: -22px 0;\n}\n#nav a.music.off {\n  background-position: -44px 0;\n}\n#nav a.music.off:hover {\n  background-position: -66px 0;\n}\n"
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	exports.onsymbol = onsymbol;
-	exports.show = show;
-	exports.hide = hide;
-	
-	__webpack_require__(7);
-	
-	__webpack_require__(23);
-	
-	var _libPromise = __webpack_require__(4);
-	
-	var _libDom = __webpack_require__(5);
-	
-	var _prologue = __webpack_require__(6);
-	
-	var symbolClickHandlers = [];
-	
-	function onsymbol(handler) {
-	    if (symbolClickHandlers.indexOf(handler) < 0) {
-	        symbolClickHandlers.push(handler);
-	    }
-	}
-	
-	var $video;
-	var videoEl = document.createElement('video');
-	videoEl.autoplay = false;
-	videoEl.autobuffer = true;
-	videoEl.controls = true;
-	videoEl.crossorigin = 'use-credentials';
-	videoEl.src = './assets/videos/project.mp4';
-	function toggleVideo(isPlayback) {
-	    if (!videoEl.parentNode) {
-	        var rect = $video.getBoundingClientRect();
-	        videoEl.width = rect.width;
-	        videoEl.height = rect.height;
-	        $video.appendChild(videoEl);
-	    }
-	    if (isPlayback) {
-	        videoEl.play();
-	    } else {
-	        videoEl.pause();
-	    }
-	}
-	
-	var $menu;
-	var isBindEvents = false;
-	
-	function show() {
-	    var _context2;
-	
-	    var _context, _context6, times;
-	
-	    return regeneratorRuntime.async(function show$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
-	
-	            case 2:
-	
-	                if (!$menu) {
-	                    $menu = _libDom.find.call(document, '#menu');
-	                }
-	                if (!$video) {
-	                    $video = (_context = $menu, _libDom.find).call(_context, '.project-video');
-	                }
-	
-	                (_context2 = (_context2 = (_context2 = $menu, _libDom.show).call(_context2), _libDom.removeClass).call(_context2, 'fadeOut'), _libDom.addClass).call(_context2, 'fadeIn');
-	
-	                if (!isBindEvents) {
-	                    isBindEvents = true;
-	
-	                    times = (function () {
-	                        var _times = [];
-	                        var _iteratorNormalCompletion = true;
-	                        var _didIteratorError = false;
-	                        var _iteratorError = undefined;
-	
-	                        try {
-	                            for (var _iterator = new Array(8).fill(0).map(function (v, i) {
-	                                return i;
-	                            })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                                var j = _step.value;
-	
-	                                _times.push('t' + j * 3);
-	                            }
-	                        } catch (err) {
-	                            _didIteratorError = true;
-	                            _iteratorError = err;
-	                        } finally {
-	                            try {
-	                                if (!_iteratorNormalCompletion && _iterator['return']) {
-	                                    _iterator['return']();
-	                                }
-	                            } finally {
-	                                if (_didIteratorError) {
-	                                    throw _iteratorError;
-	                                }
-	                            }
-	                        }
-	
-	                        return _times;
-	                    })();
-	
-	                    times.forEach(function (t) {
-	                        var _context3;
-	
-	                        (_context3 = (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.trigger[for="' + t + '"]'), _libDom.on).call(_context3, 'mouseenter', function (e) {
-	                            var _context4;
-	
-	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeOut'), _libDom.addClass).call(_context4, 'fadeIn');
-	
-	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeIn';
-	                        }), _libDom.on).call(_context3, 'mouseleave', function (e) {
-	                            var _context5;
-	
-	                            (_context5 = (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.hover.' + t), _libDom.removeClass).call(_context5, 'fadeIn'), _libDom.addClass).call(_context5, 'fadeOut');
-	
-	                            (_context5 = $menu, _libDom.find).call(_context5, '.symbol').className = 'symbol ' + t + ' fadeOut';
-	                        }), _libDom.on).call(_context3, 'click', function (e) {
-	                            symbolClickHandlers.forEach(function (h) {
-	                                return h(t);
-	                            });
-	                        });
-	                    });
-	
-	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, 'ul'), _libDom.on).call(_context6, 'click', function (e) {
-	                        var target = e.target;
-	                        if (target.tagName.toUpperCase() === 'A' && !_libDom.hasClass.call(target, 'cur')) {
-	                            var _context7;
-	
-	                            var lastTarget = (_context7 = $menu, _libDom.find).call(_context7, 'ul .cur');
-	
-	                            _libDom.removeClass.call(lastTarget, 'cur');
-	                            _libDom.addClass.call(target, 'cur');
-	
-	                            var lastActive = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(lastTarget, 'for'));
-	                            var active = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(target, 'for'));
-	
-	                            _libDom.removeClass.call(lastActive, 'cur');
-	                            _libDom.addClass.call(active, 'cur');
-	
-	                            if (_libDom.attr.call(lastTarget, 'for') === 'project-video') {
-	                                toggleVideo(false);
-	                            }
-	
-	                            if (_libDom.attr.call(target, 'for') === 'project-video') {
-	                                toggleVideo(true);
-	                            }
-	                        }
-	                    });
-	
-	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, '.close'), _libDom.on).call(_context6, 'click', function (e) {
-	                        hide();
-	                    });
-	                }
-	
-	            case 6:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	function hide() {
-	    var _context8;
-	
-	    return regeneratorRuntime.async(function hide$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                if (!$menu) {
-	                    context$1$0.next = 5;
-	                    break;
-	                }
-	
-	                (_context8 = (_context8 = $menu, _libDom.removeClass).call(_context8, 'fadeIn'), _libDom.addClass).call(_context8, 'fadeOut');
-	
-	                context$1$0.next = 4;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(400));
-	
-	            case 4:
-	
-	                (_context8 = $menu, _libDom.hide).call(_context8);
-	
-	            case 5:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(24);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 24 */
-/***/ function(module, exports) {
-
-	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover,\n#menu ul li a.cur {\n  color: #FFF;\n}\n#menu .time-circle {\n  display: none;\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle.cur {\n  display: block;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n#menu .project-video {\n  display: none;\n  position: absolute;\n  width: 650px;\n  height: 325px;\n  top: 50%;\n  left: 50%;\n  margin-left: -325px;\n  margin-top: -162px;\n}\n#menu .project-video.cur {\n  display: block;\n}\n#menu .project-about {\n  display: none;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#menu .project-about.cur {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n"
-
-/***/ },
-/* 25 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -40047,7 +40635,7 @@ THREE.OBJLoader.prototype = {
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
 	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 	
@@ -40168,6 +40756,10 @@ THREE.OBJLoader.prototype = {
 	    }, {
 	        key: "togglePlayback",
 	        value: function togglePlayback(play) {
+	            if (typeof play === 'undefined') {
+	                play = !this.isPlaying;
+	            }
+	
 	            if (!play && this.isPlaying) {
 	                // Stop playback
 	                this.source[this.source.stop ? 'stop' : 'noteOff'](0);
@@ -40221,7 +40813,7 @@ THREE.OBJLoader.prototype = {
 	module.exports = exports["default"];
 
 /***/ },
-/* 26 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40240,37 +40832,37 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(27);
+	__webpack_require__(36);
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
-	var _scene = __webpack_require__(29);
+	var _scene = __webpack_require__(38);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(30);
+	var _camera = __webpack_require__(39);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(31);
+	var _renderer = __webpack_require__(40);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(32);
+	var _light = __webpack_require__(41);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _controls = __webpack_require__(33);
+	var _controls = __webpack_require__(42);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var _tower = __webpack_require__(34);
+	var _tower = __webpack_require__(43);
 	
 	var Tower = _interopRequireWildcard(_tower);
 	
-	var _sky = __webpack_require__(35);
+	var _sky = __webpack_require__(44);
 	
 	var Sky = _interopRequireWildcard(_sky);
 	
@@ -40534,16 +41126,16 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 27 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(28);
+	var content = __webpack_require__(37);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
+	var update = __webpack_require__(4)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -40560,13 +41152,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 28 */
+/* 37 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"opening\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 29 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40575,7 +41167,7 @@ THREE.OBJLoader.prototype = {
 	  value: true
 	});
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -40588,7 +41180,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 30 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40601,9 +41193,9 @@ THREE.OBJLoader.prototype = {
 	
 	exports.resize = resize;
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
 	var VIEW_ANGLE = 60;
 	var NEAR = 1;
@@ -40655,7 +41247,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 31 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40668,9 +41260,9 @@ THREE.OBJLoader.prototype = {
 	
 	exports.resize = resize;
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 0;
@@ -40725,7 +41317,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 32 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40738,9 +41330,9 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _clock = __webpack_require__(13);
+	var _clock = __webpack_require__(18);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -40823,7 +41415,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 33 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40836,11 +41428,11 @@ THREE.OBJLoader.prototype = {
 	exports.flyOut = flyOut;
 	exports.init = init;
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
-	var _libUtil = __webpack_require__(12);
+	var _libUtil = __webpack_require__(14);
 	
 	var camera;
 	
@@ -40924,7 +41516,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 34 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40933,9 +41525,9 @@ THREE.OBJLoader.prototype = {
 	    value: true
 	});
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _prologue = __webpack_require__(6);
+	var _prologue = __webpack_require__(9);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -41013,7 +41605,7 @@ THREE.OBJLoader.prototype = {
 	// );
 
 /***/ },
-/* 35 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41026,13 +41618,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
-	var _prologue = __webpack_require__(6);
+	var _prologue = __webpack_require__(9);
 	
-	var _clock = __webpack_require__(13);
+	var _clock = __webpack_require__(18);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -41106,7 +41698,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 36 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41124,33 +41716,33 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(37);
+	__webpack_require__(46);
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
-	var _scene = __webpack_require__(39);
+	var _scene = __webpack_require__(48);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(40);
+	var _camera = __webpack_require__(49);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(41);
+	var _renderer = __webpack_require__(50);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(42);
+	var _light = __webpack_require__(51);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(43);
+	var _galaxy = __webpack_require__(52);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(45);
+	var _controls = __webpack_require__(54);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -41346,16 +41938,16 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 37 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(38);
+	var content = __webpack_require__(47);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(3)(content, {});
+	var update = __webpack_require__(4)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -41372,13 +41964,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 38 */
+/* 47 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 39 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41387,7 +41979,7 @@ THREE.OBJLoader.prototype = {
 	  value: true
 	});
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
 	var COLOR = 0x333333;
 	
@@ -41404,7 +41996,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 40 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41418,9 +42010,9 @@ THREE.OBJLoader.prototype = {
 	exports.resize = resize;
 	exports.render = render;
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
 	var FOV = 45;
 	var NEAR = 1;
@@ -41479,7 +42071,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 41 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41492,9 +42084,9 @@ THREE.OBJLoader.prototype = {
 	
 	exports.resize = resize;
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 1;
@@ -41547,7 +42139,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 42 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41556,7 +42148,7 @@ THREE.OBJLoader.prototype = {
 	  value: true
 	});
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
 	var COLOR = 0xFFFFFF;
 	var X = 0;
@@ -41576,7 +42168,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 43 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41591,17 +42183,17 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libEnv = __webpack_require__(11);
+	var _libEnv = __webpack_require__(13);
 	
-	var _libCubicbezier = __webpack_require__(44);
+	var _libCubicbezier = __webpack_require__(53);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(12);
+	var _libUtil = __webpack_require__(14);
 	
-	var _prologue = __webpack_require__(6);
+	var _prologue = __webpack_require__(9);
 	
 	var degToRad = THREE.Math.degToRad;
 	
@@ -41745,7 +42337,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 44 */
+/* 53 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41866,7 +42458,7 @@ THREE.OBJLoader.prototype = {
 	module.exports = exports["default"];
 
 /***/ },
-/* 45 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41878,13 +42470,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _libPromise = __webpack_require__(4);
+	var _libPromise = __webpack_require__(12);
 	
-	var _libCubicbezier = __webpack_require__(44);
+	var _libCubicbezier = __webpack_require__(53);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(12);
+	var _libUtil = __webpack_require__(14);
 	
 	var controls;
 	

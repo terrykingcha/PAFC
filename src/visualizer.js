@@ -114,6 +114,10 @@ export default class Visualizer {
     }
 
     togglePlayback(play) {
+        if (typeof play === 'undefined') {
+            play = !this.isPlaying;
+        }
+
         if (!play && this.isPlaying) {
             // Stop playback
             this.source[this.source.stop ? 'stop' : 'noteOff'](0);

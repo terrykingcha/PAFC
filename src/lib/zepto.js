@@ -22,8 +22,12 @@ for (let name in originFn) {
             throw new Error(`Uncaught TypeError: Cannot read property '${name}' of null`);
         }
         var r = Zepto(this)[name](...arguments);
-        if (r.__proto__ === originFn) {
-            return r[0];
+        if (r && r.__proto__ === originFn && r.length === 1) {
+            if (r.length === 1) {
+                return r[0];
+            } else {
+                return Array.from(r);
+            }
         } else {
             return r;
         }

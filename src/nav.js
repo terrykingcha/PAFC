@@ -11,11 +11,20 @@ export function onmusic(handler) {
 }
 
 export function enable(className) {
-    document::$find(`#nav .${className}`)::show();
+    document.body::$find(`#nav .${className}`)::$show();
 }
 
 export function disable(className) {
-    document::$find(`#nav .${className}`)::hide();
+    document.body::$find(`#nav .${className}`)::$hide();
+}
+
+var $nav;
+export function on() {
+    $nav::$on(...arguments);
+}
+
+export function off() {
+    $nav::$off(...arguments);
 }
 
 export async function show() {
@@ -23,21 +32,18 @@ export async function show() {
 
     var state = Clock.state();
 
-    var $nav = document::$find('#nav');
-
-    $nav::$addClass(state === 'daylight' ? 'black' : 'white')::$show();
-    //     ::find('.open')
-    //     ::on('click', function(e) {
-    //         showMenu();
-    //     });
-
-    // var $music = $nav::find('.music');
-
-    // $music::on('click', function(e) {
-    //     $music::toggleClass('off');
-    //     var on = !$music::hasClass('off');
-    //     musicToggleHandlers.forEach((h) => h(on));
-    // });
+    var changed;
+    $nav::$addClass(state === 'daylight' ? 'black' : 'white')
+        ::$show()
+        ::$on('click', 'a', function() {
+            $nav::$trigger('change', [this::$attr('class'), changed]);
+            changed = this::$attr('class');
+            if (changed === 'music') {
+                this::$attr('off') === 'off' ? 
+                    this::$removeAttr('off') :
+                    this::$attr('off', 'off');
+            }
+        });
 }
 
 function template() {
@@ -53,5 +59,5 @@ function template() {
 
 (async () => {
     await domReady();
-    document.body::$append(template());
+    $nav = document.body::$append(template())::$find('#nav');
 })(); 

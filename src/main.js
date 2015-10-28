@@ -7,11 +7,10 @@ import * as title from './title';
 import * as clock from './clock';
 import * as share from './share';
 import * as nav from './nav';
-import * as menu from './menu';
+import * as category from './category';
 import Visualizer from './visualizer';
 import * as opening from './opening';
 import * as chapter1 from './chapter1';
-
 
 var chapters = [chapter1];
 var currentChapter;
@@ -44,16 +43,14 @@ function tick() {
     renderHandler && renderHandler();
 }
 
-async function changeChapter(index) {
-    var chapter = chapters[index];
-    var chapterMusic = chapterMusics[index];
+async function changeChapter(index) {  
+    var chapter = chapters[index - 1];
+    var chapterMusic = chapterMusics[index - 1];
 
     if (chapter && chapterMusic) {
         openingMusic.togglePlayback(false);
 
         currentMusic = chapterMusic;
-
-        await menu.hide();
 
         resizeHandler = ::opening.resize;
         renderHandler = ::opening.render;
@@ -72,7 +69,25 @@ async function changeChapter(index) {
         renderHandler = ::chapter.render;
 
         await chapter.entering(currentMusic);
+
+        nav.enable('index');
     }
+}
+
+async function backToIndex() {  
+    currentMusic.togglePlayback(false);
+    openingMusic.togglePlayback(true);
+    currentMusic = openingMusic;
+
+    resizeHandler = ::opening.resize;
+    renderHandler = ::opening.render;
+
+    await Promise.all([
+        opening.leaving(),
+        currentChapter.leaving()
+    ]);
+
+    nav.disable('index');
 }
 
 (async () => {
@@ -80,7 +95,7 @@ async function changeChapter(index) {
 
     await Promise.all([
         opening.init(),
-        // ...chapters.map((c) => c.init())
+        ...chapters.map((c) => c.init())
     ]);
 
     opening.render();
@@ -96,6 +111,9 @@ async function changeChapter(index) {
     clock.show();
     clock.run();
     share.show();
+
+    nav.disable('index');
+    nav.disable('video');
     nav.show();
 
     await opening.start();
@@ -103,16 +121,24 @@ async function changeChapter(index) {
     resize();
     tick();
 
-    // nav.onmusic(function(on) {
-    //     currentMusic.togglePlayback(on);
-    // });
+    nav.on('change', function(e, newValue, oldValue) {
+        if (newValue === 'index') {
+            backToIndex();
+        } else if (newValue === 'category') {
+            category.show();
+        } else if (newValue === 'music') {
+            currentMusic.togglePlayback();
+        }
+    });
 
-    // menu.onsymbol(function(symbol) {
-    //     var index = symbol.substr(1) >> 0 / 3;
-    //     changeChapter(index);
-    // });
+    category.on('change', function(e, newValue, oldValue) {
+        category.hide();
+        if (newValue !== oldValue) {
+            changeChapter(newValue);
+        }
+    });
 
-    // opening.ontowerclick(function() {
-    //     changeChapter(1);
-    // });
+    opening.ontowerclick(function() {
+        changeChapter(1);
+    });
 })();
