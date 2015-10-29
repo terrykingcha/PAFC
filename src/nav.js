@@ -27,14 +27,22 @@ export function off() {
     $nav::$off(...arguments);
 }
 
+var originColor;
+export function changeColor(color) {
+    color = color || originColor;
+    $nav::$removeClass('black white')
+        ::$addClass(color);
+}
+
 export async function show() {
     await Clock.ready();
 
     var state = Clock.state();
+    originColor = state === 'daylight' ? 'black' : 'white'
+    changeColor(originColor);
 
     var changed;
-    $nav::$addClass(state === 'daylight' ? 'black' : 'white')
-        ::$show()
+    $nav::$show()
         ::$on('click', 'a', function() {
             $nav::$trigger('change', [this::$attr('class'), changed]);
             changed = this::$attr('class');
@@ -49,10 +57,10 @@ export async function show() {
 function template() {
     return `
         <div id="nav">
-            <a class="index"></a>
-            <a class="video"></a>
-            <a class="category"></a>
             <a class="music"></a>
+            <a class="category" anim><span>Concert</span></a>
+            <a class="video" anim><span>Video</span></a>
+            <a class="index" anim><span>Index</span></a>
         </div>
     `;
 }

@@ -67,8 +67,18 @@ export function f24(h,m) {
     return f;
 }
 
-export function show() {
-    document::$find('#clock')::$show();
+var $clock;
+export async function show() {
+    await ready();
+
+    $clock::$addClass(state() === 'daylight' ? 'black' : 'white')
+        ::$removeClass('fadeOut')
+        ::$addClass('fadeIn');
+}
+
+export async function hide() {
+    $clock::$removeClass('fadeIn')
+        ::$addClass('fadeOut');
 }
 
 export function run() {
@@ -94,6 +104,6 @@ function template() {
 
 (async () => {
     await domReady();
-    document.body::$append(template());
+    $clock = document.body::$append(template())::$find('#clock');
 })();
 

@@ -38256,15 +38256,16 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function changeChapter(index) {
-	    var chapter, chapterMusic;
+	    var chapter, chapterMusic, categoryName;
 	    return regeneratorRuntime.async(function changeChapter$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                chapter = chapters[index - 1];
 	                chapterMusic = chapterMusics[index - 1];
+	                categoryName = category.get(index);
 	
 	                if (!(chapter && chapterMusic)) {
-	                    context$1$0.next = 18;
+	                    context$1$0.next = 22;
 	                    break;
 	                }
 	
@@ -38276,31 +38277,34 @@ THREE.OBJLoader.prototype = {
 	                renderHandler = opening.render.bind(opening);
 	
 	                if (!currentChapter) {
-	                    context$1$0.next = 10;
+	                    context$1$0.next = 11;
 	                    break;
 	                }
 	
-	                context$1$0.next = 10;
+	                context$1$0.next = 11;
 	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
 	
-	            case 10:
-	                context$1$0.next = 12;
+	            case 11:
+	                context$1$0.next = 13;
 	                return regeneratorRuntime.awrap(opening.entering());
 	
-	            case 12:
+	            case 13:
 	
 	                currentChapter = chapter;
 	                resizeHandler = chapter.resize.bind(chapter);
 	                renderHandler = chapter.render.bind(chapter);
 	
-	                context$1$0.next = 17;
+	                context$1$0.next = 18;
 	                return regeneratorRuntime.awrap(chapter.entering(currentMusic));
 	
-	            case 17:
+	            case 18:
 	
 	                nav.enable('index');
+	                nav.changeColor('white');
+	                category.showName(categoryName);
+	                clock.hide();
 	
-	            case 18:
+	            case 22:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38324,8 +38328,11 @@ THREE.OBJLoader.prototype = {
 	            case 7:
 	
 	                nav.disable('index');
+	                nav.changeColor();
+	                category.hideName();
+	                clock.show();
 	
-	            case 8:
+	            case 11:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39495,6 +39502,7 @@ THREE.OBJLoader.prototype = {
 	exports.f12 = f12;
 	exports.f24 = f24;
 	exports.show = show;
+	exports.hide = hide;
 	exports.run = run;
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
@@ -39578,14 +39586,45 @@ THREE.OBJLoader.prototype = {
 	    return f;
 	}
 	
+	var $clock;
+	
 	function show() {
 	    var _context;
 	
-	    (_context = $find.call(document, '#clock'), $show).call(_context);
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(ready());
+	
+	            case 2:
+	
+	                (_context = (_context = (_context = $clock, $addClass).call(_context, state() === 'daylight' ? 'black' : 'white'), $removeClass).call(_context, 'fadeOut'), $addClass).call(_context, 'fadeIn');
+	
+	            case 3:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hide() {
+	    var _context2;
+	
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                (_context2 = (_context2 = $clock, $removeClass).call(_context2, 'fadeIn'), $addClass).call(_context2, 'fadeOut');
+	
+	            case 1:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
 	}
 	
 	function run() {
-	    var _context2;
+	    var _context3;
 	
 	    setTimeout(run, 60 * 1000);
 	
@@ -39597,9 +39636,9 @@ THREE.OBJLoader.prototype = {
 	
 	    var $clock = $find.call(document, '#clock');
 	
-	    (_context2 = $find.call($clock, '.category'), $text).call(_context2, Category.get(section()));
-	    (_context2 = $find.call($clock, '.ampm'), $text).call(_context2, ampm);
-	    (_context2 = $find.call($clock, '.time'), $text).call(_context2, hours + ':' + minutes);
+	    (_context3 = $find.call($clock, '.category'), $text).call(_context3, Category.get(section()));
+	    (_context3 = $find.call($clock, '.ampm'), $text).call(_context3, ampm);
+	    (_context3 = $find.call($clock, '.time'), $text).call(_context3, hours + ':' + minutes);
 	}
 	
 	function template() {
@@ -39607,7 +39646,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	(function callee$0$0() {
-	    var _context3;
+	    var _context4;
 	
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -39616,7 +39655,7 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
 	
 	            case 2:
-	                (_context3 = document.body, $append).call(_context3, template());
+	                $clock = (_context4 = (_context4 = document.body, $append).call(_context4, template()), $find).call(_context4, '#clock');
 	
 	            case 3:
 	            case 'end':
@@ -39655,7 +39694,7 @@ THREE.OBJLoader.prototype = {
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "#clock {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  width: 240px;\n  height: 127px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 60px;\n  width: 32px;\n  height: 32px;\n  line-height: 32px;\n  font-size: 22px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  border-radius: 16px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 32px;\n  color: #FFF;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  left: 50px;\n  top: 0;\n  color: #FFF;\n  font-size: 150px;\n  -webkit-transform: scaleX(0.5);\n  -ms-transform: scaleX(0.5);\n  transform: scaleX(0.5);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n"
+	module.exports = "#clock {\n  opacity: 0;\n  position: absolute;\n  z-index: 99;\n  width: 200px;\n  height: 88px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock.white .category,\n#clock.white .ampm,\n#clock.white .time {\n  color: #FFF;\n  border-color: #FFF;\n}\n#clock.black .category,\n#clock.black .ampm,\n#clock.black .time {\n  color: #1C1C1C;\n  border-color: #1C1C1C;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 25px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  font-size: 16px;\n  text-align: center;\n  border: 1px solid transparent;\n  border-radius: 12px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 26px;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  left: 30px;\n  top: 0;\n  font-size: 100px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n"
 
 /***/ },
 /* 21 */
@@ -39673,6 +39712,8 @@ THREE.OBJLoader.prototype = {
 	exports.get = get;
 	exports.on = on;
 	exports.off = off;
+	exports.showName = showName;
+	exports.hideName = hideName;
 	exports.show = show;
 	exports.hide = hide;
 	
@@ -39717,8 +39758,27 @@ THREE.OBJLoader.prototype = {
 	    (_ref2 = (_context2 = $category, $off)).call.apply(_ref2, [_context2].concat(_slice.call(arguments)));
 	}
 	
-	function bindCategoryEvents() {
+	var $categoryName;
+	
+	function showName(text) {
 	    var _context3;
+	
+	    (_context3 = $categoryName, $show).call(_context3);
+	    if (!!text) {
+	        var _context4;
+	
+	        (_context4 = $categoryName, $text).call(_context4, text);
+	    }
+	}
+	
+	function hideName() {
+	    var _context5;
+	
+	    (_context5 = $categoryName, $hide).call(_context5);
+	}
+	
+	function bindCategoryEvents() {
+	    var _context6;
 	
 	    var _$circle$getBoundingClientRect = $circle.getBoundingClientRect();
 	
@@ -39751,11 +39811,11 @@ THREE.OBJLoader.prototype = {
 	    }
 	
 	    var changed;
-	    (_context3 = (_context3 = $circle, $on).call(_context3, 'mousemove mouseleave mousedown mouseup', function (e) {
-	        var _context4;
+	    (_context6 = (_context6 = $circle, $on).call(_context6, 'mousemove mouseleave mousedown mouseup', function (e) {
+	        var _context7;
 	
 	        var eventName = e.type;
-	        (_context4 = $circle, $findAll).call(_context4, 'img').forEach(function (img) {
+	        (_context7 = $circle, $findAll).call(_context7, 'img').forEach(function (img) {
 	            return $removeClass.call(img, 'hover');
 	        });
 	
@@ -39767,45 +39827,45 @@ THREE.OBJLoader.prototype = {
 	        var rad = _parse.rad;
 	
 	        if (radius <= circleWidth / 2 && radius <= circleHeight / 2) {
-	            var _context5;
+	            var _context8;
 	
 	            var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
-	            (_context5 = (_context5 = $circle, $find).call(_context5, '.c' + index), $addClass).call(_context5, 'hover');
+	            (_context8 = (_context8 = $circle, $find).call(_context8, '.c' + index), $addClass).call(_context8, 'hover');
 	
 	            if (eventName === 'mousemove') return;
 	
-	            (_context5 = $circle, $trigger).call(_context5, 'change', [index, changed]);
+	            (_context8 = $circle, $trigger).call(_context8, 'change', [index, changed]);
 	            changed = index;
 	        }
-	    }), $on).call(_context3, 'mouseleave', function (e) {
-	        var _context6;
+	    }), $on).call(_context6, 'mouseleave', function (e) {
+	        var _context9;
 	
-	        (_context6 = $circle, $findAll).call(_context6, 'img').forEach(function (img) {
+	        (_context9 = $circle, $findAll).call(_context9, 'img').forEach(function (img) {
 	            return $removeClass.call(img, 'hover');
 	        });
 	    });
 	}
 	
 	function bindBackEvents() {
-	    var _context7;
+	    var _context10;
 	
-	    (_context7 = (_context7 = $category, $find).call(_context7, '.back'), $on).call(_context7, 'click', hide);
+	    (_context10 = (_context10 = $category, $find).call(_context10, '.back'), $on).call(_context10, 'click', hide);
 	}
 	
 	var isBoundEvents = false;
 	
 	function show() {
-	    var _context8;
+	    var _context11;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context8 = $category, $show).call(_context8);
+	                (_context11 = $category, $show).call(_context11);
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
 	
 	            case 3:
-	                (_context8 = $category, $addClass).call(_context8, 'fadeIn');
+	                (_context11 = $category, $addClass).call(_context11, 'fadeIn');
 	                context$1$0.next = 6;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
@@ -39825,17 +39885,17 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context9;
+	    var _context12;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context9 = (_context9 = $category, $removeClass).call(_context9, 'fadeIn'), $addClass).call(_context9, 'fadeOut');
+	                (_context12 = (_context12 = $category, $removeClass).call(_context12, 'fadeIn'), $addClass).call(_context12, 'fadeOut');
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
 	            case 3:
-	                (_context9 = (_context9 = $category, $removeClass).call(_context9, 'fadeOut'), $hide).call(_context9);
+	                (_context12 = (_context12 = $category, $removeClass).call(_context12, 'fadeOut'), $hide).call(_context12);
 	
 	            case 4:
 	            case 'end':
@@ -39845,11 +39905,11 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function template() {
-	    return '\n        <div id="category">\n            <a class="back">Back</a>\n            <div class="circle"></div>\n        </div>\n    ';
+	    return '\n        <div id="category">\n            <a class="back">Back</a>\n            <div class="circle"></div>\n        </div>\n        <div id="category-name"></div>\n    ';
 	}
 	
 	(function callee$0$0() {
-	    var _context10;
+	    var _context13;
 	
 	    var imgs;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -39860,26 +39920,27 @@ THREE.OBJLoader.prototype = {
 	
 	            case 2:
 	
-	                $category = (_context10 = (_context10 = document.body, $append).call(_context10, template()), $find).call(_context10, '#category');
-	                $circle = (_context10 = $category, $find).call(_context10, '.circle');
+	                $category = (_context13 = (_context13 = document.body, $append).call(_context13, template()), $find).call(_context13, '#category');
+	                $categoryName = (_context13 = document.body, $find).call(_context13, '#category-name');
+	                $circle = (_context13 = $category, $find).call(_context13, '.circle');
 	
-	                context$1$0.next = 6;
+	                context$1$0.next = 7;
 	                return regeneratorRuntime.awrap(Promise.all(images));
 	
-	            case 6:
+	            case 7:
 	                imgs = context$1$0.sent;
 	
 	                imgs.forEach(function (image, i) {
-	                    var _context11;
+	                    var _context14;
 	
 	                    if ($attr.call(image, 'src').indexOf('circle.png') > -1) {
 	                        return;
 	                    }
 	                    $addClass.call(image, 'c' + i);
-	                    (_context11 = $circle, $append).call(_context11, image);
+	                    (_context14 = $circle, $append).call(_context14, image);
 	                });
 	
-	            case 8:
+	            case 9:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39916,7 +39977,7 @@ THREE.OBJLoader.prototype = {
 /* 23 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 50px;\n  height: 50px;\n  line-height: 50px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 30px;\n  border-radius: 25px;\n  left: 25px;\n  top: 25px;\n}\n"
 
 /***/ },
 /* 24 */
@@ -40042,6 +40103,7 @@ THREE.OBJLoader.prototype = {
 	exports.disable = disable;
 	exports.on = on;
 	exports.off = off;
+	exports.changeColor = changeColor;
 	exports.show = show;
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
@@ -40090,8 +40152,17 @@ THREE.OBJLoader.prototype = {
 	    (_ref2 = (_context4 = $nav, $off)).call.apply(_ref2, [_context4].concat(_slice.call(arguments)));
 	}
 	
-	function show() {
+	var originColor;
+	
+	function changeColor(color) {
 	    var _context5;
+	
+	    color = color || originColor;
+	    (_context5 = (_context5 = $nav, $removeClass).call(_context5, 'black white'), $addClass).call(_context5, color);
+	}
+	
+	function show() {
+	    var _context6;
 	
 	    var state, changed;
 	    return regeneratorRuntime.async(function show$(context$1$0) {
@@ -40103,17 +40174,20 @@ THREE.OBJLoader.prototype = {
 	            case 2:
 	                state = Clock.state();
 	
-	                (_context5 = (_context5 = (_context5 = $nav, $addClass).call(_context5, state === 'daylight' ? 'black' : 'white'), $show).call(_context5), $on).call(_context5, 'click', 'a', function () {
-	                    var _context6;
+	                originColor = state === 'daylight' ? 'black' : 'white';
+	                changeColor(originColor);
 	
-	                    (_context6 = $nav, $trigger).call(_context6, 'change', [$attr.call(this, 'class'), changed]);
+	                (_context6 = (_context6 = $nav, $show).call(_context6), $on).call(_context6, 'click', 'a', function () {
+	                    var _context7;
+	
+	                    (_context7 = $nav, $trigger).call(_context7, 'change', [$attr.call(this, 'class'), changed]);
 	                    changed = $attr.call(this, 'class');
 	                    if (changed === 'music') {
 	                        $attr.call(this, 'off') === 'off' ? $removeAttr.call(this, 'off') : $attr.call(this, 'off', 'off');
 	                    }
 	                });
 	
-	            case 4:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40121,11 +40195,11 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function template() {
-	    return '\n        <div id="nav">\n            <a class="index"></a>\n            <a class="video"></a>\n            <a class="category"></a>\n            <a class="music"></a>\n        </div>\n    ';
+	    return '\n        <div id="nav">\n            <a class="music"></a>\n            <a class="category" anim><span>Concert</span></a>\n            <a class="video" anim><span>Video</span></a>\n            <a class="index" anim><span>Index</span></a>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
-	    var _context7;
+	    var _context8;
 	
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -40134,7 +40208,7 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
 	
 	            case 2:
-	                $nav = (_context7 = (_context7 = document.body, $append).call(_context7, template()), $find).call(_context7, '#nav');
+	                $nav = (_context8 = (_context8 = document.body, $append).call(_context8, template()), $find).call(_context8, '#nav');
 	
 	            case 3:
 	            case 'end':
@@ -40173,7 +40247,7 @@ THREE.OBJLoader.prototype = {
 /* 29 */
 /***/ function(module, exports) {
 
-	module.exports = "#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav.black a {\n  background-image: url(assets/images/nav_black.png);\n}\n#nav.white a {\n  background-image: url(assets/images/nav_white.png);\n}\n#nav a {\n  display: inline-block;\n  margin: 0 9px;\n  width: 34px;\n  height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: -52px 0;\n}\n#nav a.category {\n  background-position: -102px 0;\n}\n#nav a.music {\n  background-position: -154px 0;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav.black a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\n#nav.white a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 110px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\n"
 
 /***/ },
 /* 30 */

@@ -1,3 +1,5 @@
+@import "fn.less";
+
 #nav {
     display: none;
     position: absolute;
@@ -8,38 +10,59 @@
 
     &.black a {
         background-image: url(./assets/images/nav_black.png);
+        color: #1C1C1C;
     }
 
     &.white a {
         background-image: url(./assets/images/nav_white.png);
+        color: #FFF;
     }
 
     a {
-        display: inline-block;
-        margin: 0 9px;
+        display: block;
+        float: right;
+        margin: 0 5px;
         width: 34px;
         height: 34px;
+        line-height: 34px;
         background-repeat: no-repeat;
         background-position: 0 0;
         vertical-align: middle;
         font-size: 0;
         line-height: 0;
         cursor: pointer;
+        overflow: hidden;
+        font-size: 16px;
+
+        &[anim] {
+            .transition(width 0.4s ease 0s);
+
+            &:hover {
+                width: 110px;
+            }
+        }
+
+        span {
+            display: inline-block;
+            margin-left: 40px;
+            height: 100%;
+            line-height: 34px;
+        }
 
         &.index {
             background-position: 0 0;
         }
 
         &.video {
-            background-position: -52px 0;
+            background-position: 0 -40px;
         }
 
         &.category {
-            background-position: -102px 0;
+            background-position: 0 -80px;
         }
 
         &.music {
-            background-position: -154px 0;
+            background-position:0 -120px;
         }
     }
 }

@@ -36,6 +36,18 @@ export function off() {
     $category::$off(...arguments);
 }
 
+var $categoryName;
+export function showName(text) {
+    $categoryName::$show();
+    if (!!text) {
+        $categoryName::$text(text);
+    }
+}
+
+export function hideName() {
+    $categoryName::$hide();
+}
+
 function bindCategoryEvents() {
     var {width: circleWidth, height: circleHeight, 
             left: circleLeft, top: circleTop} = 
@@ -119,6 +131,7 @@ function template() {
             <a class="back">Back</a>
             <div class="circle"></div>
         </div>
+        <div id="category-name"></div>
     `;
 }
 
@@ -126,6 +139,7 @@ function template() {
     await domReady();
 
     $category = document.body::$append(template())::$find('#category');
+    $categoryName = document.body::$find('#category-name');
     $circle = $category::$find('.circle');
 
     var imgs = await Promise.all(images);

@@ -46,6 +46,7 @@ function tick() {
 async function changeChapter(index) {  
     var chapter = chapters[index - 1];
     var chapterMusic = chapterMusics[index - 1];
+    var categoryName = category.get(index);
 
     if (chapter && chapterMusic) {
         openingMusic.togglePlayback(false);
@@ -71,6 +72,9 @@ async function changeChapter(index) {
         await chapter.entering(currentMusic);
 
         nav.enable('index');
+        nav.changeColor('white');
+        category.showName(categoryName);
+        clock.hide();
     }
 }
 
@@ -88,6 +92,9 @@ async function backToIndex() {
     ]);
 
     nav.disable('index');
+    nav.changeColor();
+    category.hideName();
+    clock.show();
 }
 
 (async () => {
