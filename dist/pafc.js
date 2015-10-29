@@ -38229,9 +38229,9 @@ THREE.OBJLoader.prototype = {
 	
 	var openingMusic = new _visualizer2['default'](prologue.manager);
 	openingMusic.load('./assets/sounds/opening.mp3');
-	openingMusic.ready().then(function () {
-	    openingMusic.togglePlayback(true);
-	});
+	// openingMusic.ready().then(function() {
+	//     openingMusic.togglePlayback(true);
+	// });
 	
 	var chapterMusics = [];
 	for (var i = 1; i <= 6; i++) {
@@ -38360,14 +38360,17 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap(Promise.all([prologue.hide(), opening.show()]));
 	
 	            case 7:
-	                context$1$0.next = 9;
+	
+	                openingMusic.togglePlayback(true);
+	
+	                context$1$0.next = 10;
 	                return regeneratorRuntime.awrap(title.show());
 	
-	            case 9:
-	                context$1$0.next = 11;
+	            case 10:
+	                context$1$0.next = 12;
 	                return regeneratorRuntime.awrap(title.hide());
 	
-	            case 11:
+	            case 12:
 	
 	                clock.show();
 	                clock.run();
@@ -38377,11 +38380,10 @@ THREE.OBJLoader.prototype = {
 	                nav.disable('video');
 	                nav.show();
 	
-	                context$1$0.next = 19;
+	                context$1$0.next = 20;
 	                return regeneratorRuntime.awrap(opening.start());
 	
-	            case 19:
-	
+	            case 20:
 	                resize();
 	                tick();
 	
@@ -38406,7 +38408,7 @@ THREE.OBJLoader.prototype = {
 	                    changeChapter(1);
 	                });
 	
-	            case 24:
+	            case 25:
 	            case 'end':
 	                return context$1$0.stop();
 	        }

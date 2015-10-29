@@ -17,9 +17,9 @@ var currentChapter;
 
 var openingMusic = new Visualizer(prologue.manager);
 openingMusic.load('./assets/sounds/opening.mp3');
-openingMusic.ready().then(function() {
-    openingMusic.togglePlayback(true);
-});
+// openingMusic.ready().then(function() {
+//     openingMusic.togglePlayback(true);
+// });
 
 var chapterMusics = [];
 for (let i = 1; i <= 6; i++) {
@@ -112,6 +112,8 @@ async function backToIndex() {
         opening.show()
     ]);
 
+    openingMusic.togglePlayback(true);
+
     await title.show();
     await title.hide();
 
@@ -124,7 +126,6 @@ async function backToIndex() {
     nav.show();
 
     await opening.start();
-
     resize();
     tick();
 
