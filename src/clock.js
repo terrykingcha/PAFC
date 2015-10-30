@@ -3,20 +3,32 @@ import {defer, domReady} from './lib/promise';
 import {manager, onProgress, onError} from './prologue';
 import * as Category from './category';
 
+var testState;
+if ((testState = location.search.match(/time=([^=&]+)/))) {
+    testState = testState[1];
+}
+
 export var serverTime;
 export var clientTime;
-
-var deferred = defer();
-export var ready = () => deferred.promise;
+var timeDeferred = defer();
+export var timeReady = () => timeDeferred.promise;
 
 manager.itemStart('server/clock');
 serverTime = Date.now();
 clientTime = Date.now();
 manager.itemEnd('server/clock');
-deferred.resolve();
+timeDeferred.resolve();
+
+
+var deferred = defer();
+export var ready = () => deferred.promise;
 
 export function state() {
     var h = getHours();
+
+    if (testState) {
+        return testState;
+    }
     
     if (h >= 6 && h < 18) {
         return 'daylight';
@@ -69,10 +81,7 @@ export function f24(h,m) {
 
 var $clock;
 export async function show() {
-    await ready();
-
-    $clock::$addClass(state() === 'daylight' ? 'black' : 'white')
-        ::$removeClass('fadeOut')
+    $clock::$removeClass('fadeOut')
         ::$addClass('fadeIn');
 }
 
@@ -103,7 +112,15 @@ function template() {
 }
 
 (async () => {
-    await domReady();
-    $clock = document.body::$append(template())::$find('#clock');
+    await Promise.all([
+        domReady(),
+        timeReady()
+    ]);
+
+    $clock = document.body::$append(template())
+        ::$find('#clock')
+        ::$addClass(state() === 'daylight' ? 'black' : 'white')
+
+    deferred.resolve();
 })();
 

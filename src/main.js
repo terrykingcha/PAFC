@@ -114,8 +114,15 @@ async function backToIndex() {
 
     openingMusic.togglePlayback(true);
 
+    await title.ready();
     await title.show();
     await title.hide();
+
+    await Promise.all([
+        clock.ready(),
+        share.ready(),
+        nav.ready()
+    ]);
 
     clock.show();
     clock.run();

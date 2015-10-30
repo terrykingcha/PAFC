@@ -1,6 +1,7 @@
 import './index.less';
 import {delay, waitForEvent, pageLoad} from '../lib/promise';
 import {width, height} from '../lib/env';
+import * as Clock from '../clock';
 
 import * as Scene from './scene';
 import * as Camera from './camera';
@@ -9,14 +10,19 @@ import * as Light from './light';
 import * as Controls from './controls';
 import * as Tower from './tower';
 import * as Sky from './sky';
+import * as Cloud from './cloud';
+import * as Star  from './star';
 
-var scene, 
+var state,
+    scene, 
     camera, 
     renderer, 
     domElement, 
     light1, light2, light3, light4,
     tower, 
     sky, 
+    cloud,
+    star,
     mouse, 
     raycaster;
 
@@ -27,9 +33,13 @@ export var init = async () => {
         Renderer.ready(),
         Light.ready(),
         Tower.ready(),
-        Sky.ready()
+        Sky.ready(),
+        Cloud.ready(),
+        Star.ready(),
+        Clock.timeReady()
     ]);
 
+    state = Clock.state();
     scene = Scene.scene;
     camera = Camera.camera;
     renderer = Renderer.renderer;
@@ -40,6 +50,8 @@ export var init = async () => {
     light4 = Light.light4;
     tower = Tower.object;
     sky = Sky.object;
+    cloud = Cloud.object;
+    star = Star.object;
     mouse = new THREE.Vector2(-100, -100);
     raycaster = new THREE.Raycaster();
 
@@ -50,6 +62,11 @@ export var init = async () => {
     scene.add(light4);
     scene.add(tower);
     scene.add(sky);
+    if (state === 'daylight') {
+        scene.add(cloud);
+    } else if (state === 'night') {
+        scene.add(star);
+    }
 
     camera.position.set(0, 0, 20);
     camera.lookAt(scene.position);
@@ -87,6 +104,19 @@ export var init = async () => {
 
         mouse.x = (e.clientX / width()) * 2 - 1;
         mouse.y = - (e.clientY / height()) * 2 + 1;
+
+        var intersects = raycaster.intersectObject(tower.children[2]);    
+        var color;
+
+        if (intersects.length > 0) {
+            color = 0x282930;
+            domElement.style.cursor = 'pointer';
+        } else {
+            color = 0x000000;
+            domElement.style.cursor = 'default';
+        }
+
+        tower.children[1].material.emissive.setHex(color);
     }, false);
 
     window.addEventListener('mousedown', function(e) {
@@ -105,9 +135,9 @@ export var init = async () => {
     await pageLoad();
     document.body.appendChild(domElement);
 
-    // window.scene = scene;
-    // window.camera = camera;
-    // window.renderer = renderer;
+    window.scene = scene;
+    window.camera = camera;
+    window.renderer = renderer;
 }
 
 export function resize() {
@@ -122,25 +152,13 @@ export function ontowerclick(h) {
     }
 }
 
-function highlightTower() {
-    raycaster.setFromCamera(mouse, camera);
-
-    var intersects = raycaster.intersectObject(tower.children[2]);    
-    var color;
-
-    if (intersects.length > 0) {
-        color = 0x282930;
-        domElement.style.cursor = 'pointer';
-    } else {
-        color = 0x000000;
-        domElement.style.cursor = 'default';
-    }
-
-    tower.children[1].material.emissive.setHex(color);
-}
-
 export function render() {
-    highlightTower();
+    if (state === 'daylight') {
+        Cloud.render();
+    } else if (state === 'night') {
+        Star.render();
+    }
+    raycaster.setFromCamera(mouse, camera);
     renderer.render(scene, camera);
 }
 

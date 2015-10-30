@@ -3,6 +3,9 @@ import {defer, domReady} from './lib/promise';
 import {show as showMenu} from './menu';
 import * as Clock from './clock';
 
+var deferred = defer();
+export var ready = () => deferred.promise;
+
 var musicToggleHandlers = [];
 export function onmusic(handler) {
     if (musicToggleHandlers.indexOf(handler) < 0) {
@@ -35,12 +38,6 @@ export function changeColor(color) {
 }
 
 export async function show() {
-    await Clock.ready();
-
-    var state = Clock.state();
-    originColor = state === 'daylight' ? 'black' : 'white'
-    changeColor(originColor);
-
     var changed;
     $nav::$show()
         ::$on('click', 'a', function() {
@@ -66,6 +63,18 @@ function template() {
 }
 
 (async () => {
-    await domReady();
-    $nav = document.body::$append(template())::$find('#nav');
+    await Promise.all([
+        domReady(),
+        Clock.timeReady()
+    ]);
+
+    var state = Clock.state();
+    originColor = state === 'daylight' ? 'black' : 'white';
+
+    $nav = document.body::$append(template())
+                ::$find('#nav')
+                ::$addClass(originColor);
+
+    deferred.resolve();
+
 })(); 

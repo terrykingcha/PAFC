@@ -38220,7 +38220,7 @@ THREE.OBJLoader.prototype = {
 	
 	var opening = _interopRequireWildcard(_opening);
 	
-	var _chapter1 = __webpack_require__(45);
+	var _chapter1 = __webpack_require__(47);
 	
 	var chapter1 = _interopRequireWildcard(_chapter1);
 	
@@ -38364,13 +38364,21 @@ THREE.OBJLoader.prototype = {
 	                openingMusic.togglePlayback(true);
 	
 	                context$1$0.next = 10;
-	                return regeneratorRuntime.awrap(title.show());
+	                return regeneratorRuntime.awrap(title.ready());
 	
 	            case 10:
 	                context$1$0.next = 12;
-	                return regeneratorRuntime.awrap(title.hide());
+	                return regeneratorRuntime.awrap(title.show());
 	
 	            case 12:
+	                context$1$0.next = 14;
+	                return regeneratorRuntime.awrap(title.hide());
+	
+	            case 14:
+	                context$1$0.next = 16;
+	                return regeneratorRuntime.awrap(Promise.all([clock.ready(), share.ready(), nav.ready()]));
+	
+	            case 16:
 	
 	                clock.show();
 	                clock.run();
@@ -38380,10 +38388,10 @@ THREE.OBJLoader.prototype = {
 	                nav.disable('video');
 	                nav.show();
 	
-	                context$1$0.next = 20;
+	                context$1$0.next = 24;
 	                return regeneratorRuntime.awrap(opening.start());
 	
-	            case 20:
+	            case 24:
 	                resize();
 	                tick();
 	
@@ -38408,7 +38416,7 @@ THREE.OBJLoader.prototype = {
 	                    changeChapter(1);
 	                });
 	
-	            case 25:
+	            case 29:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39355,31 +39363,30 @@ THREE.OBJLoader.prototype = {
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var $title;
+	
 	function show() {
 	    var _context;
 	
-	    var state, images, $titleWrap;
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Clock.ready());
-	
-	            case 2:
-	                state = Clock.state();
-	                images = titleImages[state === 'daylight' ? 'black' : 'white'];
-	                $titleWrap = (_context = $find.call(document, '#title .wrap'), $append).call(_context, images);
-	                context$1$0.next = 7;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
 	
-	            case 7:
+	            case 2:
 	
-	                $addClass.call($titleWrap, 'anim');
-	
-	                context$1$0.next = 10;
+	                (_context = (_context = (_context = $title, $show).call(_context), $find).call(_context, '.wrap'), $addClass).call(_context, 'anim');
+	                context$1$0.next = 5;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
 	
-	            case 10:
+	            case 5:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39389,16 +39396,15 @@ THREE.OBJLoader.prototype = {
 	function hide() {
 	    var _context2;
 	
-	    var $title;
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                $title = (_context2 = $find.call(document, '#title'), $addClass).call(_context2, 'fadeOut');
+	                (_context2 = $title, $addClass).call(_context2, 'fadeOut');
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
 	            case 3:
-	                $remove.call($title);
+	                (_context2 = $title, $remove).call(_context2);
 	
 	            case 4:
 	            case 'end':
@@ -39414,9 +39420,11 @@ THREE.OBJLoader.prototype = {
 	
 	var _loop = function (i) {
 	    var _loop2 = function (k) {
-	        new THREE.ImageLoader(_prologue.manager).load('assets/images/title_' + k + '_' + i + '.png', function (image) {
-	            titleImages[k][i - 1] = image;
-	        }, _prologue.onProgress, _prologue.onError);
+	        titleImages[k][i] = new Promise(function (resolve, reject) {
+	            new THREE.ImageLoader(_prologue.manager).load('assets/images/title_' + k + '_' + (i + 1) + '.png', function (image) {
+	                return resolve(image);
+	            }, _prologue.onProgress, _prologue.onError);
+	        });
 	    };
 	
 	    for (var k in titleImages) {
@@ -39424,7 +39432,7 @@ THREE.OBJLoader.prototype = {
 	    }
 	};
 	
-	for (var i = 1; i <= 4; i++) {
+	for (var i = 0; i < 4; i++) {
 	    _loop(i);
 	}
 	
@@ -39435,17 +39443,29 @@ THREE.OBJLoader.prototype = {
 	(function callee$0$0() {
 	    var _context3;
 	
+	    var state, images;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	                return regeneratorRuntime.awrap(Promise.all([(0, _libPromise.domReady)(), Clock.timeReady()]));
 	
 	            case 2:
 	
-	                (_context3 = document.body, $append).call(_context3, template());
+	                $title = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#title');
 	
-	            case 3:
+	                state = Clock.state();
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(Promise.all(titleImages[state === 'daylight' ? 'black' : 'white']));
+	
+	            case 6:
+	                images = context$1$0.sent;
+	
+	                (_context3 = (_context3 = $title, $find).call(_context3, '.wrap'), $append).call(_context3, images);
+	
+	                deferred.resolve();
+	
+	            case 9:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39519,25 +39539,40 @@ THREE.OBJLoader.prototype = {
 	
 	var Category = _interopRequireWildcard(_category);
 	
+	var testState;
+	if (testState = location.search.match(/time=([^=&]+)/)) {
+	    testState = testState[1];
+	}
+	
 	var serverTime;
 	exports.serverTime = serverTime;
 	var clientTime;
-	
 	exports.clientTime = clientTime;
+	var timeDeferred = (0, _libPromise.defer)();
+	var timeReady = function timeReady() {
+	    return timeDeferred.promise;
+	};
+	
+	exports.timeReady = timeReady;
+	_prologue.manager.itemStart('server/clock');
+	exports.serverTime = serverTime = Date.now();
+	exports.clientTime = clientTime = Date.now();
+	_prologue.manager.itemEnd('server/clock');
+	timeDeferred.resolve();
+	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
 	    return deferred.promise;
 	};
 	
 	exports.ready = ready;
-	_prologue.manager.itemStart('server/clock');
-	exports.serverTime = serverTime = Date.now();
-	exports.clientTime = clientTime = Date.now();
-	_prologue.manager.itemEnd('server/clock');
-	deferred.resolve();
 	
 	function state() {
 	    var h = getHours();
+	
+	    if (testState) {
+	        return testState;
+	    }
 	
 	    if (h >= 6 && h < 18) {
 	        return 'daylight';
@@ -39596,14 +39631,9 @@ THREE.OBJLoader.prototype = {
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(ready());
+	                (_context = (_context = $clock, $removeClass).call(_context, 'fadeOut'), $addClass).call(_context, 'fadeIn');
 	
-	            case 2:
-	
-	                (_context = (_context = (_context = $clock, $addClass).call(_context, state() === 'daylight' ? 'black' : 'white'), $removeClass).call(_context, 'fadeOut'), $addClass).call(_context, 'fadeIn');
-	
-	            case 3:
+	            case 1:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39654,12 +39684,15 @@ THREE.OBJLoader.prototype = {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	                return regeneratorRuntime.awrap(Promise.all([(0, _libPromise.domReady)(), timeReady()]));
 	
 	            case 2:
-	                $clock = (_context4 = (_context4 = document.body, $append).call(_context4, template()), $find).call(_context4, '#clock');
 	
-	            case 3:
+	                $clock = (_context4 = (_context4 = (_context4 = document.body, $append).call(_context4, template()), $find).call(_context4, '#clock'), $addClass).call(_context4, state() === 'daylight' ? 'black' : 'white');
+	
+	                deferred.resolve();
+	
+	            case 4:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39995,19 +40028,48 @@ THREE.OBJLoader.prototype = {
 	
 	exports.show = show;
 	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
 	__webpack_require__(25);
 	
 	var _libPromise = __webpack_require__(12);
 	
-	function sharing(type) {
+	var _clock = __webpack_require__(18);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	function sharing(e, type) {
 	    if (type === 'weixin') {
 	        var _context;
 	
+	        e.preventDefault();
 	        var $weixinCode = $find.call(document, '#share-weixin');
 	
 	        (_context = $show.call($weixinCode), $on).call(_context, 'click', function handler() {
 	            $off.call($weixinCode, 'click', handler);
 	            $hide.call($weixinCode);
+	        });
+	    } else if (type === 'weibo') {
+	        e.preventDefault();
+	        WB2.anyWhere(function (W) {
+	            W.widget.publish({
+	                action: "pubilish",
+	                type: "web",
+	                language: "zh_cn",
+	                button_type: "gray",
+	                button_size: "middle",
+	                default_text: "600米高空的风，居然会唱歌!？",
+	                refer: "y",
+	                default_image: "http%3A%2F%2Fww4.sinaimg.cn%2Fmw690%2F66101445gw1exfnkc5fgkj20m80goq3r.jpg",
+	                appkey: "3Nbb3f",
+	                id: "wb_publisher"
+	            });
 	        });
 	    }
 	}
@@ -40020,9 +40082,9 @@ THREE.OBJLoader.prototype = {
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context2 = (_context2 = $find.call(document, '#share'), $show).call(_context2), $on).call(_context2, 'click', 'a', function (e) {
+	                (_context2 = (_context2 = $share, $show).call(_context2), $on).call(_context2, 'click', 'a', function (e) {
 	                    var type = this.className;
-	                    sharing(type);
+	                    sharing(e, type);
 	                });
 	
 	            case 1:
@@ -40032,8 +40094,10 @@ THREE.OBJLoader.prototype = {
 	    }, null, this);
 	}
 	
+	var FACEBOOK_SHARE = 'https://www.facebook.com/dialog/share?' + 'app_id=1645611472322802' + '&display=page' + '&href=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2F' + '&redirect_uri=https%3A%2F%2Fdevelopers.facebook.com%2Ftools%2Fexplorer';
+	
 	function template() {
-	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 PAFC, All Rights Reserved</span>\n            <a class="weibo"></a>\n            <a class="weixin"></a>\n            <a class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
+	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 PAFC, All Rights Reserved</span>\n            <a class="weibo"></a>\n            <a class="weixin"></a>\n            <a href="' + FACEBOOK_SHARE + '" target="_blank" class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -40043,12 +40107,15 @@ THREE.OBJLoader.prototype = {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	                return regeneratorRuntime.awrap(Promise.all([(0, _libPromise.domReady)(), Clock.timeReady()]));
 	
 	            case 2:
-	                (_context3 = document.body, $append).call(_context3, template());
 	
-	            case 3:
+	                $share = (_context3 = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#share'), $addClass).call(_context3, Clock.state() === 'daylight' ? 'black' : 'white');
+	
+	                deferred.resolve();
+	
+	            case 4:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40085,7 +40152,7 @@ THREE.OBJLoader.prototype = {
 /* 26 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  color: #EEE;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,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);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:facebook {\n  background-position: -48px -24px;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share.black span {\n  color: #1C1C1C;\n}\n#share.white span {\n  color: #FFFFFF;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,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);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\n#share.black a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
 /* 27 */
@@ -40120,6 +40187,12 @@ THREE.OBJLoader.prototype = {
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
 	var musicToggleHandlers = [];
 	
 	function onmusic(handler) {
@@ -40166,19 +40239,10 @@ THREE.OBJLoader.prototype = {
 	function show() {
 	    var _context6;
 	
-	    var state, changed;
+	    var changed;
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Clock.ready());
-	
-	            case 2:
-	                state = Clock.state();
-	
-	                originColor = state === 'daylight' ? 'black' : 'white';
-	                changeColor(originColor);
-	
 	                (_context6 = (_context6 = $nav, $show).call(_context6), $on).call(_context6, 'click', 'a', function () {
 	                    var _context7;
 	
@@ -40189,7 +40253,7 @@ THREE.OBJLoader.prototype = {
 	                    }
 	                });
 	
-	            case 6:
+	            case 1:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40203,16 +40267,23 @@ THREE.OBJLoader.prototype = {
 	(function callee$0$0() {
 	    var _context8;
 	
+	    var state;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	                return regeneratorRuntime.awrap(Promise.all([(0, _libPromise.domReady)(), Clock.timeReady()]));
 	
 	            case 2:
-	                $nav = (_context8 = (_context8 = document.body, $append).call(_context8, template()), $find).call(_context8, '#nav');
+	                state = Clock.state();
 	
-	            case 3:
+	                originColor = state === 'daylight' ? 'black' : 'white';
+	
+	                $nav = (_context8 = (_context8 = (_context8 = document.body, $append).call(_context8, template()), $find).call(_context8, '#nav'), $addClass).call(_context8, originColor);
+	
+	                deferred.resolve();
+	
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40914,6 +40985,10 @@ THREE.OBJLoader.prototype = {
 	
 	var _libEnv = __webpack_require__(13);
 	
+	var _clock = __webpack_require__(18);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
 	var _scene = __webpack_require__(38);
 	
 	var Scene = _interopRequireWildcard(_scene);
@@ -40942,7 +41017,15 @@ THREE.OBJLoader.prototype = {
 	
 	var Sky = _interopRequireWildcard(_sky);
 	
-	var scene, camera, renderer, domElement, light1, light2, light3, light4, tower, sky, mouse, raycaster;
+	var _cloud = __webpack_require__(45);
+	
+	var Cloud = _interopRequireWildcard(_cloud);
+	
+	var _star = __webpack_require__(46);
+	
+	var Star = _interopRequireWildcard(_star);
+	
+	var state, scene, camera, renderer, domElement, light1, light2, light3, light4, tower, sky, cloud, star, mouse, raycaster;
 	
 	var init = function init() {
 	    var radius;
@@ -40950,10 +41033,11 @@ THREE.OBJLoader.prototype = {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Tower.ready(), Sky.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Tower.ready(), Sky.ready(), Cloud.ready(), Star.ready(), Clock.timeReady()]));
 	
 	            case 2:
 	
+	                state = Clock.state();
 	                scene = Scene.scene;
 	                camera = Camera.camera;
 	                renderer = Renderer.renderer;
@@ -40964,6 +41048,8 @@ THREE.OBJLoader.prototype = {
 	                light4 = Light.light4;
 	                tower = Tower.object;
 	                sky = Sky.object;
+	                cloud = Cloud.object;
+	                star = Star.object;
 	                mouse = new THREE.Vector2(-100, -100);
 	                raycaster = new THREE.Raycaster();
 	
@@ -40974,6 +41060,11 @@ THREE.OBJLoader.prototype = {
 	                scene.add(light4);
 	                scene.add(tower);
 	                scene.add(sky);
+	                if (state === 'daylight') {
+	                    scene.add(cloud);
+	                } else if (state === 'night') {
+	                    scene.add(star);
+	                }
 	
 	                camera.position.set(0, 0, 20);
 	                camera.lookAt(scene.position);
@@ -40996,6 +41087,19 @@ THREE.OBJLoader.prototype = {
 	
 	                    mouse.x = e.clientX / (0, _libEnv.width)() * 2 - 1;
 	                    mouse.y = -(e.clientY / (0, _libEnv.height)()) * 2 + 1;
+	
+	                    var intersects = raycaster.intersectObject(tower.children[2]);
+	                    var color;
+	
+	                    if (intersects.length > 0) {
+	                        color = 0x282930;
+	                        domElement.style.cursor = 'pointer';
+	                    } else {
+	                        color = 0x000000;
+	                        domElement.style.cursor = 'default';
+	                    }
+	
+	                    tower.children[1].material.emissive.setHex(color);
 	                }, false);
 	
 	                window.addEventListener('mousedown', function (e) {
@@ -41013,17 +41117,17 @@ THREE.OBJLoader.prototype = {
 	                    }
 	                }, false);
 	
-	                context$1$0.next = 36;
+	                context$1$0.next = 40;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 36:
+	            case 40:
 	                document.body.appendChild(domElement);
 	
-	                // window.scene = scene;
-	                // window.camera = camera;
-	                // window.renderer = renderer;
+	                window.scene = scene;
+	                window.camera = camera;
+	                window.renderer = renderer;
 	
-	            case 37:
+	            case 44:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41045,25 +41149,13 @@ THREE.OBJLoader.prototype = {
 	    }
 	}
 	
-	function highlightTower() {
-	    raycaster.setFromCamera(mouse, camera);
-	
-	    var intersects = raycaster.intersectObject(tower.children[2]);
-	    var color;
-	
-	    if (intersects.length > 0) {
-	        color = 0x282930;
-	        domElement.style.cursor = 'pointer';
-	    } else {
-	        color = 0x000000;
-	        domElement.style.cursor = 'default';
-	    }
-	
-	    tower.children[1].material.emissive.setHex(color);
-	}
-	
 	function render() {
-	    highlightTower();
+	    if (state === 'daylight') {
+	        Cloud.render();
+	    } else if (state === 'night') {
+	        Star.render();
+	    }
+	    raycaster.setFromCamera(mouse, camera);
 	    renderer.render(scene, camera);
 	}
 	
@@ -41640,45 +41732,13 @@ THREE.OBJLoader.prototype = {
 	    var trigger = new THREE.Mesh(new THREE.BoxGeometry(2.5, 22, 2.5), new THREE.MeshBasicMaterial({
 	        color: 0x000000,
 	        opacity: 0,
+	        depthTest: false,
 	        transparent: true
 	    }));
 	    object.add(trigger);
 	
 	    deferred.resolve();
 	});
-	
-	// var loader = new THREE.OBJLoader(manager);
-	// loader.load(
-	//     'assets/obj/building/building2.obj',
-	//     function (obj) {
-	//         object = new THREE.Group();
-
-	//         var buildingMesh = obj.children[0];
-	//         buildingMesh.material = new THREE.MeshLambertMaterial({
-	//             color: 0xFFFFFF,
-	//             side: THREE.DoubleSide,
-	//             wireframe: true
-	//         });
-	//         buildingMesh.rotation.set(-Math.PI / 2, 0, 0);
-	//         buildingMesh.scale.set(0.1, 0.1, 0.1);
-	//         object.add(buildingMesh);
-
-	//         var buildingInnerMesh = new THREE.Mesh(
-	//             buildingMesh.geometry.clone(),
-	//             new THREE.MeshLambertMaterial({
-	//                 color: 0x000000,
-	//                 side: THREE.DoubleSide,
-	//             })
-	//         );
-	//         buildingInnerMesh.rotation.set(-Math.PI / 2, 0, 0);
-	//         buildingInnerMesh.scale.set(0.1,0.1,0.1);
-	//         object.add(buildingInnerMesh);
-
-	//         deferred.resolve();
-	//     },
-	//     onProgress,
-	//     onError
-	// );
 
 /***/ },
 /* 44 */
@@ -41704,11 +41764,6 @@ THREE.OBJLoader.prototype = {
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
-	var testState;
-	if (testState = location.search.match(/time=([^=&]+)/)) {
-	    testState = testState[1];
-	}
-	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
 	    return deferred.promise;
@@ -41718,55 +41773,34 @@ THREE.OBJLoader.prototype = {
 	
 	exports.object = object;
 	var materials = {
-	    drawn: false,
-	    daylight: false,
-	    sunset: false,
-	    night: false
+	    daylight: new THREE.MeshBasicMaterial({
+	        color: 0xFFFFFF,
+	        side: THREE.DoubleSide
+	    }),
+	    night: new THREE.MeshBasicMaterial({
+	        color: 0x000000,
+	        side: THREE.DoubleSide
+	    })
 	};
-	
-	var _loop = function (state) {
-	    materials[state] = new Promise(function (resolve, reject) {
-	        var loader = new THREE.TextureLoader(_prologue.manager);
-	        loader.load('assets/images/' + state + '.jpg', function (texture) {
-	            var material = new THREE.MeshBasicMaterial({
-	                map: texture,
-	                side: THREE.BackSide
-	            });
-	            resolve(material);
-	        }, _prologue.onProgress, _prologue.onError);
-	    });
-	};
-	
-	for (var state in materials) {
-	    _loop(state);
-	}
+	deferred.resolve();
 	
 	(function callee$0$0() {
-	    var state, material, windowW, windowH, imageW, imageH, ratio, geometry;
+	    var state, material, geometry;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Clock.ready());
+	                return regeneratorRuntime.awrap(Clock.timeReady());
 	
 	            case 2:
-	                state = testState || Clock.state();
-	                context$1$0.next = 5;
-	                return regeneratorRuntime.awrap(materials[state]);
-	
-	            case 5:
-	                material = context$1$0.sent;
-	                windowW = (0, _libEnv.width)();
-	                windowH = (0, _libEnv.height)();
-	                imageW = material.map.image.width;
-	                imageH = material.map.image.height;
-	                ratio = Math.max(windowW / windowH, imageW / imageH);
+	                state = Clock.state();
+	                material = materials[state];
 	                geometry = new THREE.SphereGeometry(50, 64, 64);
 	
 	                exports.object = object = new THREE.Mesh(geometry, material);
 	                deferred.resolve();
 	
-	            case 14:
+	            case 7:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41785,6 +41819,214 @@ THREE.OBJLoader.prototype = {
 	
 	var _this = this;
 	
+	exports.render = render;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _libEnv = __webpack_require__(13);
+	
+	var _prologue = __webpack_require__(9);
+	
+	var _clock = __webpack_require__(18);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var materialPromises = [];
+	
+	var _loop = function (i) {
+	    materialPromises[i] = new Promise(function (resolve, reject) {
+	        var loader = new THREE.TextureLoader(_prologue.manager);
+	        loader.load('assets/images/cloud' + (i + 1) + '.png', function (texture) {
+	            texture.minFilter = THREE.LinearFilter;
+	            texture.magFilter = THREE.LinearFilter;
+	            var material = new THREE.MeshBasicMaterial({
+	                map: texture,
+	                side: THREE.DoubleSide,
+	                transparent: true
+	            });
+	            resolve(material);
+	        }, _prologue.onProgress, _prologue.onError);
+	    });
+	};
+	
+	for (var i = 0; i < 4; i++) {
+	    _loop(i);
+	}
+	
+	var rotationY = 0.001;
+	
+	function render() {
+	    object.children.forEach(function (obj, i) {
+	        var sign = i % 2 === 0 ? 1 : -1;
+	        obj.rotation.y += rotationY * i * sign;
+	    });
+	}
+	
+	(function callee$0$0() {
+	    var materials;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                exports.object = object = new THREE.Object3D();
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(Promise.all(materialPromises));
+	
+	            case 3:
+	                materials = context$1$0.sent;
+	
+	                materials.forEach(function (material, i) {
+	                    var geometry = new THREE.SphereGeometry(45 - i * 6, 64, 64);
+	                    var mesh = new THREE.Mesh(geometry, material);
+	                    object.add(mesh);
+	                });
+	
+	                deferred.resolve();
+	
+	            case 6:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.render = render;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	var _libPromise = __webpack_require__(12);
+	
+	var _libEnv = __webpack_require__(13);
+	
+	var _prologue = __webpack_require__(9);
+	
+	var _clock = __webpack_require__(18);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var materialPromise = new Promise(function (resolve, reject) {
+	    var loader = new THREE.TextureLoader(_prologue.manager);
+	    loader.load('assets/images/night1.jpg', function (texture) {
+	        texture.minFilter = THREE.LinearFilter;
+	        texture.magFilter = THREE.LinearFilter;
+	        var material = new THREE.MeshBasicMaterial({
+	            map: texture,
+	            side: THREE.BackSide
+	        });
+	        resolve(material);
+	    }, _prologue.onProgress, _prologue.onError);
+	});
+	
+	function buildStars(i) {
+	    var material = new THREE.PointsMaterial({ // 星星
+	        size: 0.1 * Math.random() + 0.1,
+	        opacity: 1,
+	        vertexColors: THREE.VertexColors,
+	        side: THREE.DoubleSide
+	    });
+	
+	    var total = 2000;
+	    var vertices = new Float32Array(3 * total);
+	    var colors = new Float32Array(3 * total);
+	    var radius = 50 - i / 10;
+	    while (total-- > 0) {
+	        var theta = Math.PI * 2 * Math.random();
+	        var lamda = Math.PI * 2 * Math.random();
+	        vertices[total * 3] = radius * Math.cos(lamda) * Math.cos(theta);
+	        vertices[total * 3 + 1] = radius * Math.cos(lamda) * Math.sin(theta);
+	        vertices[total * 3 + 2] = radius * Math.sin(lamda);
+	        colors[total * 3 + 2] = colors[total * 3 + 1] = colors[total * 3] = Math.random();
+	    }
+	
+	    var geometry = new THREE.BufferGeometry();
+	    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+	    geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+	    geometry.computeBoundingSphere();
+	
+	    return new THREE.Points(geometry, material);
+	}
+	
+	var rotationY = 0.0001;
+	
+	function render() {
+	    object.children.forEach(function (obj, i) {
+	        var sign = i % 2 === 0 ? 1 : -1;
+	        obj.rotation.y += rotationY * i * sign;
+	    });
+	}
+	
+	(function callee$0$0() {
+	    var material, geometry, mesh, i;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                exports.object = object = new THREE.Object3D();
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(materialPromise);
+	
+	            case 3:
+	                material = context$1$0.sent;
+	                geometry = new THREE.SphereGeometry(50, 64, 64);
+	                mesh = new THREE.Mesh(geometry, material);
+	
+	                object.add(mesh);
+	
+	                for (i = 1; i < 4; i++) {
+	                    object.add(buildStars(i));
+	                }
+	
+	                deferred.resolve();
+	
+	            case 9:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
 	exports.resize = resize;
 	exports.render = render;
 	exports.onentering = onentering;
@@ -41792,33 +42034,33 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(46);
+	__webpack_require__(48);
 	
 	var _libPromise = __webpack_require__(12);
 	
 	var _libEnv = __webpack_require__(13);
 	
-	var _scene = __webpack_require__(48);
+	var _scene = __webpack_require__(50);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(49);
+	var _camera = __webpack_require__(51);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(50);
+	var _renderer = __webpack_require__(52);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(51);
+	var _light = __webpack_require__(53);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(52);
+	var _galaxy = __webpack_require__(54);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(54);
+	var _controls = __webpack_require__(56);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -41856,11 +42098,11 @@ THREE.OBJLoader.prototype = {
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
 	
-	                window.scene = scene;
-	                window.camera = camera;
-	                window.renderer = renderer;
+	                // window.scene = scene;
+	                // window.camera = camera;
+	                // window.renderer = renderer;
 	
-	            case 20:
+	            case 17:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -42014,13 +42256,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(47);
+	var content = __webpack_require__(49);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -42040,13 +42282,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42072,7 +42314,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42147,7 +42389,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42215,7 +42457,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42244,7 +42486,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42263,7 +42505,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libEnv = __webpack_require__(13);
 	
-	var _libCubicbezier = __webpack_require__(53);
+	var _libCubicbezier = __webpack_require__(55);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
@@ -42413,7 +42655,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42534,7 +42776,7 @@ THREE.OBJLoader.prototype = {
 	module.exports = exports["default"];
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42548,7 +42790,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(12);
 	
-	var _libCubicbezier = __webpack_require__(53);
+	var _libCubicbezier = __webpack_require__(55);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	

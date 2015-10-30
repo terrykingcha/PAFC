@@ -1,27 +1,22 @@
 import './title.less';
 import {defer, domReady, delay, waitForEvent} from './lib/promise';
-
 import {manager, onProgress, onError} from './prologue';
 import * as Clock from './clock';
 
+var deferred = defer();
+export var ready = () => deferred.promise;
+
+var $title;
 export async function show() {
-    await Clock.ready();
-
-    var state = Clock.state();
-    var images = titleImages[state === 'daylight' ? 'black' : 'white'];
-
-    var $titleWrap = document::$find('#title .wrap')
-        ::$append(images)
-
     await delay(1);
 
-    $titleWrap::$addClass('anim');
-
+    $title::$show()::$find('.wrap')
+        ::$addClass('anim');
     await delay(2000);
 }
 
 export async function hide() {
-    var $title = document::$find('#title')::$addClass('fadeOut');
+    $title::$addClass('fadeOut');
     await delay(450);
     $title::$remove();
 }
@@ -31,14 +26,16 @@ var titleImages = {
     black: new Array(4)
 };
 
-for (let i = 1; i <= 4; i++) {
+for (let i = 0; i < 4; i++) {
     for (let k in titleImages) {
-        new THREE.ImageLoader(manager).load(
-            `assets/images/title_${k}_${i}.png`,
-            (image) => {titleImages[k][i - 1] = image},
-            onProgress,
-            onError
-        ); 
+        titleImages[k][i] = new Promise(function(resolve, reject) {
+            new THREE.ImageLoader(manager).load(
+                `assets/images/title_${k}_${i+1}.png`,
+                image => resolve(image),
+                onProgress,
+                onError
+            ); 
+        });
     }
 }
 
@@ -51,7 +48,19 @@ function template() {
 }
 
 (async () => {
-    await domReady();
+    await Promise.all([
+        domReady(),
+        Clock.timeReady()
+    ]);
 
-    document.body::$append(template());
+    $title = document.body::$append(template())
+                ::$find('#title');
+
+    var state = Clock.state();
+    var images = await Promise.all(titleImages[state === 'daylight' ? 'black' : 'white']);
+
+    $title::$find('.wrap')
+            ::$append(images);
+
+    deferred.resolve();
 })();
