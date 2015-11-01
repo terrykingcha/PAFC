@@ -38188,29 +38188,35 @@ THREE.OBJLoader.prototype = {
 	
 	__webpack_require__(7);
 	
-	var _prologue = __webpack_require__(9);
+	__webpack_require__(9);
+	
+	var _prologue = __webpack_require__(11);
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _title = __webpack_require__(15);
+	var _title = __webpack_require__(16);
 	
 	var title = _interopRequireWildcard(_title);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var clock = _interopRequireWildcard(_clock);
 	
-	var _share = __webpack_require__(24);
+	var _share = __webpack_require__(25);
 	
 	var share = _interopRequireWildcard(_share);
 	
-	var _nav = __webpack_require__(27);
+	var _nav = __webpack_require__(28);
 	
 	var nav = _interopRequireWildcard(_nav);
 	
-	var _category = __webpack_require__(21);
+	var _category = __webpack_require__(22);
 	
 	var category = _interopRequireWildcard(_category);
+	
+	var _video = __webpack_require__(31);
+	
+	var video = _interopRequireWildcard(_video);
 	
 	var _visualizer = __webpack_require__(34);
 	
@@ -38224,14 +38230,19 @@ THREE.OBJLoader.prototype = {
 	
 	var chapter1 = _interopRequireWildcard(_chapter1);
 	
-	var chapters = [chapter1];
+	var _chapter6 = __webpack_require__(60);
+	
+	var chapter6 = _interopRequireWildcard(_chapter6);
+	
+	// import * as chapter2 from './chapters';
+	
+	var chapters = new Array(6);
+	chapters[0] = chapter1;
+	chapters[5] = chapter6;
 	var currentChapter;
 	
 	var openingMusic = new _visualizer2['default'](prologue.manager);
 	openingMusic.load('./assets/sounds/opening.mp3');
-	// openingMusic.ready().then(function() {
-	//     openingMusic.togglePlayback(true);
-	// });
 	
 	var chapterMusics = [];
 	for (var i = 1; i <= 6; i++) {
@@ -38255,6 +38266,9 @@ THREE.OBJLoader.prototype = {
 	    renderHandler && renderHandler();
 	}
 	
+	var lastScene;
+	var currentScene;
+	
 	function changeChapter(index) {
 	    var chapter, chapterMusic, categoryName;
 	    return regeneratorRuntime.async(function changeChapter$(context$1$0) {
@@ -38262,10 +38276,10 @@ THREE.OBJLoader.prototype = {
 	            case 0:
 	                chapter = chapters[index - 1];
 	                chapterMusic = chapterMusics[index - 1];
-	                categoryName = category.get(index);
+	                categoryName = category.get(index - 1);
 	
-	                if (!(chapter && chapterMusic)) {
-	                    context$1$0.next = 22;
+	                if (!(chapter && chapterMusic && currentScene !== 'chapter' + index)) {
+	                    context$1$0.next = 27;
 	                    break;
 	                }
 	
@@ -38276,43 +38290,55 @@ THREE.OBJLoader.prototype = {
 	                resizeHandler = opening.resize.bind(opening);
 	                renderHandler = opening.render.bind(opening);
 	
-	                if (!currentChapter) {
+	                if (!(currentScene === 'video')) {
 	                    context$1$0.next = 11;
 	                    break;
 	                }
 	
 	                context$1$0.next = 11;
-	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
+	                return regeneratorRuntime.awrap(hideVideo());
 	
 	            case 11:
-	                context$1$0.next = 13;
+	                if (!currentChapter) {
+	                    context$1$0.next = 14;
+	                    break;
+	                }
+	
+	                context$1$0.next = 14;
+	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
+	
+	            case 14:
+	                context$1$0.next = 16;
 	                return regeneratorRuntime.awrap(opening.entering());
 	
-	            case 13:
+	            case 16:
 	
 	                currentChapter = chapter;
 	                resizeHandler = chapter.resize.bind(chapter);
 	                renderHandler = chapter.render.bind(chapter);
 	
-	                context$1$0.next = 18;
+	                context$1$0.next = 21;
 	                return regeneratorRuntime.awrap(chapter.entering(currentMusic));
 	
-	            case 18:
+	            case 21:
 	
 	                nav.enable('index');
 	                nav.changeColor('white');
 	                category.showName(categoryName);
 	                clock.hide();
 	
-	            case 22:
+	                lastScene = currentScene;
+	                currentScene = 'chapter' + index;
+	
+	            case 27:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, this);
 	}
 	
-	function backToIndex() {
-	    return regeneratorRuntime.async(function backToIndex$(context$1$0) {
+	function leavingChapter() {
+	    return regeneratorRuntime.async(function leavingChapter$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                currentMusic.togglePlayback(false);
@@ -38331,8 +38357,109 @@ THREE.OBJLoader.prototype = {
 	                nav.changeColor();
 	                category.hideName();
 	                clock.show();
+	                currentChapter = null;
+	                lastScene = null;
+	                currentScene = 'index';
 	
-	            case 11:
+	            case 14:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function showVideo() {
+	    return regeneratorRuntime.async(function showVideo$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(video.show());
+	
+	            case 2:
+	                nav.enable('index');
+	                nav.disable('video');
+	                nav.changeColor('black');
+	                lastScene = currentScene;
+	                currentScene = 'video';
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hideVideo() {
+	    return regeneratorRuntime.async(function hideVideo$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(video.hide());
+	
+	            case 2:
+	                nav.enable('video');
+	                if (lastScene === 'index') {
+	                    nav.enable('video');
+	                    nav.disable('index');
+	                    nav.changeColor();
+	                } else if (lastScene && lastScene.indexOf('chapter') === '0') {
+	                    nav.enable('video');
+	                    nav.changeColor('white');
+	                }
+	
+	                currentScene = lastScene;
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function showCategory() {
+	    return regeneratorRuntime.async(function showCategory$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                if (!(lastScene && lastScene.indexOf('chapter') === '0' && currentScene === 'video')) {
+	                    context$1$0.next = 5;
+	                    break;
+	                }
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(hideVideo());
+	
+	            case 3:
+	                context$1$0.next = 7;
+	                break;
+	
+	            case 5:
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(category.show());
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function backToIndex() {
+	    return regeneratorRuntime.async(function backToIndex$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                if (!(currentScene === 'video')) {
+	                    context$1$0.next = 3;
+	                    break;
+	                }
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(hideVideo());
+	
+	            case 3:
+	                context$1$0.next = 5;
+	                return regeneratorRuntime.awrap(leavingChapter());
+	
+	            case 5:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38385,21 +38512,24 @@ THREE.OBJLoader.prototype = {
 	                share.show();
 	
 	                nav.disable('index');
-	                nav.disable('video');
 	                nav.show();
 	
-	                context$1$0.next = 24;
+	                context$1$0.next = 23;
 	                return regeneratorRuntime.awrap(opening.start());
 	
-	            case 24:
+	            case 23:
 	                resize();
 	                tick();
+	
+	                currentScene = 'index';
 	
 	                nav.on('change', function (e, newValue, oldValue) {
 	                    if (newValue === 'index') {
 	                        backToIndex();
+	                    } else if (newValue === 'video') {
+	                        showVideo();
 	                    } else if (newValue === 'category') {
-	                        category.show();
+	                        showCategory();
 	                    } else if (newValue === 'music') {
 	                        currentMusic.togglePlayback();
 	                    }
@@ -38407,9 +38537,9 @@ THREE.OBJLoader.prototype = {
 	
 	                category.on('change', function (e, newValue, oldValue) {
 	                    category.hide();
-	                    if (newValue !== oldValue) {
-	                        changeChapter(newValue);
-	                    }
+	                    // if (newValue !== oldValue) {
+	                    changeChapter(newValue);
+	                    // }
 	                });
 	
 	                opening.ontowerclick(function () {
@@ -38711,7 +38841,7 @@ THREE.OBJLoader.prototype = {
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n}\n"
+	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n  font-family: weblysleek, Arial, \"Microsoft YaHei\", \"SC Heiti\";\n}\n"
 
 /***/ },
 /* 7 */
@@ -38791,104 +38921,27 @@ THREE.OBJLoader.prototype = {
 
 	'use strict';
 	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
 	var _this = this;
 	
-	exports.onProgress = onProgress;
-	exports.onError = onError;
-	exports.hide = hide;
+	var _libPromise = __webpack_require__(10);
 	
-	__webpack_require__(10);
+	var _prologue = __webpack_require__(11);
 	
-	var _libPromise = __webpack_require__(12);
-	
-	var _libEnv = __webpack_require__(13);
-	
-	var _libUtil = __webpack_require__(14);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
+	var url = './assets/fonts/weblysleek';
+	_prologue.manager.itemStart(url);
+	window.fontloadcallback = function (base64) {
+	    var fontface = '\n        @font-face {\n            font-family: \'weblysleek\';\n            src: url(' + base64 + ') format(\'truetype\');\n        }\n    ';
+	    var style = document.createElement('style');
+	    style.innerHTML = fontface;
+	    document.querySelector('head').appendChild(style);
+	    _prologue.manager.itemEnd(url);
 	};
 	
-	exports.ready = ready;
-	var loaded = 0;
-	var total = 0;
-	var percent = 0;
-	
-	var manager = new THREE.LoadingManager();
-	exports.manager = manager;
-	manager.onProgress = function (item, _loaded, _total) {
-	    loaded = _loaded;
-	    total = _total;
-	    percent = loaded / total;
-	};
-	
-	function onProgress(xhr) {}
-	
-	;
-	
-	function onError(xhr) {}
-	
-	function hide() {
-	    var _context;
-	
-	    var $prologue;
-	    return regeneratorRuntime.async(function hide$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                $prologue = (_context = $find.call(document, '#prologue'), $addClass).call(_context, 'fadeOut');
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
-	
-	            case 3:
-	                $remove.call($prologue);
-	
-	            case 4:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	var LINE_WIDTH = 2;
-	function renderPercent(_ref) {
-	    var canvas = _ref.canvas;
-	    var ctx2d = _ref.ctx2d;
-	    var width = canvas.width;
-	    var height = canvas.height;
-	
-	    var radius = width / 2;
-	
-	    ctx2d.clearRect(0, 0, width, height);
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.95, -Math.PI * 0.5, Math.PI * 1.5 * percent, false);
-	    ctx2d.lineWidth = LINE_WIDTH;
-	    ctx2d.strokeStyle = '#FFF';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	
-	    ctx2d.beginPath();
-	    ctx2d.arc(radius, radius, radius * 0.95, Math.PI * 1.5 * percent, Math.PI * 1.5, false);
-	    ctx2d.lineWidth = LINE_WIDTH;
-	    ctx2d.strokeStyle = '#333';
-	    ctx2d.stroke();
-	    ctx2d.closePath();
-	}
-	
-	function template() {
-	    return '\n        <div id="prologue">\n            <div class="loading">\n                <canvas></canvas>\n                <div></div>\n                <p></p>\n            </div>\n        </div>\n    ';
-	}
+	var fontLoader = document.createElement('script');
+	fontLoader.src = url;
+	fontLoader.async = true;
 	
 	(function callee$0$0() {
-	    var _context2;
-	
-	    var $loading, $percent, canvas, _canvas$getBoundingClientRect, width, height, ctx2d;
-	
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -38896,46 +38949,9 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
 	
 	            case 2:
+	                document.body.appendChild(fontLoader);
 	
-	                (_context2 = document.body, $append).call(_context2, template());
-	
-	                $loading = (_context2 = $find.call(document, '#prologue .loading'), $show).call(_context2);
-	                $percent = $find.call(document, '#prologue p');
-	                canvas = $find.call(document, '#prologue canvas');
-	                _canvas$getBoundingClientRect = canvas.getBoundingClientRect();
-	                width = _canvas$getBoundingClientRect.width;
-	                height = _canvas$getBoundingClientRect.height;
-	
-	                canvas.width = width * (0, _libEnv.dpr)();
-	                canvas.height = height * (0, _libEnv.dpr)();
-	
-	                ctx2d = canvas.getContext('2d');
-	
-	                void (function checkPercent() {
-	                    if (percent < 1) {
-	                        (0, _libUtil.requestAnimationFrame)(checkPercent);
-	
-	                        percent += 0.0001;
-	                        if (total && loaded < total) {
-	                            percent = Math.min(percent, (loaded + 1) / total * 0.95);
-	                        } else if (total && loaded === total) {
-	                            percent = 1;
-	                        }
-	                    }
-	
-	                    $text.call($percent, parseInt(percent * 100));
-	
-	                    renderPercent({
-	                        canvas: canvas,
-	                        ctx2d: ctx2d
-	                    });
-	
-	                    if (loaded && total && loaded === total) {
-	                        deferred.resolve();
-	                    }
-	                })();
-	
-	            case 13:
+	            case 3:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38944,38 +38960,6 @@ THREE.OBJLoader.prototype = {
 
 /***/ },
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(11);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(4)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n}\n#prologue .loading canvas {\n  width: 136px;\n  height: 136px;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 136px;\n  height: 136px;\n  top: 0;\n  left: 0;\n  background: url(assets/images/loading-logo.png) no-repeat center center;\n}\n#prologue .loading p {\n  font-family: arial;\n  width: 100%;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n"
-
-/***/ },
-/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -39297,7 +39281,199 @@ THREE.OBJLoader.prototype = {
 	module.exports = exports['default'];
 
 /***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.onProgress = onProgress;
+	exports.onError = onError;
+	exports.hide = hide;
+	
+	__webpack_require__(12);
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var loaded = 0;
+	var total = 0;
+	var percent = 0;
+	
+	var manager = new THREE.LoadingManager();
+	exports.manager = manager;
+	manager.onProgress = function (item, _loaded, _total) {
+	    loaded = _loaded;
+	    total = _total;
+	    percent = loaded / total;
+	};
+	
+	function onProgress(xhr) {}
+	
+	;
+	
+	function onError(xhr) {}
+	
+	function hide() {
+	    var _context;
+	
+	    var $prologue;
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                $prologue = (_context = $find.call(document, '#prologue'), $addClass).call(_context, 'fadeOut');
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
+	
+	            case 3:
+	                $remove.call($prologue);
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	var LINE_WIDTH = 2;
+	function renderPercent(_ref) {
+	    var canvas = _ref.canvas;
+	    var ctx2d = _ref.ctx2d;
+	    var width = canvas.width;
+	    var height = canvas.height;
+	
+	    var radius = width / 2;
+	
+	    ctx2d.clearRect(0, 0, width, height);
+	
+	    var offset = -Math.PI / 2;
+	    var angle = Math.PI * 2 * percent;
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.95, offset, angle + offset, false);
+	    ctx2d.lineWidth = LINE_WIDTH;
+	    ctx2d.strokeStyle = '#FFF';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	
+	    ctx2d.beginPath();
+	    ctx2d.arc(radius, radius, radius * 0.95, angle + offset, Math.PI * 2 + offset, false);
+	    ctx2d.lineWidth = LINE_WIDTH;
+	    ctx2d.strokeStyle = '#333';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	}
+	
+	function template() {
+	    return '\n        <div id="prologue">\n            <div class="loading">\n                <canvas></canvas>\n                <div></div>\n                <p></p>\n            </div>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context2;
+	
+	    var $loading, $percent, canvas, _canvas$getBoundingClientRect, width, height, ctx2d;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                (_context2 = document.body, $append).call(_context2, template());
+	
+	                $loading = (_context2 = $find.call(document, '#prologue .loading'), $show).call(_context2);
+	                $percent = $find.call(document, '#prologue p');
+	                canvas = $find.call(document, '#prologue canvas');
+	                _canvas$getBoundingClientRect = canvas.getBoundingClientRect();
+	                width = _canvas$getBoundingClientRect.width;
+	                height = _canvas$getBoundingClientRect.height;
+	
+	                canvas.width = width * (0, _libEnv.dpr)();
+	                canvas.height = height * (0, _libEnv.dpr)();
+	
+	                ctx2d = canvas.getContext('2d');
+	
+	                void (function checkPercent() {
+	                    if (percent < 1) {
+	                        (0, _libUtil.requestAnimationFrame)(checkPercent);
+	
+	                        percent += 0.0001;
+	                        if (total && loaded < total) {
+	                            percent = Math.min(percent, (loaded + 1) / total * 0.95);
+	                        } else if (total && loaded === total) {
+	                            percent = 1;
+	                        }
+	                    }
+	
+	                    $text.call($percent, parseInt(percent * 100));
+	
+	                    renderPercent({
+	                        canvas: canvas,
+	                        ctx2d: ctx2d
+	                    });
+	
+	                    if (loaded && total && loaded === total) {
+	                        deferred.resolve();
+	                    }
+	                })();
+	
+	            case 13:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(13);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./prologue.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
 /* 13 */
+/***/ function(module, exports) {
+
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n}\n#prologue .loading canvas {\n  width: 136px;\n  height: 136px;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 136px;\n  height: 136px;\n  top: 0;\n  left: 0;\n  background: url(assets/images/loading-logo.png) no-repeat center center;\n}\n#prologue .loading p {\n  font-family: arial;\n  width: 100%;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n"
+
+/***/ },
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39322,7 +39498,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39337,7 +39513,7 @@ THREE.OBJLoader.prototype = {
 	exports.cancelAnimationFrame = cancelAnimationFrame;
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39353,13 +39529,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(16);
+	__webpack_require__(17);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -39473,13 +39649,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(17);
+	var content = __webpack_require__(18);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -39499,13 +39675,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title .wrap {\n  width: 569px;\n  height: 432px;\n  position: relative;\n  overflow: hidden;\n}\n#title .wrap img {\n  position: absolute;\n  left: 0;\n  width: 100%;\n  vertical-align: middle;\n  border: 0;\n  font-size: 0;\n  -webkit-transform: translateX(-100%);\n  -ms-transform: translateX(-100%);\n  transform: translateX(-100%);\n}\n#title .wrap.anim img:nth-child(1) {\n  -webkit-transition: -webkit-transform 0.8s ease 0s;\n  -ms-transition: -ms-transform 0.8s ease 0s;\n  transition: transform 0.8s ease 0s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(2) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.2s;\n  -ms-transition: -ms-transform 0.8s ease 0.2s;\n  transition: transform 0.8s ease 0.2s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(3) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.4s;\n  -ms-transition: -ms-transform 0.8s ease 0.4s;\n  transition: transform 0.8s ease 0.4s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(4) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.6s;\n  -ms-transition: -ms-transform 0.8s ease 0.6s;\n  transition: transform 0.8s ease 0.6s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap img:nth-child(1) {\n  top: 0;\n  height: 37px;\n}\n#title .wrap img:nth-child(2) {\n  top: 67px;\n  height: 106px;\n}\n#title .wrap img:nth-child(3) {\n  top: 201px;\n  height: 64px;\n}\n#title .wrap img:nth-child(4) {\n  top: 292px;\n  height: 140px;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title .wrap {\n  width: 569px;\n  height: 432px;\n  position: relative;\n  overflow: hidden;\n}\n#title .wrap img {\n  position: absolute;\n  left: 0;\n  width: 100%;\n  vertical-align: middle;\n  border: 0;\n  font-size: 0;\n  -webkit-transform: translateX(-100%);\n  -ms-transform: translateX(-100%);\n  transform: translateX(-100%);\n}\n#title .wrap.anim img:nth-child(1) {\n  -webkit-transition: -webkit-transform 0.8s ease 0s;\n  -ms-transition: -ms-transform 0.8s ease 0s;\n  transition: transform 0.8s ease 0s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(2) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.2s;\n  -ms-transition: -ms-transform 0.8s ease 0.2s;\n  transition: transform 0.8s ease 0.2s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(3) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.4s;\n  -ms-transition: -ms-transform 0.8s ease 0.4s;\n  transition: transform 0.8s ease 0.4s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap.anim img:nth-child(4) {\n  -webkit-transition: -webkit-transform 0.8s ease 0.6s;\n  -ms-transition: -ms-transform 0.8s ease 0.6s;\n  transition: transform 0.8s ease 0.6s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#title .wrap img:nth-child(1) {\n  top: 0;\n  height: 37px;\n}\n#title .wrap img:nth-child(2) {\n  top: 67px;\n  height: 106px;\n}\n#title .wrap img:nth-child(3) {\n  top: 201px;\n  height: 64px;\n}\n#title .wrap img:nth-child(4) {\n  top: 292px;\n  height: 140px;\n}\n"
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39529,13 +39705,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(19);
+	__webpack_require__(20);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
-	var _category = __webpack_require__(21);
+	var _category = __webpack_require__(22);
 	
 	var Category = _interopRequireWildcard(_category);
 	
@@ -39700,13 +39876,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(20);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -39726,13 +39902,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
-	module.exports = "#clock {\n  opacity: 0;\n  position: absolute;\n  z-index: 99;\n  width: 200px;\n  height: 88px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock.white .category,\n#clock.white .ampm,\n#clock.white .time {\n  color: #FFF;\n  border-color: #FFF;\n}\n#clock.black .category,\n#clock.black .ampm,\n#clock.black .time {\n  color: #1C1C1C;\n  border-color: #1C1C1C;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 25px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  font-size: 16px;\n  text-align: center;\n  border: 1px solid transparent;\n  border-radius: 12px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 26px;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  left: 30px;\n  top: 0;\n  font-size: 100px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n"
+	module.exports = "#clock {\n  opacity: 0;\n  position: absolute;\n  z-index: 99;\n  width: 200px;\n  height: 88px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock.white .category,\n#clock.white .ampm,\n#clock.white .time {\n  color: #FFF;\n  border-color: #FFF;\n}\n#clock.black .category,\n#clock.black .ampm,\n#clock.black .time {\n  color: #1C1C1C;\n  border-color: #1C1C1C;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 25px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  font-size: 16px;\n  text-align: center;\n  border: 1px solid transparent;\n  border-radius: 12px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 26px;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  line-height: 100%;\n  left: 30px;\n  top: 0;\n  font-size: 90px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\n"
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39752,13 +39928,14 @@ THREE.OBJLoader.prototype = {
 	exports.show = show;
 	exports.hide = hide;
 	
-	__webpack_require__(22);
+	__webpack_require__(23);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
 	var categorys = ['雾', '云', '日', '雷', '雨', '星'];
+	var avialables = ['雾', '星'];
 	
 	var length = categorys.length;
 	
@@ -39865,6 +40042,10 @@ THREE.OBJLoader.prototype = {
 	            var _context8;
 	
 	            var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
+	            var name = get(index - 1);
+	
+	            if (avialables.indexOf(name) < 0) return;
+	
 	            (_context8 = (_context8 = $circle, $find).call(_context8, '.c' + index), $addClass).call(_context8, 'hover');
 	
 	            if (eventName === 'mousemove') return;
@@ -39983,13 +40164,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(23);
+	var content = __webpack_require__(24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40009,13 +40190,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 50px;\n  height: 50px;\n  line-height: 50px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 30px;\n  border-radius: 25px;\n  left: 25px;\n  top: 25px;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 50px;\n  height: 50px;\n  line-height: 50px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 30px;\n  border-radius: 25px;\n  left: 25px;\n  top: 25px;\n}\n"
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40030,11 +40211,11 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(25);
+	__webpack_require__(26);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -40123,13 +40304,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(26);
+	var content = __webpack_require__(27);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40149,13 +40330,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share.black span {\n  color: #1C1C1C;\n}\n#share.white span {\n  color: #FFFFFF;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\n#share.black a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share.black span {\n  color: #1C1C1C;\n}\n#share.white span {\n  color: #FFFFFF;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\n#share.black a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40177,13 +40358,11 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(28);
+	__webpack_require__(29);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _menu = __webpack_require__(30);
-	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -40291,13 +40470,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(29);
+	var content = __webpack_require__(30);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40317,13 +40496,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99;\n  overflow: hidden;\n}\n#nav.black a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\n#nav.white a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 110px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n}\n#nav.black a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\n#nav.white a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 110px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\n"
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40331,161 +40510,34 @@ THREE.OBJLoader.prototype = {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
-	exports.onsymbol = onsymbol;
+	
+	var _this = this;
+	
 	exports.show = show;
 	exports.hide = hide;
 	
-	__webpack_require__(2);
+	__webpack_require__(32);
 	
-	__webpack_require__(31);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libPromise = __webpack_require__(12);
-	
-	var _libDom = __webpack_require__(33);
-	
-	var _prologue = __webpack_require__(9);
-	
-	var symbolClickHandlers = [];
-	
-	function onsymbol(handler) {
-	    if (symbolClickHandlers.indexOf(handler) < 0) {
-	        symbolClickHandlers.push(handler);
-	    }
-	}
+	var _prologue = __webpack_require__(11);
 	
 	var $video;
-	var videoEl = document.createElement('video');
-	videoEl.autoplay = false;
-	videoEl.autobuffer = true;
-	videoEl.controls = true;
-	videoEl.crossorigin = 'use-credentials';
-	videoEl.src = './assets/videos/project.mp4';
-	function toggleVideo(isPlayback) {
-	    if (!videoEl.parentNode) {
-	        var rect = $video.getBoundingClientRect();
-	        videoEl.width = rect.width;
-	        videoEl.height = rect.height;
-	        $video.appendChild(videoEl);
-	    }
-	    if (isPlayback) {
-	        videoEl.play();
-	    } else {
-	        videoEl.pause();
-	    }
-	}
-	
-	var $menu;
-	var isBindEvents = false;
 	
 	function show() {
-	    var _context2;
-	
-	    var _context, _context6, times;
+	    var _context;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	                (_context = $video, $show).call(_context);
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(10));
 	
-	            case 2:
-	
-	                if (!$menu) {
-	                    $menu = _libDom.find.call(document, '#menu');
-	                }
-	                if (!$video) {
-	                    $video = (_context = $menu, _libDom.find).call(_context, '.project-video');
-	                }
-	
-	                (_context2 = (_context2 = (_context2 = $menu, _libDom.show).call(_context2), _libDom.removeClass).call(_context2, 'fadeOut'), _libDom.addClass).call(_context2, 'fadeIn');
-	
-	                if (!isBindEvents) {
-	                    isBindEvents = true;
-	
-	                    times = (function () {
-	                        var _times = [];
-	                        var _iteratorNormalCompletion = true;
-	                        var _didIteratorError = false;
-	                        var _iteratorError = undefined;
-	
-	                        try {
-	                            for (var _iterator = new Array(8).fill(0).map(function (v, i) {
-	                                return i;
-	                            })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                                var j = _step.value;
-	
-	                                _times.push('t' + j * 3);
-	                            }
-	                        } catch (err) {
-	                            _didIteratorError = true;
-	                            _iteratorError = err;
-	                        } finally {
-	                            try {
-	                                if (!_iteratorNormalCompletion && _iterator['return']) {
-	                                    _iterator['return']();
-	                                }
-	                            } finally {
-	                                if (_didIteratorError) {
-	                                    throw _iteratorError;
-	                                }
-	                            }
-	                        }
-	
-	                        return _times;
-	                    })();
-	
-	                    times.forEach(function (t) {
-	                        var _context3;
-	
-	                        (_context3 = (_context3 = (_context3 = (_context3 = $menu, _libDom.find).call(_context3, '.trigger[for="' + t + '"]'), _libDom.on).call(_context3, 'mouseenter', function (e) {
-	                            var _context4;
-	
-	                            (_context4 = (_context4 = (_context4 = $menu, _libDom.find).call(_context4, '.hover.' + t), _libDom.removeClass).call(_context4, 'fadeOut'), _libDom.addClass).call(_context4, 'fadeIn');
-	
-	                            (_context4 = $menu, _libDom.find).call(_context4, '.symbol').className = 'symbol ' + t + ' fadeIn';
-	                        }), _libDom.on).call(_context3, 'mouseleave', function (e) {
-	                            var _context5;
-	
-	                            (_context5 = (_context5 = (_context5 = $menu, _libDom.find).call(_context5, '.hover.' + t), _libDom.removeClass).call(_context5, 'fadeIn'), _libDom.addClass).call(_context5, 'fadeOut');
-	
-	                            (_context5 = $menu, _libDom.find).call(_context5, '.symbol').className = 'symbol ' + t + ' fadeOut';
-	                        }), _libDom.on).call(_context3, 'click', function (e) {
-	                            symbolClickHandlers.forEach(function (h) {
-	                                return h(t);
-	                            });
-	                        });
-	                    });
-	
-	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, 'ul'), _libDom.on).call(_context6, 'click', function (e) {
-	                        var target = e.target;
-	                        if (target.tagName.toUpperCase() === 'A' && !_libDom.hasClass.call(target, 'cur')) {
-	                            var _context7;
-	
-	                            var lastTarget = (_context7 = $menu, _libDom.find).call(_context7, 'ul .cur');
-	
-	                            _libDom.removeClass.call(lastTarget, 'cur');
-	                            _libDom.addClass.call(target, 'cur');
-	
-	                            var lastActive = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(lastTarget, 'for'));
-	                            var active = (_context7 = $menu, _libDom.find).call(_context7, '.' + _libDom.attr.call(target, 'for'));
-	
-	                            _libDom.removeClass.call(lastActive, 'cur');
-	                            _libDom.addClass.call(active, 'cur');
-	
-	                            if (_libDom.attr.call(lastTarget, 'for') === 'project-video') {
-	                                toggleVideo(false);
-	                            }
-	
-	                            if (_libDom.attr.call(target, 'for') === 'project-video') {
-	                                toggleVideo(true);
-	                            }
-	                        }
-	                    });
-	
-	                    (_context6 = (_context6 = $menu, _libDom.find).call(_context6, '.close'), _libDom.on).call(_context6, 'click', function (e) {
-	                        hide();
-	                    });
-	                }
+	            case 3:
+	                (_context = $video, $addClass).call(_context, 'show');
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(650));
 	
 	            case 6:
 	            case 'end':
@@ -40495,40 +40547,64 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context8;
+	    var _context2;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                if (!$menu) {
-	                    context$1$0.next = 5;
-	                    break;
-	                }
+	                (_context2 = $video, $addClass).call(_context2, 'hide');
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(650));
 	
-	                (_context8 = (_context8 = $menu, _libDom.removeClass).call(_context8, 'fadeIn'), _libDom.addClass).call(_context8, 'fadeOut');
-	
-	                context$1$0.next = 4;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(400));
+	            case 3:
+	                (_context2 = $video, $removeClass).call(_context2, 'show hide');
 	
 	            case 4:
-	
-	                (_context8 = $menu, _libDom.hide).call(_context8);
-	
-	            case 5:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, this);
 	}
+	
+	var PATH = './assets/images/video';
+	var VIDEO = './assets/videos/project.mp4';
+	function template() {
+	    return '\n        <div id="video">\n            <div class="wrap">\n                <div class="slogan"></div>\n                <section>\n                    <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                    <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous"\n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n                <section>\n                    <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                    <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                    <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                    <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                </section>\n                <div class="banner">\n                    <img src="' + PATH + '/banner.jpg" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/01.jpg" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/02.jpg" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/03.jpg" />\n                </div>\n                <section>\n                    <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                    <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                    <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                    <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                    <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous" \n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n            </div>\n        </div>\n    ';
+	}
+	
+	(function callee$0$0() {
+	    var _context3;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	
+	                $video = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#video');
+	                (_context3 = $video, $on).call(_context3, 'mousewheel', function (e) {
+	                    var detal = e.wheelDelta;
+	                    console.log(detal);
+	                    $video.scrollTop -= detal;
+	                });
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(32);
+	var content = __webpack_require__(33);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40537,8 +40613,8 @@ THREE.OBJLoader.prototype = {
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./menu.less");
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./video.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./video.less");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -40548,225 +40624,10 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	module.exports = "#menu {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  z-index: 9999;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#menu .close {\n  position: absolute;\n  top: 50%;\n  height: 20px;\n  line-height: 20px;\n  margin-top: -10px;\n  left: 50px;\n  color: #858585;\n  padding-left: 24px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANBJREFUeNpibG1tZaAAmAHxKSYyNcsB8TogXgrEwqQawgbE1UB8HojPAbEOEL9lIcEADyCeDMRXgNgIiB/CJFiIdPoEINYF4jwg3o6ugIlEp2/HppCFVKcTYwhBp2MDTKQ6HZdLhID4IhCfIcbpuFzCCGX/h2IGcgx5C8QqUG+ch3qLjVRDQOAnELdAvWMCxFehMUSSITAACo9AaMxMhuYPOVINgYHt0Bgiyov4UizRXiQmFxP0IilFAU4vklqeYPOiEAuZJRvMi6Di8R1AgAEA1cw2FM9y2KsAAAAASUVORK5CYII=) no-repeat left center;\n  font-size: 14px;\n  cursor: pointer;\n}\n#menu .close:hover {\n  color: #FFF;\n  backgorund-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNqslEEKwyAQRbXrkkuU3qH0Nr1HcrJ0JaIIbr2AkK4FF0IpMU5x4cI0jlQYRNTvf44OiTGS3lBKPaDv2iylvFlrF+fcm3N+RW1mjJ2NMXMIYU39M40HlBOt9QgnJwcvIcS9nENZT0JTbQ3aerPIL+uHIi3Wd0Uw1qsiKc8X7/2n1XotToR8A1qklK6kp2WcATAyzgx4KJxyADiAlS927BIpUjzlFC+QsS4RLOKh1RZEzAfcRcSWgipiV1EqEeGxkn+Ux02AAQDsRs7Nfs3EagAAAABJRU5ErkJggg==);\n}\n#menu ul {\n  position: absolute;\n  padding: 0;\n  margin: 0;\n  height: 90px;\n  top: 50%;\n  right: 50px;\n  margin-top: -45px;\n  list-style: none;\n}\n#menu ul li a {\n  display: inline-block;\n  height: 30px;\n  line-height: 30px;\n  color: #858585;\n  font-size: 14px;\n  text-align: center;\n  cursor: pointer;\n}\n#menu ul li a:hover,\n#menu ul li a.cur {\n  color: #FFF;\n}\n#menu .time-circle {\n  display: none;\n  position: absolute;\n  width: 462px;\n  height: 476px;\n  top: 50%;\n  left: 50%;\n  margin-top: -238px;\n  margin-left: -231px;\n  background-image: url(assets/images/time-circle.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n}\n#menu .time-circle.cur {\n  display: block;\n}\n#menu .time-circle .hover {\n  opacity: 0;\n  position: absolute;\n  z-index: 1000;\n  background: url(assets/images/time-circle-hover.png) no-repeat 0 0;\n}\n#menu .time-circle .hover.t0 {\n  background-position: -231px -17px;\n  left: 233px;\n  top: 16px;\n  width: 101px;\n  height: 32px;\n}\n#menu .time-circle .hover.t3 {\n  background-position: -378px -92px;\n  left: 380px;\n  top: 90px;\n  width: 77px;\n  height: 73px;\n}\n#menu .time-circle .hover.t6 {\n  background-position: -419px -239px;\n  left: 422px;\n  top: 238px;\n  width: 33px;\n  height: 98px;\n}\n#menu .time-circle .hover.t9 {\n  background-position: -303px -386px;\n  left: 308px;\n  top: 384px;\n  width: 72px;\n  height: 74px;\n}\n#menu .time-circle .hover.t12 {\n  background-position: -131px -427px;\n  left: 134px;\n  top: 426px;\n  width: 99px;\n  height: 32px;\n}\n#menu .time-circle .hover.t15 {\n  background-position: -7px -313px;\n  left: 10px;\n  top: 313px;\n  width: 77px;\n  height: 71px;\n}\n#menu .time-circle .hover.t18 {\n  background-position: -8px -137px;\n  left: 11px;\n  top: 137px;\n  width: 34px;\n  height: 100px;\n}\n#menu .time-circle .hover.t21 {\n  background-position: -87px -16px;\n  left: 87px;\n  top: 16px;\n  width: 71px;\n  height: 74px;\n}\n#menu .time-circle .trigger {\n  position: absolute;\n  z-index: 1001;\n  width: 45px;\n  height: 45px;\n  cursor: pointer;\n}\n#menu .time-circle .trigger[for=\"t0\"] {\n  left: 212px;\n  top: 0px;\n}\n#menu .time-circle .trigger[for=\"t3\"] {\n  left: 368px;\n  top: 59px;\n}\n#menu .time-circle .trigger[for=\"t6\"] {\n  left: 417px;\n  top: 211px;\n}\n#menu .time-circle .trigger[for=\"t9\"] {\n  left: 365px;\n  top: 367px;\n}\n#menu .time-circle .trigger[for=\"t12\"] {\n  left: 212px;\n  top: 431px;\n}\n#menu .time-circle .trigger[for=\"t15\"] {\n  left: 51px;\n  top: 370px;\n}\n#menu .time-circle .trigger[for=\"t18\"] {\n  left: 0px;\n  top: 212px;\n}\n#menu .time-circle .trigger[for=\"t21\"] {\n  left: 56px;\n  top: 57px;\n}\n#menu .time-circle .symbol {\n  width: 128px;\n  height: 128px;\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -64px 0 0 -64px;\n  z-index: 1000;\n  background: url(assets/images/time-symbol.png) no-repeat 10000px 10000px;\n}\n#menu .time-circle .symbol.t0 {\n  background-position: 0px 0px;\n}\n#menu .time-circle .symbol.t3 {\n  background-position: -128px 0px;\n}\n#menu .time-circle .symbol.t6 {\n  background-position: -256px 0px;\n}\n#menu .time-circle .symbol.t9 {\n  background-position: -384px 0px;\n}\n#menu .time-circle .symbol.t12 {\n  background-position: 0px -128px;\n}\n#menu .time-circle .symbol.t15 {\n  background-position: -128px -128px;\n}\n#menu .time-circle .symbol.t18 {\n  background-position: -256px -128px;\n}\n#menu .time-circle .symbol.t21 {\n  background-position: -384px -128px;\n}\n#menu .project-video {\n  display: none;\n  position: absolute;\n  width: 650px;\n  height: 325px;\n  top: 50%;\n  left: 50%;\n  margin-left: -325px;\n  margin-top: -162px;\n}\n#menu .project-video.cur {\n  display: block;\n}\n#menu .project-about {\n  display: none;\n  -webkit-box-pack: center;\n  -webkit-box-align: center;\n  -ms-flex-pack: center;\n  -ms-flex-align: center;\n  justify-content: center;\n  align-items: center;\n  align-content: center;\n}\n#menu .project-about.cur {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n"
-
-/***/ },
 /* 33 */
 /***/ function(module, exports) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	var _slice = Array.prototype.slice;
-	
-	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-	
-	exports.find = find;
-	exports.findAll = findAll;
-	exports.text = text;
-	exports.show = show;
-	exports.hide = hide;
-	exports.matches = matches;
-	exports.on = on;
-	exports.off = off;
-	exports.addClass = addClass;
-	exports.removeClass = removeClass;
-	exports.toggleClass = toggleClass;
-	exports.hasClass = hasClass;
-	exports.attr = attr;
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-	
-	function parse(argsLength, isGeterSeter, dom) {
-	    for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-	        args[_key - 3] = arguments[_key];
-	    }
-	
-	    if (!isGeterSeter && args.length === argsLength - 1 || isGeterSeter && !(dom instanceof HTMLElement) || argsLength === 0) {
-	        args.unshift(dom);
-	        dom = this === window ? document : this;
-	    }
-	
-	    return [dom].concat(args);
-	}
-	
-	function find() {
-	    var _parse$call = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call2 = _slicedToArray(_parse$call, 2);
-	
-	    var dom = _parse$call2[0];
-	    var selector = _parse$call2[1];
-	
-	    return dom.querySelector(selector);
-	}
-	
-	function findAll() {
-	    var _parse$call3 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call32 = _slicedToArray(_parse$call3, 2);
-	
-	    var dom = _parse$call32[0];
-	    var selector = _parse$call32[1];
-	
-	    return dom.querySelectorAll(selector);
-	}
-	
-	function text() {
-	    var _parse$call4 = parse.call.apply(parse, [this, 1, true].concat(_slice.call(arguments)));
-	
-	    var _parse$call42 = _slicedToArray(_parse$call4, 2);
-	
-	    var dom = _parse$call42[0];
-	    var content = _parse$call42[1];
-	
-	    if (typeof content === 'undefined') {
-	        return dom.textContent;
-	    } else {
-	        dom.textContent = content;
-	        return dom;
-	    }
-	}
-	
-	function show() {
-	    var _parse$call5 = parse.call.apply(parse, [this, 0, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call52 = _slicedToArray(_parse$call5, 1);
-	
-	    var dom = _parse$call52[0];
-	
-	    dom.style.display = dom._originStyleDisplay || 'block';
-	    return dom;
-	}
-	
-	function hide() {
-	    var _parse$call6 = parse.call.apply(parse, [this, 0, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call62 = _slicedToArray(_parse$call6, 1);
-	
-	    var dom = _parse$call62[0];
-	
-	    dom._originStyleDisplay = dom.style.display;
-	    dom.style.display = 'none';
-	    return dom;
-	}
-	
-	function matches() {
-	    var _parse$call7 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call72 = _slicedToArray(_parse$call7, 3);
-	
-	    var dom = _parse$call72[0];
-	    var selector = _parse$call72[1];
-	    var parent = _parse$call72[2];
-	
-	    var m;
-	    if (parent === document) {
-	        m = dom.matches || dom.webkitMatchesSelector || dom.mozMatchesSelector || dom.msMatchesSelector;
-	    }
-	    if (!m || parent !== document) {
-	        m = function (s) {
-	            return [].concat(_toConsumableArray(parent.querySelectorAll(s))).indexOf(this) !== -1;
-	        };
-	    }
-	
-	    return m.call(dom, selector);
-	}
-	
-	function on() {
-	    var _parse$call8 = parse.call.apply(parse, [this, 2, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call82 = _slicedToArray(_parse$call8, 3);
-	
-	    var dom = _parse$call82[0];
-	    var event = _parse$call82[1];
-	    var handler = _parse$call82[2];
-	
-	    dom.addEventListener(event, handler, false);
-	    return dom;
-	}
-	
-	function off() {
-	    var _parse$call9 = parse.call.apply(parse, [this, 2, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call92 = _slicedToArray(_parse$call9, 3);
-	
-	    var dom = _parse$call92[0];
-	    var event = _parse$call92[1];
-	    var handler = _parse$call92[2];
-	
-	    dom.removeEventListener(event, handler);
-	    return dom;
-	}
-	
-	function addClass() {
-	    var _parse$call10 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call102 = _slicedToArray(_parse$call10, 2);
-	
-	    var dom = _parse$call102[0];
-	    var className = _parse$call102[1];
-	
-	    dom.classList.add(className);
-	    return dom;
-	}
-	
-	function removeClass() {
-	    var _parse$call11 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call112 = _slicedToArray(_parse$call11, 2);
-	
-	    var dom = _parse$call112[0];
-	    var className = _parse$call112[1];
-	
-	    dom.classList.remove(className);
-	    return dom;
-	}
-	
-	function toggleClass() {
-	    var _parse$call12 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call122 = _slicedToArray(_parse$call12, 2);
-	
-	    var dom = _parse$call122[0];
-	    var className = _parse$call122[1];
-	
-	    dom.classList.toggle(className);
-	    return dom;
-	}
-	
-	function hasClass() {
-	    var _parse$call13 = parse.call.apply(parse, [this, 1, false].concat(_slice.call(arguments)));
-	
-	    var _parse$call132 = _slicedToArray(_parse$call13, 2);
-	
-	    var dom = _parse$call132[0];
-	    var className = _parse$call132[1];
-	
-	    return dom.classList.contains(className);
-	}
-	
-	function attr() {
-	    var _parse$call14 = parse.call.apply(parse, [this, 2, true].concat(_slice.call(arguments)));
-	
-	    var _parse$call142 = _slicedToArray(_parse$call14, 3);
-	
-	    var dom = _parse$call142[0];
-	    var name = _parse$call142[1];
-	    var value = _parse$call142[2];
-	
-	    if (typeof value === 'undefined') {
-	        return dom.getAttribute(name);
-	    } else {
-	        dom.setAttribute(name, value);
-	        return dom;
-	    }
-	}
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 9999;\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .wrap {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .slogan {\n  width: 569px;\n  height: 420px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 480px;\n  font-size: 16px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 1120px;\n  height: 660px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px 0;\n}\n"
 
 /***/ },
 /* 34 */
@@ -40782,7 +40643,7 @@ THREE.OBJLoader.prototype = {
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
 	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 	
@@ -40901,6 +40762,17 @@ THREE.OBJLoader.prototype = {
 	            bufferLoader.load();
 	        }
 	    }, {
+	        key: "getTime",
+	        value: function getTime() {
+	            var time;
+	            if (this.isPlaying) {
+	                time = this.startOffset + audioContext.currentTime - this.startTime;
+	            } else {
+	                time = this.startOffset;
+	            }
+	            return time % this.buffer.duration;
+	        }
+	    }, {
 	        key: "togglePlayback",
 	        value: function togglePlayback(play) {
 	            if (typeof play === 'undefined') {
@@ -40914,6 +40786,7 @@ THREE.OBJLoader.prototype = {
 	                console.debug('paused at', this.startOffset);
 	                // Save the position of the play head.
 	            } else if (play && !this.isPlaying) {
+	                    console.log(audioContext);
 	                    this.startTime = audioContext.currentTime;
 	                    console.debug('started at', this.startOffset);
 	                    this.source = audioContext.createBufferSource();
@@ -40981,11 +40854,11 @@ THREE.OBJLoader.prototype = {
 	
 	__webpack_require__(36);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -41123,11 +40996,11 @@ THREE.OBJLoader.prototype = {
 	            case 40:
 	                document.body.appendChild(domElement);
 	
-	                window.scene = scene;
-	                window.camera = camera;
-	                window.renderer = renderer;
+	                // window.scene = scene;
+	                // window.camera = camera;
+	                // window.renderer = renderer;
 	
-	            case 44:
+	            case 41:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41335,7 +41208,7 @@ THREE.OBJLoader.prototype = {
 	  value: true
 	});
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -41361,9 +41234,9 @@ THREE.OBJLoader.prototype = {
 	
 	exports.resize = resize;
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
 	var VIEW_ANGLE = 60;
 	var NEAR = 1;
@@ -41428,9 +41301,9 @@ THREE.OBJLoader.prototype = {
 	
 	exports.resize = resize;
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 0;
@@ -41498,9 +41371,9 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -41596,11 +41469,11 @@ THREE.OBJLoader.prototype = {
 	exports.flyOut = flyOut;
 	exports.init = init;
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
-	var _libUtil = __webpack_require__(14);
+	var _libUtil = __webpack_require__(15);
 	
 	var camera;
 	
@@ -41641,6 +41514,7 @@ THREE.OBJLoader.prototype = {
 	    flyInDeferred = flyInDeferred || (0, _libPromise.defer)();
 	
 	    lonStep += 0.02;
+	    lonStep = Math.min(lonStep, 1);
 	    raduis -= 0.2;
 	    raduis = Math.max(raduis, 0);
 	
@@ -41662,6 +41536,7 @@ THREE.OBJLoader.prototype = {
 	
 	    isRotation = true;
 	    lonStep += 0.02;
+	    lonStep = Math.min(lonStep, 1);
 	    raduis += 0.2;
 	    raduis = Math.min(raduis, initRaduis);
 	
@@ -41693,9 +41568,9 @@ THREE.OBJLoader.prototype = {
 	    value: true
 	});
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -41754,13 +41629,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -41823,13 +41698,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -41916,13 +41791,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(18);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -42036,9 +41911,9 @@ THREE.OBJLoader.prototype = {
 	
 	__webpack_require__(48);
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
 	var _scene = __webpack_require__(50);
 	
@@ -42056,11 +41931,920 @@ THREE.OBJLoader.prototype = {
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(54);
+	var _tree = __webpack_require__(54);
+	
+	var Tree = _interopRequireWildcard(_tree);
+	
+	var _ground = __webpack_require__(56);
+	
+	var Ground = _interopRequireWildcard(_ground);
+	
+	var _grass = __webpack_require__(57);
+	
+	var Grass = _interopRequireWildcard(_grass);
+	
+	var _leaf = __webpack_require__(58);
+	
+	var Leaf = _interopRequireWildcard(_leaf);
+	
+	var _controls = __webpack_require__(59);
+	
+	var Controls = _interopRequireWildcard(_controls);
+	
+	var scene, camera, renderer, domElement, light, visualizer, tree, ground, grass, leaf;
+	
+	var init = function init() {
+	    return regeneratorRuntime.async(function init$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Tree.ready(), Ground.ready(), Leaf.ready(), Light.ready()]));
+	
+	            case 2:
+	
+	                scene = Scene.scene;
+	                camera = Camera.camera;
+	                renderer = Renderer.renderer;
+	                domElement = Renderer.domElement;
+	                tree = Tree.object;
+	                ground = Ground.object;
+	                grass = Grass.object;
+	                leaf = Leaf.object;
+	                light = Light.light;
+	
+	                scene.add(camera);
+	                scene.add(light);
+	                scene.add(tree);
+	                scene.add(ground);
+	                scene.add(grass);
+	                scene.add(leaf);
+	
+	                light.position.set(-100, 100, 100);
+	                camera.position.set(0, -15, 180);
+	                camera.rotation.set(0.15, 0, 0);
+	                tree.position.set(0, -29, 0);
+	                ground.position.set(0, -40, -2);
+	                grass.position.set(-100, -34, -80);
+	                leaf.position.set(-10, 35, 20);
+	
+	                // await Controls.init(camera, renderer);
+	                context$1$0.next = 26;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 26:
+	
+	                domElement.setAttribute('scene', 'chapters');
+	                document.body.appendChild(domElement);
+	
+	                window.scene = scene;
+	                window.camera = camera;
+	                window.renderer = renderer;
+	
+	            case 31:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.init = init;
+	
+	function resize() {
+	    Renderer.resize();
+	    Camera.resize();
+	}
+	
+	var downNote = [21, 35, 49, 60, 67, 80, 102, 116];
+	var downNote1 = [];
+	function renderLeafDown() {
+	    var time = visualizer.getTime();
+	    if (downNote.length === 0) {
+	        downNote = downNote1.slice(0);
+	        downNote1 = [];
+	    }
+	    if (Math.floor(time) === downNote[0]) {
+	        downNote1.push(downNote.shift());
+	        Leaf.down();
+	    }
+	    Leaf.render();
+	}
+	
+	function render() {
+	    renderLeafDown();
+	    Camera.render();
+	    // Controls.render();
+	    renderer.render(scene, camera);
+	}
+	
+	var starting;
+	var start = function start() {
+	    return regeneratorRuntime.async(function start$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	
+	            case 1:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.start = start;
+	var isEntering;
+	
+	exports.isEntering = isEntering;
+	var onenteringHandlers = [];
+	
+	function onentering(handler) {
+	    if (onenteringHandlers.indexOf(handler) < 0) {
+	        onenteringHandlers.push(handler);
+	    }
+	}
+	
+	var entering = function entering(_visualizer) {
+	    return regeneratorRuntime.async(function entering$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                visualizer = _visualizer;
+	                starting = false;
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(show());
+	
+	            case 4:
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(visualizer.ready());
+	
+	            case 6:
+	                exports.isEntering = isEntering = true;
+	                onenteringHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	                visualizer.togglePlayback(true);
+	
+	            case 9:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.entering = entering;
+	var onleavingHandlers = [];
+	
+	function onleaving(handler) {
+	    if (onleavingHandlers.indexOf(handler) < 0) {
+	        onleavingHandlers.push(handler);
+	    }
+	}
+	
+	var leaving = function leaving() {
+	    return regeneratorRuntime.async(function leaving$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(hide());
+	
+	            case 3:
+	                exports.isEntering = isEntering = false;
+	                onleavingHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	                visualizer.togglePlayback(false);
+	
+	            case 6:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.leaving = leaving;
+	var show = function show() {
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.display = 'block';
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(50));
+	
+	            case 3:
+	
+	                domElement.style.transition = 'opacity 0.4s ease-out 0s';
+	                domElement.style.opacity = 1;
+	
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.show = show;
+	var hide = function hide() {
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.transition = 'opacity 0.4s ease-in 0s';
+	                domElement.style.opacity = 0;
+	
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 4:
+	
+	                domElement.style.display = 'none';
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	exports.hide = hide;
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(49);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 49 */
+/***/ function(module, exports) {
+
+	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var COLOR = 0x000000;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var scene = new THREE.Scene();
+	exports.scene = scene;
+	scene.fog = new THREE.FogExp2(COLOR, 0.005);
+	
+	deferred.resolve();
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	exports.render = render;
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var FOV = 45;
+	var NEAR = 1;
+	var FAR = 10000;
+	var ORTH_NEAR = -500;
+	var ORTH_FAR = 1000;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var camera;
+	
+	exports.camera = camera;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    camera.updateProjectionMatrix();
+	}
+	
+	function render() {
+	    camera.updateProjectionMatrix();
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                // camera = new THREE.OrthographicCamera(w / -2,  w / 2, h / 2,  h / -2, ORTH_NEAR, ORTH_FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
+	                exports.camera = camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
+	                camera.position.set(X, Y, Z); //放置位置
+	                camera.updateProjectionMatrix();
+	
+	                deferred.resolve();
+	
+	            case 8:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var COLOR = 0x000000;
+	var ALPHA = 1;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var renderer;
+	exports.renderer = renderer;
+	var domElement;
+	
+	exports.domElement = domElement;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    renderer.setSize(w, h);
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.renderer = renderer = new THREE.WebGLRenderer();
+	                renderer.setSize(w, h);
+	                renderer.setPixelRatio(window.devicePixelRatio);
+	                renderer.setClearColor(COLOR, ALPHA);
+	
+	                exports.domElement = domElement = renderer.domElement;
+	
+	                deferred.resolve();
+	
+	            case 10:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var COLOR = 0xFFFFFF;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var light = new THREE.PointLight(COLOR);
+	exports.light = light;
+	light.position.set(X, Y, Z);
+	
+	deferred.resolve();
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(55);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	loader.load('assets/obj/01_fog/tree.js', function (geometry, materials) {
+	    materials[0].color.setHex(0xAAAAAA);
+	    materials[0].emissive.setHex(0x6F5811);
+	    materials[1].color.setHex(0x00F954);
+	    materials[1].emissive.setHex(0x36D140);
+	
+	    var material = new THREE.MeshFaceMaterial(materials);
+	    var mesh = new THREE.Mesh(geometry, material);
+	    mesh.rotation.set(0.3, 0, 0);
+	    mesh.scale.set(1, 1, 1);
+	
+	    exports.object = object = new THREE.Object3D();
+	    object.add(mesh);
+	
+	    deferred.resolve();
+	}, _prologue.onProgress, _prologue.onError);
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	function cubicBezierFunction(p1x, p1y, p2x, p2y) {
+	    var ZERO_LIMIT = 1e-6;
+	    // Calculate the polynomial coefficients,
+	    // implicit first and last control points are (0,0) and (1,1).
+	    var ax = 3 * p1x - 3 * p2x + 1,
+	        bx = 3 * p2x - 6 * p1x,
+	        cx = 3 * p1x;
+	
+	    var ay = 3 * p1y - 3 * p2y + 1,
+	        by = 3 * p2y - 6 * p1y,
+	        cy = 3 * p1y;
+	
+	    function sampleCurveDerivativeX(t) {
+	        // `ax t^3 + bx t^2 + cx t' expanded using Horner 's rule.
+	        return (3 * ax * t + 2 * bx) * t + cx;
+	    }
+	
+	    function sampleCurveX(t) {
+	        return ((ax * t + bx) * t + cx) * t;
+	    }
+	
+	    function sampleCurveY(t) {
+	        return ((ay * t + by) * t + cy) * t;
+	    }
+	
+	    // Given an x value, find a parametric value it came from.
+	    function solveCurveX(x) {
+	        var t2 = x,
+	            derivative,
+	            x2;
+	
+	        // https://trac.webkit.org/browser/trunk/Source/WebCore/platform/animation
+	        // First try a few iterations of Newton's method -- normally very fast.
+	        // http://en.wikipedia.org/wiki/Newton's_method
+	        for (var i = 0; i < 8; i++) {
+	            // f(t)-x=0
+	            x2 = sampleCurveX(t2) - x;
+	            if (Math.abs(x2) < ZERO_LIMIT) {
+	                return t2;
+	            }
+	            derivative = sampleCurveDerivativeX(t2);
+	            // == 0, failure
+	            if (Math.abs(derivative) < ZERO_LIMIT) {
+	                break;
+	            }
+	            t2 -= x2 / derivative;
+	        }
+	
+	        // Fall back to the bisection method for reliability.
+	        // bisection
+	        // http://en.wikipedia.org/wiki/Bisection_method
+	        var t1 = 1,
+	            t0 = 0;
+	        t2 = x;
+	        while (t1 > t0) {
+	            x2 = sampleCurveX(t2) - x;
+	            if (Math.abs(x2) < ZERO_LIMIT) {
+	                return t2;
+	            }
+	            if (x2 > 0) {
+	                t1 = t2;
+	            } else {
+	                t0 = t2;
+	            }
+	            t2 = (t1 + t0) / 2;
+	        }
+	
+	        // Failure
+	        return t2;
+	    }
+	
+	    function solve(x) {
+	        return sampleCurveY(solveCurveX(x));
+	    }
+	
+	    return solve;
+	}
+	
+	/**
+	 * @namespace lib 
+	 */
+	
+	/**
+	 * @callback BezierFunction
+	 * @param {Number} x x坐标，0~1之间的数
+	 * @return {Number} y坐标
+	 */
+	
+	/**
+	 * 生成贝塞尔曲线函数
+	 * @method cubicbezier
+	 * @memberOf lib
+	 * @param {Number} p1x 第一个控制点x坐标
+	 * @param {Number} p1y 第一个控制点y坐标
+	 * @param {Number} p2x 第二个控制点x坐标
+	 * @param {Number} p2y 第二个控制点y坐标
+	 * @property {BezierFunction} linear 直线函数
+	 * @property {BezierFunction} ease ease函数
+	 * @property {BezierFunction} easeIn easeIn函数
+	 * @property {BezierFunction} easeOut easeOut函数
+	 * @property {BezierFunction} easeInOut easeInOut函数
+	 * @return {BezierFunction} 贝塞尔曲线函数
+	 */
+	exports["default"] = cubicBezierFunction;
+	
+	cubicBezierFunction.linear = cubicBezierFunction(0, 0, 1, 1);
+	cubicBezierFunction.ease = cubicBezierFunction(.25, .1, .25, 1);
+	cubicBezierFunction.easeIn = cubicBezierFunction(.42, 0, 1, 1);
+	cubicBezierFunction.easeOut = cubicBezierFunction(0, 0, .58, 1);
+	cubicBezierFunction.easeInOut = cubicBezierFunction(.42, 0, .58, 1);
+	module.exports = exports["default"];
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(55);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	loader.load('assets/obj/01_fog/ground.js', function (geometry, materials) {
+	    materials[0].color.setHex(0xBAC5B9);
+	    materials[0].emissive.setHex(0x0C0A05);
+	    materials[0].fog = true;
+	    materials[0].vertexColors = THREE.VertexColors;
+	    materials[0].wireframe = false;
+	    materials[0].side = THREE.DoubleSide;
+	
+	    var material = new THREE.MeshFaceMaterial(materials);
+	    exports.object = object = new THREE.Mesh(geometry, material);
+	    object.scale.set(5, 1, 5);
+	    deferred.resolve();
+	}, _prologue.onProgress, _prologue.onError);
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(55);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var render = function render() {};
+	
+	exports.render = render;
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	loader.load('assets/obj/01_fog/grass.js', function (geometry, materials) {
+	    exports.object = object = new THREE.Object3D();
+	
+	    materials.forEach(function (m) {
+	        m.fog = true;
+	    });
+	
+	    var material = new THREE.MeshFaceMaterial(materials);
+	
+	    for (var x = 0; x < 5; x++) {
+	        for (var z = 0; z < 6; z++) {
+	            var mesh = new THREE.SkinnedMesh(geometry.clone(), material);
+	            mesh.position.set(x * 50, 0, z * 40);
+	            mesh.scale.set(20, 20, 20);
+	            mesh.rotation.set(0, Math.PI / 2, 0);
+	            object.add(mesh);
+	        }
+	    }
+	
+	    deferred.resolve();
+	}, _prologue.onProgress, _prologue.onError);
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.down = down;
+	exports.render = render;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(55);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var geometry;
+	var material;
+	var mesh;
+	var leafs = [];
+	
+	function down() {
+	    var count = Math.floor(3 + Math.random() * 3);
+	    for (var i = 0; i < count; i++) {
+	        var leaf = mesh.clone();
+	        var scale = Math.random() * 1.5 + 1.5;
+	        leaf.scale.set(scale, scale, scale);
+	        leaf.rotation.set(Math.random(), Math.random(), Math.random());
+	        leaf.position.set(Math.random() * 5, Math.random() * 5, Math.random() * 5);
+	        leaf.yspeed = Math.random() * 0.1 + 0.1;
+	        leaf.xspeed = -Math.random() * 0.05 - 0.1;
+	        leaf.zspeed = Math.random() * 0.05 * Math.sign(Math.random() - 0.5);
+	        leafs.push(leaf);
+	        object.add(leaf);
+	    }
+	}
+	
+	function render() {
+	    if (!leafs.length) return;
+	
+	    var _leafs = leafs.slice();
+	    for (var i = 0; i < _leafs.length; i++) {
+	        var leaf = _leafs[i];
+	        leaf.rotation.x += Math.random() * 0.005;
+	        leaf.rotation.y += Math.random() * 0.001;
+	        leaf.rotation.z += Math.random() * 0.01;
+	        leaf.position.y -= leaf.yspeed;
+	        leaf.position.x += leaf.xspeed;
+	        leaf.position.z += leaf.zspeed;
+	        if (leaf.position.y <= -110) {
+	            leafs.splice(leafs.indexOf(leaf), 1);
+	            object.remove(leaf);
+	        }
+	    }
+	}
+	
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	loader.load('assets/obj/01_fog/leaf.js', function (_geometry, _materials) {
+	    geometry = _geometry;
+	    _materials[0].color.setHex(0x00F954);
+	    _materials[0].emissive.setHex(0x36D140);
+	    _materials[0].side = THREE.DoubleSide;
+	    material = new THREE.MeshFaceMaterial(_materials);
+	    mesh = new THREE.Mesh(geometry, material);
+	    exports.object = object = new THREE.Object3D();
+	    deferred.resolve();
+	}, _prologue.onProgress, _prologue.onError);
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.init = init;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libCubicbezier = __webpack_require__(55);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var controls;
+	
+	exports.controls = controls;
+	var render = function render() {
+	    return controls.update();
+	};
+	
+	exports.render = render;
+	var deferred = (0, _libPromise.defer)();
+	
+	function init(camera, renderer) {
+	    exports.controls = controls = new THREE.OrbitControls(camera, renderer.domElement);
+	    controls.enableDamping = true;
+	    controls.dampingFactor = 0.25;
+	    controls.enableZoom = true;
+	    deferred.resolve();
+	}
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	exports.render = render;
+	exports.onentering = onentering;
+	exports.onleaving = onleaving;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(61);
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _scene = __webpack_require__(63);
+	
+	var Scene = _interopRequireWildcard(_scene);
+	
+	var _camera = __webpack_require__(64);
+	
+	var Camera = _interopRequireWildcard(_camera);
+	
+	var _renderer = __webpack_require__(65);
+	
+	var Renderer = _interopRequireWildcard(_renderer);
+	
+	var _light = __webpack_require__(66);
+	
+	var Light = _interopRequireWildcard(_light);
+	
+	var _galaxy = __webpack_require__(67);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(56);
+	var _controls = __webpack_require__(68);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -42256,13 +43040,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 48 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(49);
+	var content = __webpack_require__(62);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -42282,13 +43066,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 49 */
+/* 62 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 50 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42297,7 +43081,7 @@ THREE.OBJLoader.prototype = {
 	  value: true
 	});
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
 	var COLOR = 0x333333;
 	
@@ -42314,7 +43098,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 51 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42328,9 +43112,9 @@ THREE.OBJLoader.prototype = {
 	exports.resize = resize;
 	exports.render = render;
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
 	var FOV = 45;
 	var NEAR = 1;
@@ -42389,7 +43173,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 52 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42402,9 +43186,9 @@ THREE.OBJLoader.prototype = {
 	
 	exports.resize = resize;
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
 	var COLOR = 0x000000;
 	var ALPHA = 1;
@@ -42457,7 +43241,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 53 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42466,7 +43250,7 @@ THREE.OBJLoader.prototype = {
 	  value: true
 	});
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
 	var COLOR = 0xFFFFFF;
 	var X = 0;
@@ -42486,7 +43270,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 54 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42501,17 +43285,17 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
-	var _libEnv = __webpack_require__(13);
+	var _libEnv = __webpack_require__(14);
 	
 	var _libCubicbezier = __webpack_require__(55);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(14);
+	var _libUtil = __webpack_require__(15);
 	
-	var _prologue = __webpack_require__(9);
+	var _prologue = __webpack_require__(11);
 	
 	var degToRad = THREE.Math.degToRad;
 	
@@ -42655,128 +43439,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 55 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	function cubicBezierFunction(p1x, p1y, p2x, p2y) {
-	    var ZERO_LIMIT = 1e-6;
-	    // Calculate the polynomial coefficients,
-	    // implicit first and last control points are (0,0) and (1,1).
-	    var ax = 3 * p1x - 3 * p2x + 1,
-	        bx = 3 * p2x - 6 * p1x,
-	        cx = 3 * p1x;
-	
-	    var ay = 3 * p1y - 3 * p2y + 1,
-	        by = 3 * p2y - 6 * p1y,
-	        cy = 3 * p1y;
-	
-	    function sampleCurveDerivativeX(t) {
-	        // `ax t^3 + bx t^2 + cx t' expanded using Horner 's rule.
-	        return (3 * ax * t + 2 * bx) * t + cx;
-	    }
-	
-	    function sampleCurveX(t) {
-	        return ((ax * t + bx) * t + cx) * t;
-	    }
-	
-	    function sampleCurveY(t) {
-	        return ((ay * t + by) * t + cy) * t;
-	    }
-	
-	    // Given an x value, find a parametric value it came from.
-	    function solveCurveX(x) {
-	        var t2 = x,
-	            derivative,
-	            x2;
-	
-	        // https://trac.webkit.org/browser/trunk/Source/WebCore/platform/animation
-	        // First try a few iterations of Newton's method -- normally very fast.
-	        // http://en.wikipedia.org/wiki/Newton's_method
-	        for (var i = 0; i < 8; i++) {
-	            // f(t)-x=0
-	            x2 = sampleCurveX(t2) - x;
-	            if (Math.abs(x2) < ZERO_LIMIT) {
-	                return t2;
-	            }
-	            derivative = sampleCurveDerivativeX(t2);
-	            // == 0, failure
-	            if (Math.abs(derivative) < ZERO_LIMIT) {
-	                break;
-	            }
-	            t2 -= x2 / derivative;
-	        }
-	
-	        // Fall back to the bisection method for reliability.
-	        // bisection
-	        // http://en.wikipedia.org/wiki/Bisection_method
-	        var t1 = 1,
-	            t0 = 0;
-	        t2 = x;
-	        while (t1 > t0) {
-	            x2 = sampleCurveX(t2) - x;
-	            if (Math.abs(x2) < ZERO_LIMIT) {
-	                return t2;
-	            }
-	            if (x2 > 0) {
-	                t1 = t2;
-	            } else {
-	                t0 = t2;
-	            }
-	            t2 = (t1 + t0) / 2;
-	        }
-	
-	        // Failure
-	        return t2;
-	    }
-	
-	    function solve(x) {
-	        return sampleCurveY(solveCurveX(x));
-	    }
-	
-	    return solve;
-	}
-	
-	/**
-	 * @namespace lib 
-	 */
-	
-	/**
-	 * @callback BezierFunction
-	 * @param {Number} x x坐标，0~1之间的数
-	 * @return {Number} y坐标
-	 */
-	
-	/**
-	 * 生成贝塞尔曲线函数
-	 * @method cubicbezier
-	 * @memberOf lib
-	 * @param {Number} p1x 第一个控制点x坐标
-	 * @param {Number} p1y 第一个控制点y坐标
-	 * @param {Number} p2x 第二个控制点x坐标
-	 * @param {Number} p2y 第二个控制点y坐标
-	 * @property {BezierFunction} linear 直线函数
-	 * @property {BezierFunction} ease ease函数
-	 * @property {BezierFunction} easeIn easeIn函数
-	 * @property {BezierFunction} easeOut easeOut函数
-	 * @property {BezierFunction} easeInOut easeInOut函数
-	 * @return {BezierFunction} 贝塞尔曲线函数
-	 */
-	exports["default"] = cubicBezierFunction;
-	
-	cubicBezierFunction.linear = cubicBezierFunction(0, 0, 1, 1);
-	cubicBezierFunction.ease = cubicBezierFunction(.25, .1, .25, 1);
-	cubicBezierFunction.easeIn = cubicBezierFunction(.42, 0, 1, 1);
-	cubicBezierFunction.easeOut = cubicBezierFunction(0, 0, .58, 1);
-	cubicBezierFunction.easeInOut = cubicBezierFunction(.42, 0, .58, 1);
-	module.exports = exports["default"];
-
-/***/ },
-/* 56 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42788,13 +43451,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _libPromise = __webpack_require__(12);
+	var _libPromise = __webpack_require__(10);
 	
 	var _libCubicbezier = __webpack_require__(55);
 	
 	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
 	
-	var _libUtil = __webpack_require__(14);
+	var _libUtil = __webpack_require__(15);
 	
 	var controls;
 	
