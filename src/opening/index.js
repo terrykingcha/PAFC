@@ -135,9 +135,9 @@ export var init = async () => {
     await pageLoad();
     document.body.appendChild(domElement);
 
-    window.scene = scene;
-    window.camera = camera;
-    window.renderer = renderer;
+    // window.scene = scene;
+    // window.camera = camera;
+    // window.renderer = renderer;
 }
 
 export function resize() {

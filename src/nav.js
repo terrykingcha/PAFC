@@ -1,6 +1,5 @@
 import './nav.less';
 import {defer, domReady} from './lib/promise';
-import {show as showMenu} from './menu';
 import * as Clock from './clock';
 
 var deferred = defer();

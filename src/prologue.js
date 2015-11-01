@@ -37,15 +37,18 @@ function renderPercent({
 
     ctx2d.clearRect(0, 0, width, height);
 
+    var offset = -Math.PI / 2;
+    var angle = Math.PI * 2 * percent;
+
     ctx2d.beginPath();
-    ctx2d.arc(radius, radius, radius * 0.95, -Math.PI *0.5, Math.PI * 1.5 * percent, false);
+    ctx2d.arc(radius, radius, radius * 0.95, offset, angle + offset, false);
     ctx2d.lineWidth = LINE_WIDTH;
     ctx2d.strokeStyle = '#FFF';
     ctx2d.stroke();
     ctx2d.closePath();
 
     ctx2d.beginPath();
-    ctx2d.arc(radius, radius, radius * 0.95,  Math.PI * 1.5 * percent, Math.PI * 1.5, false);
+    ctx2d.arc(radius, radius, radius * 0.95, angle + offset, Math.PI * 2 + offset, false);
     ctx2d.lineWidth = LINE_WIDTH;
     ctx2d.strokeStyle = '#333';
     ctx2d.stroke();

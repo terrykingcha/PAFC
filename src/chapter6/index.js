@@ -6,23 +6,17 @@ import * as Scene from './scene';
 import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
-import * as Tree from './tree';
-import * as Ground from './ground';
-import * as Grass from './grass';
-import * as Leaf from './leaf';
+import * as Galaxy from './galaxy';
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, visualizer,
-    tree, ground, grass, leaf;
+var scene, camera, renderer, domElement, light, galaxy, visualizer;
 
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
         Camera.ready(),
         Renderer.ready(),
-        Tree.ready(),
-        Ground.ready(),
-        Leaf.ready(),
+        Galaxy.ready(),
         Light.ready()
     ]);
 
@@ -30,26 +24,15 @@ export var init = async () => {
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    tree = Tree.object;
-    ground = Ground.object;
-    grass = Grass.object;
-    leaf = Leaf.object;
+    galaxy = Galaxy.object;
     light = Light.light;
 
     scene.add(camera);
     scene.add(light);
-    scene.add(tree);
-    scene.add(ground);
-    scene.add(grass);
-    scene.add(leaf);
+    scene.add(galaxy);
 
-    light.position.set(-100, 100, 100);
-    camera.position.set(0, -15, 180);
-    camera.rotation.set(0.15, 0, 0);
-    tree.position.set(0, -29, 0);
-    ground.position.set(0, -40, -2);
-    grass.position.set(-100, -34, -80);
-    leaf.position.set(-10, 35, 20);
+    light.position.set(-10, 10, 10);
+    camera.position.set(0, 0, 10);
     
     // await Controls.init(camera, renderer);
     await pageLoad();
@@ -57,33 +40,19 @@ export var init = async () => {
     domElement.setAttribute('scene', 'chapters');
     document.body.appendChild(domElement);
 
-    window.scene = scene;
-    window.camera = camera;
-    window.renderer = renderer;
+    // window.scene = scene;
+    // window.camera = camera;
+    // window.renderer = renderer;
 }
+
 
 export function resize() {
     Renderer.resize();
     Camera.resize();
 }
 
-var downNote = [21, 35, 49, 60, 67, 80, 102, 116];
-var downNote1 = [];
-function renderLeafDown() {
-    var time = visualizer.getTime();
-    if (downNote.length === 0) {
-        downNote = downNote1.slice(0);
-        downNote1 = [];
-    }
-    if (Math.floor(time) === downNote[0]) {
-        downNote1.push(downNote.shift());
-        Leaf.down();
-    }
-    Leaf.render();
-}
-
 export function render() {
-    renderLeafDown();
+    Galaxy.render();
     Camera.render();
     // Controls.render();
     renderer.render(scene, camera);

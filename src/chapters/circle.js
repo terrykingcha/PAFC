@@ -6,7 +6,6 @@ import {manager, onProgress, onError} from '../prologue';
 
 var deferred = defer();
 export var ready = () => deferred.promise;
-
 export var object;
 
 var prevTime;
@@ -17,7 +16,7 @@ export var render = () => {
     }
 
     var time = Date.now();
-    object.updateAnimation(time - prevTime);
+    // object.updateAnimation(time - prevTime);
     prevTime = time;
 }
 
@@ -31,7 +30,7 @@ function morphColorsToFaceColors(geometry) {
 }
 
 var loader = new THREE.JSONLoader(manager);
-loader.load('assets/obj/01_circle/circle.js', function(geometry) {
+loader.load('assets/obj/01_fog/tree.js', function(geometry) {
     morphColorsToFaceColors(geometry);
 
     var material = new THREE.MeshPhongMaterial({ 
@@ -42,8 +41,8 @@ loader.load('assets/obj/01_circle/circle.js', function(geometry) {
         wireframe: true
     });
     object = new THREE.MorphAnimMesh(geometry, material);
-    object.rotation.set(Math.PI / 2, 0, 0)
-    object.scale.set(0.1, 0.1, 0.1);
+    // object.rotation.set(Math.PI / 2, 0, 0)
+    // object.scale.set(0.1, 0.1, 0.1);
     object.duration = 5000;
     deferred.resolve();
 

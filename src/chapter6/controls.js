@@ -12,6 +12,6 @@ export function init(camera, renderer) {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
-    controls.enableZoom = true;
+    controls.enableZoom = false;
     deferred.resolve();
 }

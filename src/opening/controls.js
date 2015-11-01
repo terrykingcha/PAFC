@@ -40,6 +40,7 @@ export function flyIn() {
     flyInDeferred = flyInDeferred || defer();
 
     lonStep += 0.02;
+    lonStep = Math.min(lonStep, 1);
     raduis -= 0.2;
     raduis = Math.max(raduis, 0);
 
@@ -61,6 +62,7 @@ export function flyOut() {
 
     isRotation = true;
     lonStep += 0.02;
+    lonStep = Math.min(lonStep, 1);
     raduis += 0.2;
     raduis = Math.min(raduis, initRaduis);
 

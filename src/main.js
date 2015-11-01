@@ -1,6 +1,7 @@
 import './common.less';
 import './main.less';
 import './lib/zepto';
+import './font';
 
 import * as prologue from './prologue';
 import * as title from './title';
@@ -8,18 +9,20 @@ import * as clock from './clock';
 import * as share from './share';
 import * as nav from './nav';
 import * as category from './category';
+import * as video  from './video';
 import Visualizer from './visualizer';
 import * as opening from './opening';
 import * as chapter1 from './chapter1';
+import * as chapter6 from './chapter6';
+// import * as chapter2 from './chapters';
 
-var chapters = [chapter1];
+var chapters = new Array(6);
+chapters[0] = chapter1;
+chapters[5] = chapter6;
 var currentChapter;
 
 var openingMusic = new Visualizer(prologue.manager);
 openingMusic.load('./assets/sounds/opening.mp3');
-// openingMusic.ready().then(function() {
-//     openingMusic.togglePlayback(true);
-// });
 
 var chapterMusics = [];
 for (let i = 1; i <= 6; i++) {
@@ -43,18 +46,28 @@ function tick() {
     renderHandler && renderHandler();
 }
 
-async function changeChapter(index) {  
+var lastScene;
+var currentScene;
+
+async function changeChapter(index) {
     var chapter = chapters[index - 1];
     var chapterMusic = chapterMusics[index - 1];
-    var categoryName = category.get(index);
+    var categoryName = category.get(index - 1);
 
-    if (chapter && chapterMusic) {
+    if (chapter && 
+            chapterMusic && 
+            currentScene !== 'chapter' + index) {
+
         openingMusic.togglePlayback(false);
 
         currentMusic = chapterMusic;
 
         resizeHandler = ::opening.resize;
         renderHandler = ::opening.render;
+
+        if (currentScene === 'video') {
+            await hideVideo();
+        }
 
         if (currentChapter) {
             await Promise.all([
@@ -75,10 +88,13 @@ async function changeChapter(index) {
         nav.changeColor('white');
         category.showName(categoryName);
         clock.hide();
+
+        lastScene = currentScene;
+        currentScene = 'chapter' + index;
     }
 }
 
-async function backToIndex() {  
+async function leavingChapter() {
     currentMusic.togglePlayback(false);
     openingMusic.togglePlayback(true);
     currentMusic = openingMusic;
@@ -95,6 +111,51 @@ async function backToIndex() {
     nav.changeColor();
     category.hideName();
     clock.show();
+    currentChapter = null;
+    lastScene = null;
+    currentScene = 'index';
+}
+
+
+async function showVideo() {
+    await video.show();
+    nav.enable('index');
+    nav.disable('video');
+    nav.changeColor('black');
+    lastScene = currentScene;
+    currentScene = 'video';
+}
+
+async function hideVideo() {
+    await video.hide();
+    nav.enable('video');
+    if (lastScene === 'index') {
+        nav.enable('video');
+        nav.disable('index');
+        nav.changeColor();
+    } else if (lastScene && lastScene.indexOf('chapter') === '0') {
+        nav.enable('video');
+        nav.changeColor('white');
+    }
+
+    currentScene = lastScene;
+}
+
+async function showCategory() {
+    if (lastScene && 
+            lastScene.indexOf('chapter') === '0' &&
+            currentScene === 'video') {
+        await hideVideo();
+    } else {
+        await category.show();
+    }
+}
+
+async function backToIndex() {
+    if (currentScene === 'video') {
+        await hideVideo();
+    }
+    await leavingChapter();
 }
 
 (async () => {
@@ -129,18 +190,21 @@ async function backToIndex() {
     share.show();
 
     nav.disable('index');
-    nav.disable('video');
     nav.show();
 
     await opening.start();
     resize();
     tick();
 
+    currentScene = 'index';
+
     nav.on('change', function(e, newValue, oldValue) {
         if (newValue === 'index') {
             backToIndex();
+        } else if (newValue === 'video') {
+            showVideo();
         } else if (newValue === 'category') {
-            category.show();
+            showCategory();
         } else if (newValue === 'music') {
             currentMusic.togglePlayback();
         }
@@ -148,9 +212,9 @@ async function backToIndex() {
 
     category.on('change', function(e, newValue, oldValue) {
         category.hide();
-        if (newValue !== oldValue) {
-            changeChapter(newValue);
-        }
+        // if (newValue !== oldValue) {
+        changeChapter(newValue);
+        // }
     });
 
     opening.ontowerclick(function() {

@@ -113,6 +113,16 @@ export default class Visualizer {
         bufferLoader.load();
     }
 
+    getTime() {
+        var time;
+        if (this.isPlaying) {
+            time = this.startOffset + audioContext.currentTime - this.startTime;
+        } else {
+            time = this.startOffset;
+        }
+        return time % this.buffer.duration;
+    }
+
     togglePlayback(play) {
         if (typeof play === 'undefined') {
             play = !this.isPlaying;
@@ -125,6 +135,7 @@ export default class Visualizer {
             console.debug('paused at', this.startOffset);
             // Save the position of the play head.
         } else if (play && !this.isPlaying) {
+            console.log(audioContext);
             this.startTime = audioContext.currentTime;
             console.debug('started at', this.startOffset);
             this.source = audioContext.createBufferSource();

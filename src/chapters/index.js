@@ -7,7 +7,7 @@ import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Circle from './circle';
-import * as Tree from './tree';
+// import * as Tree from './tree';
 import * as Controls from './controls';
 
 var scene, camera, renderer, domElement, light, circle, tree, visualizer;
@@ -18,7 +18,7 @@ export var init = async () => {
         Camera.ready(),
         Renderer.ready(),
         Circle.ready(),
-        Tree.ready(),
+        // Tree.ready(),
         Light.ready()
     ]);
 
@@ -27,17 +27,17 @@ export var init = async () => {
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
     circle = Circle.object;
-    tree = Tree.object;
+    // tree = Tree.object;
     light = Light.light;
 
     scene.add(camera);
     scene.add(light);
     scene.add(circle);
-    scene.add(tree);
+    // scene.add(tree);
 
     light.position.set(0, 0, 100);
     camera.position.set(0, 0, 100);
-    tree.position.set(0, -20, 0);
+    // tree.position.set(0, -20, 0);
     
     await Controls.init(camera, renderer);
     await pageLoad();
