@@ -1,6 +1,5 @@
 import './share.less';
 import {defer, domReady} from './lib/promise';
-import * as Clock from './clock';
 
 var deferred = defer();
 export var ready = () => deferred.promise;
@@ -63,14 +62,10 @@ function template() {
 
 (async () => {
     await Promise.all([
-        domReady(),
-        Clock.timeReady()
+        domReady()
     ]);
 
-    $share = document.body::$append(template()) 
-            ::$find('#share')
-            ::$addClass(Clock.state() === 'daylight'?'black':'white');
-
+    $share = document.body::$append(template())::$find('#share')
     deferred.resolve();
 
 })();

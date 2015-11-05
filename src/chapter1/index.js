@@ -1,19 +1,19 @@
 import './index.less';
 import {delay, waitForEvent, pageLoad} from '../lib/promise';
 import {width, height} from '../lib/env';
+import {changeColor} from '../color';
 
 import * as Scene from './scene';
 import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Tree from './tree';
-import * as Ground from './ground';
 import * as Grass from './grass';
 import * as Leaf from './leaf';
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, visualizer,
-    tree, ground, grass, leaf;
+var scene, camera, renderer, domElement, visualizer,
+    light1, light2, light3, tree, grass, leaf;
 
 export var init = async () => {    
     await Promise.all([
@@ -21,7 +21,7 @@ export var init = async () => {
         Camera.ready(),
         Renderer.ready(),
         Tree.ready(),
-        Ground.ready(),
+        Grass.ready(),
         Leaf.ready(),
         Light.ready()
     ]);
@@ -31,25 +31,29 @@ export var init = async () => {
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
     tree = Tree.object;
-    ground = Ground.object;
     grass = Grass.object;
     leaf = Leaf.object;
-    light = Light.light;
+    light1 = Light.light1;
+    light2 = Light.light2;
+    light3 = Light.light3;
 
     scene.add(camera);
-    scene.add(light);
+    scene.add(light1);
+    scene.add(light2);
+    scene.add(light3);
     scene.add(tree);
-    scene.add(ground);
     scene.add(grass);
     scene.add(leaf);
 
-    light.position.set(-100, 100, 100);
-    camera.position.set(0, -15, 180);
-    camera.rotation.set(0.15, 0, 0);
-    tree.position.set(0, -29, 0);
-    ground.position.set(0, -40, -2);
-    grass.position.set(-100, -34, -80);
-    leaf.position.set(-10, 35, 20);
+    light1.position.set(0, 100, 100);
+    light2.position.set(-100, 100, 0);
+    light3.position.set(100, 100, 0);
+    camera.position.set(0, 0, Grass.Z_SIZE * 0.5);
+    grass.position.set(-Grass.X_SIZE / 2, -50, -Grass.Z_SIZE / 2);
+    grass.rotation.set(-0.28, 0, 0);
+    tree.position.set(0, -35, -20);
+    leaf.position.set(-Leaf.X_SIZE / 2, -Leaf.Y_SIZE, -Leaf.Z_SIZE / 2);
+    leaf.rotation.set(-0.28, 0, 0);
     
     // await Controls.init(camera, renderer);
     await pageLoad();
@@ -69,22 +73,22 @@ export function resize() {
 
 var downNote = [21, 35, 49, 60, 67, 80, 102, 116];
 var downNote1 = [];
-function renderLeafDown() {
+function blowLeafWind() {
     var time = visualizer.getTime();
     if (downNote.length === 0) {
         downNote = downNote1.slice(0);
         downNote1 = [];
     }
-    if (Math.floor(time) === downNote[0]) {
+    if (Math.floor(time + 0.5) === downNote[0]) {
         downNote1.push(downNote.shift());
-        Leaf.down();
+        Leaf.blowWind();
     }
-    Leaf.render();
 }
 
 export function render() {
-    renderLeafDown();
-    Camera.render();
+    blowLeafWind();
+    Leaf.render();
+    Grass.render();
     // Controls.render();
     renderer.render(scene, camera);
 }
@@ -110,6 +114,7 @@ export var entering = async (_visualizer) => {
     isEntering = true;
     onenteringHandlers.forEach((h) => h());
     visualizer.togglePlayback(true);
+    changeColor('black');
 }
 
 var onleavingHandlers = [];
@@ -138,6 +143,8 @@ export var show = async () => {
         waitForEvent(domElement, 'transitionend'),
         delay(450)
     ]);
+
+    changeColor('black');
 }
 
 export var hide = async () => {

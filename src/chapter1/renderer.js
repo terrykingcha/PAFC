@@ -1,7 +1,7 @@
 import {defer, domReady} from '../lib/promise';
 import {width, height} from '../lib/env';
 
-const COLOR = 0x000000;
+const COLOR = 0xFFFFFF;
 const ALPHA = 1;
 
 var deferred = defer();

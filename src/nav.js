@@ -1,6 +1,5 @@
 import './nav.less';
 import {defer, domReady} from './lib/promise';
-import * as Clock from './clock';
 
 var deferred = defer();
 export var ready = () => deferred.promise;
@@ -16,8 +15,16 @@ export function enable(className) {
     document.body::$find(`#nav .${className}`)::$show();
 }
 
+export function enableAll(className) {
+    document.body::$find('#nav a')::$show();
+}
+
 export function disable(className) {
     document.body::$find(`#nav .${className}`)::$hide();
+}
+
+export function disableAll(className) {
+    document.body::$find('#nav a')::$hide();
 }
 
 var $nav;
@@ -27,13 +34,6 @@ export function on() {
 
 export function off() {
     $nav::$off(...arguments);
-}
-
-var originColor;
-export function changeColor(color) {
-    color = color || originColor;
-    $nav::$removeClass('black white')
-        ::$addClass(color);
 }
 
 export async function show() {
@@ -63,17 +63,10 @@ function template() {
 
 (async () => {
     await Promise.all([
-        domReady(),
-        Clock.timeReady()
+        domReady()
     ]);
 
-    var state = Clock.state();
-    originColor = state === 'daylight' ? 'black' : 'white';
-
-    $nav = document.body::$append(template())
-                ::$find('#nav')
-                ::$addClass(originColor);
-
+    $nav = document.body::$append(template())::$find('#nav');
     deferred.resolve();
 
 })(); 

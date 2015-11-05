@@ -50,17 +50,14 @@ function template() {
 (async () => {
     await Promise.all([
         domReady(),
-        Clock.timeReady()
+        Clock.ready()
     ]);
 
-    $title = document.body::$append(template())
-                ::$find('#title');
+    $title = document.body::$append(template())::$find('#title');
 
     var state = Clock.state();
     var images = await Promise.all(titleImages[state === 'daylight' ? 'black' : 'white']);
 
-    $title::$find('.wrap')
-            ::$append(images);
-
+    $title::$find('.wrap')::$append(images);
     deferred.resolve();
 })();

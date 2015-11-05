@@ -2,6 +2,7 @@ import './index.less';
 import {delay, waitForEvent, pageLoad} from '../lib/promise';
 import {width, height} from '../lib/env';
 import * as Clock from '../clock';
+import {changeColor} from '../color';
 
 import * as Scene from './scene';
 import * as Camera from './camera';
@@ -182,6 +183,7 @@ export var entering = async () => {
     await hide();
     isEntering = true;
     onenteringHandlers.forEach((h) => h());
+    changeColor();
 }
 
 var onleavingHandlers = [];
@@ -210,6 +212,8 @@ export var show = async () => {
         waitForEvent(domElement, 'transitionend'),
         delay(450)
     ]);
+
+    changeColor();
 }
 
 export var hide = async () => {

@@ -8,16 +8,6 @@
     z-index: 99999;
     overflow: hidden;
 
-    &.black a {
-        background-image: url(./assets/images/nav_black.png);
-        color: #1C1C1C;
-    }
-
-    &.white a {
-        background-image: url(./assets/images/nav_white.png);
-        color: #FFF;
-    }
-
     a {
         display: block;
         float: right;
@@ -65,4 +55,14 @@
             background-position:0 -120px;
         }
     }
+}
+
+body.black #nav a {
+    background-image: url(./assets/images/nav_black.png);
+    color: #1C1C1C;
+}
+
+body.white #nav a {
+    background-image: url(./assets/images/nav_white.png);
+    color: #FFF;
 }

@@ -8,20 +8,6 @@
     left: 35px;
     overflow: hidden;
 
-    &.white {
-        .category, .ampm, .time {
-            color: #FFF;
-            border-color: #FFF;
-        }
-    }
-
-    &.black {
-        .category, .ampm, .time {
-            color: #1C1C1C;
-            border-color: #1C1C1C;
-        }
-    }
-
     .category {
         display: block;
         position: absolute;
@@ -65,5 +51,19 @@
         -webkit-transform-origin: left top;
         -ms-transform-origin: left top;
         transform-origin: left top;
+    }
+}
+
+body.white #clock{
+    .category, .ampm, .time {
+        color: #FFF;
+        border-color: #FFF;
+    }
+}
+
+body.black #clock{
+    .category, .ampm, .time {
+        color: #1C1C1C;
+        border-color: #1C1C1C;
     }
 }

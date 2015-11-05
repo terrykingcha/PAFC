@@ -13,18 +13,6 @@
         margin-right: 8px;
     }
 
-    &.black {
-        span {
-            color: #1C1C1C;
-        }
-    }
-
-    &.white {
-        span {
-            color: #FFFFFF;
-        }
-    }
-
     a {
         display: inline-block;
         margin: 0 2px;
@@ -62,13 +50,22 @@
             }
         }
     }
+}
 
-    &.black {
-        a:hover {
-            -webkit-filter: invert(60%);
-            filter: invert(60%);
-        }
+
+body.black #share {
+    span {
+        color: #1C1C1C;
     }
+
+    a:hover {
+        -webkit-filter: invert(60%);
+        filter: invert(60%);
+    }
+}
+
+body.white #share span {
+    color: #FFFFFF;
 }
 
 #share-weixin {

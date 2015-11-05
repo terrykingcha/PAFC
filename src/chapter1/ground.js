@@ -10,8 +10,8 @@ export var object;
 
 var loader = new THREE.JSONLoader(manager);
 loader.load('assets/obj/01_fog/ground.js', function(geometry, materials) {
-    materials[0].color.setHex(0xBAC5B9);
-    materials[0].emissive.setHex(0x0C0A05);
+    materials[0].color.setHex(0xFFFFFF);
+    materials[0].emissive.setHex(0xFFFFFF);
     materials[0].fog = true;
     materials[0].vertexColors = THREE.VertexColors;
     materials[0].wireframe = false;
@@ -19,7 +19,7 @@ loader.load('assets/obj/01_fog/ground.js', function(geometry, materials) {
 
     var material = new THREE.MeshFaceMaterial(materials);
     object = new THREE.Mesh(geometry, material);
-    object.scale.set(5, 1, 5);
+    object.scale.set(10, 0.5, 10);
     deferred.resolve();
 
 }, onProgress, onError);

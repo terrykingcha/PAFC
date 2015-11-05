@@ -19,10 +19,7 @@ export function resize() {
     var w = width();
     var h = height();
 
-    camera.updateProjectionMatrix();
-}
-
-export function render() {
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
 }
 
@@ -31,7 +28,6 @@ export function render() {
     var w = width();
     var h = height();
 
-    // camera = new THREE.OrthographicCamera(w / -2,  w / 2, h / 2,  h / -2, ORTH_NEAR, ORTH_FAR); /* 摄像机视角，视口长宽比，近切面，远切面 */
     camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
     camera.position.set(X, Y, Z); //放置位置
     camera.updateProjectionMatrix();

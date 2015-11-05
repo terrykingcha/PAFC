@@ -8,29 +8,67 @@ var deferred = defer();
 export var ready = () => deferred.promise;
 export var object;
 
+var clock = new THREE.Clock();
+var mixers = [];
 export var render = () => {
-
+    var delta = 0.75 * clock.getDelta();
+    for(let mixer of mixers) {
+        if (Math.random() < 0.8) continue;
+        mixer.update(delta);
+    }
 }
 
-var loader = new THREE.JSONLoader(manager);
-loader.load('assets/obj/01_fog/grass.js', function(geometry, materials) {
+export const X_STEP = 4;
+export const Z_STEP = 4;
+export const X_SIZE = 60 * X_STEP;
+export const Z_SIZE = 40 * Z_STEP;
+
+var loader = new THREE.ObjectLoader(manager);
+loader.load('assets/obj/01_fog/grass4.js', function(loadedScene) {
     object = new THREE.Object3D();
 
-    materials.forEach(function(m) {
-        m.fog = true;
-    });
+    var originMeshs = loadedScene.children[0].children.slice(1);
+    var grassMeshs = [];
 
-    var material = new THREE.MeshFaceMaterial(materials);
+    for (let mesh of originMeshs) {
+        let grassMesh = new THREE.SkinnedMesh(mesh.geometry, mesh.material);
+        grassMesh.material.color.setHex(0xFFFFFF);
+        grassMesh.material.emissive.setHex(0xFFFFFF);
+        grassMesh.material.skinning = true;
+        grassMesh.scale.set(5, 5, 5);
+        grassMesh.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2);
+        grassMeshs.push(grassMesh);
+    }
 
-    for (let x = 0; x < 5; x++) {
-        for (let z = 0; z < 6; z++) {
-            let mesh = new THREE.SkinnedMesh(geometry.clone(), material);
-            mesh.position.set(x * 50, 0, z * 40);
-            mesh.scale.set(20, 20, 20);
-            mesh.rotation.set(0, Math.PI / 2, 0);
+    for (let x = 0; x < X_SIZE; x += X_STEP) {
+        for (let z = 0; z < Z_SIZE; z += Z_STEP) {
+            let mesh = grassMeshs[Math.floor(Math.random() * grassMeshs.length)].clone();
+            mesh.scale.x += Math.random() * 1 - 0.5;
+            mesh.scale.y += Math.random() * 1 - 0.5;
+            mesh.scale.z += Math.random() * 1 - 0.5;
+            mesh.rotation.set(Math.PI / 2, Math.PI * 0.9, -Math.PI / 2);
+            mesh.position.x += x + (Math.random() * 1 - 0.5) * X_STEP;
+            mesh.position.z += z + (Math.random() * 1 - 0.5) * Z_STEP;
             object.add(mesh);
+
+            // let skeletonHelper = new THREE.SkeletonHelper(mesh);
+            // skeletonHelper.material.linewidth = 2;
+            // object.add(skeletonHelper);
+
+            let mixer = new THREE.AnimationMixer(mesh);
+            mixer.play(new THREE.AnimationAction(mesh.geometry.animations[0]));
+            mixers.push(mixer);
         }
     }
+
+    var plane = new THREE.PlaneGeometry(X_SIZE, Z_SIZE);
+    var planeMesh = new THREE.Mesh(plane, new THREE.MeshBasicMaterial({
+        color: 0x78727F,
+        side: THREE.DoubleSide
+    }));
+    planeMesh.rotation.set(-Math.PI / 2, 0, 0);
+    planeMesh.position.set(X_SIZE / 2, 0, Z_SIZE / 2);
+    object.add(planeMesh);
 
     deferred.resolve();
 }, onProgress, onError);

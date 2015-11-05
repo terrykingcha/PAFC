@@ -113,14 +113,10 @@ function template() {
 
 (async () => {
     await Promise.all([
-        domReady(),
-        timeReady()
+        domReady()
     ]);
 
-    $clock = document.body::$append(template())
-        ::$find('#clock')
-        ::$addClass(state() === 'daylight' ? 'black' : 'white')
-
+    $clock = document.body::$append(template())::$find('#clock');
     deferred.resolve();
 })();
 

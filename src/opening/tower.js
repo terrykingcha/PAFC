@@ -17,6 +17,8 @@ loader.load(
             new THREE.MeshLambertMaterial({
                 color: 0xFFFFFF,
                 side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.4,
                 wireframe: true,
                 wireframeLinewidth: 1
             })

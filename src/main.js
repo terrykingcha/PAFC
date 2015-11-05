@@ -3,6 +3,7 @@ import './main.less';
 import './lib/zepto';
 import './font';
 
+import {changeColor} from './color';
 import * as prologue from './prologue';
 import * as title from './title';
 import * as clock from './clock';
@@ -49,7 +50,16 @@ function tick() {
 var lastScene;
 var currentScene;
 
-async function changeChapter(index) {
+async function backToIndex() {
+    if (currentScene === 'video') {
+        await hideVideo();
+    }
+    if (lastScene && lastScene.indexOf('chapter') === 0) {
+        await leavingChapter();
+    }
+}
+
+async function enteringChapter(index) {
     var chapter = chapters[index - 1];
     var chapterMusic = chapterMusics[index - 1];
     var categoryName = category.get(index - 1);
@@ -82,10 +92,13 @@ async function changeChapter(index) {
         resizeHandler = ::chapter.resize;
         renderHandler = ::chapter.render;
 
-        await chapter.entering(currentMusic);
+        await Promise.all([
+            opening.hide(),
+            chapter.entering(currentMusic)
+        ]);
 
-        nav.enable('index');
-        nav.changeColor('white');
+        nav.enableAll();
+        nav.disable('category');
         category.showName(categoryName);
         clock.hide();
 
@@ -102,60 +115,72 @@ async function leavingChapter() {
     resizeHandler = ::opening.resize;
     renderHandler = ::opening.render;
 
+    await opening.show();
+
     await Promise.all([
         opening.leaving(),
         currentChapter.leaving()
     ]);
 
+    nav.enableAll();
     nav.disable('index');
-    nav.changeColor();
     category.hideName();
     clock.show();
+
     currentChapter = null;
-    lastScene = null;
+    lastScene = currentScene;
     currentScene = 'index';
 }
 
-
 async function showVideo() {
-    await video.show();
-    nav.enable('index');
+    var navDisableName;
+    if (currentScene === 'index') {
+        await Promise.all([
+            opening.hide(),
+            video.show()
+        ]);
+        navDisableName = 'category'
+    } else if (currentScene && currentScene.indexOf('chapter') === 0) {
+        await Promise.all([
+            currentChapter.hide(),
+            video.show()
+        ]);
+        navDisableName = 'index'
+    }
+    nav.enableAll();
     nav.disable('video');
-    nav.changeColor('black');
+    nav.disable(navDisableName);
+    changeColor('black');
     lastScene = currentScene;
     currentScene = 'video';
 }
 
 async function hideVideo() {
-    await video.hide();
-    nav.enable('video');
+    var navDisableName;
     if (lastScene === 'index') {
-        nav.enable('video');
-        nav.disable('index');
-        nav.changeColor();
-    } else if (lastScene && lastScene.indexOf('chapter') === '0') {
-        nav.enable('video');
-        nav.changeColor('white');
+        await Promise.all([
+            opening.show(),
+            video.hide()
+        ]);
+        navDisableName = 'index';
+    } else if (lastScene && lastScene.indexOf('chapter') === 0) {
+        await Promise.all([
+            currentChapter.show(),
+            video.hide()
+        ]);
+        navDisableName = 'category';
     }
-
+    nav.enableAll();
+    nav.disable(navDisableName);
     currentScene = lastScene;
 }
 
 async function showCategory() {
-    if (lastScene && 
-            lastScene.indexOf('chapter') === '0' &&
-            currentScene === 'video') {
+    if (currentScene === 'video') {
         await hideVideo();
     } else {
         await category.show();
     }
-}
-
-async function backToIndex() {
-    if (currentScene === 'video') {
-        await hideVideo();
-    }
-    await leavingChapter();
 }
 
 (async () => {
@@ -212,12 +237,10 @@ async function backToIndex() {
 
     category.on('change', function(e, newValue, oldValue) {
         category.hide();
-        // if (newValue !== oldValue) {
-        changeChapter(newValue);
-        // }
+        enteringChapter(newValue);
     });
 
     opening.ontowerclick(function() {
-        changeChapter(1);
+        enteringChapter(1);
     });
 })();
