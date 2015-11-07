@@ -19,10 +19,7 @@ export function resize() {
     var w = width();
     var h = height();
 
-    camera.updateProjectionMatrix();
-}
-
-export function render() {
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
 }
 

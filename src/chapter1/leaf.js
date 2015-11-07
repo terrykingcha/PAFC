@@ -20,11 +20,15 @@ export const Z_SIZE = 40 * Z_STEP;
 var leafMesh;
 function genLeaf() {
     var mesh = leafMesh.clone();
-    var scale = Math.random() * 0.5 + 0.5;
-    mesh.mg = Math.random() * 0.1 + 0.1;
+    var scale = Math.random() * 0.3 + 0.3;
+    mesh.mg = Math.random() * 0.3 + 0.3;
     mesh.scale.set(scale, scale, scale);
     mesh.rotation.set(Math.random(), Math.random(), Math.random());
-    mesh.position.set(X_SIZE, Math.random() * Y_SIZE, Math.random() * Z_SIZE);
+    mesh.position.set(
+        X_SIZE * (Math.random() * 0.2 + 0.8), 
+        Y_SIZE * (Math.random() * 0.2 + 0.8), 
+        Z_SIZE * (Math.random() * 0.9 + 0.1)
+    );
     return mesh;
 }
 
@@ -35,8 +39,8 @@ function mergeForce(mg, f, t) {
     var fy = f * Math.sin(t);
     var mgx = 0;
     var mgy = -mg;
-    var cx = fx + (fx - mgx) / 2;
-    var cy = fy + (fy - mgy) / 2;
+    var cx = fx + (mgx - fx) / 2;
+    var cy = fy + (mgy - fy) / 2;
     var r = Math.sqrt(cx * cx + cy * cy);
     var theta = Math.atan(cy/cx);
     if (cx > 0 && cy > 0) {
@@ -51,7 +55,7 @@ function mergeForce(mg, f, t) {
     return [r, theta];
 }
 
-const LEAF_MAX_LIMIT = 100;
+const LEAF_MAX_LIMIT = 200;
 
 var leafs = [];
 var isBlowWind = false;
@@ -62,8 +66,8 @@ export function blowWind() {
     var originWidthTheta = windTheta;
     var origintWindForce = windForce;
 
-    windTheta = originWidthTheta + Math.PI * 2;
-    windForce = Math.random() * 2 + 2;
+    windTheta = originWidthTheta;
+    windForce = Math.random() * 5 + 5;
 
     var thetaStep = (windTheta - originWidthTheta) / count;
     var forceStep = (windForce - origintWindForce) / count;
@@ -93,6 +97,7 @@ export function render() {
     }
 
     if (Math.random() < 0.2 && !isBlowWind) {
+        windForce = Math.random() * 1 + 1;
         windTheta = degToRad(180) + (Math.random() * degToRad(10) - degToRad(5));
     }
 

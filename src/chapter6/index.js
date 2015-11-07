@@ -53,8 +53,8 @@ export function resize() {
 }
 
 export function render() {
-    Galaxy.render();
-    Camera.render();
+    visualizer.analysis();
+    Galaxy.render(visualizer);
     // Controls.render();
     renderer.render(scene, camera);
 }

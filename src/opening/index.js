@@ -99,7 +99,7 @@ export var init = async () => {
 
     domElement.setAttribute('scene', 'opening');
 
-    window.addEventListener('mousemove', function(e) {
+    domElement.addEventListener('mousemove', function(e) {
         e.preventDefault();
         if (!starting) return;
 
@@ -120,7 +120,7 @@ export var init = async () => {
         tower.children[1].material.emissive.setHex(color);
     }, false);
 
-    window.addEventListener('mousedown', function(e) {
+    domElement.addEventListener('mousedown', function(e) {
         e.preventDefault();
         if (!starting) return;
 
@@ -201,6 +201,7 @@ export var leaving = async () => {
 }
 
 export var show = async () => {
+    starting = true;
     domElement.style.display = 'block';
 
     await delay(50);
@@ -217,6 +218,7 @@ export var show = async () => {
 }
 
 export var hide = async () => {
+    starting = false;
     domElement.style.transition = 'opacity 0.4s ease-in 0s';
     domElement.style.opacity = 0;
     

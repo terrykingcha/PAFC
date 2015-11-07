@@ -13,7 +13,7 @@ var mixers = [];
 export var render = () => {
     var delta = 0.75 * clock.getDelta();
     for(let mixer of mixers) {
-        if (Math.random() < 0.8) continue;
+        if (Math.random() < 0.9) continue;
         mixer.update(delta);
     }
 }

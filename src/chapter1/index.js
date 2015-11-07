@@ -71,7 +71,7 @@ export function resize() {
     Camera.resize();
 }
 
-var downNote = [21, 35, 49, 60, 67, 80, 102, 116];
+var downNote = [21, 51, 84, 116, 132];
 var downNote1 = [];
 function blowLeafWind() {
     var time = visualizer.getTime();
@@ -79,7 +79,7 @@ function blowLeafWind() {
         downNote = downNote1.slice(0);
         downNote1 = [];
     }
-    if (Math.floor(time + 0.5) === downNote[0]) {
+    if (Math.floor(time + 0.5) >= downNote[0]) {
         downNote1.push(downNote.shift());
         Leaf.blowWind();
     }

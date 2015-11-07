@@ -45,8 +45,8 @@ export async function show() {
 const FACEBOOK_SHARE = 'https://www.facebook.com/dialog/share?' +
   'app_id=1645611472322802' + 
   '&display=page' + 
-  '&href=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2F' + 
-  '&redirect_uri=https%3A%2F%2Fdevelopers.facebook.com%2Ftools%2Fexplorer';
+  '&href=' + encodeURIComponent(location.href) +  
+  '&redirect_uri=' + encodeURIComponent(location.href);
 
 function template() {
     return `

@@ -54,7 +54,7 @@ async function backToIndex() {
     if (currentScene === 'video') {
         await hideVideo();
     }
-    if (lastScene && lastScene.indexOf('chapter') === 0) {
+    if (currentScene.indexOf('chapter') === 0) {
         await leavingChapter();
     }
 }
@@ -140,7 +140,7 @@ async function showVideo() {
             video.show()
         ]);
         navDisableName = 'category'
-    } else if (currentScene && currentScene.indexOf('chapter') === 0) {
+    } else if (currentScene.indexOf('chapter') === 0) {
         await Promise.all([
             currentChapter.hide(),
             video.show()

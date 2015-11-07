@@ -40,16 +40,16 @@ function template() {
                     <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       
                 </section>
                 <div class="banner">
-                    <img src="${PATH}/banner.jpg" />
+                    <img src="${PATH}/banner.jpg" width="70%" />
                 </div>
                 <div class="img">
-                    <img src="${PATH}/01.jpg" />
+                    <img src="${PATH}/01.jpg" width="70%" />
                 </div>
                 <div class="img">
-                    <img src="${PATH}/02.jpg" />
+                    <img src="${PATH}/02.jpg" width="70%" />
                 </div>
                 <div class="img">
-                    <img src="${PATH}/03.jpg" />
+                    <img src="${PATH}/03.jpg" width="70%" />
                 </div>
                 <section>
                     <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>

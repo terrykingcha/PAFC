@@ -1,7 +1,7 @@
 import {defer} from '../lib/promise';
 import {width, height}from '../lib/env';
 import CubicBezier from '../lib/cubicbezier';
-import {requestAnimationFrame}from '../lib/util';
+import {requestAnimationFrame, cancelAnimationFrame}from '../lib/util';
 import {manager, onProgress, onError} from '../prologue';
 
 var {degToRad} = THREE.Math;
@@ -69,18 +69,53 @@ function addCube(x, y, z) {
     requestAnimationFrame(falling);
 }
 
-window.addCube = addCube;
+var visualizer;
+var isBeating = false;
+var beatingId;
+var step = 360;
+export function beat() {
+    if (isBeating) return;
+    isBeating = true;
+
+    if (beatingId) {
+        cancelAnimationFrame(beatingId);
+    }
+
+    var position = galaxy.geometry.attributes.position;
+    var index = Math.floor(Math.random() * 10 + 20);
+
+    function beating() {
+        if (!isBeating) return;
+        beatingId = requestAnimationFrame(beating);
+        var count = visualizer.times.length / 4;
+        for (let i = 0; i < count; i++) {
+            let percent = visualizer.times[i * 4] / 512;
+            percent *= (count - Math.abs(i - count / 2)) / count;
+            for (let j = 0; j < step; j++) {
+                position.setY((index + i) * step + j, percent);            
+            }
+        }
+        position.needsUpdate = true;
+    }
+
+    beatingId = requestAnimationFrame(function() {
+        isBeating = true;
+        beating();
+    });
+}
 
 var galaxy;
 var galaxyWrap;
-export function render() {
+export function render(_visualizer) {
     galaxy.rotation.y -= 0.001;
+    visualizer = _visualizer;
+
+    // if (Math.random() < 0.01) {
+    beat();
+    // }
+
     if (Math.random() < 0.1) {
-        addCube(
-            4 - Math.random() * 10,
-            4,
-            2 - Math.random() * 5
-        );
+        addCube(4 - Math.random() * 10, 4, 2 - Math.random() * 5);
     }
 }
 

@@ -30,21 +30,22 @@
         padding: 200px 0;
         background: url(./assets/images/video/logo.jpg) no-repeat 90px 90px;
         background-color: #FFF;
+        background-size: 20%;
         .flex();
         .flex-vertical();
         .flex-vertical-center();
     }
 
     .slogan {
-        width: 569px;
-        height: 420px;
+        width: 569px * 0.7;
+        height: 420px * 0.7;
         background: url(./assets/images/video/title.jpg) no-repeat 0 0;
         background-size: contain;
     }
 
     section {
-        width: 480px;
-        font-size: 16px;
+        width: 480px * 0.7;
+        font-size: 14px;
         color: #000;
         line-height: 1.5em;
 
@@ -58,8 +59,8 @@
     }
 
     video {
-        width: 1120px;
-        height: 660px;
+        width: 1120px * 0.7;
+        height: 660px * 0.7;
         overflow: hidden;
         vertical-align: middle;
     }
@@ -67,6 +68,7 @@
     .banner, .img {
         vertical-align: middle;
         overflow: hidden;
-        margin: 10px 0;
+        margin: 10px auto;
+        text-align: center;
     }
 }
