@@ -38493,7 +38493,7 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap(hideVideo());
 	
 	            case 3:
-	                if (!(lastScene && lastScene.indexOf('chapter') === 0)) {
+	                if (!(currentScene.indexOf('chapter') === 0)) {
 	                    context$1$0.next = 6;
 	                    break;
 	                }
@@ -38631,7 +38631,7 @@ THREE.OBJLoader.prototype = {
 	                break;
 	
 	            case 6:
-	                if (!(currentScene && currentScene.indexOf('chapter') === 0)) {
+	                if (!(currentScene.indexOf('chapter') === 0)) {
 	                    context$1$0.next = 10;
 	                    break;
 	                }
@@ -39728,7 +39728,7 @@ THREE.OBJLoader.prototype = {
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n}\n#prologue .loading canvas {\n  width: 136px;\n  height: 136px;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 136px;\n  height: 136px;\n  top: 0;\n  left: 0;\n  background: url(data:image/png;base64,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) no-repeat center center;\n}\n#prologue .loading p {\n  font-family: arial;\n  width: 100%;\n  height: 30px;\n  line-height: 30px;\n  color: #FFF;\n  font-size: 20px;\n  text-align: center;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n}\n#prologue .loading canvas {\n  width: 95.2px;\n  height: 95.2px;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 95.2px;\n  height: 95.2px;\n  top: 0;\n  left: 0;\n  background: url(data:image/png;base64,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) no-repeat center center;\n  background-size: 80%;\n}\n#prologue .loading p {\n  font-family: arial;\n  width: 100%;\n  height: 20px;\n  line-height: 20px;\n  color: #FFF;\n  font-size: 16px;\n  text-align: center;\n}\n"
 
 /***/ },
 /* 14 */
@@ -40331,7 +40331,7 @@ THREE.OBJLoader.prototype = {
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 50px;\n  height: 50px;\n  line-height: 50px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 30px;\n  border-radius: 25px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 30px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
 
 /***/ },
 /* 23 */
@@ -40574,7 +40574,7 @@ THREE.OBJLoader.prototype = {
 	    }, null, this);
 	}
 	
-	var FACEBOOK_SHARE = 'https://www.facebook.com/dialog/share?' + 'app_id=1645611472322802' + '&display=page' + '&href=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2F' + '&redirect_uri=https%3A%2F%2Fdevelopers.facebook.com%2Ftools%2Fexplorer';
+	var FACEBOOK_SHARE = 'https://www.facebook.com/dialog/share?' + 'app_id=1645611472322802' + '&display=page' + '&href=' + encodeURIComponent(location.href) + '&redirect_uri=' + encodeURIComponent(location.href);
 	
 	function template() {
 	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 PAFC, All Rights Reserved</span>\n            <a class="weibo"></a>\n            <a class="weixin"></a>\n            <a href="' + FACEBOOK_SHARE + '" target="_blank" class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
@@ -40631,7 +40631,7 @@ THREE.OBJLoader.prototype = {
 /* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 12px;\n  line-height: 24px;\n  margin-right: 8px;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,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);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\nbody.black #share span {\n  color: #1C1C1C;\n}\nbody.black #share a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\nbody.white #share span {\n  color: #FFFFFF;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 14px;\n  line-height: 24px;\n  margin-right: 8px;\n  font-weight: bold;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,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);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\nbody.black #share span {\n  color: #333;\n  text-shadow: 2px 1px 1px rgba(0, 0, 0, 0.9);\n}\nbody.black #share a {\n  -webkit-filter: invert(100%);\n  filter: invert(60%);\n}\nbody.black #share a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\nbody.white #share span {\n  color: #FFFFFF;\n  text-shadow: 2px 1px 1px rgba(255, 255, 255, 0.9);\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
 /* 29 */
@@ -40790,7 +40790,7 @@ THREE.OBJLoader.prototype = {
 /* 31 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 110px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\nbody.black #nav a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 110px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\nbody.black #nav a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n"
 
 /***/ },
 /* 32 */
@@ -40860,7 +40860,7 @@ THREE.OBJLoader.prototype = {
 	var PATH = './assets/images/video';
 	var VIDEO = './assets/videos/project.mp4';
 	function template() {
-	    return '\n        <div id="video">\n            <div class="wrap">\n                <div class="slogan"></div>\n                <section>\n                    <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                    <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous"\n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n                <section>\n                    <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                    <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                    <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                    <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                </section>\n                <div class="banner">\n                    <img src="' + PATH + '/banner.jpg" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/01.jpg" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/02.jpg" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/03.jpg" />\n                </div>\n                <section>\n                    <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                    <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                    <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                    <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                    <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous" \n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n            </div>\n        </div>\n    ';
+	    return '\n        <div id="video">\n            <div class="wrap">\n                <div class="slogan"></div>\n                <section>\n                    <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                    <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous"\n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n                <section>\n                    <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                    <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                    <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                    <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                </section>\n                <div class="banner">\n                    <img src="' + PATH + '/banner.jpg" width="70%" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/01.jpg" width="70%" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/02.jpg" width="70%" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/03.jpg" width="70%" />\n                </div>\n                <section>\n                    <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                    <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                    <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                    <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                    <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous" \n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n            </div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -40918,7 +40918,7 @@ THREE.OBJLoader.prototype = {
 /* 34 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 9999;\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .wrap {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .slogan {\n  width: 569px;\n  height: 420px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 480px;\n  font-size: 16px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 1120px;\n  height: 660px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px 0;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 9999;\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .wrap {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 784px;\n  height: 462px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n}\n"
 
 /***/ },
 /* 35 */
@@ -41247,7 +41247,7 @@ THREE.OBJLoader.prototype = {
 	
 	                domElement.setAttribute('scene', 'opening');
 	
-	                window.addEventListener('mousemove', function (e) {
+	                domElement.addEventListener('mousemove', function (e) {
 	                    e.preventDefault();
 	                    if (!starting) return;
 	
@@ -41268,7 +41268,7 @@ THREE.OBJLoader.prototype = {
 	                    tower.children[1].material.emissive.setHex(color);
 	                }, false);
 	
-	                window.addEventListener('mousedown', function (e) {
+	                domElement.addEventListener('mousedown', function (e) {
 	                    e.preventDefault();
 	                    if (!starting) return;
 	
@@ -41417,24 +41417,25 @@ THREE.OBJLoader.prototype = {
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
+	                starting = true;
 	                domElement.style.display = 'block';
 	
-	                context$1$0.next = 3;
+	                context$1$0.next = 4;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(50));
 	
-	            case 3:
+	            case 4:
 	
 	                domElement.style.transition = 'opacity 0.4s ease-out 0s';
 	                domElement.style.opacity = 1;
 	
-	                context$1$0.next = 7;
+	                context$1$0.next = 8;
 	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
 	
-	            case 7:
+	            case 8:
 	
 	                (0, _color.changeColor)();
 	
-	            case 8:
+	            case 9:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41446,17 +41447,18 @@ THREE.OBJLoader.prototype = {
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
+	                starting = false;
 	                domElement.style.transition = 'opacity 0.4s ease-in 0s';
 	                domElement.style.opacity = 0;
 	
-	                context$1$0.next = 4;
+	                context$1$0.next = 5;
 	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
 	
-	            case 4:
+	            case 5:
 	
 	                domElement.style.display = 'none';
 	
-	            case 5:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -42316,7 +42318,7 @@ THREE.OBJLoader.prototype = {
 	    Camera.resize();
 	}
 	
-	var downNote = [21, 35, 49, 60, 67, 80, 102, 116];
+	var downNote = [21, 51, 84, 116, 132];
 	var downNote1 = [];
 	function blowLeafWind() {
 	    var time = visualizer.getTime();
@@ -42324,7 +42326,7 @@ THREE.OBJLoader.prototype = {
 	        downNote = downNote1.slice(0);
 	        downNote1 = [];
 	    }
-	    if (Math.floor(time + 0.5) === downNote[0]) {
+	    if (Math.floor(time + 0.5) >= downNote[0]) {
 	        downNote1.push(downNote.shift());
 	        Leaf.blowWind();
 	    }
@@ -42948,7 +42950,7 @@ THREE.OBJLoader.prototype = {
 	        for (var _iterator = mixers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var mixer = _step.value;
 	
-	            if (Math.random() < 0.8) continue;
+	            if (Math.random() < 0.9) continue;
 	            mixer.update(delta);
 	        }
 	    } catch (err) {
@@ -43103,11 +43105,11 @@ THREE.OBJLoader.prototype = {
 	var leafMesh;
 	function genLeaf() {
 	    var mesh = leafMesh.clone();
-	    var scale = Math.random() * 0.5 + 0.5;
-	    mesh.mg = Math.random() * 0.1 + 0.1;
+	    var scale = Math.random() * 0.3 + 0.3;
+	    mesh.mg = Math.random() * 0.3 + 0.3;
 	    mesh.scale.set(scale, scale, scale);
 	    mesh.rotation.set(Math.random(), Math.random(), Math.random());
-	    mesh.position.set(X_SIZE, Math.random() * Y_SIZE, Math.random() * Z_SIZE);
+	    mesh.position.set(X_SIZE * (Math.random() * 0.2 + 0.8), Y_SIZE * (Math.random() * 0.2 + 0.8), Z_SIZE * (Math.random() * 0.9 + 0.1));
 	    return mesh;
 	}
 	
@@ -43118,8 +43120,8 @@ THREE.OBJLoader.prototype = {
 	    var fy = f * Math.sin(t);
 	    var mgx = 0;
 	    var mgy = -mg;
-	    var cx = fx + (fx - mgx) / 2;
-	    var cy = fy + (fy - mgy) / 2;
+	    var cx = fx + (mgx - fx) / 2;
+	    var cy = fy + (mgy - fy) / 2;
 	    var r = Math.sqrt(cx * cx + cy * cy);
 	    var theta = Math.atan(cy / cx);
 	    if (cx > 0 && cy > 0) {
@@ -43134,7 +43136,7 @@ THREE.OBJLoader.prototype = {
 	    return [r, theta];
 	}
 	
-	var LEAF_MAX_LIMIT = 100;
+	var LEAF_MAX_LIMIT = 200;
 	
 	var leafs = [];
 	var isBlowWind = false;
@@ -43146,8 +43148,8 @@ THREE.OBJLoader.prototype = {
 	    var originWidthTheta = windTheta;
 	    var origintWindForce = windForce;
 	
-	    windTheta = originWidthTheta + Math.PI * 2;
-	    windForce = Math.random() * 2 + 2;
+	    windTheta = originWidthTheta;
+	    windForce = Math.random() * 5 + 5;
 	
 	    var thetaStep = (windTheta - originWidthTheta) / count;
 	    var forceStep = (windForce - origintWindForce) / count;
@@ -43177,6 +43179,7 @@ THREE.OBJLoader.prototype = {
 	    }
 	
 	    if (Math.random() < 0.2 && !isBlowWind) {
+	        windForce = Math.random() * 1 + 1;
 	        windTheta = degToRad(180) + (Math.random() * degToRad(10) - degToRad(5));
 	    }
 	
@@ -43381,8 +43384,8 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    Galaxy.render();
-	    Camera.render();
+	    visualizer.analysis();
+	    Galaxy.render(visualizer);
 	    // Controls.render();
 	    renderer.render(scene, camera);
 	}
@@ -43578,7 +43581,7 @@ THREE.OBJLoader.prototype = {
 	exports.ready = ready;
 	var scene = new THREE.Scene();
 	exports.scene = scene;
-	scene.fog = new THREE.FogExp2(COLOR, 0.15);
+	// scene.fog = new THREE.FogExp2(COLOR, 0.15);
 	
 	deferred.resolve();
 
@@ -43595,7 +43598,6 @@ THREE.OBJLoader.prototype = {
 	var _this = this;
 	
 	exports.resize = resize;
-	exports.render = render;
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -43624,10 +43626,7 @@ THREE.OBJLoader.prototype = {
 	    var w = (0, _libEnv.width)();
 	    var h = (0, _libEnv.height)();
 	
-	    camera.updateProjectionMatrix();
-	}
-	
-	function render() {
+	    camera.aspect = w / h;
 	    camera.updateProjectionMatrix();
 	}
 	
@@ -43766,6 +43765,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _this = this;
 	
+	exports.beat = beat;
 	exports.render = render;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -43847,13 +43847,53 @@ THREE.OBJLoader.prototype = {
 	    (0, _libUtil.requestAnimationFrame)(falling);
 	}
 	
-	window.addCube = addCube;
+	var visualizer;
+	var isBeating = false;
+	var beatingId;
+	var step = 360;
+	
+	function beat() {
+	    if (isBeating) return;
+	    isBeating = true;
+	
+	    if (beatingId) {
+	        (0, _libUtil.cancelAnimationFrame)(beatingId);
+	    }
+	
+	    var position = galaxy.geometry.attributes.position;
+	    var index = Math.floor(Math.random() * 10 + 20);
+	
+	    function beating() {
+	        if (!isBeating) return;
+	        beatingId = (0, _libUtil.requestAnimationFrame)(beating);
+	        var count = visualizer.times.length / 4;
+	        for (var i = 0; i < count; i++) {
+	            var percent = visualizer.times[i * 4] / 512;
+	            percent *= (count - Math.abs(i - count / 2)) / count;
+	            for (var j = 0; j < step; j++) {
+	                position.setY((index + i) * step + j, percent);
+	            }
+	        }
+	        position.needsUpdate = true;
+	    }
+	
+	    beatingId = (0, _libUtil.requestAnimationFrame)(function () {
+	        isBeating = true;
+	        beating();
+	    });
+	}
 	
 	var galaxy;
 	var galaxyWrap;
 	
-	function render() {
+	function render(_visualizer) {
 	    galaxy.rotation.y -= 0.001;
+	    visualizer = _visualizer;
+	
+	    // if (Math.random() < 0.01) {
+	    beat();
+	    // }
+	
 	    if (Math.random() < 0.1) {
 	        addCube(4 - Math.random() * 10, 4, 2 - Math.random() * 5);
 	    }
