@@ -10,32 +10,36 @@ import * as Light from './light';
 import * as Tree from './tree';
 import * as Grass from './grass';
 import * as Leaf from './leaf';
+import * as Fog from './fog';
 import * as Controls from './controls';
 
 var scene, camera, renderer, domElement, visualizer,
-    light1, light2, light3, tree, grass, leaf;
+    light1, light2, light3, tree, grass, leaf, fog;
 
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
         Camera.ready(),
         Renderer.ready(),
+        Light.ready(),
         Tree.ready(),
         Grass.ready(),
         Leaf.ready(),
-        Light.ready()
+        Fog.ready()
     ]);
 
     scene = Scene.scene;
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    tree = Tree.object;
-    grass = Grass.object;
-    leaf = Leaf.object;
     light1 = Light.light1;
     light2 = Light.light2;
     light3 = Light.light3;
+    tree = Tree.object;
+    grass = Grass.object;
+    leaf = Leaf.object;
+    fog = Fog.object;
+
 
     scene.add(camera);
     scene.add(light1);
@@ -44,6 +48,7 @@ export var init = async () => {
     scene.add(tree);
     scene.add(grass);
     scene.add(leaf);
+    scene.add(fog);
 
     light1.position.set(0, 100, 100);
     light2.position.set(-100, 100, 0);
@@ -51,9 +56,12 @@ export var init = async () => {
     camera.position.set(0, 0, Grass.Z_SIZE * 0.5);
     grass.position.set(-Grass.X_SIZE / 2, -50, -Grass.Z_SIZE / 2);
     grass.rotation.set(-0.28, 0, 0);
-    tree.position.set(0, -35, -20);
+    tree.position.set(-5, -37, -20);
     leaf.position.set(-Leaf.X_SIZE / 2, -Leaf.Y_SIZE, -Leaf.Z_SIZE / 2);
     leaf.rotation.set(-0.28, 0, 0);
+    fog.scale.set(Grass.X_SIZE / Fog.WIDTH / 2, Grass.X_SIZE / Fog.WIDTH / 4, 1);
+    fog.rotation.set(-0.28, 0, 0);
+    fog.position.set(0, -15, 20);
     
     // await Controls.init(camera, renderer);
     await pageLoad();
@@ -89,6 +97,7 @@ export function render() {
     blowLeafWind();
     Leaf.render();
     Grass.render();
+    Fog.render();
     // Controls.render();
     renderer.render(scene, camera);
 }

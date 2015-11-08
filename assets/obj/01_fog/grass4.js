@@ -159,7 +159,6 @@
         "materials": [{
             "blending": "NormalBlending",
             "DbgColor": 15658734,
-            "colorAmbient": [0.563149,0.59769,0.503936],
             "opacity": 1,
             "visible": true,
             "DbgIndex": 0,
@@ -450,7 +449,6 @@
         "materials": [{
             "blending": "NormalBlending",
             "DbgColor": 15658734,
-            "colorAmbient": [0.563149,0.59769,0.503936],
             "opacity": 1,
             "visible": true,
             "DbgIndex": 0,
@@ -765,7 +763,6 @@
         "materials": [{
             "blending": "NormalBlending",
             "DbgColor": 15658734,
-            "colorAmbient": [0.563149,0.59769,0.503936],
             "opacity": 1,
             "visible": true,
             "DbgIndex": 0,

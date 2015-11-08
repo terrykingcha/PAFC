@@ -52,9 +52,23 @@ export function resize() {
     Camera.resize();
 }
 
+var note = [4,9, 35,39, 51,58, 87,92, 109,115, 133,140];
+var tempNode = [];
+function speedGalaxyUp() {
+    var time = visualizer.getTime();
+    if (note.length === 0) {
+        note = tempNode.slice(0);
+        tempNode = [];
+    }
+    if (Math.floor(time) >= note[0]) {
+        tempNode.push(note.shift());
+        Galaxy.toggleSpeedUp();
+    }
+}
+
 export function render() {
-    visualizer.analysis();
-    Galaxy.render(visualizer);
+    speedGalaxyUp();
+    Galaxy.render();
     // Controls.render();
     renderer.render(scene, camera);
 }

@@ -235,8 +235,8 @@ async function showCategory() {
         }
     });
 
-    category.on('change', function(e, newValue, oldValue) {
-        category.hide();
+    category.on('change', async function(e, newValue, oldValue) {
+        await category.hide();
         enteringChapter(newValue);
     });
 

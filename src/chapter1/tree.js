@@ -43,7 +43,7 @@ loader.load('assets/obj/01_fog/tree1.js', function(geometry, materials) {
     var material = new THREE.MeshFaceMaterial(materials);
     var mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.set(-0.25, Math.PI * 0.35, 0);
-    mesh.scale.set(4, 4, 4);
+    mesh.scale.set(6, 6, 6);
 
     object = new THREE.Object3D();
     object.add(mesh);

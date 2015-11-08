@@ -25,9 +25,68 @@ var cubeMaterial = new THREE.MeshPhongMaterial({
     transparent: true
 });
 
+var isSpeedUp = 1;
+var speed = 0.001;
+var ratio = 0.1;
+var xstep = 2;
+export function toggleSpeedUp() {
+    var bezierFunc = bezier[Math.floor(Math.random() * bezier.length)];
+
+    if (isSpeedUp === 1) {
+        isSpeedUp = Math.random() * 2 + 4;
+        let originSpeed = speed;
+        let targetSpeed = speed * isSpeedUp;
+        let originRatio = ratio;
+        let targetRatio = ratio * isSpeedUp;
+        let originXStep = xstep;
+        let targetXStep = xstep * isSpeedUp;
+        let i1 = 0;
+        function speedUp() {
+            if (i1 < 1) {
+                requestAnimationFrame(speedUp);
+                var i2 = bezierFunc(i1);
+                speed = originSpeed + (targetSpeed - originSpeed) * i2;
+                ratio = originRatio + (targetRatio - originRatio) * i2;
+                xstep = originXStep + (targetXStep - originXStep) * i2;
+                i1 += 0.01;
+            } else {
+                speed = targetSpeed;
+                ratio = targetRatio;
+                xstep = targetXStep;
+            }
+
+        }
+        speedUp();
+    } else {
+        let originSpeed = speed;
+        let targetSpeed = speed / isSpeedUp;
+        let originRatio = ratio;
+        let targetRatio = ratio / isSpeedUp;
+        let originXStep = xstep;
+        let targetXStep = xstep / isSpeedUp;
+        let i1 = 0;
+        isSpeedUp = 1;
+        function speedDown() {
+            if (i1 < 1) {
+                requestAnimationFrame(speedDown);
+                var i2 = bezierFunc(i1);
+                speed = originSpeed + (targetSpeed - originSpeed) * i2;
+                ratio = originRatio + (targetRatio - originRatio) * i2;
+                xstep = originXStep + (targetXStep - originXStep) * i2;
+                i1 += 0.005;
+            } else {
+                speed = targetSpeed;
+                ratio = targetRatio;
+                xstep = targetXStep;
+            }
+
+        }
+        speedDown();
+    }
+}
+
 var cube
 var cubes = [];
-var easeIn = CubicBezier.easeIn;
 function addCube(x, y, z) {
     var cube;
     var available = cubes.filter((c) => !!c.available);
@@ -57,7 +116,7 @@ function addCube(x, y, z) {
 
         var i2 = bezierFunc(i1);
 
-        cube.position.x = x + i1 * 2;
+        cube.position.x = x - i1 * xstep;
         cube.material.opacity = 1 - i2;
         cube.position.y = y + (-3 - y) * i2;
         cube.rotation.x += 0.01;
@@ -69,61 +128,21 @@ function addCube(x, y, z) {
     requestAnimationFrame(falling);
 }
 
-var visualizer;
-var isBeating = false;
-var beatingId;
-var step = 360;
-export function beat() {
-    if (isBeating) return;
-    isBeating = true;
-
-    if (beatingId) {
-        cancelAnimationFrame(beatingId);
-    }
-
-    var position = galaxy.geometry.attributes.position;
-    var index = Math.floor(Math.random() * 10 + 20);
-
-    function beating() {
-        if (!isBeating) return;
-        beatingId = requestAnimationFrame(beating);
-        var count = visualizer.times.length / 4;
-        for (let i = 0; i < count; i++) {
-            let percent = visualizer.times[i * 4] / 512;
-            percent *= (count - Math.abs(i - count / 2)) / count;
-            for (let j = 0; j < step; j++) {
-                position.setY((index + i) * step + j, percent);            
-            }
-        }
-        position.needsUpdate = true;
-    }
-
-    beatingId = requestAnimationFrame(function() {
-        isBeating = true;
-        beating();
-    });
-}
 
 var galaxy;
 var galaxyWrap;
-export function render(_visualizer) {
-    galaxy.rotation.y -= 0.001;
-    visualizer = _visualizer;
-
-    // if (Math.random() < 0.01) {
-    beat();
-    // }
-
-    if (Math.random() < 0.1) {
-        addCube(4 - Math.random() * 10, 4, 2 - Math.random() * 5);
+export function render() {
+    galaxy.rotation.y -= speed;
+    if (Math.random() < ratio) {
+        addCube(6 - Math.random() * 10, 4, 2 - Math.random() * 5);
     }
 }
 
 (async () => {
 
 var bezierFunc = CubicBezier.ease;
-var angleSegment = 360;
-var radiusStep = 0.1;
+var angleSegment = 720;
+var radiusStep = 0.05;
 var radius = 10;
 var deeps = 5;
 var total = angleSegment * (radius / radiusStep);
@@ -135,10 +154,10 @@ for (let i = 0, theta = 0, deep; i < total; i++) {
         radius -= radiusStep;
     }
     if (radius <= 2) {
-        radiusStep = 0.05;
+        radiusStep = 0.02;
         deep = -(1 - bezierFunc(radius / 2)) * deeps;
     } else {
-        deep = -Math.random() * 0.01;
+        deep = Math.random() * 0.1 - 0.05;
     }
     var rad = degToRad(theta / (angleSegment / 360));
     vertices[i * 3] = (radius + (Math.random() / 2 - 0.25) * radiusStep) * Math.cos(rad + Math.random() * 0.01);
@@ -163,7 +182,7 @@ var material = new THREE.PointsMaterial({  // 星星
 galaxy = new THREE.Points(geometry, material);
 galaxyWrap = new THREE.Object3D();
 galaxyWrap.add(galaxy);
-galaxyWrap.rotation.set(degToRad(5), 0, degToRad(25));
+galaxyWrap.rotation.set(degToRad(5), 0, degToRad(20));
 
 object = new THREE.Object3D();
 object.add(galaxyWrap);

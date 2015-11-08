@@ -78,12 +78,9 @@ function bindCategoryEvents() {
     }
 
     var changed;
-    $circle::$on('mousemove mouseleave mousedown mouseup', function(e) {
+    $circle::$on('mousemove mousedown', function(e) {
             var eventName = e.type;
             $circle::$findAll('img').forEach(img => img::$removeClass('hover'));
-            
-            if (eventName === 'mouseleave' ||
-                    eventName === 'mouseup') return;
 
             var {radius, rad} = parse(e);
             if (radius <= circleWidth / 2 &&
@@ -100,7 +97,7 @@ function bindCategoryEvents() {
                 $circle::$trigger('change', [index, changed]);
                 changed = index;
             }
-        })::$on('mouseleave', function(e) {
+        })::$on('mouseup mouseleave', function(e) {
             $circle::$findAll('img').forEach(img => img::$removeClass('hover'));
         });
 }
