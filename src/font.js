@@ -1,12 +1,12 @@
 import {defer, domReady} from './lib/promise';
 import {manager} from './prologue';
 
-var url = './assets/fonts/weblysleek';
+var url = './assets/fonts/camelia';
 manager.itemStart(url);
 window.fontloadcallback = function(base64) {
     var fontface = `
         @font-face {
-            font-family: 'weblysleek';
+            font-family: 'camelia';
             src: url(${base64}) format('truetype');
         }
     `;

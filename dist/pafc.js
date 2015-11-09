@@ -38480,33 +38480,14 @@ THREE.OBJLoader.prototype = {
 	var lastScene;
 	var currentScene;
 	
-	function backToIndex() {
-	    return regeneratorRuntime.async(function backToIndex$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                if (!(currentScene === 'video')) {
-	                    context$1$0.next = 3;
-	                    break;
-	                }
-	
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap(hideVideo());
-	
-	            case 3:
-	                if (!(currentScene.indexOf('chapter') === 0)) {
-	                    context$1$0.next = 6;
-	                    break;
-	                }
-	
-	                context$1$0.next = 6;
-	                return regeneratorRuntime.awrap(leavingChapter());
-	
-	            case 6:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
+	// async function backToIndex() {
+	//     if (currentScene === 'video') {
+	//         await hideVideo();
+	//     }
+	//     if (currentScene.indexOf('chapter') === 0) {
+	//         await leavingChapter();
+	//     }
+	// }
 	
 	function enteringChapter(index) {
 	    var chapter, chapterMusic, categoryName;
@@ -38518,58 +38499,69 @@ THREE.OBJLoader.prototype = {
 	                categoryName = category.get(index - 1);
 	
 	                if (!(chapter && chapterMusic && currentScene !== 'chapter' + index)) {
-	                    context$1$0.next = 27;
+	                    context$1$0.next = 23;
 	                    break;
 	                }
 	
-	                openingMusic.togglePlayback(false);
+	                currentMusic.togglePlayback(false);
 	
-	                currentMusic = chapterMusic;
+	                // resizeHandler = ::opening.resize;
+	                // renderHandler = ::opening.render;
 	
-	                resizeHandler = opening.resize.bind(opening);
-	                renderHandler = opening.render.bind(opening);
+	                // if (currentScene === 'video') {
+	                //     await hideVideo();
+	                // }
 	
-	                if (!(currentScene === 'video')) {
-	                    context$1$0.next = 11;
-	                    break;
-	                }
+	                // if (currentChapter) {
+	                //     await Promise.all([
+	                //         opening.leaving(),
+	                //         currentChapter.leaving()
+	                //     ]);
+	                // }
 	
-	                context$1$0.next = 11;
-	                return regeneratorRuntime.awrap(hideVideo());
+	                // await opening.entering();
 	
-	            case 11:
 	                if (!currentChapter) {
-	                    context$1$0.next = 14;
+	                    context$1$0.next = 10;
 	                    break;
 	                }
 	
-	                context$1$0.next = 14;
-	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
+	                context$1$0.next = 8;
+	                return regeneratorRuntime.awrap(currentChapter.leaving());
 	
-	            case 14:
-	                context$1$0.next = 16;
+	            case 8:
+	                context$1$0.next = 12;
+	                break;
+	
+	            case 10:
+	                context$1$0.next = 12;
 	                return regeneratorRuntime.awrap(opening.entering());
 	
-	            case 16:
+	            case 12:
 	
 	                currentChapter = chapter;
+	                currentMusic = chapterMusic;
 	                resizeHandler = chapter.resize.bind(chapter);
 	                renderHandler = chapter.render.bind(chapter);
 	
-	                context$1$0.next = 21;
-	                return regeneratorRuntime.awrap(Promise.all([opening.hide(), chapter.entering(currentMusic)]));
+	                // await Promise.all([
+	                //     opening.hide(),
+	                //     chapter.entering(currentMusic)
+	                // ]);
+	                context$1$0.next = 18;
+	                return regeneratorRuntime.awrap(currentChapter.entering(currentMusic));
 	
-	            case 21:
+	            case 18:
 	
-	                nav.enableAll();
-	                nav.disable('category');
+	                // nav.enableAll();
+	                nav.enable('index');
 	                category.showName(categoryName);
 	                clock.hide();
 	
 	                lastScene = currentScene;
 	                currentScene = 'chapter' + index;
 	
-	            case 27:
+	            case 23:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38596,7 +38588,7 @@ THREE.OBJLoader.prototype = {
 	
 	            case 9:
 	
-	                nav.enableAll();
+	                // nav.enableAll();
 	                nav.disable('index');
 	                category.hideName();
 	                clock.show();
@@ -38605,126 +38597,63 @@ THREE.OBJLoader.prototype = {
 	                lastScene = currentScene;
 	                currentScene = 'index';
 	
-	            case 16:
+	            case 15:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, this);
 	}
 	
-	function showVideo() {
-	    var navDisableName;
-	    return regeneratorRuntime.async(function showVideo$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                if (!(currentScene === 'index')) {
-	                    context$1$0.next = 6;
-	                    break;
-	                }
+	// async function showVideo() {
+	//     var navDisableName;
+	//     if (currentScene === 'index') {
+	//         await Promise.all([
+	//             opening.hide(),
+	//             video.show()
+	//         ]);
+	//         navDisableName = 'category'
+	//     } else if (currentScene.indexOf('chapter') === 0) {
+	//         await Promise.all([
+	//             currentChapter.hide(),
+	//             video.show()
+	//         ]);
+	//         navDisableName = 'index'
+	//     }
+	//     nav.enableAll();
+	//     nav.disable('video');
+	//     nav.disable(navDisableName);
+	//     changeColor('black');
+	//     lastScene = currentScene;
+	//     currentScene = 'video';
+	// }
 	
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap(Promise.all([opening.hide(), video.show()]));
+	// async function hideVideo() {
+	//     var navDisableName;
+	//     if (lastScene === 'index') {
+	//         await Promise.all([
+	//             opening.show(),
+	//             video.hide()
+	//         ]);
+	//         navDisableName = 'index';
+	//     } else if (lastScene && lastScene.indexOf('chapter') === 0) {
+	//         await Promise.all([
+	//             currentChapter.show(),
+	//             video.hide()
+	//         ]);
+	//         navDisableName = 'category';
+	//     }
+	//     nav.enableAll();
+	//     nav.disable(navDisableName);
+	//     currentScene = lastScene;
+	// }
 	
-	            case 3:
-	                navDisableName = 'category';
-	                context$1$0.next = 10;
-	                break;
-	
-	            case 6:
-	                if (!(currentScene.indexOf('chapter') === 0)) {
-	                    context$1$0.next = 10;
-	                    break;
-	                }
-	
-	                context$1$0.next = 9;
-	                return regeneratorRuntime.awrap(Promise.all([currentChapter.hide(), video.show()]));
-	
-	            case 9:
-	                navDisableName = 'index';
-	
-	            case 10:
-	                nav.enableAll();
-	                nav.disable('video');
-	                nav.disable(navDisableName);
-	                (0, _color.changeColor)('black');
-	                lastScene = currentScene;
-	                currentScene = 'video';
-	
-	            case 16:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	function hideVideo() {
-	    var navDisableName;
-	    return regeneratorRuntime.async(function hideVideo$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                if (!(lastScene === 'index')) {
-	                    context$1$0.next = 6;
-	                    break;
-	                }
-	
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap(Promise.all([opening.show(), video.hide()]));
-	
-	            case 3:
-	                navDisableName = 'index';
-	                context$1$0.next = 10;
-	                break;
-	
-	            case 6:
-	                if (!(lastScene && lastScene.indexOf('chapter') === 0)) {
-	                    context$1$0.next = 10;
-	                    break;
-	                }
-	
-	                context$1$0.next = 9;
-	                return regeneratorRuntime.awrap(Promise.all([currentChapter.show(), video.hide()]));
-	
-	            case 9:
-	                navDisableName = 'category';
-	
-	            case 10:
-	                nav.enableAll();
-	                nav.disable(navDisableName);
-	                currentScene = lastScene;
-	
-	            case 13:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	function showCategory() {
-	    return regeneratorRuntime.async(function showCategory$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                if (!(currentScene === 'video')) {
-	                    context$1$0.next = 5;
-	                    break;
-	                }
-	
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap(hideVideo());
-	
-	            case 3:
-	                context$1$0.next = 7;
-	                break;
-	
-	            case 5:
-	                context$1$0.next = 7;
-	                return regeneratorRuntime.awrap(category.show());
-	
-	            case 7:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
+	// async function showCategory() {
+	//     if (currentScene === 'video') {
+	//         await hideVideo();
+	//     } else {
+	//         await category.show();
+	//     }
+	// }
 	
 	(function callee$0$0() {
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -38785,11 +38714,11 @@ THREE.OBJLoader.prototype = {
 	
 	                nav.on('change', function (e, newValue, oldValue) {
 	                    if (newValue === 'index') {
-	                        backToIndex();
+	                        leavingChapter();
 	                    } else if (newValue === 'video') {
-	                        showVideo();
+	                        video.show();
 	                    } else if (newValue === 'category') {
-	                        showCategory();
+	                        category.show();
 	                    } else if (newValue === 'music') {
 	                        currentMusic.togglePlayback();
 	                    }
@@ -39111,7 +39040,7 @@ THREE.OBJLoader.prototype = {
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n  font-family: weblysleek, Arial, \"Microsoft YaHei\", \"SC Heiti\";\n}\n"
+	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n  font-family: camelia, \"Microsoft YaHei\", \"SC Heiti\", sans-serif;\n}\n"
 
 /***/ },
 /* 7 */
@@ -39197,10 +39126,10 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var url = './assets/fonts/weblysleek';
+	var url = './assets/fonts/camelia';
 	_prologue.manager.itemStart(url);
 	window.fontloadcallback = function (base64) {
-	    var fontface = '\n        @font-face {\n            font-family: \'weblysleek\';\n            src: url(' + base64 + ') format(\'truetype\');\n        }\n    ';
+	    var fontface = '\n        @font-face {\n            font-family: \'camelia\';\n            src: url(' + base64 + ') format(\'truetype\');\n        }\n    ';
 	    var style = document.createElement('style');
 	    style.innerHTML = fontface;
 	    document.querySelector('head').appendChild(style);
@@ -40055,7 +39984,7 @@ THREE.OBJLoader.prototype = {
 /* 19 */
 /***/ function(module, exports) {
 
-	module.exports = "#clock {\n  opacity: 0;\n  position: absolute;\n  z-index: 99;\n  width: 200px;\n  height: 88px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 25px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  font-size: 16px;\n  text-align: center;\n  border: 1px solid transparent;\n  border-radius: 12px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 26px;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  line-height: 100%;\n  left: 30px;\n  top: 0;\n  font-size: 90px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\nbody.white #clock .category,\nbody.white #clock .ampm,\nbody.white #clock .time {\n  color: #FFF;\n  border-color: #FFF;\n}\nbody.black #clock .category,\nbody.black #clock .ampm,\nbody.black #clock .time {\n  color: #1C1C1C;\n  border-color: #1C1C1C;\n}\n"
+	module.exports = "#clock {\n  opacity: 0;\n  position: absolute;\n  z-index: 99;\n  width: 200px;\n  height: 88px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 25px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  font-size: 16px;\n  text-align: center;\n  border: 1px solid transparent;\n  border-radius: 12px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 26px;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  left: 30px;\n  top: 0;\n  font-size: 90px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\nbody.white #clock .category,\nbody.white #clock .ampm,\nbody.white #clock .time {\n  color: #FFF;\n  border-color: #FFF;\n}\nbody.black #clock .category,\nbody.black #clock .ampm,\nbody.black #clock .time {\n  color: #1C1C1C;\n  border-color: #1C1C1C;\n}\n"
 
 /***/ },
 /* 20 */
@@ -40090,7 +40019,7 @@ THREE.OBJLoader.prototype = {
 	var length = categorys.length;
 	
 	exports.length = length;
-	var images = ['circle.png', 'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png'];
+	var images = ['circle.png', 'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png', 'c1_disable.png', 'c2_disable.png', 'c3_disable.png', 'c4_disable.png', 'c5_disable.png', 'c6_disable.png'];
 	images = images.map(function (image) {
 	    var loader = new THREE.ImageLoader(_prologue.manager);
 	
@@ -40187,49 +40116,56 @@ THREE.OBJLoader.prototype = {
 	        var rad = _parse.rad;
 	
 	        if (radius <= circleWidth / 2 && radius <= circleHeight / 2) {
-	            var _context8;
-	
 	            var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
 	            var name = get(index - 1);
 	
-	            if (avialables.indexOf(name) < 0) return;
+	            var type;
+	            if (avialables.indexOf(name) < 0) {
+	                var _context8;
 	
-	            (_context8 = (_context8 = $circle, $find).call(_context8, '.c' + index), $addClass).call(_context8, 'hover');
+	                (_context8 = (_context8 = $circle, $find).call(_context8, '.c' + index + '.disable'), $addClass).call(_context8, 'hover');
+	            } else {
+	                var _context9;
 	
-	            if (eventName === 'mousemove') return;
+	                (_context9 = (_context9 = $circle, $find).call(_context9, '.c' + index + '.enable'), $addClass).call(_context9, 'hover');
 	
-	            (_context8 = $circle, $trigger).call(_context8, 'change', [index, changed]);
-	            changed = index;
+	                if (eventName === 'mousedown') {
+	                    var _context10;
+	
+	                    (_context10 = $circle, $trigger).call(_context10, 'change', [index, changed]);
+	                    changed = index;
+	                }
+	            }
 	        }
 	    }), $on).call(_context6, 'mouseup mouseleave', function (e) {
-	        var _context9;
+	        var _context11;
 	
-	        (_context9 = $circle, $findAll).call(_context9, 'img').forEach(function (img) {
+	        (_context11 = $circle, $findAll).call(_context11, 'img').forEach(function (img) {
 	            return $removeClass.call(img, 'hover');
 	        });
 	    });
 	}
 	
 	function bindBackEvents() {
-	    var _context10;
+	    var _context12;
 	
-	    (_context10 = (_context10 = $category, $find).call(_context10, '.back'), $on).call(_context10, 'click', hide);
+	    (_context12 = (_context12 = $category, $find).call(_context12, '.back'), $on).call(_context12, 'click', hide);
 	}
 	
 	var isBoundEvents = false;
 	
 	function show() {
-	    var _context11;
+	    var _context13;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context11 = $category, $show).call(_context11);
+	                (_context13 = $category, $show).call(_context13);
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
 	
 	            case 3:
-	                (_context11 = $category, $addClass).call(_context11, 'fadeIn');
+	                (_context13 = $category, $addClass).call(_context13, 'fadeIn');
 	                context$1$0.next = 6;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
@@ -40249,17 +40185,17 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context12;
+	    var _context14;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context12 = (_context12 = $category, $removeClass).call(_context12, 'fadeIn'), $addClass).call(_context12, 'fadeOut');
+	                (_context14 = (_context14 = $category, $removeClass).call(_context14, 'fadeIn'), $addClass).call(_context14, 'fadeOut');
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
 	            case 3:
-	                (_context12 = (_context12 = $category, $removeClass).call(_context12, 'fadeOut'), $hide).call(_context12);
+	                (_context14 = (_context14 = $category, $removeClass).call(_context14, 'fadeOut'), $hide).call(_context14);
 	
 	            case 4:
 	            case 'end':
@@ -40273,7 +40209,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	(function callee$0$0() {
-	    var _context13;
+	    var _context15;
 	
 	    var imgs;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -40284,9 +40220,9 @@ THREE.OBJLoader.prototype = {
 	
 	            case 2:
 	
-	                $category = (_context13 = (_context13 = document.body, $append).call(_context13, template()), $find).call(_context13, '#category');
-	                $categoryName = (_context13 = document.body, $find).call(_context13, '#category-name');
-	                $circle = (_context13 = $category, $find).call(_context13, '.circle');
+	                $category = (_context15 = (_context15 = document.body, $append).call(_context15, template()), $find).call(_context15, '#category');
+	                $categoryName = (_context15 = document.body, $find).call(_context15, '#category-name');
+	                $circle = (_context15 = $category, $find).call(_context15, '.circle');
 	
 	                context$1$0.next = 7;
 	                return regeneratorRuntime.awrap(Promise.all(images));
@@ -40294,14 +40230,21 @@ THREE.OBJLoader.prototype = {
 	            case 7:
 	                imgs = context$1$0.sent;
 	
-	                imgs.forEach(function (image, i) {
-	                    var _context14;
+	                imgs.forEach(function (image) {
+	                    var src = $attr.call(image, 'src');
+	                    var name = src.match(/(c\d)(?:_disable)?.png/);
 	
-	                    if ($attr.call(image, 'src').indexOf('circle.png') > -1) {
-	                        return;
+	                    if (name) {
+	                        var _context16;
+	
+	                        $addClass.call(image, name[1]);
+	                        if (src.indexOf('disable') > 0) {
+	                            $addClass.call(image, 'disable');
+	                        } else {
+	                            $addClass.call(image, 'enable');
+	                        }
+	                        (_context16 = $circle, $append).call(_context16, image);
 	                    }
-	                    $addClass.call(image, 'c' + i);
-	                    (_context14 = $circle, $append).call(_context14, image);
 	                });
 	
 	            case 9:
@@ -40341,7 +40284,7 @@ THREE.OBJLoader.prototype = {
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 30px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
 
 /***/ },
 /* 23 */
@@ -40800,7 +40743,7 @@ THREE.OBJLoader.prototype = {
 /* 31 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 110px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\nbody.black #nav a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 120px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\nbody.black #nav a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n"
 
 /***/ },
 /* 32 */
@@ -40870,12 +40813,13 @@ THREE.OBJLoader.prototype = {
 	var PATH = './assets/images/video';
 	var VIDEO = './assets/videos/project.mp4';
 	function template() {
-	    return '\n        <div id="video">\n            <div class="wrap">\n                <div class="slogan"></div>\n                <section>\n                    <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                    <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous"\n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n                <section>\n                    <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                    <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                    <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                    <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                </section>\n                <div class="banner">\n                    <img src="' + PATH + '/banner.jpg" width="70%" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/01.jpg" width="70%" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/02.jpg" width="70%" />\n                </div>\n                <div class="img">\n                    <img src="' + PATH + '/03.jpg" width="70%" />\n                </div>\n                <section>\n                    <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                    <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                    <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                    <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                    <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                </section>\n                <video src="' + VIDEO + '" \n                    controls\n                    crossorigin="anonymous" \n                    poster="' + PATH + '/poster.jpg"\n                    preload="auto">\n                </video>\n            </div>\n        </div>\n    ';
+	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <video src="' + VIDEO + '" \n                        controls\n                        crossorigin="anonymous"\n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner">\n                        <img src="' + PATH + '/banner.jpg" width="70%" />\n                    </div>\n                    <div class="img">\n                        <img src="' + PATH + '/01.jpg" width="70%" />\n                    </div>\n                    <div class="img">\n                        <img src="' + PATH + '/02.jpg" width="70%" />\n                    </div>\n                    <div class="img">\n                        <img src="' + PATH + '/03.jpg" width="70%" />\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                    </section>\n                    <video src="' + VIDEO + '" \n                        controls\n                        crossorigin="anonymous" \n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
 	    var _context3;
 	
+	    var $scroll, $back;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -40885,13 +40829,19 @@ THREE.OBJLoader.prototype = {
 	            case 2:
 	
 	                $video = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#video');
-	                (_context3 = $video, $on).call(_context3, 'mousewheel', function (e) {
+	                $scroll = (_context3 = $video, $find).call(_context3, '.scrollWrap');
+	                $back = (_context3 = $video, $find).call(_context3, '.back');
+	
+	                $on.call($scroll, 'mousewheel', function (e) {
 	                    var detal = e.wheelDelta;
-	                    console.log(detal);
-	                    $video.scrollTop -= detal;
+	                    $scroll.scrollTop -= detal;
 	                });
 	
-	            case 4:
+	                $on.call($back, 'click', function (e) {
+	                    hide();
+	                });
+	
+	            case 7:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40928,7 +40878,7 @@ THREE.OBJLoader.prototype = {
 /* 34 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 9999;\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .wrap {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 784px;\n  height: 462px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #1C1C1C;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 784px;\n  height: 462px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n}\n"
 
 /***/ },
 /* 35 */

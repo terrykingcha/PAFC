@@ -7,7 +7,10 @@ var avialables = ['雾', '星'];
 
 export var length = categorys.length;
 
-var images = ['circle.png', 'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png'];
+var images = [
+    'circle.png', 'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png',
+    'c1_disable.png', 'c2_disable.png', 'c3_disable.png', 'c4_disable.png', 'c5_disable.png', 'c6_disable.png'
+];
 images = images.map(function(image) {
     var loader = new THREE.ImageLoader(manager);
 
@@ -88,14 +91,17 @@ function bindCategoryEvents() {
                 var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
                 var name = get(index - 1);
 
-                if (avialables.indexOf(name) < 0) return;
+                var type;
+                if (avialables.indexOf(name) < 0) {
+                    $circle::$find(`.c${index}.disable`)::$addClass('hover');
+                } else {
+                    $circle::$find(`.c${index}.enable`)::$addClass('hover');
 
-                $circle::$find(`.c${index}`)::$addClass('hover');
-
-                if (eventName === 'mousemove') return;
-
-                $circle::$trigger('change', [index, changed]);
-                changed = index;
+                    if (eventName === 'mousedown') {
+                        $circle::$trigger('change', [index, changed]);
+                        changed = index;
+                    }
+                }
             }
         })::$on('mouseup mouseleave', function(e) {
             $circle::$findAll('img').forEach(img => img::$removeClass('hover'));
@@ -145,11 +151,18 @@ function template() {
     $circle = $category::$find('.circle');
 
     var imgs = await Promise.all(images);
-    imgs.forEach(function(image, i) {
-        if (image::$attr('src').indexOf('circle.png') > -1) {
-            return;
+    imgs.forEach(function(image) {
+        var src = image::$attr('src');
+        var name = src.match(/(c\d)(?:_disable)?.png/);
+
+        if (name) {
+            image::$addClass(name[1]);
+            if (src.indexOf('disable') > 0) {
+                image::$addClass('disable');
+            } else {
+                image::$addClass('enable');
+            }
+            $circle::$append(image);
         }
-        image::$addClass(`c${i}`);
-        $circle::$append(image);
     });
 })();
