@@ -4,7 +4,7 @@ import {requestAnimationFrame, cancelAnimationFrame} from '../lib/util';
 
 
 var camera;
-
+var cloud;
 var lon = 90;
 var lonStep = 0.1;
 var initRaduis;
@@ -15,6 +15,8 @@ export function rotation() {
     requestAnimationFrame(rotation);
 
     if (isRotation) {
+        cloud.rotation.y -= THREE.Math.degToRad(lonStep);
+
         lon += lonStep;
         var theta = THREE.Math.degToRad(lon);
         camera.position.x = raduis * Math.cos(theta);
@@ -76,7 +78,8 @@ export function flyOut() {
     }
 }
 
-export function init(_camera) {
+export function init(_camera, _cloud) {
+    cloud = _cloud;
     camera = _camera;
     raduis = initRaduis = camera.position.z;
 

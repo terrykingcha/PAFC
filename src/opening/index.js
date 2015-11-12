@@ -63,39 +63,23 @@ export var init = async () => {
     scene.add(light4);
     scene.add(tower);
     scene.add(sky);
-    if (state === 'daylight') {
-        scene.add(cloud);
-    } else if (state === 'night') {
+    scene.add(cloud);
+    if (state === 'night') {
         scene.add(star);
     }
 
     camera.position.set(0, 0, 20);
     camera.lookAt(scene.position);
     var radius = sky.geometry.parameters.radius;
-    light1.position.set(
-        0,
-        radius, 
-        -radius
-    );
-    light2.position.set(
-        0, 
-        radius, 
-        radius
-    );
-    light3.position.set(
-        radius, 
-        radius, 
-        0
-    );
-    light4.position.set(
-        -radius, 
-        radius, 
-        0
-    );
-    tower.position.set(0, -4.5, 0)
+    light1.position.set(0, radius, -radius);
+    light2.position.set(0, radius, radius);
+    light3.position.set(radius, radius, 0);
+    light4.position.set(-radius, radius, 0);
+    tower.position.set(0, -4.5, 0);
+    cloud.position.set(0, -3.5, 0);
     sky.position.set(0, 0, 0);
 
-    Controls.init(camera);
+    Controls.init(camera, cloud);
 
     domElement.setAttribute('scene', 'opening');
 
@@ -154,9 +138,8 @@ export function ontowerclick(h) {
 }
 
 export function render() {
-    if (state === 'daylight') {
-        Cloud.render();
-    } else if (state === 'night') {
+    Cloud.render();
+    if (state === 'night') {
         Star.render();
     }
     raycaster.setFromCamera(mouse, camera);

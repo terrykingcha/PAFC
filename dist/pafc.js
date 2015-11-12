@@ -40499,7 +40499,7 @@ THREE.OBJLoader.prototype = {
 	                button_size: "middle",
 	                default_text: "600米高空的风，居然会唱歌!？",
 	                refer: "y",
-	                default_image: "http%3A%2F%2Fww4.sinaimg.cn%2Fmw690%2F66101445gw1exfnkc5fgkj20m80goq3r.jpg",
+	                default_image: "http%3A%2F%2Fww3.sinaimg.cn%2Fmw690%2F624af76dgw1exypoesja7j20go0m8gmj.jpg",
 	                appkey: "3Nbb3f",
 	                id: "wb_publisher"
 	            });
@@ -40527,10 +40527,11 @@ THREE.OBJLoader.prototype = {
 	    }, null, this);
 	}
 	
-	var FACEBOOK_SHARE = 'https://www.facebook.com/dialog/share?' + 'app_id=1645611472322802' + '&display=page' + '&href=' + encodeURIComponent(location.href) + '&redirect_uri=' + encodeURIComponent(location.href);
+	var FACEBOOK_SHARE = 'https://www.facebook.com/dialog/feed?' + 'app_id=1645611472322802' + '&display=page' + '&caption=At%20600m%20in%20the%20atmosphere%2C%20we%20managed%20to%20capture%20nature.';
+	'&href=' + encodeURIComponent(location.href) + '&redirect_uri=' + encodeURIComponent(location.href);
 	
 	function template() {
-	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 PAFC, All Rights Reserved</span>\n            <a class="weibo"></a>\n            <a class="weixin"></a>\n            <a href="' + FACEBOOK_SHARE + '" target="_blank" class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
+	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 Shenzhen PAFC, All Rights Reserved</span>\n            <a class="weibo"></a>\n            <a class="weixin"></a>\n            <a href="' + FACEBOOK_SHARE + '" target="_blank" class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -40584,7 +40585,7 @@ THREE.OBJLoader.prototype = {
 /* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 14px;\n  line-height: 24px;\n  margin-right: 8px;\n  font-weight: bold;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,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);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\nbody.black #share span {\n  color: #333;\n  text-shadow: 2px 1px 1px rgba(0, 0, 0, 0.9);\n}\nbody.black #share a {\n  -webkit-filter: invert(100%);\n  filter: invert(60%);\n}\nbody.black #share a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\nbody.white #share span {\n  color: #FFFFFF;\n  text-shadow: 2px 1px 1px rgba(255, 255, 255, 0.9);\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 14px;\n  line-height: 24px;\n  margin-right: 8px;\n  font-weight: bold;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\nbody.black #share span {\n  color: #333;\n}\nbody.black #share a {\n  -webkit-filter: invert(100%);\n  filter: invert(60%);\n}\nbody.black #share a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\nbody.white #share span {\n  color: #FFFFFF;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
 /* 29 */
@@ -41186,9 +41187,8 @@ THREE.OBJLoader.prototype = {
 	                scene.add(light4);
 	                scene.add(tower);
 	                scene.add(sky);
-	                if (state === 'daylight') {
-	                    scene.add(cloud);
-	                } else if (state === 'night') {
+	                scene.add(cloud);
+	                if (state === 'night') {
 	                    scene.add(star);
 	                }
 	
@@ -41201,9 +41201,10 @@ THREE.OBJLoader.prototype = {
 	                light3.position.set(radius, radius, 0);
 	                light4.position.set(-radius, radius, 0);
 	                tower.position.set(0, -4.5, 0);
+	                cloud.position.set(0, -3.5, 0);
 	                sky.position.set(0, 0, 0);
 	
-	                Controls.init(camera);
+	                Controls.init(camera, cloud);
 	
 	                domElement.setAttribute('scene', 'opening');
 	
@@ -41243,17 +41244,17 @@ THREE.OBJLoader.prototype = {
 	                    }
 	                }, false);
 	
-	                context$1$0.next = 40;
+	                context$1$0.next = 42;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 40:
+	            case 42:
 	                document.body.appendChild(domElement);
 	
 	                // window.scene = scene;
 	                // window.camera = camera;
 	                // window.renderer = renderer;
 	
-	            case 41:
+	            case 43:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41276,9 +41277,8 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    if (state === 'daylight') {
-	        Cloud.render();
-	    } else if (state === 'night') {
+	    Cloud.render();
+	    if (state === 'night') {
 	        Star.render();
 	    }
 	    raycaster.setFromCamera(mouse, camera);
@@ -41736,7 +41736,7 @@ THREE.OBJLoader.prototype = {
 	var _libUtil = __webpack_require__(15);
 	
 	var camera;
-	
+	var cloud;
 	var lon = 90;
 	var lonStep = 0.1;
 	var initRaduis;
@@ -41748,6 +41748,8 @@ THREE.OBJLoader.prototype = {
 	    (0, _libUtil.requestAnimationFrame)(rotation);
 	
 	    if (isRotation) {
+	        cloud.rotation.y -= THREE.Math.degToRad(lonStep);
+	
 	        lon += lonStep;
 	        var theta = THREE.Math.degToRad(lon);
 	        camera.position.x = raduis * Math.cos(theta);
@@ -41810,7 +41812,8 @@ THREE.OBJLoader.prototype = {
 	    }
 	}
 	
-	function init(_camera) {
+	function init(_camera, _cloud) {
+	    cloud = _cloud;
 	    camera = _camera;
 	    raduis = initRaduis = camera.position.z;
 	
@@ -41978,59 +41981,100 @@ THREE.OBJLoader.prototype = {
 	var object;
 	
 	exports.object = object;
-	var materialPromises = [];
-	
-	var _loop = function (i) {
-	    materialPromises[i] = new Promise(function (resolve, reject) {
-	        var loader = new THREE.TextureLoader(_prologue.manager);
-	        loader.load('assets/images/cloud' + (i + 1) + '.png', function (texture) {
-	            texture.minFilter = THREE.LinearFilter;
-	            texture.magFilter = THREE.LinearFilter;
-	            var material = new THREE.MeshBasicMaterial({
-	                map: texture,
-	                side: THREE.DoubleSide,
-	                transparent: true
-	            });
-	            resolve(material);
-	        }, _prologue.onProgress, _prologue.onError);
-	    });
+	var materialPromises = {
+	    daylight: [],
+	    night: []
 	};
+	var _iteratorNormalCompletion = true;
+	var _didIteratorError = false;
+	var _iteratorError = undefined;
 	
-	for (var i = 0; i < 4; i++) {
-	    _loop(i);
+	try {
+	    var _loop = function () {
+	        var state = _step.value;
+	
+	        var _loop2 = function (i) {
+	            materialPromises[state][i] = new Promise(function (resolve, reject) {
+	                var loader = new THREE.TextureLoader(_prologue.manager);
+	                loader.load('assets/images/cloud-' + state + '-' + (i + 1) + '.png', function (texture) {
+	                    texture.minFilter = THREE.LinearFilter;
+	                    texture.magFilter = THREE.LinearFilter;
+	                    var material = new THREE.MeshBasicMaterial({
+	                        map: texture,
+	                        side: THREE.DoubleSide,
+	                        transparent: true
+	                    });
+	                    resolve(material);
+	                }, _prologue.onProgress, _prologue.onError);
+	            });
+	        };
+	
+	        for (var i = 0; i < 4; i++) {
+	            _loop2(i);
+	        }
+	    };
+	
+	    for (var _iterator = Object.keys(materialPromises)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        _loop();
+	    }
+	} catch (err) {
+	    _didIteratorError = true;
+	    _iteratorError = err;
+	} finally {
+	    try {
+	        if (!_iteratorNormalCompletion && _iterator['return']) {
+	            _iterator['return']();
+	        }
+	    } finally {
+	        if (_didIteratorError) {
+	            throw _iteratorError;
+	        }
+	    }
 	}
 	
-	var rotationY = 0.001;
+	var tranverse = 1;
 	
 	function render() {
 	    object.children.forEach(function (obj, i) {
-	        var sign = i % 2 === 0 ? 1 : -1;
-	        obj.rotation.y += rotationY * i * sign;
+	        var sign = (i % 2 === 0 ? 1 : -1) * tranverse;
+	        obj.position.x += 0.0005 * sign;
+	        if (Math.abs(obj.position.x) > 10) {
+	            tranverse *= -1;
+	        }
 	    });
 	}
 	
 	(function callee$0$0() {
-	    var materials;
+	    var state, materials;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Clock.ready());
+	
+	            case 2:
+	
 	                exports.object = object = new THREE.Object3D();
 	
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap(Promise.all(materialPromises));
+	                state = Clock.state();
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(Promise.all(materialPromises[state]));
 	
-	            case 3:
+	            case 6:
 	                materials = context$1$0.sent;
 	
 	                materials.forEach(function (material, i) {
-	                    var geometry = new THREE.SphereGeometry(45 - i * 6, 64, 64);
+	                    var width = 20;
+	                    var height = 10;
+	                    var geometry = new THREE.PlaneGeometry(width, height);
 	                    var mesh = new THREE.Mesh(geometry, material);
+	                    mesh.position.set(0, -Math.random(), Math.random() * 10 + 5);
 	                    object.add(mesh);
 	                });
 	
 	                deferred.resolve();
 	
-	            case 6:
+	            case 9:
 	            case 'end':
 	                return context$1$0.stop();
 	        }

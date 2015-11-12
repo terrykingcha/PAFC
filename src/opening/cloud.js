@@ -7,47 +7,59 @@ var deferred = defer();
 export var ready = () => deferred.promise;
 export var object;
 
-var materialPromises = [];
-for (let i = 0; i < 4; i++) {
-    materialPromises[i] = new Promise(function(resolve, reject) {
-        var loader = new THREE.TextureLoader(manager);
-        loader.load(
-            `assets/images/cloud${i + 1}.png`,
-            function(texture) {
-                texture.minFilter = THREE.LinearFilter;
-                texture.magFilter = THREE.LinearFilter;
-                var material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    side: THREE.DoubleSide,
-                    transparent: true
-                });
-                resolve(material);
-            },
-            onProgress, 
-            onError
-        );  
-    });
+var materialPromises = {
+    daylight: [],
+    night: []
+};
+for (let state of Object.keys(materialPromises)) {
+    for (let i = 0; i < 4; i++) {
+        materialPromises[state][i] = new Promise(function(resolve, reject) {
+            var loader = new THREE.TextureLoader(manager);
+            loader.load(
+                `assets/images/cloud-${state}-${i + 1}.png`,
+                function(texture) {
+                    texture.minFilter = THREE.LinearFilter;
+                    texture.magFilter = THREE.LinearFilter;
+                    var material = new THREE.MeshBasicMaterial({
+                        map: texture,
+                        side: THREE.DoubleSide,
+                        transparent: true
+                    });
+                    resolve(material);
+                },
+                onProgress, 
+                onError
+            );  
+        });
+    }
 }
 
-var rotationY = 0.001;
+var tranverse = 1;
 export function render() {
     object.children.forEach(function(obj, i) {
-        var sign = i % 2 === 0 ? 1 : -1;
-        obj.rotation.y += rotationY * i * sign;
+        var sign = (i % 2 === 0 ? 1 : -1) * tranverse;
+        obj.position.x += 0.0005 * sign;
+        if (Math.abs(obj.position.x) > 10) {
+            tranverse *= -1;
+        } 
     });
 }
 
 
 (async () => {
-    object = new THREE.Object3D();
+    await Clock.ready();
 
-    var materials = await Promise.all(materialPromises);
+    object = new THREE.Object3D();
+    
+    var state = Clock.state();
+    var materials = await Promise.all(materialPromises[state]);
 
     materials.forEach(function(material, i) {
-        var geometry = new THREE.SphereGeometry(
-            45 - i * 6, 64, 64
-        );
+        var width = 20;
+        var height = 10;
+        var geometry = new THREE.PlaneGeometry(width, height);
         var mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(0, -Math.random(), Math.random() * 10 + 5);
         object.add(mesh);
     });
 
