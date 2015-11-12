@@ -45,8 +45,8 @@ export async function show() {
 const FACEBOOK_SHARE = 'https://www.facebook.com/dialog/feed?' +
   'app_id=1645611472322802' + 
   '&display=page' + 
-  '&caption=At%20600m%20in%20the%20atmosphere%2C%20we%20managed%20to%20capture%20nature.'
-  '&href=' + encodeURIComponent(location.href) +  
+  '&caption=At%20600m%20in%20the%20atmosphere%2C%20we%20managed%20to%20capture%20nature.' + 
+  '&link=' + encodeURIComponent(location.href) +  
   '&redirect_uri=' + encodeURIComponent(location.href);
 
 function template() {
