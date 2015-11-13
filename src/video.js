@@ -28,8 +28,7 @@ function template() {
                         <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>
                         <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>
                     </section>
-                    <video src="${VIDEO}" 
-                        controls
+                    <video controls
                         crossorigin="anonymous"
                         poster="${PATH}/poster.jpg"
                         preload="auto">
@@ -60,8 +59,7 @@ function template() {
                         <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>
                         <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>
                     </section>
-                    <video src="${VIDEO}" 
-                        controls
+                    <video controls
                         crossorigin="anonymous" 
                         poster="${PATH}/poster.jpg"
                         preload="auto">
