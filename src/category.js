@@ -3,7 +3,7 @@ import {defer, domReady, delay} from './lib/promise';
 import {manager, onProgress, onError} from './prologue';
 
 var categorys = ['雾', '云', '日', '雷', '雨', '星'];
-var avialables = ['雾', '星'];
+var avialables = ['雾', '云', '星'];
 
 export var length = categorys.length;
 

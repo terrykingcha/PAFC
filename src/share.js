@@ -14,22 +14,6 @@ function sharing(e, type) {
                 $weixinCode::$off('click', handler);
                 $weixinCode::$hide();
             });
-    } else if (type === 'weibo') {
-        e.preventDefault();
-        WB2.anyWhere(function(W){
-            W.widget.publish({
-                action:"pubilish",
-                type:"web",
-                language:"zh_cn",
-                button_type:"gray",
-                button_size:"middle",
-                default_text:"600米高空的风，居然会唱歌!？",
-                refer:"y",
-                default_image:"http%3A%2F%2Fww3.sinaimg.cn%2Fmw690%2F624af76dgw1exypoesja7j20go0m8gmj.jpg",
-                appkey:"3Nbb3f",
-                id: "wb_publisher"
-            });
-        });
     }
 }
 
@@ -40,6 +24,22 @@ export async function show() {
             var type = this.className;
             sharing(e, type);
         });
+
+    WB2.anyWhere(function(W){
+        W.widget.publish({
+            action:"pubilish",
+            toolbar:"",
+            type:"web",
+            language:"zh_cn",
+            position: "c",
+            default_text:"600米高空的风，居然会唱歌!？",
+            default_image:"http%3A%2F%2Fww3.sinaimg.cn%2Fmw690%2F624af76dgw1exypoesja7j20go0m8gmj.jpg",
+            tag:"深圳平安风之音乐会",
+            refer:"y",
+            appkey:"3Nbb3f",
+            id: "wb_publisher"
+        });
+    });
 }
 
 const FACEBOOK_SHARE = 'https://www.facebook.com/dialog/feed?' +
@@ -53,7 +53,7 @@ function template() {
     return `
         <div id="share">
             <span>Copyright &copy; 2015 Shenzhen PAFC, All Rights Reserved</span>
-            <a class="weibo"></a>
+            <a class="weibo" id="wb_publisher"></a>
             <a class="weixin"></a>
             <a href="${FACEBOOK_SHARE}" target="_blank" class="facebook"></a>
         </div>
