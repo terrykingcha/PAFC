@@ -68,7 +68,7 @@ export var init = async () => {
     // scene.add(new THREE.PointLightHelper(light4, 2))
 
     
-    await Controls.init(camera, renderer);
+    // await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -85,7 +85,7 @@ export function resize() {
 }
 
 export function render() {
-    Controls.render();
+    // Controls.render();
     renderer.render(scene, camera);
 }
 

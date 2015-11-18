@@ -43646,14 +43646,11 @@ THREE.OBJLoader.prototype = {
 	                // scene.add(new THREE.PointLightHelper(light3, 2))
 	                // scene.add(new THREE.PointLightHelper(light4, 2))
 	
+	                // await Controls.init(camera, renderer);
 	                context$1$0.next = 31;
-	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
-	
-	            case 31:
-	                context$1$0.next = 33;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 33:
+	            case 31:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -43662,7 +43659,7 @@ THREE.OBJLoader.prototype = {
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 38:
+	            case 36:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -43677,7 +43674,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    Controls.render();
+	    // Controls.render();
 	    renderer.render(scene, camera);
 	}
 	
