@@ -59,7 +59,7 @@ export function render() {
         var height = 10;
         var geometry = new THREE.PlaneGeometry(width, height);
         var mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(0, -Math.random(), Math.random() * 10 + 5);
+        mesh.position.set(Math.random() - 0.5, 1 + Math.random() * 0.2, Math.random() * 10 + 5);
         object.add(mesh);
     });
 

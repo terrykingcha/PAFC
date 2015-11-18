@@ -15,13 +15,11 @@ for (let i = 0; i < 7; i++) {
         loader.load(
             `assets/images/hill-cloud-${i + 1}.png`,
             function(texture) {
-                console.log(texture);
                 texture.minFilter = THREE.LinearFilter;
                 texture.magFilter = THREE.LinearFilter;
                 var material = new THREE.MeshBasicMaterial({
                     map: texture,
                     side: THREE.DoubleSide,
-                    // wireframe: true,
                     transparent: true
                 });
                 resolve(material);

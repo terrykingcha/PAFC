@@ -35,7 +35,7 @@ loader.load('assets/obj/01_fog/grass4.js', function(loadedScene) {
         grassMesh.material.color.setHex(0xFFFFFF);
         grassMesh.material.emissive.setHex(0xFFFFFF);
         grassMesh.material.skinning = true;
-        grassMesh.scale.set(5, 5, 5);
+        grassMesh.scale.set(3.5, 3.5, 3.5);
         grassMesh.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2);
         grassMeshs.push(grassMesh);
     }
@@ -50,10 +50,6 @@ loader.load('assets/obj/01_fog/grass4.js', function(loadedScene) {
             mesh.position.x += x + (Math.random() * 1 - 0.5) * X_STEP;
             mesh.position.z += z + (Math.random() * 1 - 0.5) * Z_STEP;
             object.add(mesh);
-
-            // let skeletonHelper = new THREE.SkeletonHelper(mesh);
-            // skeletonHelper.material.linewidth = 2;
-            // object.add(skeletonHelper);
 
             let mixer = new THREE.AnimationMixer(mesh);
             mixer.play(new THREE.AnimationAction(mesh.geometry.animations[0]));

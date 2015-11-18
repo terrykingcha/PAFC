@@ -214,7 +214,8 @@ async function leavingChapter() {
     await Promise.all([
         clock.ready(),
         share.ready(),
-        nav.ready()
+        nav.ready(),
+        video.ready()
     ]);
 
     clock.show();
@@ -234,7 +235,7 @@ async function leavingChapter() {
         if (newValue === 'index') {
             leavingChapter();
         } else if (newValue === 'video') {
-            video.show();
+            video.show(currentMusic);
         } else if (newValue === 'category') {
             category.show();
         } else if (newValue === 'music') {

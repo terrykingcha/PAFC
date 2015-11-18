@@ -38697,7 +38697,7 @@ THREE.OBJLoader.prototype = {
 	
 	            case 14:
 	                context$1$0.next = 16;
-	                return regeneratorRuntime.awrap(Promise.all([clock.ready(), share.ready(), nav.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([clock.ready(), share.ready(), nav.ready(), video.ready()]));
 	
 	            case 16:
 	
@@ -38721,7 +38721,7 @@ THREE.OBJLoader.prototype = {
 	                    if (newValue === 'index') {
 	                        leavingChapter();
 	                    } else if (newValue === 'video') {
-	                        video.show();
+	                        video.show(currentMusic);
 	                    } else if (newValue === 'category') {
 	                        category.show();
 	                    } else if (newValue === 'music') {
@@ -40289,7 +40289,7 @@ THREE.OBJLoader.prototype = {
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -350px;\n  margin-top: -350px;\n  width: 700px;\n  height: 700px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 700px 700px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -280px;\n  margin-top: -280px;\n  width: 560px;\n  height: 560px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 560px 560px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
 
 /***/ },
 /* 23 */
@@ -40771,24 +40771,128 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var $video;
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
 	
-	function show() {
+	exports.ready = ready;
+	var PATH = './assets/images/video';
+	var VIDEO = './assets/videos/project.mp4';
+	
+	var imagePromises = [];
+	var imageSrc = [PATH + '/poster.jpg', PATH + '/banner.jpg', PATH + '/01.jpg', PATH + '/02.jpg', PATH + '/03.jpg'];
+	var _iteratorNormalCompletion = true;
+	var _didIteratorError = false;
+	var _iteratorError = undefined;
+	
+	try {
+	    var _loop = function () {
+	        var src = _step.value;
+	
+	        imagePromises.push(new Promise(function (resolve, reject) {
+	            var loader = new THREE.ImageLoader(_prologue.manager);
+	            loader.load(src, function (img) {
+	                img.originSrc = src;
+	                resolve(img);
+	            }, _prologue.onProgress, _prologue.onError);
+	        }));
+	    };
+	
+	    for (var _iterator = imageSrc[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        _loop();
+	    }
+	} catch (err) {
+	    _didIteratorError = true;
+	    _iteratorError = err;
+	} finally {
+	    try {
+	        if (!_iteratorNormalCompletion && _iterator['return']) {
+	            _iterator['return']();
+	        }
+	    } finally {
+	        if (_didIteratorError) {
+	            throw _iteratorError;
+	        }
+	    }
+	}
+	
+	var $video;
+	var music;
+	
+	var BANNER_MAGIC_RATIO = 0.7;
+	function resizeBanner() {
 	    var _context;
+	
+	    var $banner = (_context = $video, $find).call(_context, '.banner');
+	    var $bannerImg = $find.call($banner, 'img');
+	
+	    $bannerImg.style.width = window.innerWidth + 'px';
+	    var imgRect = $bannerImg.getBoundingClientRect();
+	    $banner.style.height = imgRect.height * BANNER_MAGIC_RATIO + 'px';
+	}
+	
+	function scrollBannerImage(e) {
+	    var _context2;
+	
+	    var detal = e.wheelDelta;
+	    var $scroll = (_context2 = $video, $find).call(_context2, '.scrollWrap');
+	    var $banner = (_context2 = $video, $find).call(_context2, '.banner');
+	    var $bannerImg = $find.call($banner, 'img');
+	    var bannerRect = $banner.getBoundingClientRect();
+	
+	    if (bannerRect.bottom > bannerRect.height && bannerRect.bottom < window.innerHeight || bannerRect.top > 0 && bannerRect.top < window.innerHeight - bannerRect.height) {
+	        var minRectTop = 0;
+	        var maxRectTop = window.innerHeight - bannerRect.height;
+	        var ratio = (maxRectTop - bannerRect.top) / (maxRectTop - minRectTop);
+	
+	        $bannerImg.style.transform = $bannerImg.style.webkitTransform = 'translateY(-' + (1 - BANNER_MAGIC_RATIO) * ratio * 100 + '%)';
+	    } else if (bannerRect.top < 0) {
+	        $bannerImg.style.transform = $bannerImg.style.webkitTransform = 'translateY(-' + (1 - BANNER_MAGIC_RATIO) * 100 + '%)';
+	    } else {
+	        $bannerImg.style.transform = $bannerImg.style.webkitTransform = '';
+	    }
+	}
+	
+	function startBannerMagic() {
+	    var _context3;
+	
+	    var $banner = (_context3 = $video, $find).call(_context3, '.banner');
+	    var $bannerImg = $find.call($banner, 'img');
+	    resizeBanner();
+	    $on.call(window, 'resize', resizeBanner);
+	
+	    (_context3 = (_context3 = $video, $find).call(_context3, '.scrollWrap'), $on).call(_context3, 'mousewheel', scrollBannerImage);
+	}
+	
+	function stopBannerMagic() {
+	    var _context4;
+	
+	    $off.call(window, 'resize', resizeBanner);
+	    (_context4 = (_context4 = $video, $find).call(_context4, '.scrollWrap'), $off).call(_context4, 'mousewheel', scrollBannerImage);
+	}
+	
+	function show(currentMusic) {
+	    var _context5;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context = $video, $show).call(_context);
-	                context$1$0.next = 3;
+	                music = currentMusic;
+	                (_context5 = $video, $show).call(_context5);
+	                context$1$0.next = 4;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(10));
 	
-	            case 3:
-	                (_context = $video, $addClass).call(_context, 'show');
-	                context$1$0.next = 6;
+	            case 4:
+	                (_context5 = $video, $addClass).call(_context5, 'show');
+	                context$1$0.next = 7;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(650));
 	
-	            case 6:
+	            case 7:
+	                music.togglePlayback(false);
+	                startBannerMagic();
+	
+	            case 9:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40796,35 +40900,34 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context2;
+	    var _context6;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context2 = $video, $addClass).call(_context2, 'hide');
+	                (_context6 = $video, $addClass).call(_context6, 'hide');
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(650));
 	
 	            case 3:
-	                (_context2 = $video, $removeClass).call(_context2, 'show hide');
+	                (_context6 = $video, $removeClass).call(_context6, 'show hide');
+	                music.togglePlayback(true);
 	
-	            case 4:
+	            case 5:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, this);
 	}
 	
-	var PATH = './assets/images/video';
-	var VIDEO = './assets/videos/project.mp4';
 	function template() {
-	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous"\n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner">\n                        <img src="' + PATH + '/banner.jpg" width="70%" />\n                    </div>\n                    <div class="img">\n                        <img src="' + PATH + '/01.jpg" width="70%" />\n                    </div>\n                    <div class="img">\n                        <img src="' + PATH + '/02.jpg" width="70%" />\n                    </div>\n                    <div class="img">\n                        <img src="' + PATH + '/03.jpg" width="70%" />\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous" \n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
+	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous"\n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. <!--Here is the album, feel free to download and share it. Enjoy~--></p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。<!--以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。--></p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous" \n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
-	    var _context3;
+	    var _context7;
 	
-	    var $scroll, $back;
+	    var images, $scroll, $back;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -40832,10 +40935,26 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
 	
 	            case 2:
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(Promise.all(imagePromises));
 	
-	                $video = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#video');
-	                $scroll = (_context3 = $video, $find).call(_context3, '.scrollWrap');
-	                $back = (_context3 = $video, $find).call(_context3, '.back');
+	            case 4:
+	                images = context$1$0.sent;
+	
+	                $video = (_context7 = (_context7 = document.body, $append).call(_context7, template()), $find).call(_context7, '#video');
+	
+	                images.forEach(function (image) {
+	                    var _context8;
+	
+	                    var originSrc = image.originSrc;
+	                    var el = (_context8 = $video, $find).call(_context8, '[img-src="' + originSrc + '"]');
+	                    if (el) {
+	                        $append.call(el, image);
+	                    }
+	                });
+	
+	                $scroll = (_context7 = $video, $find).call(_context7, '.scrollWrap');
+	                $back = (_context7 = $video, $find).call(_context7, '.back');
 	
 	                $on.call($scroll, 'mousewheel', function (e) {
 	                    var detal = e.wheelDelta;
@@ -40846,7 +40965,9 @@ THREE.OBJLoader.prototype = {
 	                    hide();
 	                });
 	
-	            case 7:
+	                deferred.resolve();
+	
+	            case 12:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40883,7 +41004,7 @@ THREE.OBJLoader.prototype = {
 /* 34 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #1C1C1C;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 784px;\n  height: 462px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #1C1C1C;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 560px;\n  height: 330px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n  width: 100%;\n  position: relative;\n}\n#video .banner img {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n#video .img img {\n  width: 50%;\n}\n"
 
 /***/ },
 /* 35 */
@@ -41230,7 +41351,7 @@ THREE.OBJLoader.prototype = {
 	                        domElement.style.cursor = 'default';
 	                    }
 	
-	                    tower.children[1].material.emissive.setHex(color);
+	                    // tower.children[1].material.emissive.setHex(color);
 	                }, false);
 	
 	                domElement.addEventListener('mousedown', function (e) {
@@ -41854,9 +41975,10 @@ THREE.OBJLoader.prototype = {
 	
 	    var buildingMesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({
 	        color: 0xFFFFFF,
+	        emissive: 0x000000,
 	        side: THREE.DoubleSide,
 	        transparent: true,
-	        opacity: 0.4,
+	        opacity: 0.2,
 	        wireframe: true,
 	        wireframeLinewidth: 1
 	    }));
@@ -41866,7 +41988,7 @@ THREE.OBJLoader.prototype = {
 	    var buildingInnerMesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
 	        color: 0x000000,
 	        emissive: 0x222222,
-	        opacity: 0.95,
+	        opacity: 1,
 	        transparent: true,
 	        side: THREE.DoubleSide
 	    }));
@@ -42072,7 +42194,7 @@ THREE.OBJLoader.prototype = {
 	                    var height = 10;
 	                    var geometry = new THREE.PlaneGeometry(width, height);
 	                    var mesh = new THREE.Mesh(geometry, material);
-	                    mesh.position.set(0, -Math.random(), Math.random() * 10 + 5);
+	                    mesh.position.set(Math.random() - 0.5, 1 + Math.random() * 0.2, Math.random() * 10 + 5);
 	                    object.add(mesh);
 	                });
 	
@@ -43016,7 +43138,7 @@ THREE.OBJLoader.prototype = {
 	            grassMesh.material.color.setHex(0xFFFFFF);
 	            grassMesh.material.emissive.setHex(0xFFFFFF);
 	            grassMesh.material.skinning = true;
-	            grassMesh.scale.set(5, 5, 5);
+	            grassMesh.scale.set(3.5, 3.5, 3.5);
 	            grassMesh.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2);
 	            grassMeshs.push(grassMesh);
 	        }
@@ -43045,10 +43167,6 @@ THREE.OBJLoader.prototype = {
 	            mesh.position.x += x + (Math.random() * 1 - 0.5) * X_STEP;
 	            mesh.position.z += z + (Math.random() * 1 - 0.5) * Z_STEP;
 	            object.add(mesh);
-	
-	            // let skeletonHelper = new THREE.SkeletonHelper(mesh);
-	            // skeletonHelper.material.linewidth = 2;
-	            // object.add(skeletonHelper);
 	
 	            var mixer = new THREE.AnimationMixer(mesh);
 	            mixer.play(new THREE.AnimationAction(mesh.geometry.animations[0]));
@@ -43186,8 +43304,6 @@ THREE.OBJLoader.prototype = {
 	    }
 	    blowing();
 	}
-	
-	window.blowWind = blowWind;
 	
 	function render() {
 	    if (leafs.length < LEAF_MAX_LIMIT && Math.random() < 0.5) {
@@ -43474,18 +43590,22 @@ THREE.OBJLoader.prototype = {
 	
 	var Cloud = _interopRequireWildcard(_cloud);
 	
+	// import * as Bird from './bird';
+	
 	var _controls = __webpack_require__(71);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var scene, camera, renderer, domElement, visualizer, light1, light2, light3, light4, hill, sky, cloud;
+	var scene, camera, renderer, domElement, visualizer, light1, light2, light3, light4, hill, sky, cloud, bird;
 	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Hill.ready(), Sky.ready(), Cloud.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Hill.ready(), Sky.ready(),
+	                // Bird.ready(),
+	                Cloud.ready()]));
 	
 	            case 2:
 	
@@ -43499,6 +43619,7 @@ THREE.OBJLoader.prototype = {
 	                light4 = Light.light4;
 	                hill = Hill.object;
 	                sky = Sky.object;
+	                // bird = Bird.object;
 	                cloud = Cloud.object;
 	
 	                scene.add(camera);
@@ -43508,6 +43629,7 @@ THREE.OBJLoader.prototype = {
 	                scene.add(light4);
 	                scene.add(hill);
 	                scene.add(sky);
+	                // scehe.add(bird);
 	                scene.add(cloud);
 	
 	                light1.position.set(0, 20, 20);
@@ -43524,11 +43646,14 @@ THREE.OBJLoader.prototype = {
 	                // scene.add(new THREE.PointLightHelper(light3, 2))
 	                // scene.add(new THREE.PointLightHelper(light4, 2))
 	
-	                // await Controls.init(camera, renderer);
 	                context$1$0.next = 31;
-	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
 	
 	            case 31:
+	                context$1$0.next = 33;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 33:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -43537,7 +43662,7 @@ THREE.OBJLoader.prototype = {
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 36:
+	            case 38:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -43552,7 +43677,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    // Controls.render();
+	    Controls.render();
 	    renderer.render(scene, camera);
 	}
 	
@@ -44069,13 +44194,11 @@ THREE.OBJLoader.prototype = {
 	    materialPromises[i] = new Promise(function (resolve, reject) {
 	        var loader = new THREE.TextureLoader(_prologue.manager);
 	        loader.load('assets/images/hill-cloud-' + (i + 1) + '.png', function (texture) {
-	            console.log(texture);
 	            texture.minFilter = THREE.LinearFilter;
 	            texture.magFilter = THREE.LinearFilter;
 	            var material = new THREE.MeshBasicMaterial({
 	                map: texture,
 	                side: THREE.DoubleSide,
-	                // wireframe: true,
 	                transparent: true
 	            });
 	            resolve(material);

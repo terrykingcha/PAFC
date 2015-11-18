@@ -27,17 +27,19 @@
         cursor: pointer;
     }
 
+    @scale-ratio: 0.8;
+
     .circle {
         position: absolute;
         left: 50%;
         top: 50%;
-        margin-left: -350px;
-        margin-top: -350px;
-        width: 700px;
-        height: 700px;
+        margin-left: -350px * @scale-ratio;
+        margin-top: -350px * @scale-ratio;
+        width: 700px * @scale-ratio;
+        height: 700px * @scale-ratio;
         overflow: hidden;
         background: url(./assets/images/circle.png) no-repeat center center;
-        background-size: 700px 700px;
+        background-size: 700px * @scale-ratio 700px * @scale-ratio;
         cursor: pointer;
 
         img {

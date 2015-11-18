@@ -10,10 +10,12 @@ import * as Light from './light';
 import * as Hill from './hill';
 import * as Sky from './sky';
 import * as Cloud from './cloud';
+// import * as Bird from './bird';
+
 import * as Controls from './controls';
 
 var scene, camera, renderer, domElement, visualizer,
-    light1, light2, light3, light4, hill, sky, cloud;
+    light1, light2, light3, light4, hill, sky, cloud, bird;
 
 export var init = async () => {    
     await Promise.all([
@@ -23,6 +25,7 @@ export var init = async () => {
         Light.ready(),
         Hill.ready(),
         Sky.ready(),
+        // Bird.ready(),
         Cloud.ready()
     ]);
 
@@ -36,6 +39,7 @@ export var init = async () => {
     light4 = Light.light4;
     hill = Hill.object;
     sky = Sky.object;
+    // bird = Bird.object;
     cloud = Cloud.object;
 
 
@@ -46,6 +50,7 @@ export var init = async () => {
     scene.add(light4);
     scene.add(hill);
     scene.add(sky);
+    // scehe.add(bird);
     scene.add(cloud);
 
     light1.position.set(0, 20, 20);
@@ -63,7 +68,7 @@ export var init = async () => {
     // scene.add(new THREE.PointLightHelper(light4, 2))
 
     
-    // await Controls.init(camera, renderer);
+    await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -80,7 +85,7 @@ export function resize() {
 }
 
 export function render() {
-    // Controls.render();
+    Controls.render();
     renderer.render(scene, camera);
 }
 

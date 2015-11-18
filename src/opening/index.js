@@ -101,7 +101,7 @@ export var init = async () => {
             domElement.style.cursor = 'default';
         }
 
-        tower.children[1].material.emissive.setHex(color);
+        // tower.children[1].material.emissive.setHex(color);
     }, false);
 
     domElement.addEventListener('mousedown', function(e) {

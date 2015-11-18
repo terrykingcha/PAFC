@@ -16,9 +16,10 @@ loader.load(
             geometry, 
             new THREE.MeshLambertMaterial({
                 color: 0xFFFFFF,
+                emissive: 0x000000,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.4,
+                opacity: 0.2,
                 wireframe: true,
                 wireframeLinewidth: 1
             })
@@ -31,7 +32,7 @@ loader.load(
             new THREE.MeshPhongMaterial({
                 color: 0x000000,
                 emissive: 0x222222,
-                opacity: 0.95,
+                opacity: 1,
                 transparent: true,
                 side: THREE.DoubleSide,
             })

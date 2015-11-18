@@ -87,8 +87,6 @@ export function blowWind() {
     blowing();
 }
 
-window.blowWind = blowWind;
-
 export function render() {
     if (leafs.length < LEAF_MAX_LIMIT && Math.random() < 0.5) {
         let leaf = genLeaf();
