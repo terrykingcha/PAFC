@@ -36,10 +36,11 @@ for (let i = 1; i <= 6; i++) {
 
 var currentMusic = openingMusic;
 
-var resizeHandler = ::opening.resize;
+var resizeHandler = [::opening.resize];
+chapters.forEach(capter => resizeHandler.push(::capter.resize));
 function resize() {
     window.addEventListener('resize', function() {
-        resizeHandler && resizeHandler();
+        resizeHandler.forEach(h => h && h());
     });
 }
 
@@ -72,21 +73,6 @@ async function enteringChapter(index) {
 
         currentMusic.togglePlayback(false);
 
-        // resizeHandler = ::opening.resize;
-        // renderHandler = ::opening.render;
-
-        // if (currentScene === 'video') {
-        //     await hideVideo();
-        // }
-
-        // if (currentChapter) {
-        //     await Promise.all([
-        //         opening.leaving(),
-        //         currentChapter.leaving()
-        //     ]);
-        // }
-
-        // await opening.entering();
         if (currentChapter) {
             await currentChapter.leaving();
         } else {
@@ -95,16 +81,10 @@ async function enteringChapter(index) {
 
         currentChapter = chapter;
         currentMusic = chapterMusic;
-        resizeHandler = ::chapter.resize;
         renderHandler = ::chapter.render;
 
-        // await Promise.all([
-        //     opening.hide(),
-        //     chapter.entering(currentMusic)
-        // ]);
         await currentChapter.entering(currentMusic);
 
-        // nav.enableAll();
         nav.enable('index');
         category.showName(categoryName);
         clock.hide();
@@ -119,7 +99,6 @@ async function leavingChapter() {
     openingMusic.togglePlayback(true);
     currentMusic = openingMusic;
 
-    resizeHandler = ::opening.resize;
     renderHandler = ::opening.render;
 
     await opening.show();
@@ -129,7 +108,6 @@ async function leavingChapter() {
         currentChapter.leaving()
     ]);
 
-    // nav.enableAll();
     nav.disable('index');
     category.hideName();
     clock.show();
@@ -138,57 +116,6 @@ async function leavingChapter() {
     lastScene = currentScene;
     currentScene = 'index';
 }
-
-// async function showVideo() {
-//     var navDisableName;
-//     if (currentScene === 'index') {
-//         await Promise.all([
-//             opening.hide(),
-//             video.show()
-//         ]);
-//         navDisableName = 'category'
-//     } else if (currentScene.indexOf('chapter') === 0) {
-//         await Promise.all([
-//             currentChapter.hide(),
-//             video.show()
-//         ]);
-//         navDisableName = 'index'
-//     }
-//     nav.enableAll();
-//     nav.disable('video');
-//     nav.disable(navDisableName);
-//     changeColor('black');
-//     lastScene = currentScene;
-//     currentScene = 'video';
-// }
-
-// async function hideVideo() {
-//     var navDisableName;
-//     if (lastScene === 'index') {
-//         await Promise.all([
-//             opening.show(),
-//             video.hide()
-//         ]);
-//         navDisableName = 'index';
-//     } else if (lastScene && lastScene.indexOf('chapter') === 0) {
-//         await Promise.all([
-//             currentChapter.show(),
-//             video.hide()
-//         ]);
-//         navDisableName = 'category';
-//     }
-//     nav.enableAll();
-//     nav.disable(navDisableName);
-//     currentScene = lastScene;
-// }
-
-// async function showCategory() {
-//     if (currentScene === 'video') {
-//         await hideVideo();
-//     } else {
-//         await category.show();
-//     }
-// }
 
 (async () => {
     await prologue.ready();

@@ -52,13 +52,21 @@ export function hideName() {
     $categoryName::$hide();
 }
 
-function bindCategoryEvents() {
-    var {width: circleWidth, height: circleHeight, 
-            left: circleLeft, top: circleTop} = 
-            $circle.getBoundingClientRect();
+var circleWidth, circleHeight, circleLeft, circleTop;
+var centerX, centerY;
 
-    var centerX = circleLeft + circleWidth / 2;
-    var centerY = circleTop + circleHeight / 2;
+function resizeHandler() {
+    var circleRect = $circle.getBoundingClientRect();
+    circleWidth = circleRect.width;
+    circleHeight = circleRect.height;
+    circleLeft = circleRect.left;
+    circleTop = circleRect.top;
+    centerX = circleLeft + circleWidth / 2;
+    centerY = circleTop + circleHeight / 2;
+}
+
+function bindCategoryEvents() {
+    window::$on('resize', resizeHandler);
 
     function parse(e) {
         var relX = e.pageX - centerX;
@@ -120,11 +128,14 @@ export async function show() {
     $category::$addClass('fadeIn');
     await delay(450);
 
+    resizeHandler();
+    
     if (!isBoundEvents) {
         isBoundEvents = true;
         bindBackEvents();
         bindCategoryEvents();
     }
+
 }
 
 export async function hide() {

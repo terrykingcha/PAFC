@@ -10,7 +10,7 @@ import * as Light from './light';
 import * as Hill from './hill';
 import * as Sky from './sky';
 import * as Cloud from './cloud';
-// import * as Bird from './bird';
+import * as Bird from './bird';
 
 import * as Controls from './controls';
 
@@ -25,7 +25,7 @@ export var init = async () => {
         Light.ready(),
         Hill.ready(),
         Sky.ready(),
-        // Bird.ready(),
+        Bird.ready(),
         Cloud.ready()
     ]);
 
@@ -39,7 +39,7 @@ export var init = async () => {
     light4 = Light.light4;
     hill = Hill.object;
     sky = Sky.object;
-    // bird = Bird.object;
+    bird = Bird.object;
     cloud = Cloud.object;
 
 
@@ -50,7 +50,7 @@ export var init = async () => {
     scene.add(light4);
     scene.add(hill);
     scene.add(sky);
-    // scehe.add(bird);
+    scene.add(bird);
     scene.add(cloud);
 
     light1.position.set(0, 20, 20);
@@ -61,6 +61,7 @@ export var init = async () => {
     camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
     hill.position.set(0, 0, 0);
     sky.position.set(0, 60, -100);
+    bird.position.set(0, -30, -30);
 
     // scene.add(new THREE.PointLightHelper(light1, 2));
     // scene.add(new THREE.PointLightHelper(light2, 2))
@@ -84,8 +85,25 @@ export function resize() {
     Camera.resize();
 }
 
+var note = [14, 29, 44, 86];
+var note1 = [];
+function flyingBirds() {
+    var time = visualizer.getTime();
+    if (note.length === 0 && time < 1) {
+        note = note1.slice();
+        note1 = [];
+    }
+    if (Math.floor(time) >= note[0]) {
+        note1.push(note.shift());
+        Bird.flying();
+    }
+}
+
 export function render() {
     // Controls.render();
+    flyingBirds();
+    Bird.render();
+    Cloud.render();
     renderer.render(scene, camera);
 }
 

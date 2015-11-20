@@ -135,7 +135,6 @@ export default class Visualizer {
             console.debug('paused at', this.startOffset);
             // Save the position of the play head.
         } else if (play && !this.isPlaying) {
-            console.log(audioContext);
             this.startTime = audioContext.currentTime;
             console.debug('started at', this.startOffset);
             this.source = audioContext.createBufferSource();

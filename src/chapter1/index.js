@@ -83,7 +83,7 @@ var downNote = [21, 51, 84, 116, 132];
 var downNote1 = [];
 function blowLeafWind() {
     var time = visualizer.getTime();
-    if (downNote.length === 0) {
+    if (downNote.length === 0 && time < 1) {
         downNote = downNote1.slice(0);
         downNote1 = [];
     }

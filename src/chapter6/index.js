@@ -56,7 +56,7 @@ var note = [4,9, 35,39, 51,58, 87,92, 109,115, 133,140];
 var tempNode = [];
 function speedGalaxyUp() {
     var time = visualizer.getTime();
-    if (note.length === 0) {
+    if (note.length === 0 && time < 1) {
         note = tempNode.slice(0);
         tempNode = [];
     }

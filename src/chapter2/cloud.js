@@ -30,18 +30,31 @@ for (let i = 0; i < 7; i++) {
     });
 }
 
+var clouds = [];
+var properties = [
+    [-15, 2, 10, 0.6],
+    [-25, -5, 15, 0.7],
+    [5, -4, 20, 0.5],
+    [-5, -3, 25, 0.3],
+    [50, 10, -20, 0.4],
+    [25, -2, 10, 0.6],
+    [-15, 2, 15, 0.2]
+];
+export function render() {
+    for (let i = 0; i < clouds.length; i++) {
+        let cloud = clouds[i];
+        cloud.position.x += cloud.xSpeed;
+        if (Math.abs(cloud.position.x) > 100) {
+            cloud.xSpeed -= cloud.xSpeed;
+            cloud.position.x = 100 * Math.sign(cloud.position.x);
+        }
+    }
+}
+
 (async () => {
     object = new THREE.Object3D();
     var materials = await Promise.all(materialPromises);
-    var properties = [
-        [-15, 2, 10, 0.6],
-        [-25, -5, 15, 0.7],
-        [5, -4, 20, 0.5],
-        [-5, -3, 25, 0.3],
-        [50, 10, -20, 0.4],
-        [25, -2, 10, 0.6],
-        [-15, 2, 15, 0.2]
-    ];
+
 
     materials.forEach(function(material, i) {
         var image = material.map.image;
@@ -53,6 +66,8 @@ for (let i = 0; i < 7; i++) {
             let prop = properties[i];
             mesh.position.set(prop[0], prop[1], prop[2]);
             mesh.scale.set(prop[3], prop[3], prop[3]);
+            mesh.xSpeed = 0.003 * Math.random() * Math.sign(Math.random() - 0.5);
+            clouds.push(mesh);
             object.add(mesh);       
         }
     });

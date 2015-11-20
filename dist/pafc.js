@@ -38445,7 +38445,7 @@ THREE.OBJLoader.prototype = {
 	
 	var chapter2 = _interopRequireWildcard(_chapter2);
 	
-	var _chapter6 = __webpack_require__(72);
+	var _chapter6 = __webpack_require__(73);
 	
 	var chapter6 = _interopRequireWildcard(_chapter6);
 	
@@ -38469,10 +38469,15 @@ THREE.OBJLoader.prototype = {
 	
 	var currentMusic = openingMusic;
 	
-	var resizeHandler = opening.resize.bind(opening);
+	var resizeHandler = [opening.resize.bind(opening)];
+	chapters.forEach(function (capter) {
+	    return resizeHandler.push(capter.resize.bind(capter));
+	});
 	function resize() {
 	    window.addEventListener('resize', function () {
-	        resizeHandler && resizeHandler();
+	        resizeHandler.forEach(function (h) {
+	            return h && h();
+	        });
 	    });
 	}
 	
@@ -38504,27 +38509,11 @@ THREE.OBJLoader.prototype = {
 	                categoryName = category.get(index - 1);
 	
 	                if (!(chapter && chapterMusic && currentScene !== 'chapter' + index)) {
-	                    context$1$0.next = 23;
+	                    context$1$0.next = 22;
 	                    break;
 	                }
 	
 	                currentMusic.togglePlayback(false);
-	
-	                // resizeHandler = ::opening.resize;
-	                // renderHandler = ::opening.render;
-	
-	                // if (currentScene === 'video') {
-	                //     await hideVideo();
-	                // }
-	
-	                // if (currentChapter) {
-	                //     await Promise.all([
-	                //         opening.leaving(),
-	                //         currentChapter.leaving()
-	                //     ]);
-	                // }
-	
-	                // await opening.entering();
 	
 	                if (!currentChapter) {
 	                    context$1$0.next = 10;
@@ -38546,19 +38535,13 @@ THREE.OBJLoader.prototype = {
 	
 	                currentChapter = chapter;
 	                currentMusic = chapterMusic;
-	                resizeHandler = chapter.resize.bind(chapter);
 	                renderHandler = chapter.render.bind(chapter);
 	
-	                // await Promise.all([
-	                //     opening.hide(),
-	                //     chapter.entering(currentMusic)
-	                // ]);
-	                context$1$0.next = 18;
+	                context$1$0.next = 17;
 	                return regeneratorRuntime.awrap(currentChapter.entering(currentMusic));
 	
-	            case 18:
+	            case 17:
 	
-	                // nav.enableAll();
 	                nav.enable('index');
 	                category.showName(categoryName);
 	                clock.hide();
@@ -38566,7 +38549,7 @@ THREE.OBJLoader.prototype = {
 	                lastScene = currentScene;
 	                currentScene = 'chapter' + index;
 	
-	            case 23:
+	            case 22:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -38581,19 +38564,17 @@ THREE.OBJLoader.prototype = {
 	                openingMusic.togglePlayback(true);
 	                currentMusic = openingMusic;
 	
-	                resizeHandler = opening.resize.bind(opening);
 	                renderHandler = opening.render.bind(opening);
 	
-	                context$1$0.next = 7;
+	                context$1$0.next = 6;
 	                return regeneratorRuntime.awrap(opening.show());
 	
-	            case 7:
-	                context$1$0.next = 9;
+	            case 6:
+	                context$1$0.next = 8;
 	                return regeneratorRuntime.awrap(Promise.all([opening.leaving(), currentChapter.leaving()]));
 	
-	            case 9:
+	            case 8:
 	
-	                // nav.enableAll();
 	                nav.disable('index');
 	                category.hideName();
 	                clock.show();
@@ -38602,63 +38583,12 @@ THREE.OBJLoader.prototype = {
 	                lastScene = currentScene;
 	                currentScene = 'index';
 	
-	            case 15:
+	            case 14:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
 	    }, null, this);
 	}
-	
-	// async function showVideo() {
-	//     var navDisableName;
-	//     if (currentScene === 'index') {
-	//         await Promise.all([
-	//             opening.hide(),
-	//             video.show()
-	//         ]);
-	//         navDisableName = 'category'
-	//     } else if (currentScene.indexOf('chapter') === 0) {
-	//         await Promise.all([
-	//             currentChapter.hide(),
-	//             video.show()
-	//         ]);
-	//         navDisableName = 'index'
-	//     }
-	//     nav.enableAll();
-	//     nav.disable('video');
-	//     nav.disable(navDisableName);
-	//     changeColor('black');
-	//     lastScene = currentScene;
-	//     currentScene = 'video';
-	// }
-	
-	// async function hideVideo() {
-	//     var navDisableName;
-	//     if (lastScene === 'index') {
-	//         await Promise.all([
-	//             opening.show(),
-	//             video.hide()
-	//         ]);
-	//         navDisableName = 'index';
-	//     } else if (lastScene && lastScene.indexOf('chapter') === 0) {
-	//         await Promise.all([
-	//             currentChapter.show(),
-	//             video.hide()
-	//         ]);
-	//         navDisableName = 'category';
-	//     }
-	//     nav.enableAll();
-	//     nav.disable(navDisableName);
-	//     currentScene = lastScene;
-	// }
-	
-	// async function showCategory() {
-	//     if (currentScene === 'video') {
-	//         await hideVideo();
-	//     } else {
-	//         await category.show();
-	//     }
-	// }
 	
 	(function callee$0$0() {
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -40073,18 +40003,23 @@ THREE.OBJLoader.prototype = {
 	    (_context5 = $categoryName, $hide).call(_context5);
 	}
 	
+	var circleWidth, circleHeight, circleLeft, circleTop;
+	var centerX, centerY;
+	
+	function resizeHandler() {
+	    var circleRect = $circle.getBoundingClientRect();
+	    circleWidth = circleRect.width;
+	    circleHeight = circleRect.height;
+	    circleLeft = circleRect.left;
+	    circleTop = circleRect.top;
+	    centerX = circleLeft + circleWidth / 2;
+	    centerY = circleTop + circleHeight / 2;
+	}
+	
 	function bindCategoryEvents() {
 	    var _context6;
 	
-	    var _$circle$getBoundingClientRect = $circle.getBoundingClientRect();
-	
-	    var circleWidth = _$circle$getBoundingClientRect.width;
-	    var circleHeight = _$circle$getBoundingClientRect.height;
-	    var circleLeft = _$circle$getBoundingClientRect.left;
-	    var circleTop = _$circle$getBoundingClientRect.top;
-	
-	    var centerX = circleLeft + circleWidth / 2;
-	    var centerY = circleTop + circleHeight / 2;
+	    $on.call(window, 'resize', resizeHandler);
 	
 	    function parse(e) {
 	        var relX = e.pageX - centerX;
@@ -40176,13 +40111,15 @@ THREE.OBJLoader.prototype = {
 	
 	            case 6:
 	
+	                resizeHandler();
+	
 	                if (!isBoundEvents) {
 	                    isBoundEvents = true;
 	                    bindBackEvents();
 	                    bindCategoryEvents();
 	                }
 	
-	            case 7:
+	            case 8:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40289,7 +40226,7 @@ THREE.OBJLoader.prototype = {
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #FFF;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -280px;\n  margin-top: -280px;\n  width: 560px;\n  height: 560px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 560px 560px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .back:hover {\n  text-decoration: line-through;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -280px;\n  margin-top: -280px;\n  width: 560px;\n  height: 560px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 560px 560px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
 
 /***/ },
 /* 23 */
@@ -41004,7 +40941,7 @@ THREE.OBJLoader.prototype = {
 /* 34 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  border-bottom: 1px solid #1C1C1C;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 560px;\n  height: 330px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n  width: 100%;\n  position: relative;\n}\n#video .banner img {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n#video .img img {\n  width: 50%;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .back:hover {\n  text-decoration: line-through;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 560px;\n  height: 330px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n  width: 100%;\n  position: relative;\n}\n#video .banner img {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n#video .img img {\n  width: 50%;\n}\n"
 
 /***/ },
 /* 35 */
@@ -41163,7 +41100,6 @@ THREE.OBJLoader.prototype = {
 	                console.debug('paused at', this.startOffset);
 	                // Save the position of the play head.
 	            } else if (play && !this.isPlaying) {
-	                    console.log(audioContext);
 	                    this.startTime = audioContext.currentTime;
 	                    console.debug('started at', this.startOffset);
 	                    this.source = audioContext.createBufferSource();
@@ -42461,7 +42397,7 @@ THREE.OBJLoader.prototype = {
 	var downNote1 = [];
 	function blowLeafWind() {
 	    var time = visualizer.getTime();
-	    if (downNote.length === 0) {
+	    if (downNote.length === 0 && time < 1) {
 	        downNote = downNote1.slice(0);
 	        downNote1 = [];
 	    }
@@ -43590,9 +43526,11 @@ THREE.OBJLoader.prototype = {
 	
 	var Cloud = _interopRequireWildcard(_cloud);
 	
-	// import * as Bird from './bird';
+	var _bird = __webpack_require__(71);
 	
-	var _controls = __webpack_require__(71);
+	var Bird = _interopRequireWildcard(_bird);
+	
+	var _controls = __webpack_require__(72);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -43603,9 +43541,7 @@ THREE.OBJLoader.prototype = {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Hill.ready(), Sky.ready(),
-	                // Bird.ready(),
-	                Cloud.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Hill.ready(), Sky.ready(), Bird.ready(), Cloud.ready()]));
 	
 	            case 2:
 	
@@ -43619,7 +43555,7 @@ THREE.OBJLoader.prototype = {
 	                light4 = Light.light4;
 	                hill = Hill.object;
 	                sky = Sky.object;
-	                // bird = Bird.object;
+	                bird = Bird.object;
 	                cloud = Cloud.object;
 	
 	                scene.add(camera);
@@ -43629,7 +43565,7 @@ THREE.OBJLoader.prototype = {
 	                scene.add(light4);
 	                scene.add(hill);
 	                scene.add(sky);
-	                // scehe.add(bird);
+	                scene.add(bird);
 	                scene.add(cloud);
 	
 	                light1.position.set(0, 20, 20);
@@ -43640,6 +43576,7 @@ THREE.OBJLoader.prototype = {
 	                camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
 	                hill.position.set(0, 0, 0);
 	                sky.position.set(0, 60, -100);
+	                bird.position.set(0, -30, -30);
 	
 	                // scene.add(new THREE.PointLightHelper(light1, 2));
 	                // scene.add(new THREE.PointLightHelper(light2, 2))
@@ -43647,10 +43584,10 @@ THREE.OBJLoader.prototype = {
 	                // scene.add(new THREE.PointLightHelper(light4, 2))
 	
 	                // await Controls.init(camera, renderer);
-	                context$1$0.next = 31;
+	                context$1$0.next = 34;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 31:
+	            case 34:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -43659,7 +43596,7 @@ THREE.OBJLoader.prototype = {
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 36:
+	            case 39:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -43673,8 +43610,25 @@ THREE.OBJLoader.prototype = {
 	    Camera.resize();
 	}
 	
+	var note = [14, 29, 44, 86];
+	var note1 = [];
+	function flyingBirds() {
+	    var time = visualizer.getTime();
+	    if (note.length === 0 && time < 1) {
+	        note = note1.slice();
+	        note1 = [];
+	    }
+	    if (Math.floor(time) >= note[0]) {
+	        note1.push(note.shift());
+	        Bird.flying();
+	    }
+	}
+	
 	function render() {
 	    // Controls.render();
+	    flyingBirds();
+	    Bird.render();
+	    Cloud.render();
 	    renderer.render(scene, camera);
 	}
 	
@@ -44163,6 +44117,8 @@ THREE.OBJLoader.prototype = {
 	
 	var _this = this;
 	
+	exports.render = render;
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _libPromise = __webpack_require__(10);
@@ -44207,8 +44163,22 @@ THREE.OBJLoader.prototype = {
 	    _loop(i);
 	}
 	
+	var clouds = [];
+	var properties = [[-15, 2, 10, 0.6], [-25, -5, 15, 0.7], [5, -4, 20, 0.5], [-5, -3, 25, 0.3], [50, 10, -20, 0.4], [25, -2, 10, 0.6], [-15, 2, 15, 0.2]];
+	
+	function render() {
+	    for (var i = 0; i < clouds.length; i++) {
+	        var cloud = clouds[i];
+	        cloud.position.x += cloud.xSpeed;
+	        if (Math.abs(cloud.position.x) > 100) {
+	            cloud.xSpeed -= cloud.xSpeed;
+	            cloud.position.x = 100 * Math.sign(cloud.position.x);
+	        }
+	    }
+	}
+	
 	(function callee$0$0() {
-	    var materials, properties;
+	    var materials;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
@@ -44218,7 +44188,6 @@ THREE.OBJLoader.prototype = {
 	
 	            case 3:
 	                materials = context$1$0.sent;
-	                properties = [[-15, 2, 10, 0.6], [-25, -5, 15, 0.7], [5, -4, 20, 0.5], [-5, -3, 25, 0.3], [50, 10, -20, 0.4], [25, -2, 10, 0.6], [-15, 2, 15, 0.2]];
 	
 	                materials.forEach(function (material, i) {
 	                    var image = material.map.image;
@@ -44230,13 +44199,15 @@ THREE.OBJLoader.prototype = {
 	                        var prop = properties[i];
 	                        mesh.position.set(prop[0], prop[1], prop[2]);
 	                        mesh.scale.set(prop[3], prop[3], prop[3]);
+	                        mesh.xSpeed = 0.003 * Math.random() * Math.sign(Math.random() - 0.5);
+	                        clouds.push(mesh);
 	                        object.add(mesh);
 	                    }
 	                });
 	
 	                deferred.resolve();
 	
-	            case 7:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -44245,6 +44216,177 @@ THREE.OBJLoader.prototype = {
 
 /***/ },
 /* 71 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	exports.render = render;
+	exports.flying = flying;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(56);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var degToRad = THREE.Math.degToRad;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	
+	var BirdGeometry = (function (_THREE$Geometry) {
+	    _inherits(BirdGeometry, _THREE$Geometry);
+	
+	    function BirdGeometry() {
+	        _classCallCheck(this, BirdGeometry);
+	
+	        _get(Object.getPrototypeOf(BirdGeometry.prototype), 'constructor', this).call(this);
+	
+	        var self = this;
+	
+	        v(5, 0, 0);
+	        v(-5, -2, 1);
+	        v(-5, 0, 0);
+	        v(-5, -2, -1);
+	
+	        v(0, 2, -6);
+	        v(0, 2, 6);
+	        v(2, 0, 0);
+	        v(-3, 0, 0);
+	
+	        f3(0, 2, 1);
+	        f3(4, 7, 6);
+	        f3(5, 6, 7);
+	
+	        this.computeFaceNormals();
+	
+	        function v(x, y, z) {
+	            self.vertices.push(new THREE.Vector3(x, y, z));
+	        }
+	
+	        function f3(a, b, c) {
+	            self.faces.push(new THREE.Face3(a, b, c));
+	        }
+	    }
+	
+	    return BirdGeometry;
+	})(THREE.Geometry);
+	
+	;
+	
+	var birds = [];
+	var WINDS_MAX_Y = 5;
+	var WINDS_MIN_Y = -5;
+	var ANGLE_MIN = 100;
+	
+	function render() {
+	    var array = birds.slice();
+	    for (var i = 0; i < array.length; i++) {
+	        var bird = array[i];
+	        var windsSpeed = bird.wingsSpeed;
+	        var windsY = bird.geometry.vertices[5].y;
+	        if (windsY >= WINDS_MAX_Y || windsY <= WINDS_MIN_Y) {
+	            windsSpeed = bird.wingsSpeed = -windsSpeed;
+	            windsY = Math.max(windsY, WINDS_MIN_Y);
+	            windsY = Math.min(windsY, WINDS_MAX_Y);
+	        }
+	        bird.geometry.vertices[5].y = bird.geometry.vertices[4].y = windsY + windsSpeed;
+	        bird.geometry.verticesNeedUpdate = true;
+	
+	        // bird.angle += bird.angleSpeed;
+	        // bird.angle = Math.min(bird.angle, ANGLE_MIN);
+	        bird.position.x += bird.xSpeed;
+	        // let ySpeed = bird.xSpeed * Math.tan(degToRad(bird.angle));
+	        bird.position.y += bird.ySpeed;
+	
+	        bird.ySpeed += 0.001;
+	        bird.ySpeed = Math.min(bird.ySpeed, 1);
+	
+	        if (bird.position.x < -300) {
+	            birds.splice(birds.indexOf(bird), 1);
+	            object.remove(bird);
+	        }
+	    }
+	}
+	
+	function addBird() {
+	    var geometry = new BirdGeometry();
+	    var material = new THREE.MeshBasicMaterial({
+	        color: Math.random() * 0xffffff,
+	        side: THREE.DoubleSide
+	    });
+	
+	    var bird = new THREE.Mesh(geometry, material);
+	    bird.rotation.y = Math.PI;
+	    bird.scale.set(0.2, 0.2, 0.2);
+	    birds.push(bird);
+	    return bird;
+	}
+	
+	var BIRDS_AMOUNT = 100;
+	
+	function flying() {
+	    for (var i = 0; i < BIRDS_AMOUNT; i++) {
+	        var bird = addBird();
+	        bird.position.x = 50 * Math.random() + 20;
+	        bird.position.y = 10 * Math.random() + 10;
+	        bird.position.z = (10 * Math.random() + 20) * Math.sign(Math.random() - 0.5);
+	        bird.xSpeed = -(Math.random() * 0.5 + 0.5);
+	        bird.ySpeed = Math.random() * 0.2 + 0.2;
+	        bird.wingsSpeed = Math.random() * 0.5 + 0.5;
+	
+	        var color = bird.material.color;
+	        color.r = color.g = color.b = Math.abs(bird.position.z / 50);
+	
+	        birds.push(bird);
+	        object.add(bird);
+	    }
+	}
+	
+	// window.flyingBirds = flyingBirds;
+	
+	(function callee$0$0() {
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                exports.object = object = new THREE.Object3D();
+	                deferred.resolve();
+	
+	            case 2:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44283,7 +44425,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44301,7 +44443,7 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(73);
+	__webpack_require__(74);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -44309,27 +44451,27 @@ THREE.OBJLoader.prototype = {
 	
 	var _color = __webpack_require__(16);
 	
-	var _scene = __webpack_require__(75);
+	var _scene = __webpack_require__(76);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(76);
+	var _camera = __webpack_require__(77);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(77);
+	var _renderer = __webpack_require__(78);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(78);
+	var _light = __webpack_require__(79);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(79);
+	var _galaxy = __webpack_require__(80);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(80);
+	var _controls = __webpack_require__(81);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -44389,7 +44531,7 @@ THREE.OBJLoader.prototype = {
 	var tempNode = [];
 	function speedGalaxyUp() {
 	    var time = visualizer.getTime();
-	    if (note.length === 0) {
+	    if (note.length === 0 && time < 1) {
 	        note = tempNode.slice(0);
 	        tempNode = [];
 	    }
@@ -44544,13 +44686,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(74);
+	var content = __webpack_require__(75);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -44570,13 +44712,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44602,7 +44744,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 76 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44673,7 +44815,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 77 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44741,7 +44883,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 78 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44770,7 +44912,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 79 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45004,7 +45146,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 80 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
