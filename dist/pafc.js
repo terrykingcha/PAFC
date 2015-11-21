@@ -40718,7 +40718,7 @@ THREE.OBJLoader.prototype = {
 	var VIDEO = './assets/videos/project.mp4';
 	
 	var imagePromises = [];
-	var imageSrc = [PATH + '/poster.jpg', PATH + '/banner.jpg', PATH + '/01.jpg', PATH + '/02.jpg', PATH + '/03.jpg'];
+	var imageSrc = [PATH + '/poster.jpg', PATH + '/video-banner.jpg', PATH + '/01.jpg', PATH + '/02.jpg', PATH + '/03.jpg'];
 	var _iteratorNormalCompletion = true;
 	var _didIteratorError = false;
 	var _iteratorError = undefined;
@@ -40763,10 +40763,19 @@ THREE.OBJLoader.prototype = {
 	
 	    var $banner = (_context = $video, $find).call(_context, '.banner');
 	    var $bannerImg = $find.call($banner, 'img');
-	
-	    $bannerImg.style.width = window.innerWidth + 'px';
 	    var imgRect = $bannerImg.getBoundingClientRect();
-	    $banner.style.height = imgRect.height * BANNER_MAGIC_RATIO + 'px';
+	
+	    var winWidth = window.innerWidth;
+	    var winHeight = window.innerHeight;
+	    var imgWidth = imgRect.width;
+	    var imgHeight = imgRect.height;
+	    var ratio = Math.max(winWidth / imgWidth, winHeight / imgHeight);
+	
+	    $bannerImg.style.width = imgWidth * ratio + 'px';
+	    $bannerImg.style.height = imgHeight * ratio + 'px';
+	    $bannerImg.style.left = (window.innerWidth - imgWidth * ratio) / 2 + 'px';
+	
+	    $banner.style.height = window.innerHeight + 'px';
 	}
 	
 	function scrollBannerImage(e) {
@@ -40778,17 +40787,9 @@ THREE.OBJLoader.prototype = {
 	    var $bannerImg = $find.call($banner, 'img');
 	    var bannerRect = $banner.getBoundingClientRect();
 	
-	    if (bannerRect.bottom > bannerRect.height && bannerRect.bottom < window.innerHeight || bannerRect.top > 0 && bannerRect.top < window.innerHeight - bannerRect.height) {
-	        var minRectTop = 0;
-	        var maxRectTop = window.innerHeight - bannerRect.height;
-	        var ratio = (maxRectTop - bannerRect.top) / (maxRectTop - minRectTop);
+	    var top = -bannerRect.top * 0.9;
 	
-	        $bannerImg.style.transform = $bannerImg.style.webkitTransform = 'translateY(-' + (1 - BANNER_MAGIC_RATIO) * ratio * 100 + '%)';
-	    } else if (bannerRect.top < 0) {
-	        $bannerImg.style.transform = $bannerImg.style.webkitTransform = 'translateY(-' + (1 - BANNER_MAGIC_RATIO) * 100 + '%)';
-	    } else {
-	        $bannerImg.style.transform = $bannerImg.style.webkitTransform = '';
-	    }
+	    $bannerImg.style.transform = $bannerImg.style.webkitTransform = 'translateY(' + top + 'px)';
 	}
 	
 	function startBannerMagic() {
@@ -40858,7 +40859,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function template() {
-	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous"\n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. <!--Here is the album, feel free to download and share it. Enjoy~--></p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。<!--以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。--></p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous" \n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
+	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous"\n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/video-banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Dr. Maria Wong, a famous Jazz musician and compsoer, managed to  bring these voice of wind alive. ……</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. <!--Here is the album, feel free to download and share it. Enjoy~--></p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。<!--以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。--></p>\n                    </section>\n                    <video controls\n                        crossorigin="anonymous" \n                        poster="' + PATH + '/poster.jpg"\n                        preload="auto">\n                    </video>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -43026,7 +43027,7 @@ THREE.OBJLoader.prototype = {
 	        for (var _iterator = mixers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var mixer = _step.value;
 	
-	            if (Math.random() < 0.9) continue;
+	            if (Math.random() < 0.95) continue;
 	            mixer.update(delta);
 	        }
 	    } catch (err) {
@@ -43046,13 +43047,13 @@ THREE.OBJLoader.prototype = {
 	};
 	
 	exports.render = render;
-	var X_STEP = 4;
+	var X_STEP = 2;
 	exports.X_STEP = X_STEP;
-	var Z_STEP = 4;
+	var Z_STEP = 2;
 	exports.Z_STEP = Z_STEP;
-	var X_SIZE = 60 * X_STEP;
+	var X_SIZE = 120 * X_STEP;
 	exports.X_SIZE = X_SIZE;
-	var Z_SIZE = 40 * Z_STEP;
+	var Z_SIZE = 80 * Z_STEP;
 	
 	exports.Z_SIZE = Z_SIZE;
 	var loader = new THREE.ObjectLoader(_prologue.manager);
@@ -43074,7 +43075,7 @@ THREE.OBJLoader.prototype = {
 	            grassMesh.material.color.setHex(0xFFFFFF);
 	            grassMesh.material.emissive.setHex(0xFFFFFF);
 	            grassMesh.material.skinning = true;
-	            grassMesh.scale.set(3.5, 3.5, 3.5);
+	            grassMesh.scale.set(2.5, 2.5, 2.5);
 	            grassMesh.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2);
 	            grassMeshs.push(grassMesh);
 	        }
@@ -43093,8 +43094,8 @@ THREE.OBJLoader.prototype = {
 	        }
 	    }
 	
-	    for (var x = 0; x < X_SIZE; x += X_STEP) {
-	        for (var z = 0; z < Z_SIZE; z += Z_STEP) {
+	    for (var x = X_SIZE * 0.2; x < X_SIZE * 0.8; x += X_STEP * 1.2) {
+	        for (var z = Z_SIZE / 4; z < Z_SIZE; z += Z_STEP * 1.2) {
 	            var mesh = grassMeshs[Math.floor(Math.random() * grassMeshs.length)].clone();
 	            mesh.scale.x += Math.random() * 1 - 0.5;
 	            mesh.scale.y += Math.random() * 1 - 0.5;

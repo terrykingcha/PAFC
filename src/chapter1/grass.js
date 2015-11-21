@@ -13,15 +13,15 @@ var mixers = [];
 export var render = () => {
     var delta = 0.75 * clock.getDelta();
     for(let mixer of mixers) {
-        if (Math.random() < 0.9) continue;
+        if (Math.random() < 0.95) continue;
         mixer.update(delta);
     }
 }
 
-export const X_STEP = 4;
-export const Z_STEP = 4;
-export const X_SIZE = 60 * X_STEP;
-export const Z_SIZE = 40 * Z_STEP;
+export const X_STEP = 2;
+export const Z_STEP = 2;
+export const X_SIZE = 120 * X_STEP;
+export const Z_SIZE = 80 * Z_STEP;
 
 var loader = new THREE.ObjectLoader(manager);
 loader.load('assets/obj/01_fog/grass4.js', function(loadedScene) {
@@ -35,13 +35,13 @@ loader.load('assets/obj/01_fog/grass4.js', function(loadedScene) {
         grassMesh.material.color.setHex(0xFFFFFF);
         grassMesh.material.emissive.setHex(0xFFFFFF);
         grassMesh.material.skinning = true;
-        grassMesh.scale.set(3.5, 3.5, 3.5);
+        grassMesh.scale.set(2.5, 2.5, 2.5);
         grassMesh.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2);
         grassMeshs.push(grassMesh);
     }
 
-    for (let x = 0; x < X_SIZE; x += X_STEP) {
-        for (let z = 0; z < Z_SIZE; z += Z_STEP) {
+    for (let x = X_SIZE * 0.2; x < X_SIZE * 0.8; x += X_STEP * 1.2) {
+        for (let z = Z_SIZE / 4; z < Z_SIZE; z += Z_STEP * 1.2) {
             let mesh = grassMeshs[Math.floor(Math.random() * grassMeshs.length)].clone();
             mesh.scale.x += Math.random() * 1 - 0.5;
             mesh.scale.y += Math.random() * 1 - 0.5;

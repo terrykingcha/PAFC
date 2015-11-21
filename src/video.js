@@ -9,7 +9,7 @@ const PATH = './assets/images/video';
 const VIDEO = './assets/videos/project.mp4';
 
 var imagePromises = [];
-var imageSrc = [`${PATH}/poster.jpg`, `${PATH}/banner.jpg`, `${PATH}/01.jpg`, `${PATH}/02.jpg`, `${PATH}/03.jpg`]
+var imageSrc = [`${PATH}/poster.jpg`, `${PATH}/video-banner.jpg`, `${PATH}/01.jpg`, `${PATH}/02.jpg`, `${PATH}/03.jpg`]
 for (let src of imageSrc) {
     imagePromises.push(new Promise(function(resolve, reject) {
         var loader = new THREE.ImageLoader(manager);
@@ -27,10 +27,19 @@ const BANNER_MAGIC_RATIO = 0.7;
 function resizeBanner() {
     var $banner = $video::$find('.banner');
     var $bannerImg = $banner::$find('img');
-
-    $bannerImg.style.width = window.innerWidth + 'px';
     var imgRect = $bannerImg.getBoundingClientRect();
-    $banner.style.height = imgRect.height * BANNER_MAGIC_RATIO + 'px';
+
+    var winWidth = window.innerWidth;
+    var winHeight = window.innerHeight;
+    var imgWidth = imgRect.width;
+    var imgHeight = imgRect.height;
+    var ratio = Math.max(winWidth / imgWidth, winHeight / imgHeight);
+
+    $bannerImg.style.width = imgWidth * ratio + 'px';
+    $bannerImg.style.height = imgHeight * ratio + 'px';
+    $bannerImg.style.left = (window.innerWidth - imgWidth * ratio) / 2 + 'px';
+
+    $banner.style.height = window.innerHeight + 'px';
 }
 
 function scrollBannerImage(e) {
@@ -39,24 +48,13 @@ function scrollBannerImage(e) {
     var $banner = $video::$find('.banner');
     var $bannerImg = $banner::$find('img');
     var bannerRect = $banner.getBoundingClientRect();
-    
-    if (bannerRect.bottom > bannerRect.height && bannerRect.bottom < window.innerHeight ||
-            bannerRect.top > 0 && bannerRect.top < window.innerHeight - bannerRect.height) {
-        let minRectTop = 0;
-        let maxRectTop = window.innerHeight - bannerRect.height;
-        let ratio = (maxRectTop - bannerRect.top) / (maxRectTop - minRectTop);
-        
-        $bannerImg.style.transform = 
-            $bannerImg.style.webkitTransform = 
-                `translateY(-${(1 - BANNER_MAGIC_RATIO) * ratio * 100}%)`;
-    } else if (bannerRect.top < 0){
-        $bannerImg.style.transform = 
-            $bannerImg.style.webkitTransform = 
-                `translateY(-${(1 - BANNER_MAGIC_RATIO) * 100}%)`;
-    } else {
-        $bannerImg.style.transform = 
-            $bannerImg.style.webkitTransform = '';
-    }
+
+    var top = -bannerRect.top * 0.9;
+
+
+    $bannerImg.style.transform = 
+        $bannerImg.style.webkitTransform = 
+            `translateY(${top}px)`;
 }
 
 function startBannerMagic() {
@@ -113,7 +111,7 @@ function template() {
                         <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.<br>We invite the artists from Nexus Interactive Arts to design such a special windtrument. </p>
                         <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       
                     </section>
-                    <div class="banner" img-src="${PATH}/banner.jpg">
+                    <div class="banner" img-src="${PATH}/video-banner.jpg">
                     </div>
                     <div class="img" img-src="${PATH}/01.jpg">
                     </div>
