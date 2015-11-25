@@ -15,12 +15,14 @@ import Visualizer from './visualizer';
 import * as opening from './opening';
 import * as chapter1 from './chapter1';
 import * as chapter2 from './chapter2';
+import * as chapter5 from './chapter5';
 import * as chapter6 from './chapter6';
 // import * as chapter2 from './chapters';
 
 var chapters = new Array(6);
 chapters[0] = chapter1;
 chapters[1] = chapter2;
+chapters[4] = chapter5;
 chapters[5] = chapter6;
 var currentChapter;
 

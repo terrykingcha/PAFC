@@ -1,17 +1,30 @@
 import './title.less';
 import {defer, domReady, delay, waitForEvent} from './lib/promise';
 import {manager, onProgress, onError} from './prologue';
+import {requestAnimationFrame} from './lib/util';
 import * as Clock from './clock';
 
 var deferred = defer();
 export var ready = () => deferred.promise;
 
 var $title;
+var images;
 export async function show() {
     await delay(1);
 
-    $title::$show()::$find('.wrap')
-        ::$addClass('anim');
+    var $wrap = $title::$show()::$find('.wrap')
+
+    await new Promise(function(resolve, reject) {
+        var i = 0;
+
+        requestAnimationFrame(function tick() {
+            if (i === 96) return resolve();
+            requestAnimationFrame(tick);
+            $wrap.innerHTML = '';
+            $wrap.appendChild(images[i++]);
+        });
+    });
+
     await delay(2000);
 }
 
@@ -21,16 +34,16 @@ export async function hide() {
     $title::$remove();
 }
 
-var titleImages = {
-    white: new Array(4),
-    black: new Array(4)
+var imageLoaders = {
+    white: new Array(96),
+    black: new Array(96)
 };
 
-for (let i = 0; i < 4; i++) {
-    for (let k in titleImages) {
-        titleImages[k][i] = new Promise(function(resolve, reject) {
+for (let i = 0; i < 96; i++) {
+    for (let k in imageLoaders) {
+        imageLoaders[k][i] = new Promise(function(resolve, reject) {
             new THREE.ImageLoader(manager).load(
-                `assets/images/title_${k}_${i+1}.png`,
+                `assets/images/icon-${k}/icon-${k}_00${i}.png`,
                 image => resolve(image),
                 onProgress,
                 onError
@@ -56,8 +69,6 @@ function template() {
     $title = document.body::$append(template())::$find('#title');
 
     var state = Clock.state();
-    var images = await Promise.all(titleImages[state === 'daylight' ? 'black' : 'white']);
-
-    $title::$find('.wrap')::$append(images);
+    images = await Promise.all(imageLoaders[state === 'daylight' ? 'black' : 'white']);
     deferred.resolve();
 })();

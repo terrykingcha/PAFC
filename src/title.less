@@ -11,60 +11,61 @@
 
     .wrap {
         width: 569px;
-        height: 432px;
+        height: 455px;
         position: relative;
         overflow: hidden;
+        .transform(scale(1.5));
 
         img {
             position: absolute;
             left: 0;
+            top: 0;
             width: 100%;
             vertical-align: middle;
             border: 0;
             font-size: 0;
-            .transform(translateX(-100%));
         }
 
-        &.anim {
-            img:nth-child(1) {
-                .transition-transform(0.8s ease 0s);
-                .transform(translateX(0));
-            }
+        // &.anim {
+        //     img:nth-child(1) {
+        //         .transition-transform(0.8s ease 0s);
+        //         .transform(translateX(0));
+        //     }
 
-            img:nth-child(2) {
-                .transition-transform(0.8s ease 0.2s);
-                .transform(translateX(0));
-            }
+        //     img:nth-child(2) {
+        //         .transition-transform(0.8s ease 0.2s);
+        //         .transform(translateX(0));
+        //     }
 
-            img:nth-child(3) {
-                .transition-transform(0.8s ease 0.4s);
-                .transform(translateX(0));
-            }
+        //     img:nth-child(3) {
+        //         .transition-transform(0.8s ease 0.4s);
+        //         .transform(translateX(0));
+        //     }
 
-            img:nth-child(4) {
-                .transition-transform(0.8s ease 0.6s);
-                .transform(translateX(0));
-            }
-        }
+        //     img:nth-child(4) {
+        //         .transition-transform(0.8s ease 0.6s);
+        //         .transform(translateX(0));
+        //     }
+        // }
 
-        img:nth-child(1) {
-            top: 0;
-            height: 37px;
-        }
+        // img:nth-child(1) {
+        //     top: 0;
+        //     height: 37px;
+        // }
 
-        img:nth-child(2) {
-            top: 67px;
-            height: 106px;
-        }
+        // img:nth-child(2) {
+        //     top: 67px;
+        //     height: 106px;
+        // }
 
-        img:nth-child(3) {
-            top: 201px;
-            height: 64px;
-        }
+        // img:nth-child(3) {
+        //     top: 201px;
+        //     height: 64px;
+        // }
 
-        img:nth-child(4) {
-            top: 292px;
-            height: 140px;
-        }
+        // img:nth-child(4) {
+        //     top: 292px;
+        //     height: 140px;
+        // }
     }
 }
