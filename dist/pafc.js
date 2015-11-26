@@ -38399,41 +38399,39 @@ THREE.OBJLoader.prototype = {
 	
 	__webpack_require__(9);
 	
-	var _color = __webpack_require__(16);
-	
 	var _prologue = __webpack_require__(11);
 	
 	var prologue = _interopRequireWildcard(_prologue);
 	
-	var _title = __webpack_require__(23);
+	var _title = __webpack_require__(16);
 	
 	var title = _interopRequireWildcard(_title);
 	
-	var _clock = __webpack_require__(17);
+	var _clock = __webpack_require__(19);
 	
 	var clock = _interopRequireWildcard(_clock);
 	
-	var _share = __webpack_require__(26);
+	var _share = __webpack_require__(25);
 	
 	var share = _interopRequireWildcard(_share);
 	
-	var _nav = __webpack_require__(29);
+	var _nav = __webpack_require__(28);
 	
 	var nav = _interopRequireWildcard(_nav);
 	
-	var _category = __webpack_require__(20);
+	var _category = __webpack_require__(22);
 	
 	var category = _interopRequireWildcard(_category);
 	
-	var _video = __webpack_require__(32);
+	var _video = __webpack_require__(31);
 	
 	var video = _interopRequireWildcard(_video);
 	
-	var _visualizer = __webpack_require__(35);
+	var _visualizer = __webpack_require__(34);
 	
 	var _visualizer2 = _interopRequireDefault(_visualizer);
 	
-	var _opening = __webpack_require__(36);
+	var _opening = __webpack_require__(35);
 	
 	var opening = _interopRequireWildcard(_opening);
 	
@@ -38445,19 +38443,22 @@ THREE.OBJLoader.prototype = {
 	
 	var chapter2 = _interopRequireWildcard(_chapter2);
 	
-	var _chapter5 = __webpack_require__(73);
+	var _chapter3 = __webpack_require__(73);
+	
+	var chapter3 = _interopRequireWildcard(_chapter3);
+	
+	var _chapter5 = __webpack_require__(82);
 	
 	var chapter5 = _interopRequireWildcard(_chapter5);
 	
-	var _chapter6 = __webpack_require__(82);
+	var _chapter6 = __webpack_require__(91);
 	
 	var chapter6 = _interopRequireWildcard(_chapter6);
-	
-	// import * as chapter2 from './chapters';
 	
 	var chapters = new Array(6);
 	chapters[0] = chapter1;
 	chapters[1] = chapter2;
+	chapters[2] = chapter3;
 	chapters[4] = chapter5;
 	chapters[5] = chapter6;
 	var currentChapter;
@@ -38494,15 +38495,6 @@ THREE.OBJLoader.prototype = {
 	
 	var lastScene;
 	var currentScene;
-	
-	// async function backToIndex() {
-	//     if (currentScene === 'video') {
-	//         await hideVideo();
-	//     }
-	//     if (currentScene.indexOf('chapter') === 0) {
-	//         await leavingChapter();
-	//     }
-	// }
 	
 	function enteringChapter(index) {
 	    var chapter, chapterMusic, categoryName;
@@ -39663,37 +39655,138 @@ THREE.OBJLoader.prototype = {
 	
 	var _this = this;
 	
-	exports.changeColor = changeColor;
+	exports.show = show;
+	exports.hide = hide;
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _clockJs = __webpack_require__(17);
+	__webpack_require__(17);
 	
-	var Clock = _interopRequireWildcard(_clockJs);
+	var _libPromise = __webpack_require__(10);
 	
-	var timeColorType;
+	var _prologue = __webpack_require__(11);
 	
-	function changeColor(type) {
+	var _libUtil = __webpack_require__(15);
+	
+	var _clock = __webpack_require__(19);
+	
+	var Clock = _interopRequireWildcard(_clock);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var $title;
+	var images;
+	
+	function show() {
 	    var _context;
 	
-	    (_context = (_context = document.body, $removeClass).call(_context, 'white black'), $addClass).call(_context, type || timeColorType);
+	    var $wrap;
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
+	
+	            case 2:
+	                $wrap = (_context = (_context = $title, $show).call(_context), $find).call(_context, '.wrap');
+	                context$1$0.next = 5;
+	                return regeneratorRuntime.awrap(new Promise(function (resolve, reject) {
+	                    var i = 0;
+	
+	                    (0, _libUtil.requestAnimationFrame)(function tick() {
+	                        if (i === 96) return resolve();
+	                        (0, _libUtil.requestAnimationFrame)(tick);
+	                        $wrap.innerHTML = '';
+	                        $wrap.appendChild(images[i++]);
+	                    });
+	                }));
+	
+	            case 5:
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	function hide() {
+	    var _context2;
+	
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                (_context2 = $title, $addClass).call(_context2, 'fadeOut');
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
+	
+	            case 3:
+	                (_context2 = $title, $remove).call(_context2);
+	
+	            case 4:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, this);
+	}
+	
+	var imageLoaders = {
+	    white: new Array(96),
+	    black: new Array(96)
+	};
+	
+	var _loop = function (i) {
+	    var _loop2 = function (k) {
+	        imageLoaders[k][i] = new Promise(function (resolve, reject) {
+	            new THREE.ImageLoader(_prologue.manager).load('assets/images/icon-' + k + '/icon-' + k + '_00' + i + '.png', function (image) {
+	                return resolve(image);
+	            }, _prologue.onProgress, _prologue.onError);
+	        });
+	    };
+	
+	    for (var k in imageLoaders) {
+	        _loop2(k);
+	    }
+	};
+	
+	for (var i = 0; i < 96; i++) {
+	    _loop(i);
+	}
+	
+	function template() {
+	    return '\n        <div id="title">\n            <div class="wrap"></div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
+	    var _context3;
+	
 	    var state;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Clock.timeReady());
+	                return regeneratorRuntime.awrap(Promise.all([(0, _libPromise.domReady)(), Clock.ready()]));
 	
 	            case 2:
+	
+	                $title = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#title');
+	
 	                state = Clock.state();
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(Promise.all(imageLoaders[state === 'daylight' ? 'black' : 'white']));
 	
-	                timeColorType = state === 'daylight' ? 'black' : 'white';
-	                changeColor(timeColorType);
+	            case 6:
+	                images = context$1$0.sent;
 	
-	            case 5:
+	                deferred.resolve();
+	
+	            case 8:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -39702,6 +39795,38 @@ THREE.OBJLoader.prototype = {
 
 /***/ },
 /* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(18);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./title.less", function() {
+				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./title.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title .wrap {\n  width: 569px;\n  height: 455px;\n  position: relative;\n  overflow: hidden;\n  -webkit-transform: scale(1.5);\n  -ms-transform: scale(1.5);\n  transform: scale(1.5);\n}\n#title .wrap img {\n  position: absolute;\n  left: 0;\n  top: 0;\n  width: 100%;\n  vertical-align: middle;\n  border: 0;\n  font-size: 0;\n}\n"
+
+/***/ },
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39725,13 +39850,13 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(18);
+	__webpack_require__(20);
 	
 	var _libPromise = __webpack_require__(10);
 	
 	var _prologue = __webpack_require__(11);
 	
-	var _category = __webpack_require__(20);
+	var _category = __webpack_require__(22);
 	
 	var Category = _interopRequireWildcard(_category);
 	
@@ -39895,13 +40020,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(19);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -39921,13 +40046,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = "#clock {\n  opacity: 0;\n  position: absolute;\n  z-index: 99;\n  width: 200px;\n  height: 88px;\n  top: 35px;\n  left: 35px;\n  overflow: hidden;\n}\n#clock .category {\n  display: block;\n  position: absolute;\n  left: 0;\n  top: 25px;\n  width: 24px;\n  height: 24px;\n  line-height: 24px;\n  font-size: 16px;\n  text-align: center;\n  border: 1px solid transparent;\n  border-radius: 12px;\n}\n#clock .ampm {\n  display: block;\n  position: absolute;\n  font-size: 26px;\n  left: 0;\n  bottom: 0;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left bottom;\n  -ms-transform-origin: left bottom;\n  transform-origin: left bottom;\n}\n#clock .time {\n  position: absolute;\n  display: block;\n  height: 100%;\n  left: 30px;\n  top: 0;\n  font-size: 90px;\n  -webkit-transform: scaleX(0.65);\n  -ms-transform: scaleX(0.65);\n  transform: scaleX(0.65);\n  -webkit-transform-origin: left top;\n  -ms-transform-origin: left top;\n  transform-origin: left top;\n}\nbody.white #clock .category,\nbody.white #clock .ampm,\nbody.white #clock .time {\n  color: #FFF;\n  border-color: #FFF;\n}\nbody.black #clock .category,\nbody.black #clock .ampm,\nbody.black #clock .time {\n  color: #1C1C1C;\n  border-color: #1C1C1C;\n}\n"
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39947,14 +40072,14 @@ THREE.OBJLoader.prototype = {
 	exports.show = show;
 	exports.hide = hide;
 	
-	__webpack_require__(21);
+	__webpack_require__(23);
 	
 	var _libPromise = __webpack_require__(10);
 	
 	var _prologue = __webpack_require__(11);
 	
 	var categorys = ['雾', '云', '日', '雷', '雨', '星'];
-	var avialables = ['雾', '云', '雨', '星'];
+	var avialables = ['雾', '云', '日', '雨', '星'];
 	
 	var length = categorys.length;
 	
@@ -40202,13 +40327,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(22);
+	var content = __webpack_require__(24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40228,195 +40353,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .back:hover {\n  text-decoration: line-through;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -280px;\n  margin-top: -280px;\n  width: 560px;\n  height: 560px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 560px 560px;\n  cursor: pointer;\n}\n#category .circle img {\n  display: none;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle img.hover {\n  display: block;\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
 
 /***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	exports.show = show;
-	exports.hide = hide;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	__webpack_require__(24);
-	
-	var _libPromise = __webpack_require__(10);
-	
-	var _prologue = __webpack_require__(11);
-	
-	var _libUtil = __webpack_require__(15);
-	
-	var _clock = __webpack_require__(17);
-	
-	var Clock = _interopRequireWildcard(_clock);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	
-	exports.ready = ready;
-	var $title;
-	var images;
-	
-	function show() {
-	    var _context;
-	
-	    var $wrap;
-	    return regeneratorRuntime.async(function show$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
-	
-	            case 2:
-	                $wrap = (_context = (_context = $title, $show).call(_context), $find).call(_context, '.wrap');
-	                context$1$0.next = 5;
-	                return regeneratorRuntime.awrap(new Promise(function (resolve, reject) {
-	                    var i = 0;
-	
-	                    (0, _libUtil.requestAnimationFrame)(function tick() {
-	                        if (i === 96) return resolve();
-	                        (0, _libUtil.requestAnimationFrame)(tick);
-	                        $wrap.innerHTML = '';
-	                        $wrap.appendChild(images[i++]);
-	                    });
-	                }));
-	
-	            case 5:
-	                context$1$0.next = 7;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(2000));
-	
-	            case 7:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	function hide() {
-	    var _context2;
-	
-	    return regeneratorRuntime.async(function hide$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                (_context2 = $title, $addClass).call(_context2, 'fadeOut');
-	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
-	
-	            case 3:
-	                (_context2 = $title, $remove).call(_context2);
-	
-	            case 4:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, this);
-	}
-	
-	var imageLoaders = {
-	    white: new Array(96),
-	    black: new Array(96)
-	};
-	
-	var _loop = function (i) {
-	    var _loop2 = function (k) {
-	        imageLoaders[k][i] = new Promise(function (resolve, reject) {
-	            new THREE.ImageLoader(_prologue.manager).load('assets/images/icon-' + k + '/icon-' + k + '_00' + i + '.png', function (image) {
-	                return resolve(image);
-	            }, _prologue.onProgress, _prologue.onError);
-	        });
-	    };
-	
-	    for (var k in imageLoaders) {
-	        _loop2(k);
-	    }
-	};
-	
-	for (var i = 0; i < 96; i++) {
-	    _loop(i);
-	}
-	
-	function template() {
-	    return '\n        <div id="title">\n            <div class="wrap"></div>\n        </div>\n    ';
-	}
-	
-	(function callee$0$0() {
-	    var _context3;
-	
-	    var state;
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([(0, _libPromise.domReady)(), Clock.ready()]));
-	
-	            case 2:
-	
-	                $title = (_context3 = (_context3 = document.body, $append).call(_context3, template()), $find).call(_context3, '#title');
-	
-	                state = Clock.state();
-	                context$1$0.next = 6;
-	                return regeneratorRuntime.awrap(Promise.all(imageLoaders[state === 'daylight' ? 'black' : 'white']));
-	
-	            case 6:
-	                images = context$1$0.sent;
-	
-	                deferred.resolve();
-	
-	            case 8:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(25);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(4)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./title.less", function() {
-				var newContent = require("!!./../node_modules/raw-loader/index.js!./../node_modules/less-loader/index.js!./title.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
 /* 25 */
-/***/ function(module, exports) {
-
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#title .wrap {\n  width: 569px;\n  height: 455px;\n  position: relative;\n  overflow: hidden;\n  -webkit-transform: scale(1.5);\n  -ms-transform: scale(1.5);\n  transform: scale(1.5);\n}\n#title .wrap img {\n  position: absolute;\n  left: 0;\n  top: 0;\n  width: 100%;\n  vertical-align: middle;\n  border: 0;\n  font-size: 0;\n}\n"
-
-/***/ },
-/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40429,7 +40372,7 @@ THREE.OBJLoader.prototype = {
 	
 	exports.show = show;
 	
-	__webpack_require__(27);
+	__webpack_require__(26);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -40517,13 +40460,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(28);
+	var content = __webpack_require__(27);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40543,13 +40486,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports) {
 
 	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 14px;\n  line-height: 24px;\n  margin-right: 8px;\n  font-weight: bold;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAAwCAYAAACynDzrAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABndJREFUeNrsWU9oXEUYf1mDKNT2aY3WP8Gt0hDtwTV4VJpFjBfBLRGUBpItolA8JOlJD7pJD70Iu1G8CJIXhV48uPFmDLghQVCQJL3mki3SJjXBl9ZWREzWb8JvwufXmffm7UZwk3zw29k3b+Y3M9983zd/XkutVvNMUqlUDlPyMuFFQhehg9BGWCMsEeYJc4TpbDZ700sozcLfYlIQkfdT0kfocejLd4RL1MiXCTrfNPz/UhARt1MyTBgkpBJM2BbhY0KJGvolouNNx7+jIJCPEs569UtAKJgG0az8rezlcELyMcIGwSfkCGnUV3nnDeWHG+y8twv8i7CUHwi3YWUnCN/b+LctCD4bJDDLGUJW5A0pE4W5nuU+beCvYrZn8F9JhvAaePwYd4jjN8lPhNOEFZF/lLBu408h2vdFkKtBjAAbyOtW/SIo/yxjcGOYRcXTB17PwD9BOI60KmZ3FO8WIwYax29T6icG5SgPujeKP4Wl0BTtq7CSLDo+CiVwxbVAKSW4mH7fA15P8E8yN0gLS9HPG2izGjFgG79NQizrWjoJ44SvCJ9H8aewTzD56nNQApcrUIIy1cuEBQxMlRtgdT3Gy/lH2f8BxC7T84YoaxITv03+Itxgz29iotQ4Xonib8UmSiony9yJy4R4VmVO4f8NZgke4+0S3CZl6WefWdUk/j9LyBv6YuK3iRrnXez5Poc6Xbpih2Wl8Fjw9IVr8XcjrB53mw6RusqGWCk9rDwV0Q8X/mtIVez5m+Wr3fSvhD8JdxOOGep2aBdrEx3Ss6zMfVntC2AlAwjIIfJ0eW1tAcpraROpVqirckxW7cXwm2LJ04SXoBA+TpV/kvC2pW6bVtAay/yCLdllBODTbAOWxSyOMLOfQTkpayL1mGKjJIdVUis0z5Q0EcMvRS3fN+H+WyxfWc5vhFuEI5a6a1pBS4YYUcDAJ4VZL7Iyp8SKJ2VJpHrwgaEst6xJ5sZSKdUYfimbDhPylCV/SStoXgxAdjwUA/CFtXlsBeMyL1IteRaM/RjXkpJ24OeiYtdnhI8I97P817G8f0p4w1J3XitojmUOsoDrY8aOC8vy8X7G4AZc5kTKrXAQ8SrEZrPioBxfTKCNn8sZwjuEc4RDLP8FwluEdwnPWOrO6VVsGkf+Hvh+gJiyyBSmZ+8y9kdVFqsKliuEafzn/FqhGYNlBBFnKV+sYlH8JvldxKA/HK5AtvlTuCy6xAjybPVSCvmGBekJDKaAMiXDuWkL9yvbl1AGfpvodvPMlTL4382UWi9/kquPHX5+3VG0rEZJRd2pnDdcRzTCP8ncqx7+VcLzhKt4vkh436X//IBXsqwwSe9TSraGG+DP/cf81v7vKAiXRAV2ZZHULEu2y6xm5t8vd9IriGF6N32B8EHiO2nRyF76qvEkdv/r2EUr5T3h1ftV40DcFOQ8wzjvJJXm4FcKMqCfMFVzkymU9xKgafhlRjuhSNisJZNN1GuP6XjT8Uvy8VpjMh4xiKbk5w0UE5KVCAWkyyy/aBlAsbY70gj/AiFPOEF4lPA4IRvFz302iVlWDB0cYubab4gJnH8ZHU2zMhkoPHRwhzh+k/xIeMTQ76NR/OrncExAq6DjsvMVpGUMjitpCrwm/iAmjviY6bjAauO3KfWMoa1WWJGVXxXqtZCqWe4WhAX2voC8NJSlrUFLL545f5lxpaEM07Mv3NYkJn6brBM6WVudiDdfE76N4j/4LnbwXayx72LK3FaFaWWEW2Xgat0Glxti9XTQ1bKKMpzfc4g/pvyMIXib+KVcBX4mHGN87xGuE64QVix1V3UM2hRLtybJIQ6UEW8CdDJk8ceD0kJLYJT8mYQ7YqmkOH4pJxFsjxBSjOsewgOEQ4RXIwL7HRYkV6NcRCfzLD9vmwHBX3ZQRI5Zaka0EyS0oIcd2uuLs6BZgwuEbK8jzX7BsFx3GxqYxbtZkR9YrMPFigoO/FwedOD80FJ3Vq9iB9/FIr6LyX1EhZn5AqwnLWYwFGafSbhPWTBsOpcdA3hY5z7oljhjjTnU6bXtpAOmmAJDgNiUFqtYuAs73bgdttxdJ+VXK9VjjO+i607ddpYJ0eGciA8+4k0hYqdb71nJdEbL4H+uQf4kCrrjLPZ/Om3bpNwgfxIFFffjfZCrgiLvg/byjWKcgpxuFPfynfQ1wkPs/QVX/v3yVSPyu1gU/8F3sRj5R4ABAO9fIjbKel7dAAAAAElFTkSuQmCC);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\nbody.black #share span {\n  color: #333;\n}\nbody.black #share a {\n  -webkit-filter: invert(100%);\n  filter: invert(60%);\n}\nbody.black #share a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\nbody.white #share span {\n  color: #FFFFFF;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40570,7 +40513,7 @@ THREE.OBJLoader.prototype = {
 	exports.off = off;
 	exports.show = show;
 	
-	__webpack_require__(30);
+	__webpack_require__(29);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -40676,13 +40619,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(31);
+	var content = __webpack_require__(30);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40702,13 +40645,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 120px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\nbody.black #nav a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n"
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40722,7 +40665,7 @@ THREE.OBJLoader.prototype = {
 	exports.show = show;
 	exports.hide = hide;
 	
-	__webpack_require__(33);
+	__webpack_require__(32);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -40933,13 +40876,13 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(34);
+	var content = __webpack_require__(33);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -40959,13 +40902,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .back:hover {\n  text-decoration: line-through;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video video {\n  width: 560px;\n  height: 330px;\n  overflow: hidden;\n  vertical-align: middle;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n  width: 100%;\n  position: relative;\n}\n#video .banner img {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n#video .img img {\n  width: 50%;\n}\n"
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -41167,7 +41110,7 @@ THREE.OBJLoader.prototype = {
 	module.exports = exports["default"];
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41186,17 +41129,17 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(37);
+	__webpack_require__(36);
 	
 	var _libPromise = __webpack_require__(10);
 	
 	var _libEnv = __webpack_require__(14);
 	
-	var _clock = __webpack_require__(17);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
-	var _color = __webpack_require__(16);
+	var _color = __webpack_require__(38);
 	
 	var _scene = __webpack_require__(39);
 	
@@ -41509,13 +41452,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(38);
+	var content = __webpack_require__(37);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -41535,10 +41478,59 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"opening\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.changeColor = changeColor;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	var _clockJs = __webpack_require__(19);
+	
+	var Clock = _interopRequireWildcard(_clockJs);
+	
+	var timeColorType;
+	
+	function changeColor(type) {
+	    var _context;
+	
+	    (_context = (_context = document.body, $removeClass).call(_context, 'white black'), $addClass).call(_context, type || timeColorType);
+	}
+	
+	(function callee$0$0() {
+	    var state;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Clock.timeReady());
+	
+	            case 2:
+	                state = Clock.state();
+	
+	                timeColorType = state === 'daylight' ? 'black' : 'white';
+	                changeColor(timeColorType);
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
 
 /***/ },
 /* 39 */
@@ -41715,7 +41707,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(10);
 	
-	var _clock = __webpack_require__(17);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -41983,7 +41975,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(17);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -42052,7 +42044,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(17);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -42186,7 +42178,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var _clock = __webpack_require__(17);
+	var _clock = __webpack_require__(19);
 	
 	var Clock = _interopRequireWildcard(_clock);
 	
@@ -42304,7 +42296,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libEnv = __webpack_require__(14);
 	
-	var _color = __webpack_require__(16);
+	var _color = __webpack_require__(38);
 	
 	var _scene = __webpack_require__(51);
 	
@@ -43517,7 +43509,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libEnv = __webpack_require__(14);
 	
-	var _color = __webpack_require__(16);
+	var _color = __webpack_require__(38);
 	
 	var _scene = __webpack_require__(64);
 	
@@ -44470,7 +44462,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libEnv = __webpack_require__(14);
 	
-	var _color = __webpack_require__(16);
+	var _color = __webpack_require__(38);
 	
 	var _scene = __webpack_require__(76);
 	
@@ -44488,11 +44480,696 @@ THREE.OBJLoader.prototype = {
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _rain = __webpack_require__(80);
+	var _wave = __webpack_require__(80);
+	
+	var Wave = _interopRequireWildcard(_wave);
+	
+	var _controls = __webpack_require__(81);
+	
+	var Controls = _interopRequireWildcard(_controls);
+	
+	var scene, camera, renderer, domElement, light, wave, visualizer;
+	
+	var init = function init() {
+	    return regeneratorRuntime.async(function init$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Wave.ready(), Light.ready()]));
+	
+	            case 2:
+	
+	                scene = Scene.scene;
+	                camera = Camera.camera;
+	                renderer = Renderer.renderer;
+	                domElement = Renderer.domElement;
+	                wave = Wave.object;
+	                light = Light.light;
+	
+	                scene.add(camera);
+	                scene.add(light);
+	                scene.add(wave);
+	
+	                light.position.set(-1000, 1000, 1000);
+	                camera.position.set(0, 0, 1500);
+	
+	                context$1$0.next = 15;
+	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
+	
+	            case 15:
+	                context$1$0.next = 17;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 17:
+	
+	                domElement.setAttribute('scene', 'chapters');
+	                document.body.appendChild(domElement);
+	
+	                // window.scene = scene;
+	                // window.camera = camera;
+	                // window.renderer = renderer;
+	
+	            case 19:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.init = init;
+	
+	function resize() {
+	    Renderer.resize();
+	    Camera.resize();
+	}
+	
+	function render() {
+	    Controls.render();
+	    Wave.render();
+	    renderer.render(scene, camera);
+	}
+	
+	var starting;
+	var start = function start() {
+	    return regeneratorRuntime.async(function start$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	
+	            case 1:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.start = start;
+	var isEntering;
+	
+	exports.isEntering = isEntering;
+	var onenteringHandlers = [];
+	
+	function onentering(handler) {
+	    if (onenteringHandlers.indexOf(handler) < 0) {
+	        onenteringHandlers.push(handler);
+	    }
+	}
+	
+	var entering = function entering(_visualizer) {
+	    return regeneratorRuntime.async(function entering$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                visualizer = _visualizer;
+	                starting = false;
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(show());
+	
+	            case 4:
+	                context$1$0.next = 6;
+	                return regeneratorRuntime.awrap(visualizer.ready());
+	
+	            case 6:
+	                exports.isEntering = isEntering = true;
+	                onenteringHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	                visualizer.togglePlayback(true);
+	                (0, _color.changeColor)('white');
+	
+	            case 10:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.entering = entering;
+	var onleavingHandlers = [];
+	
+	function onleaving(handler) {
+	    if (onleavingHandlers.indexOf(handler) < 0) {
+	        onleavingHandlers.push(handler);
+	    }
+	}
+	
+	var leaving = function leaving() {
+	    return regeneratorRuntime.async(function leaving$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                starting = true;
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap(hide());
+	
+	            case 3:
+	                exports.isEntering = isEntering = false;
+	                onleavingHandlers.forEach(function (h) {
+	                    return h();
+	                });
+	                visualizer.togglePlayback(false);
+	
+	            case 6:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.leaving = leaving;
+	var show = function show() {
+	    return regeneratorRuntime.async(function show$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.display = 'block';
+	
+	                context$1$0.next = 3;
+	                return regeneratorRuntime.awrap((0, _libPromise.delay)(50));
+	
+	            case 3:
+	
+	                domElement.style.transition = 'opacity 0.4s ease-out 0s';
+	                domElement.style.opacity = 1;
+	
+	                context$1$0.next = 7;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 7:
+	
+	                (0, _color.changeColor)('white');
+	
+	            case 8:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	
+	exports.show = show;
+	var hide = function hide() {
+	    return regeneratorRuntime.async(function hide$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                domElement.style.transition = 'opacity 0.4s ease-in 0s';
+	                domElement.style.opacity = 0;
+	
+	                context$1$0.next = 4;
+	                return regeneratorRuntime.awrap(Promise.race([(0, _libPromise.waitForEvent)(domElement, 'transitionend'), (0, _libPromise.delay)(450)]));
+	
+	            case 4:
+	
+	                domElement.style.display = 'none';
+	
+	            case 5:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	};
+	exports.hide = hide;
+
+/***/ },
+/* 74 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(75);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!./../../node_modules/raw-loader/index.js!./../../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 75 */
+/***/ function(module, exports) {
+
+	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
+
+/***/ },
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var COLOR = 0x333333;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var scene = new THREE.Scene();
+	exports.scene = scene;
+	// scene.fog = new THREE.FogExp2(COLOR, 0.001);
+	
+	deferred.resolve();
+
+/***/ },
+/* 77 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var FOV = 45;
+	var NEAR = 1;
+	var FAR = 10000;
+	var ORTH_NEAR = -500;
+	var ORTH_FAR = 1000;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var camera;
+	
+	exports.camera = camera;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    camera.aspect = w / h;
+	    camera.updateProjectionMatrix();
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.camera = camera = new THREE.PerspectiveCamera(FOV, w / h, NEAR, FAR);
+	                camera.position.set(X, Y, Z); //放置位置
+	                camera.updateProjectionMatrix();
+	
+	                deferred.resolve();
+	
+	            case 8:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var COLOR = 0x000000;
+	var ALPHA = 1;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var renderer;
+	exports.renderer = renderer;
+	var domElement;
+	
+	exports.domElement = domElement;
+	
+	function resize() {
+	    var w = (0, _libEnv.width)();
+	    var h = (0, _libEnv.height)();
+	
+	    renderer.setSize(w, h);
+	}
+	
+	(function callee$0$0() {
+	    var w, h;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
+	
+	            case 2:
+	                w = (0, _libEnv.width)();
+	                h = (0, _libEnv.height)();
+	
+	                exports.renderer = renderer = new THREE.WebGLRenderer();
+	                renderer.setSize(w, h);
+	                renderer.setPixelRatio(window.devicePixelRatio);
+	                renderer.setClearColor(COLOR, ALPHA);
+	
+	                exports.domElement = domElement = renderer.domElement;
+	
+	                deferred.resolve();
+	
+	            case 10:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 79 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var COLOR = 0x000000;
+	var X = 0;
+	var Y = 0;
+	var Z = 0;
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	  return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var light = new THREE.PointLight(COLOR);
+	exports.light = light;
+	light.position.set(X, Y, Z);
+	
+	deferred.resolve();
+
+/***/ },
+/* 80 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.render = render;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(56);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var degToRad = THREE.Math.degToRad;
+	
+	var bezier = [_libCubicbezier2['default'].linear, _libCubicbezier2['default'].ease, _libCubicbezier2['default'].easeIn, _libCubicbezier2['default'].easeOut, _libCubicbezier2['default'].easeInOut];
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var OCEAN_SURFACE_VERT = '\n    varying vec3 v_objColor;\n\n    void main() {\n        v_objColor = position;\n        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n    }\n';
+	
+	var OCEAN_SURFACE_FRAG = '\n    uniform vec3 u_color;\n    varying vec3 v_objColor;\n\n    float remap (float value, float initStart, float initEnd, float finalStart, float finalEnd) {\n        float mapped = (( (value - initStart) *(finalEnd - finalStart) ) / (initEnd- initStart)) + finalStart;\n        return mapped;\n    }\n\n    void main() {\n        vec3 cameraPos = vec3(-338.0, -48.0, 2000.0);\n        float border = -100.0;\n\n        float alpha = remap(v_objColor.y+border, 0.0, cameraPos.z*3.0, 0.0, 1.0);\n        float red = remap(v_objColor.z, -500.0, 500.0, 0.8, 1.0);\n        float green = remap(v_objColor.z, -500.0, 500.0, 0.8, 1.0);\n        \n        gl_FragColor=vec4(red, green,248.0/256.0, alpha);\n    }\n';
+	
+	var OCEAN_WIDTH = 3000 * 3;
+	var OCEAN_LENGTH = 3000 * 3;
+	var OCEAN_FRAG = 30 * 3;
+	
+	var ocean;
+	
+	var waveTime = 0;
+	var waveHeightA = 265;
+	var waveSpeedA = 7.1;
+	var waveOffsetA = 1.2834448552536923;
+	var waveHeightB = 0.01;
+	var waveSpeedB = 2.96;
+	var waveOffsetB = 2.3;
+	function waveA(x, y, t) {
+	    return Math.sin(x / 20 * waveOffsetA + t / waveSpeedA) * Math.cos(y / 20 * waveOffsetA + t / waveSpeedA) * waveHeightA;
+	}
+	
+	function waveB(x, y, t) {
+	    return Math.sin(x / 2 * waveOffsetB + t / waveSpeedB) * Math.cos(y / 2 * waveOffsetB + t / waveSpeedB) * waveHeightB;
+	}
+	
+	function waves(t) {
+	    var geometry = ocean.geometry;
+	    var vertices = geometry.vertices;
+	
+	    //big waves
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = vertices[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var vertex = _step.value;
+	
+	            vertex.z = waveA(vertex.x, vertex.y, t);
+	        }
+	
+	        //small waves
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	                _iterator['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = vertices[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var vertex = _step2.value;
+	
+	            vertex.z = vertex.z + waveB(vertex.x, vertex.z, t);
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+	                _iterator2['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
+	            }
+	        }
+	    }
+	
+	    geometry.verticesNeedUpdate = true;
+	}
+	
+	function render() {
+	    waves(waveTime * 0.013);
+	    waveTime++;
+	}
+	
+	(function callee$0$0() {
+	    var oceanUniforms, oceanMaterial, oceanPlane;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                exports.object = object = new THREE.Object3D();
+	
+	                oceanUniforms = {
+	                    u_color: {
+	                        type: 'c',
+	                        value: new THREE.Color(0x383A49)
+	                    }
+	                };
+	                oceanMaterial = new THREE.ShaderMaterial({
+	                    uniforms: oceanUniforms,
+	                    wireframe: true,
+	                    // fog: true,
+	                    side: THREE.DoubleSide,
+	                    vertexShader: OCEAN_SURFACE_VERT,
+	                    fragmentShader: OCEAN_SURFACE_FRAG
+	                });
+	                oceanPlane = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_LENGTH, OCEAN_FRAG, OCEAN_FRAG);
+	
+	                oceanPlane.dynamic = true;
+	                oceanPlane.computeFaceNormals();
+	                oceanPlane.computeVertexNormals();
+	
+	                ocean = new THREE.Mesh(oceanPlane, oceanMaterial);
+	                ocean.rotation.x = Math.PI / 2;
+	
+	                object.add(ocean);
+	
+	                deferred.resolve();
+	
+	            case 11:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 81 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports.init = init;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libCubicbezier = __webpack_require__(56);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var controls;
+	
+	exports.controls = controls;
+	var render = function render() {
+	    return controls.update();
+	};
+	
+	exports.render = render;
+	var deferred = (0, _libPromise.defer)();
+	
+	function init(camera, renderer) {
+	    exports.controls = controls = new THREE.OrbitControls(camera, renderer.domElement);
+	    controls.enableDamping = true;
+	    controls.dampingFactor = 0.2;
+	    controls.enableZoom = false;
+	    deferred.resolve();
+	}
+
+/***/ },
+/* 82 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	exports.resize = resize;
+	exports.render = render;
+	exports.onentering = onentering;
+	exports.onleaving = onleaving;
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	__webpack_require__(83);
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _color = __webpack_require__(38);
+	
+	var _scene = __webpack_require__(85);
+	
+	var Scene = _interopRequireWildcard(_scene);
+	
+	var _camera = __webpack_require__(86);
+	
+	var Camera = _interopRequireWildcard(_camera);
+	
+	var _renderer = __webpack_require__(87);
+	
+	var Renderer = _interopRequireWildcard(_renderer);
+	
+	var _light = __webpack_require__(88);
+	
+	var Light = _interopRequireWildcard(_light);
+	
+	var _rain = __webpack_require__(89);
 	
 	var Rain = _interopRequireWildcard(_rain);
 	
-	var _controls = __webpack_require__(81);
+	var _controls = __webpack_require__(90);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -44695,13 +45372,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 74 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(75);
+	var content = __webpack_require__(84);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -44721,13 +45398,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 75 */
+/* 84 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 76 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44753,7 +45430,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 77 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44824,7 +45501,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 78 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44892,7 +45569,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 79 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44921,7 +45598,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 80 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45095,7 +45772,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 81 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45134,7 +45811,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 82 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45152,35 +45829,35 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(83);
+	__webpack_require__(92);
 	
 	var _libPromise = __webpack_require__(10);
 	
 	var _libEnv = __webpack_require__(14);
 	
-	var _color = __webpack_require__(16);
+	var _color = __webpack_require__(38);
 	
-	var _scene = __webpack_require__(85);
+	var _scene = __webpack_require__(94);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(86);
+	var _camera = __webpack_require__(95);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(87);
+	var _renderer = __webpack_require__(96);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(88);
+	var _light = __webpack_require__(97);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(89);
+	var _galaxy = __webpack_require__(98);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(90);
+	var _controls = __webpack_require__(99);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -45395,13 +46072,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 83 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(84);
+	var content = __webpack_require__(93);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -45421,13 +46098,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 84 */
+/* 93 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 85 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45453,7 +46130,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 86 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45524,7 +46201,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 87 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45592,7 +46269,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 88 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45621,7 +46298,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 89 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45855,7 +46532,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 90 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

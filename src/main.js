@@ -3,7 +3,6 @@ import './main.less';
 import './lib/zepto';
 import './font';
 
-import {changeColor} from './color';
 import * as prologue from './prologue';
 import * as title from './title';
 import * as clock from './clock';
@@ -15,13 +14,14 @@ import Visualizer from './visualizer';
 import * as opening from './opening';
 import * as chapter1 from './chapter1';
 import * as chapter2 from './chapter2';
+import * as chapter3 from './chapter3';
 import * as chapter5 from './chapter5';
 import * as chapter6 from './chapter6';
-// import * as chapter2 from './chapters';
 
 var chapters = new Array(6);
 chapters[0] = chapter1;
 chapters[1] = chapter2;
+chapters[2] = chapter3;
 chapters[4] = chapter5;
 chapters[5] = chapter6;
 var currentChapter;
@@ -54,15 +54,6 @@ function tick() {
 
 var lastScene;
 var currentScene;
-
-// async function backToIndex() {
-//     if (currentScene === 'video') {
-//         await hideVideo();
-//     }
-//     if (currentScene.indexOf('chapter') === 0) {
-//         await leavingChapter();
-//     }
-// }
 
 async function enteringChapter(index) {
     var chapter = chapters[index - 1];
