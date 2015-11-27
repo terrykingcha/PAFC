@@ -35,7 +35,7 @@ export var init = async () => {
     light.position.set(-1000, 1000, 1000);
     camera.position.set(0, 0, 1500);
     
-    await Controls.init(camera, renderer);
+    // await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -52,8 +52,26 @@ export function resize() {
     Camera.resize();
 }
 
+var note = [0.2, 'flash', 7, 'startRain', 120, 'stopRain'];
+var note1 = [];
+function checkRain() {
+    var time = visualizer.getTime();
+    if (note.length === 0 && time < 0.2) {
+        note = note1.slice();
+        note1 = [];
+    }
+    if (time >= note[0]) {
+        let n = note.shift();
+        let a = note.shift();
+        note1.push(n);
+        note1.push(a);
+        Rain[a]();
+    }
+}
+
 export function render() {
-    Controls.render();
+    // Controls.render();
+    checkRain();
     Rain.render();
     renderer.render(scene, camera);
 }

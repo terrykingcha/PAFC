@@ -45205,14 +45205,11 @@ THREE.OBJLoader.prototype = {
 	                light.position.set(-1000, 1000, 1000);
 	                camera.position.set(0, 0, 1500);
 	
+	                // await Controls.init(camera, renderer);
 	                context$1$0.next = 15;
-	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
-	
-	            case 15:
-	                context$1$0.next = 17;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 17:
+	            case 15:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -45221,7 +45218,7 @@ THREE.OBJLoader.prototype = {
 	                // window.camera = camera;
 	                // window.renderer = renderer;
 	
-	            case 19:
+	            case 17:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -45235,8 +45232,26 @@ THREE.OBJLoader.prototype = {
 	    Camera.resize();
 	}
 	
+	var note = [0.2, 'flash', 7, 'startRain', 120, 'stopRain'];
+	var note1 = [];
+	function checkRain() {
+	    var time = visualizer.getTime();
+	    if (note.length === 0 && time < 0.2) {
+	        note = note1.slice();
+	        note1 = [];
+	    }
+	    if (time >= note[0]) {
+	        var n = note.shift();
+	        var a = note.shift();
+	        note1.push(n);
+	        note1.push(a);
+	        Rain[a]();
+	    }
+	}
+	
 	function render() {
-	    Controls.render();
+	    // Controls.render();
+	    checkRain();
 	    Rain.render();
 	    renderer.render(scene, camera);
 	}
@@ -45616,6 +45631,9 @@ THREE.OBJLoader.prototype = {
 	
 	var _this = this;
 	
+	exports.flash = flash;
+	exports.startRain = startRain;
+	exports.stopRain = stopRain;
 	exports.render = render;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45662,6 +45680,15 @@ THREE.OBJLoader.prototype = {
 	    fog: true
 	});
 	
+	var planMaterial = new THREE.MeshBasicMaterial({
+	    color: 0xFFFFFF,
+	    opacity: 0,
+	    transparent: true
+	});
+	
+	var particleGroup;
+	var lineGroup;
+	
 	function addLine() {
 	    var vertex = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
 	    vertex.normalize();
@@ -45687,11 +45714,47 @@ THREE.OBJLoader.prototype = {
 	    return Math.sqrt(vertex.x * vertex.x + vertex.y * vertex.y + vertex.z * vertex.z);
 	}
 	
-	var particles = [];
-	var lines = [];
+	function flash() {
+	    var planeGeometry = new THREE.PlaneGeometry(4000, 2000);
+	    var plane = new THREE.Mesh(planeGeometry, planMaterial);
+	    object.add(plane);
 	
-	function render() {
-	    var array = lines.slice();
+	    var count = 0;
+	    var material = plane.material;
+	    var step = 0.3;
+	    var opacity = material.opacity + step;
+	    (0, _libUtil.requestAnimationFrame)(function tick() {
+	        if (count === 2) {
+	            object.remove(plane);
+	            return;
+	        }
+	
+	        (0, _libUtil.requestAnimationFrame)(tick);
+	        opacity += step;
+	        if (opacity >= 1 & step > 0) {
+	            opacity = 1;
+	            step = -step;
+	        } else if (opacity <= 0 && step < 0) {
+	            opacity = 0;
+	            step = -step;
+	            count++;
+	        }
+	        material.opacity = opacity;
+	    });
+	}
+	
+	var isRaining = false;
+	
+	function startRain() {
+	    isRaining = true;
+	}
+	
+	function stopRain() {
+	    isRaining = false;
+	}
+	
+	function dropRain() {
+	    var array = lineGroup.children.slice();
 	    var _iteratorNormalCompletion = true;
 	    var _didIteratorError = false;
 	    var _iteratorError = undefined;
@@ -45713,8 +45776,7 @@ THREE.OBJLoader.prototype = {
 	            material.opacity -= line.dropSpeed - 1;
 	
 	            if (getRadius(vertex1) > 1000 || material.opacity < 0) {
-	                lines.splice(lines.indexOf(line), 1);
-	                object.remove(line);
+	                lineGroup.remove(line);
 	            }
 	        }
 	    } catch (err) {
@@ -45732,23 +45794,31 @@ THREE.OBJLoader.prototype = {
 	        }
 	    }
 	
-	    for (var i = 0; i < LINE_AMOUNT - lines.length; i++) {
-	        var line = addLine();
-	        lines.push(line);
-	        object.add(line);
+	    if (isRaining && lineGroup.children.length < LINE_AMOUNT) {
+	        var count = Math.min(Math.floor(Math.random() * 3), LINE_AMOUNT - lineGroup.children.length);
+	        for (var i = 0; i < count; i++) {
+	            var line = addLine();
+	            lineGroup.add(line);
+	        }
 	    }
+	}
+	
+	function render() {
+	    dropRain();
+	    particleGroup.rotation.y += 0.0005;
 	}
 	
 	var PARTICLE_AMOUNT = 2000;
 	var LINE_AMOUNT = 500;
 	
 	(function callee$0$0() {
-	    var i, material, particle, line;
+	    var i, material, particle;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                exports.object = object = new THREE.Object3D();
 	
+	                particleGroup = new THREE.Group();
 	                for (i = 0; i < PARTICLE_AMOUNT; i++) {
 	                    material = particalMaterial.clone();
 	                    particle = new THREE.Sprite(material);
@@ -45759,19 +45829,16 @@ THREE.OBJLoader.prototype = {
 	                    particle.position.normalize();
 	                    particle.position.multiplyScalar(Math.random() * 10 + 450);
 	                    particle.scale.multiplyScalar(2);
-	                    particles.push(particle);
-	                    object.add(particle);
+	                    particleGroup.add(particle);
 	                }
+	                object.add(particleGroup);
 	
-	                for (i = 0; i < LINE_AMOUNT; i++) {
-	                    line = addLine();
+	                lineGroup = new THREE.Group();
+	                object.add(lineGroup);
 	
-	                    lines.push(line);
-	                    object.add(line);
-	                }
 	                deferred.resolve();
 	
-	            case 4:
+	            case 7:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
