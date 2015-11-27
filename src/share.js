@@ -53,9 +53,9 @@ function template() {
     return `
         <div id="share">
             <span>Copyright &copy; 2015 Shenzhen PAFC, All Rights Reserved</span>
-            <a class="weibo" id="wb_publisher"></a>
-            <a class="weixin"></a>
-            <a href="${FACEBOOK_SHARE}" target="_blank" class="facebook"></a>
+            <a class="weibo iconfont" id="wb_publisher">&#xe606;</a>
+            <a class="weixin iconfont">&#xe605;</a>
+            <a class="facebook iconfont" href="${FACEBOOK_SHARE}" target="_blank">&#xe607;</a>
         </div>
         <div id="share-weixin"></div>
     `;

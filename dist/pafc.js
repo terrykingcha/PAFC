@@ -38647,9 +38647,9 @@ THREE.OBJLoader.prototype = {
 	                nav.on('change', function (e, newValue, oldValue) {
 	                    if (newValue === 'index') {
 	                        leavingChapter();
-	                    } else if (newValue === 'video') {
+	                    } else if (newValue === 'info') {
 	                        video.show(currentMusic);
-	                    } else if (newValue === 'category') {
+	                    } else if (newValue === 'clock') {
 	                        category.show();
 	                    } else if (newValue === 'music') {
 	                        currentMusic.togglePlayback();
@@ -38972,7 +38972,7 @@ THREE.OBJLoader.prototype = {
 /* 6 */
 /***/ function(module, exports) {
 
-	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n  font-family: camelia, \"Microsoft YaHei\", \"SC Heiti\", sans-serif;\n}\n"
+	module.exports = "html,\nbody {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  margin: 0;\n  padding: 0;\n  background-color: #000000;\n  font-family: camelia, \"Microsoft YaHei\", \"SC Heiti\", sans-serif;\n}\n.iconfont {\n  font-family: \"iconfont\" !important;\n  font-size: 16px;\n  font-style: normal;\n  -webkit-font-smoothing: antialiased;\n  -webkit-text-stroke-width: 0.2px;\n  -moz-osx-font-smoothing: grayscale;\n}\n"
 
 /***/ },
 /* 7 */
@@ -39058,19 +39058,29 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var url = './assets/fonts/camelia';
-	_prologue.manager.itemStart(url);
-	window.fontloadcallback = function (base64) {
-	    var fontface = '\n        @font-face {\n            font-family: \'camelia\';\n            src: url(' + base64 + ') format(\'truetype\');\n        }\n    ';
-	    var style = document.createElement('style');
-	    style.innerHTML = fontface;
-	    document.querySelector('head').appendChild(style);
-	    _prologue.manager.itemEnd(url);
-	};
+	function load(url, name, callback) {
+	    _prologue.manager.itemStart(url);
+	    window[callback] = function (base64) {
+	        var fontface = '\n            @font-face {\n                font-family: \'' + name + '\';\n                src: url(' + base64 + ') format(\'truetype\');\n            }\n        ';
+	        var style = document.createElement('style');
+	        style.innerHTML = fontface;
+	        document.querySelector('head').appendChild(style);
+	        _prologue.manager.itemEnd(url);
+	    };
 	
-	var fontLoader = document.createElement('script');
-	fontLoader.src = url;
-	fontLoader.async = true;
+	    var fontLoader = document.createElement('script');
+	    fontLoader.src = url;
+	    fontLoader.async = true;
+	    return fontLoader;
+	}
+	
+	var FONT_NAME = 'camelia';
+	var FONT_URL = './assets/fonts/' + FONT_NAME;
+	var camelialoader = load(FONT_URL, FONT_NAME, FONT_NAME + 'callback');
+	
+	var ICONFONT_NAME = 'iconfont';
+	var ICONFONT_URL = './assets/fonts/' + ICONFONT_NAME;
+	var iconfontloader = load(ICONFONT_URL, ICONFONT_NAME, ICONFONT_NAME + 'callback');
 	
 	(function callee$0$0() {
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -39080,9 +39090,10 @@ THREE.OBJLoader.prototype = {
 	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
 	
 	            case 2:
-	                document.body.appendChild(fontLoader);
+	                document.body.appendChild(camelialoader);
+	                document.body.appendChild(iconfontloader);
 	
-	            case 3:
+	            case 4:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -40435,7 +40446,7 @@ THREE.OBJLoader.prototype = {
 	var FACEBOOK_SHARE = 'https://www.facebook.com/dialog/feed?' + 'app_id=1645611472322802' + '&display=page' + '&caption=At%20600m%20in%20the%20atmosphere%2C%20we%20managed%20to%20capture%20nature.' + '&link=' + encodeURIComponent(location.href) + '&redirect_uri=' + encodeURIComponent(location.href);
 	
 	function template() {
-	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 Shenzhen PAFC, All Rights Reserved</span>\n            <a class="weibo" id="wb_publisher"></a>\n            <a class="weixin"></a>\n            <a href="' + FACEBOOK_SHARE + '" target="_blank" class="facebook"></a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
+	    return '\n        <div id="share">\n            <span>Copyright &copy; 2015 Shenzhen PAFC, All Rights Reserved</span>\n            <a class="weibo iconfont" id="wb_publisher">&#xe606;</a>\n            <a class="weixin iconfont">&#xe605;</a>\n            <a class="facebook iconfont" href="' + FACEBOOK_SHARE + '" target="_blank">&#xe607;</a>\n        </div>\n        <div id="share-weixin"></div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -40489,7 +40500,7 @@ THREE.OBJLoader.prototype = {
 /* 27 */
 /***/ function(module, exports) {
 
-	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 14px;\n  line-height: 24px;\n  margin-right: 8px;\n  font-weight: bold;\n}\n#share a {\n  display: inline-block;\n  margin: 0 2px;\n  width: 24px;\n  height: 24px;\n  background-image: url(data:image/png;base64,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);\n  background-repeat: no-repeat;\n  background-position: -1000px -1000px;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n}\n#share a.weibo {\n  background-position: 0 0;\n}\n#share a.weibo:hover {\n  background-position: 0 -24px;\n}\n#share a.weixin {\n  background-position: -24px 0;\n}\n#share a.weixin:hover {\n  background-position: -24px -24px;\n}\n#share a.facebook {\n  background-position: -48px 0;\n}\n#share a.facebook:hover {\n  background-position: -48px -24px;\n}\nbody.black #share span {\n  color: #333;\n}\nbody.black #share a {\n  -webkit-filter: invert(100%);\n  filter: invert(60%);\n}\nbody.black #share a:hover {\n  -webkit-filter: invert(60%);\n  filter: invert(60%);\n}\nbody.white #share span {\n  color: #FFFFFF;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
+	module.exports = "#share {\n  display: none;\n  position: absolute;\n  z-index: 99999;\n  height: 24px;\n  bottom: 20px;\n  right: 40px;\n}\n#share span {\n  display: inline-block;\n  font-size: 14px;\n  line-height: 24px;\n  margin-right: 8px;\n  font-weight: bold;\n}\n#share a {\n  display: inline-block;\n  height: 24px;\n  font-size: 32px;\n  vertical-align: middle;\n  line-height: 24px;\n  cursor: pointer;\n  text-decoration: none;\n}\nbody.black #share span {\n  color: #333;\n}\nbody.black #share a,\nbody.black #share a:visited {\n  color: #333;\n}\nbody.black #share a:hover {\n  color: #111;\n}\nbody.white #share span {\n  color: #FFFFFF;\n}\nbody.white #share a,\nbody.white #share a:visited {\n  color: #FFFFFF;\n}\nbody.white #share a:hover {\n  color: #DDDDDD;\n}\n#share-weixin {\n  display: none;\n  position: absolute;\n  z-index: 100;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-image: url(assets/images/weixin_code.png);\n  background-repeat: no-repeat;\n  background-position: center center;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n"
 
 /***/ },
 /* 28 */
@@ -40579,10 +40590,12 @@ THREE.OBJLoader.prototype = {
 	                (_context7 = (_context7 = $nav, $show).call(_context7), $on).call(_context7, 'click', 'a', function () {
 	                    var _context8;
 	
-	                    (_context8 = $nav, $trigger).call(_context8, 'change', [$attr.call(this, 'class'), changed]);
-	                    changed = $attr.call(this, 'class');
+	                    var className = $attr.call(this, 'class');
+	                    className = className.replace(/\b(on|off|iconfont|\s)\b/ig, '');
+	                    (_context8 = $nav, $trigger).call(_context8, 'change', [className, changed]);
+	                    changed = className;
 	                    if (changed === 'music') {
-	                        $attr.call(this, 'off') === 'off' ? $removeAttr.call(this, 'off') : $attr.call(this, 'off', 'off');
+	                        $toggleClass.call(this, 'on off');
 	                    }
 	                });
 	
@@ -40594,7 +40607,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function template() {
-	    return '\n        <div id="nav">\n            <a class="music"></a>\n            <a class="category" anim><span>Concert</span></a>\n            <a class="video" anim><span>Video</span></a>\n            <a class="index" anim><span>Index</span></a>\n        </div>\n    ';
+	    return '\n        <div id="nav">\n            <a class="music on iconfont"></a>\n            <a class="clock iconfont" anim><span>CLOCK</span></a>\n            <a class="info iconfont" anim><span>INFO</span></a>\n            <a class="index iconfont" anim><span>INDEX</span></a>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -40648,7 +40661,7 @@ THREE.OBJLoader.prototype = {
 /* 30 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  font-size: 0;\n  line-height: 0;\n  cursor: pointer;\n  overflow: hidden;\n  font-size: 16px;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 120px;\n}\n#nav a span {\n  display: inline-block;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n}\n#nav a.index {\n  background-position: 0 0;\n}\n#nav a.video {\n  background-position: 0 -40px;\n}\n#nav a.category {\n  background-position: 0 -80px;\n}\n#nav a.music {\n  background-position: 0 -120px;\n}\nbody.black #nav a {\n  background-image: url(assets/images/nav_black.png);\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  background-image: url(assets/images/nav_white.png);\n  color: #FFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  position: relative;\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  cursor: pointer;\n  overflow: hidden;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 120px;\n}\n#nav a::before {\n  display: inline-block;\n  position: absolute;\n  height: 34px;\n  line-height: 34px;\n  font-size: 36px;\n  text-decoration: none;\n  left: -10px;\n  cursor: inherit;\n}\n#nav a span {\n  display: inline-block;\n  position: relative;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n  cursor: inherit;\n}\n#nav a.index::before {\n  content: \"\\e601\";\n}\n#nav a.info::before {\n  content: \"\\e602\";\n}\n#nav a.clock::before {\n  content: \"\\e600\";\n}\n#nav a.music.on::before {\n  content: \"\\e604\";\n}\n#nav a.music.off::before {\n  content: \"\\e603\";\n}\nbody.black #nav a {\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  color: #FFF;\n}\n"
 
 /***/ },
 /* 31 */
@@ -44510,17 +44523,15 @@ THREE.OBJLoader.prototype = {
 	                scene.add(light);
 	                scene.add(wave);
 	
-	                light.position.set(-1000, 1000, 1000);
-	                camera.position.set(0, 0, 1500);
+	                light.position.set(1000, 1000, 1000);
+	                camera.position.set(0, 1000, 4000);
+	                camera.lookAt(new THREE.Vector3(0, 900, 0));
 	
-	                context$1$0.next = 15;
-	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
-	
-	            case 15:
-	                context$1$0.next = 17;
+	                // await Controls.init(camera, renderer);
+	                context$1$0.next = 16;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 17:
+	            case 16:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -44529,7 +44540,7 @@ THREE.OBJLoader.prototype = {
 	                // window.camera = camera;
 	                // window.renderer = renderer;
 	
-	            case 19:
+	            case 18:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -44544,7 +44555,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    Controls.render();
+	    // Controls.render();
 	    Wave.render();
 	    renderer.render(scene, camera);
 	}
@@ -44939,10 +44950,6 @@ THREE.OBJLoader.prototype = {
 	
 	var _prologue = __webpack_require__(11);
 	
-	var degToRad = THREE.Math.degToRad;
-	
-	var bezier = [_libCubicbezier2['default'].linear, _libCubicbezier2['default'].ease, _libCubicbezier2['default'].easeIn, _libCubicbezier2['default'].easeOut, _libCubicbezier2['default'].easeInOut];
-	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
 	    return deferred.promise;
@@ -44954,11 +44961,11 @@ THREE.OBJLoader.prototype = {
 	exports.object = object;
 	var OCEAN_SURFACE_VERT = '\n    varying vec3 v_objColor;\n\n    void main() {\n        v_objColor = position;\n        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n    }\n';
 	
-	var OCEAN_SURFACE_FRAG = '\n    uniform vec3 u_color;\n    varying vec3 v_objColor;\n\n    float remap (float value, float initStart, float initEnd, float finalStart, float finalEnd) {\n        float mapped = (( (value - initStart) *(finalEnd - finalStart) ) / (initEnd- initStart)) + finalStart;\n        return mapped;\n    }\n\n    void main() {\n        vec3 cameraPos = vec3(-338.0, -48.0, 2000.0);\n        float border = -100.0;\n\n        float alpha = remap(v_objColor.y+border, 0.0, cameraPos.z*3.0, 0.0, 1.0);\n        float red = remap(v_objColor.z, -500.0, 500.0, 0.8, 1.0);\n        float green = remap(v_objColor.z, -500.0, 500.0, 0.8, 1.0);\n        \n        gl_FragColor=vec4(red, green,248.0/256.0, alpha);\n    }\n';
+	var OCEAN_SURFACE_FRAG = '\n    uniform vec3 u_color;\n    varying vec3 v_objColor;\n\n    float remap (float value, float initStart, float initEnd, float finalStart, float finalEnd) {\n        float mapped = (( (value - initStart) *(finalEnd - finalStart) ) / (initEnd- initStart)) + finalStart;\n        return mapped;\n    }\n\n    void main() {\n        vec3 cameraPos = vec3(-338.0, -48.0, 2000.0);\n        float border = -100.0;\n\n        float alpha = remap(v_objColor.y + border, 0.0, cameraPos.z * 3.0, 0.0, 1.0);\n        float red = remap(v_objColor.z, -500.0, 500.0, 0.2, 0.4);\n        float green = remap(v_objColor.z, -500.0, 500.0, 0.2, 0.4);\n        float blue = remap(v_objColor.z, -500.0, 500.0, 0.2, 0.4);\n\n        gl_FragColor=vec4(red, green, blue, alpha);\n    }\n';
 	
-	var OCEAN_WIDTH = 3000 * 3;
-	var OCEAN_LENGTH = 3000 * 3;
-	var OCEAN_FRAG = 30 * 3;
+	var OCEAN_WIDTH = 4000 * 3;
+	var OCEAN_HEIGHT = 4000 * 3;
+	var OCEAN_FRAG = 10 * 3;
 	
 	var ocean;
 	
@@ -44977,8 +44984,8 @@ THREE.OBJLoader.prototype = {
 	    return Math.sin(x / 2 * waveOffsetB + t / waveSpeedB) * Math.cos(y / 2 * waveOffsetB + t / waveSpeedB) * waveHeightB;
 	}
 	
-	function waves(t) {
-	    var geometry = ocean.geometry;
+	function waves(obj, t) {
+	    var geometry = obj.geometry;
 	    var vertices = geometry.vertices;
 	
 	    //big waves
@@ -45038,7 +45045,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    waves(waveTime * 0.013);
+	    waves(ocean, waveTime * 0.013);
 	    waveTime++;
 	}
 	
@@ -45058,12 +45065,12 @@ THREE.OBJLoader.prototype = {
 	                oceanMaterial = new THREE.ShaderMaterial({
 	                    uniforms: oceanUniforms,
 	                    wireframe: true,
-	                    // fog: true,
-	                    side: THREE.DoubleSide,
+	                    wireframeLinewidth: 0.2,
+	                    // side: THREE.DoubleSide,
 	                    vertexShader: OCEAN_SURFACE_VERT,
 	                    fragmentShader: OCEAN_SURFACE_FRAG
 	                });
-	                oceanPlane = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_LENGTH, OCEAN_FRAG, OCEAN_FRAG);
+	                oceanPlane = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_HEIGHT, OCEAN_FRAG, OCEAN_FRAG);
 	
 	                oceanPlane.dynamic = true;
 	                oceanPlane.computeFaceNormals();

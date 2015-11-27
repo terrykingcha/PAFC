@@ -40,12 +40,12 @@ export async function show() {
     var changed;
     $nav::$show()
         ::$on('click', 'a', function() {
-            $nav::$trigger('change', [this::$attr('class'), changed]);
-            changed = this::$attr('class');
+            var className = this::$attr('class');
+            className = className.replace(/\b(on|off|iconfont|\s)\b/ig, '');
+            $nav::$trigger('change', [className, changed]);
+            changed = className;
             if (changed === 'music') {
-                this::$attr('off') === 'off' ? 
-                    this::$removeAttr('off') :
-                    this::$attr('off', 'off');
+                this::$toggleClass('on off');
             }
         });
 }
@@ -53,10 +53,10 @@ export async function show() {
 function template() {
     return `
         <div id="nav">
-            <a class="music"></a>
-            <a class="category" anim><span>Concert</span></a>
-            <a class="video" anim><span>Video</span></a>
-            <a class="index" anim><span>Index</span></a>
+            <a class="music on iconfont"></a>
+            <a class="clock iconfont" anim><span>CLOCK</span></a>
+            <a class="info iconfont" anim><span>INFO</span></a>
+            <a class="index iconfont" anim><span>INDEX</span></a>
         </div>
     `;
 }

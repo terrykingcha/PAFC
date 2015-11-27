@@ -32,10 +32,11 @@ export var init = async () => {
     scene.add(light);
     scene.add(wave);
 
-    light.position.set(-1000, 1000, 1000);
-    camera.position.set(0, 0, 1500);
+    light.position.set(1000, 1000, 1000);
+    camera.position.set(0, 1000, 4000);
+    camera.lookAt(new THREE.Vector3(0, 900, 0));
     
-    await Controls.init(camera, renderer);
+    // await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -53,7 +54,7 @@ export function resize() {
 }
 
 export function render() {
-    Controls.render();
+    // Controls.render();
     Wave.render();
     renderer.render(scene, camera);
 }

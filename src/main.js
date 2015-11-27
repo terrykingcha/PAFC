@@ -154,9 +154,9 @@ async function leavingChapter() {
     nav.on('change', function(e, newValue, oldValue) {
         if (newValue === 'index') {
             leavingChapter();
-        } else if (newValue === 'video') {
+        } else if (newValue === 'info') {
             video.show(currentMusic);
-        } else if (newValue === 'category') {
+        } else if (newValue === 'clock') {
             category.show();
         } else if (newValue === 'music') {
             currentMusic.togglePlayback();
