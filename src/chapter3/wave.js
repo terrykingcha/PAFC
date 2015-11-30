@@ -40,11 +40,12 @@ const OCEAN_SURFACE_FRAG = `
     }
 `;
 
-const OCEAN_WIDTH = 4000 * 3;
-const OCEAN_HEIGHT = 4000 * 3;
-const OCEAN_FRAG = 10 * 3;
+const OCEAN_WIDTH = 3000 * 3;
+const OCEAN_HEIGHT = 3000 * 3;
+const OCEAN_FRAG = 30 * 3;
 
 var ocean;
+var oceanMask;
 
 var waveTime = 0;
 var waveHeightA = 265;
@@ -80,6 +81,7 @@ function waves(obj, t) {
 
 export function render() {
     waves(ocean, waveTime * 0.013);
+    waves(oceanMask, waveTime * 0.013);
     waveTime++;
 }
 
@@ -98,7 +100,7 @@ var oceanMaterial = new THREE.ShaderMaterial({
     uniforms: oceanUniforms,
     wireframe: true,
     wireframeLinewidth: 0.2,
-    // side: THREE.DoubleSide,
+    side: THREE.DoubleSide,
     vertexShader: OCEAN_SURFACE_VERT,
     fragmentShader: OCEAN_SURFACE_FRAG
 });
@@ -110,8 +112,16 @@ oceanPlane.computeVertexNormals();
 
 ocean = new THREE.Mesh(oceanPlane, oceanMaterial);
 ocean.rotation.x = Math.PI / 2;
-
 object.add(ocean);
+
+
+oceanMask = new THREE.Mesh(oceanPlane.clone(), new THREE.MeshBasicMaterial({
+    color: 0x000000
+}));
+oceanMask.rotation.x = Math.PI / 2;
+oceanMask.position.set(0, 0, -10);
+// oceanMask.material.wireframe = false;
+object.add(oceanMask);
 
 deferred.resolve();
 })();

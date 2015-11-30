@@ -1,7 +1,7 @@
 import {defer, domReady} from '../lib/promise';
 import {width, height} from '../lib/env';
 
-const FOV = 45;
+const FOV = 44;
 const NEAR = 1;
 const FAR = 10000;
 const ORTH_NEAR = -500;

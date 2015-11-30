@@ -1,6 +1,6 @@
 import {defer} from '../lib/promise';
 
-const COLOR = 0x000000;
+const COLOR = 0x333333;
 const X = 0;
 const Y = 0;
 const Z = 0;

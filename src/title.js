@@ -12,13 +12,14 @@ var images;
 export async function show() {
     await delay(1);
 
-    var $wrap = $title::$show()::$find('.wrap')
+    var $wrap = $title::$show()::$find('.wrap');
+    $wrap::$height($wrap::$width() / 1920 * 1080);
 
     await new Promise(function(resolve, reject) {
         var i = 0;
 
         requestAnimationFrame(function tick() {
-            if (i === 96) return resolve();
+            if (i === 32) return resolve();
             requestAnimationFrame(tick);
             $wrap.innerHTML = '';
             $wrap.appendChild(images[i++]);
@@ -35,15 +36,15 @@ export async function hide() {
 }
 
 var imageLoaders = {
-    white: new Array(96),
-    black: new Array(96)
+    white: new Array(33),
+    black: new Array(33)
 };
 
-for (let i = 0; i < 96; i++) {
+for (let i = 0; i < 33; i++) {
     for (let k in imageLoaders) {
         imageLoaders[k][i] = new Promise(function(resolve, reject) {
             new THREE.ImageLoader(manager).load(
-                `assets/images/icon-${k}/icon-${k}_00${i}.png`,
+                `assets/images/icon-${k}-mini/icon-${k}_00${i}.png`,
                 image => resolve(image),
                 onProgress,
                 onError

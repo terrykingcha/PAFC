@@ -8,33 +8,44 @@ import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Wave from './wave';
+import * as Star from './star';
+import * as Lighthouse from './lighthouse';
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, wave, visualizer;
+var scene, camera, renderer, domElement, light, wave, star, lighthouse, visualizer;
 
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
         Camera.ready(),
         Renderer.ready(),
+        Light.ready(),
         Wave.ready(),
-        Light.ready()
+        Star.ready(),
+        Lighthouse.ready()
     ]);
 
     scene = Scene.scene;
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    wave = Wave.object;
     light = Light.light;
+    wave = Wave.object;
+    star = Star.object;
+    lighthouse = Lighthouse.object;
 
     scene.add(camera);
     scene.add(light);
     scene.add(wave);
+    scene.add(star);
+    scene.add(lighthouse);
 
     light.position.set(1000, 1000, 1000);
-    camera.position.set(0, 1000, 4000);
-    camera.lookAt(new THREE.Vector3(0, 900, 0));
+    wave.position.set(0, 0, 0);
+    star.position.set(0, 500, -2000);
+    lighthouse.position.set(-1500, 0, 0);
+    camera.position.set(0, 400, 3000);
+    camera.lookAt(new THREE.Vector3(0, 400, 0));
     
     // await Controls.init(camera, renderer);
     await pageLoad();
@@ -56,6 +67,7 @@ export function resize() {
 export function render() {
     // Controls.render();
     Wave.render();
+    Lighthouse.render();
     renderer.render(scene, camera);
 }
 
