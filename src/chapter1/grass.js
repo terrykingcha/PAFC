@@ -59,8 +59,8 @@ loader.load('assets/obj/01_fog/grass4.js', function(loadedScene) {
 
     var plane = new THREE.PlaneGeometry(X_SIZE, Z_SIZE);
     var planeMesh = new THREE.Mesh(plane, new THREE.MeshBasicMaterial({
-        color: 0x78727F,
-        side: THREE.DoubleSide
+        color: 0x353535,
+        side: THREE.FontSide
     }));
     planeMesh.rotation.set(-Math.PI / 2, 0, 0);
     planeMesh.position.set(X_SIZE / 2, 0, Z_SIZE / 2);

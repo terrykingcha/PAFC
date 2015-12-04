@@ -21,7 +21,7 @@ loader.load('assets/obj/03_sun/lighthouse1.js', function(scene) {
 }, onProgress, onError);
 
 export function render() {
-    houseTopGroup.rotation.z += 0.01;
+    houseTopGroup.rotation.z += 0.005;
 }
 
 (async () => {
@@ -29,7 +29,7 @@ export function render() {
     object = new THREE.Object3D();
 
     var lightCylinder = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.3, 3, 80, 64, 1),
+        new THREE.CylinderGeometry(0.3, 3, 100, 64, 1, true),
         new THREE.MeshBasicMaterial({
             color: 0xCCCCCC,
             opacity: 0.5,
@@ -37,7 +37,7 @@ export function render() {
             side: THREE.DoubleSide
         })
     );
-    lightCylinder.position.set(0, -40, 7.5)
+    lightCylinder.position.set(0, -50, 7.5)
     houseTopGroup.add(lightCylinder);
     houseTopGroup.remove(lightPlane);
     // lightPlane.material = new THREE.MeshBasicMaterial({
@@ -46,7 +46,7 @@ export function render() {
     //     transparent: true,
     //     side: THREE.DoubleSide
     // });
-    lighthouse.scale.set(50, 50, 50);
+    lighthouse.scale.set(100, 100, 100);
     object.add(lighthouse);
     deferred.resolve();
 })();

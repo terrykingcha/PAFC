@@ -42,12 +42,12 @@ export var init = async () => {
 
     light.position.set(1000, 1000, 1000);
     wave.position.set(0, 0, 0);
-    star.position.set(0, 500, -2000);
-    lighthouse.position.set(-1500, 0, 0);
+    star.position.set(0, 2000, -4000);
+    lighthouse.position.set(-2500, 0, -3000);
     camera.position.set(0, 400, 3000);
     camera.lookAt(new THREE.Vector3(0, 400, 0));
     
-    // await Controls.init(camera, renderer);
+    await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -65,7 +65,7 @@ export function resize() {
 }
 
 export function render() {
-    // Controls.render();
+    Controls.render();
     Wave.render();
     Lighthouse.render();
     renderer.render(scene, camera);

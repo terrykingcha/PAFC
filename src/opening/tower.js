@@ -31,7 +31,7 @@ loader.load(
             geometry, 
             new THREE.MeshPhongMaterial({
                 color: 0x000000,
-                emissive: 0x222222,
+                emissive: 0x000000,
                 opacity: 1,
                 transparent: true,
                 side: THREE.DoubleSide,

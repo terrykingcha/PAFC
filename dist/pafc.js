@@ -40664,7 +40664,7 @@ THREE.OBJLoader.prototype = {
 /* 30 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 48px;\n  z-index: 99999;\n  overflow: hidden;\n  -webkit-transform: scale(0.7);\n  -ms-transform: scale(0.7);\n  transform: scale(0.7);\n}\n#nav a {\n  position: relative;\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  cursor: pointer;\n  overflow: hidden;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 120px;\n}\n#nav a::before {\n  display: inline-block;\n  position: absolute;\n  height: 34px;\n  line-height: 34px;\n  font-size: 36px;\n  text-decoration: none;\n  left: -10px;\n  cursor: inherit;\n}\n#nav a span {\n  display: inline-block;\n  position: relative;\n  margin-left: 40px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 20px;\n  cursor: inherit;\n}\n#nav a.index::before {\n  content: \"\\e601\";\n}\n#nav a.info::before {\n  content: \"\\e602\";\n}\n#nav a.clock::before {\n  content: \"\\e600\";\n}\n#nav a.music.on::before {\n  content: \"\\e604\";\n}\n#nav a.music.off::before {\n  content: \"\\e603\";\n}\nbody.black #nav a {\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  color: #FFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#nav {\n  display: none;\n  position: absolute;\n  top: 24px;\n  right: 35px;\n  z-index: 99999;\n  overflow: hidden;\n}\n#nav a {\n  position: relative;\n  display: block;\n  float: right;\n  margin: 0 5px;\n  width: 24px;\n  height: 34px;\n  line-height: 34px;\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  vertical-align: middle;\n  cursor: pointer;\n  overflow: hidden;\n}\n#nav a[anim] {\n  -webkit-transition: width 0.4s ease 0s;\n  -ms-transition: width 0.4s ease 0s;\n  transition: width 0.4s ease 0s;\n}\n#nav a[anim]:hover {\n  width: 80px;\n}\n#nav a::before {\n  display: inline-block;\n  position: absolute;\n  height: 34px;\n  line-height: 34px;\n  font-size: 24px;\n  text-decoration: none;\n  left: -5px;\n  cursor: inherit;\n}\n#nav a span {\n  display: inline-block;\n  position: relative;\n  margin-left: 30px;\n  height: 100%;\n  line-height: 34px;\n  font-size: 14px;\n  cursor: inherit;\n}\n#nav a.index::before {\n  content: \"\\e601\";\n}\n#nav a.info::before {\n  content: \"\\e602\";\n}\n#nav a.clock::before {\n  content: \"\\e600\";\n}\n#nav a.music.on::before {\n  content: \"\\e604\";\n}\n#nav a.music.off::before {\n  content: \"\\e603\";\n}\nbody.black #nav a {\n  color: #1C1C1C;\n}\nbody.white #nav a {\n  color: #FFF;\n}\n"
 
 /***/ },
 /* 31 */
@@ -41870,7 +41870,7 @@ THREE.OBJLoader.prototype = {
 	    raduis -= 0.2;
 	    raduis = Math.max(raduis, 0);
 	
-	    if (raduis <= 1) {
+	    if (raduis <= 0.5) {
 	        isRotation = false;
 	        lonStep = 0.1;
 	        flyInDeferred.resolve();
@@ -41952,7 +41952,7 @@ THREE.OBJLoader.prototype = {
 	
 	    var buildingInnerMesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
 	        color: 0x000000,
-	        emissive: 0x222222,
+	        emissive: 0x000000,
 	        opacity: 1,
 	        transparent: true,
 	        side: THREE.DoubleSide
@@ -42790,7 +42790,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libPromise = __webpack_require__(10);
 	
-	var COLOR = 0xFFFFFF;
+	var COLOR = 0xEEEEEE;
 	var X = 0;
 	var Y = 0;
 	var Z = 0;
@@ -42847,10 +42847,10 @@ THREE.OBJLoader.prototype = {
 	var object;
 	
 	exports.object = object;
-	var THREE_TRUNK_COLOR = 0x8792B9;
+	var THREE_TRUNK_COLOR = 0x7b7b7b;
 	var THREE_TRUNK_EMISSIVE = 0x494949;
-	var THREE_LEAF_COLOR = 0xE220BF;
-	var THREE_LEAF_EMISSIVE = 0x494949;
+	var THREE_LEAF_COLOR = 0x333333;
+	var THREE_LEAF_EMISSIVE = 0x333333;
 	
 	var loader = new THREE.JSONLoader(_prologue.manager);
 	loader.load('assets/obj/01_fog/tree1.js', function (geometry, materials) {
@@ -43141,8 +43141,8 @@ THREE.OBJLoader.prototype = {
 	
 	    var plane = new THREE.PlaneGeometry(X_SIZE, Z_SIZE);
 	    var planeMesh = new THREE.Mesh(plane, new THREE.MeshBasicMaterial({
-	        color: 0x78727F,
-	        side: THREE.DoubleSide
+	        color: 0x353535,
+	        side: THREE.FontSide
 	    }));
 	    planeMesh.rotation.set(-Math.PI / 2, 0, 0);
 	    planeMesh.position.set(X_SIZE / 2, 0, Z_SIZE / 2);
@@ -43322,8 +43322,8 @@ THREE.OBJLoader.prototype = {
 	    }
 	}
 	
-	var THREE_LEAF_COLOR = 0xE220BF;
-	var THREE_LEAF_EMISSIVE = 0x494949;
+	var THREE_LEAF_COLOR = 0x555555;
+	var THREE_LEAF_EMISSIVE = 0x333333;
 	
 	var loader = new THREE.JSONLoader(_prologue.manager);
 	loader.load('assets/obj/01_fog/leaf.js', function (geometry, materials) {
@@ -44540,16 +44540,19 @@ THREE.OBJLoader.prototype = {
 	
 	                light.position.set(1000, 1000, 1000);
 	                wave.position.set(0, 0, 0);
-	                star.position.set(0, 500, -2000);
-	                lighthouse.position.set(-1500, 0, 0);
+	                star.position.set(0, 2000, -4000);
+	                lighthouse.position.set(-2500, 0, -3000);
 	                camera.position.set(0, 400, 3000);
 	                camera.lookAt(new THREE.Vector3(0, 400, 0));
 	
-	                // await Controls.init(camera, renderer);
 	                context$1$0.next = 23;
-	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
 	
 	            case 23:
+	                context$1$0.next = 25;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 25:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -44558,7 +44561,7 @@ THREE.OBJLoader.prototype = {
 	                // window.camera = camera;
 	                // window.renderer = renderer;
 	
-	            case 25:
+	            case 27:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -44573,7 +44576,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function render() {
-	    // Controls.render();
+	    Controls.render();
 	    Wave.render();
 	    Lighthouse.render();
 	    renderer.render(scene, camera);
@@ -44986,8 +44989,11 @@ THREE.OBJLoader.prototype = {
 	var OCEAN_HEIGHT = 3000 * 3;
 	var OCEAN_FRAG = 30 * 3;
 	
-	var ocean;
-	var oceanMask;
+	// var ocean;
+	// var oceanMask;
+	
+	var vertices = [];
+	var lines = [];
 	
 	var waveTime = 0;
 	var waveHeightA = 265;
@@ -45004,9 +45010,9 @@ THREE.OBJLoader.prototype = {
 	    return Math.sin(x / 2 * waveOffsetB + t / waveSpeedB) * Math.cos(y / 2 * waveOffsetB + t / waveSpeedB) * waveHeightB;
 	}
 	
-	function waves(obj, t) {
-	    var geometry = obj.geometry;
-	    var vertices = geometry.vertices;
+	function waves(vertices, t) {
+	    // var geometry = obj.geometry;
+	    // var vertices = geometry.vertices;
 	
 	    //big waves
 	    var _iteratorNormalCompletion = true;
@@ -45046,6 +45052,8 @@ THREE.OBJLoader.prototype = {
 	
 	            vertex.z = vertex.z + waveB(vertex.x, vertex.z, t);
 	        }
+	
+	        // geometry.verticesNeedUpdate = true;
 	    } catch (err) {
 	        _didIteratorError2 = true;
 	        _iteratorError2 = err;
@@ -45060,30 +45068,58 @@ THREE.OBJLoader.prototype = {
 	            }
 	        }
 	    }
-	
-	    geometry.verticesNeedUpdate = true;
 	}
 	
 	function render() {
-	    waves(ocean, waveTime * 0.013);
-	    waves(oceanMask, waveTime * 0.013);
+	    // return;
+	    // waves(ocean, waveTime * 0.013);
+	    // waves(oceanMask, waveTime * 0.013);
+	    waves(vertices, waveTime * 0.013);
+	
+	    var _iteratorNormalCompletion3 = true;
+	    var _didIteratorError3 = false;
+	    var _iteratorError3 = undefined;
+	
+	    try {
+	        for (var _iterator3 = lines[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	            var line = _step3.value;
+	
+	            line.geometry.verticesNeedUpdate = true;
+	        }
+	    } catch (err) {
+	        _didIteratorError3 = true;
+	        _iteratorError3 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+	                _iterator3['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError3) {
+	                throw _iteratorError3;
+	            }
+	        }
+	    }
+	
 	    waveTime++;
 	}
 	
 	(function callee$0$0() {
-	    var oceanUniforms, oceanMaterial, oceanPlane;
+	    var linesPlane, lineMaterial, y, yLineGeometry, x, vertex, yLine, xLineGeometry, xLine;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                exports.object = object = new THREE.Object3D();
 	
-	                oceanUniforms = {
+	                /*
+	                var oceanUniforms = {
 	                    u_color: {
-	                        type: 'c',
+	                        type: 'c', 
 	                        value: new THREE.Color(0x383A49)
 	                    }
 	                };
-	                oceanMaterial = new THREE.ShaderMaterial({
+	                    
+	                var oceanMaterial = new THREE.ShaderMaterial({
 	                    uniforms: oceanUniforms,
 	                    wireframe: true,
 	                    wireframeLinewidth: 0.2,
@@ -45091,27 +45127,66 @@ THREE.OBJLoader.prototype = {
 	                    vertexShader: OCEAN_SURFACE_VERT,
 	                    fragmentShader: OCEAN_SURFACE_FRAG
 	                });
-	                oceanPlane = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_HEIGHT, OCEAN_FRAG, OCEAN_FRAG);
-	
+	                
+	                var oceanPlane = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_HEIGHT, OCEAN_FRAG, OCEAN_FRAG);
 	                oceanPlane.dynamic = true;
 	                oceanPlane.computeFaceNormals();
 	                oceanPlane.computeVertexNormals();
-	
+	                
 	                ocean = new THREE.Mesh(oceanPlane, oceanMaterial);
 	                ocean.rotation.x = Math.PI / 2;
 	                object.add(ocean);
-	
+	                
 	                oceanMask = new THREE.Mesh(oceanPlane.clone(), new THREE.MeshBasicMaterial({
 	                    color: 0x000000
 	                }));
 	                oceanMask.rotation.x = Math.PI / 2;
 	                oceanMask.position.set(0, 0, -10);
-	                // oceanMask.material.wireframe = false;
+	                oceanMask.material.wireframe = false;
 	                object.add(oceanMask);
+	                */
+	
+	                linesPlane = new THREE.Object3D();
+	                lineMaterial = new THREE.LineBasicMaterial({
+	                    color: 0x666666,
+	                    linewidth: 0.05,
+	                    opacity: 0.3,
+	                    transparent: 0
+	                });
+	
+	                for (y = 0; y <= OCEAN_FRAG; y++) {
+	                    yLineGeometry = new THREE.Geometry();
+	
+	                    for (x = 0; x <= OCEAN_FRAG; x++) {
+	                        vertex = new THREE.Vector3(-OCEAN_WIDTH / 2 + OCEAN_WIDTH / OCEAN_FRAG * x, -OCEAN_HEIGHT / 2 + OCEAN_HEIGHT / OCEAN_FRAG * y, 0);
+	
+	                        yLineGeometry.vertices.push(vertex);
+	                        vertices.push(vertex);
+	                    }
+	                    yLine = new THREE.Line(yLineGeometry, lineMaterial);
+	
+	                    lines.push(yLine);
+	                    linesPlane.add(yLine);
+	                }
+	
+	                for (x = 0; x <= OCEAN_FRAG; x++) {
+	                    xLineGeometry = new THREE.Geometry();
+	
+	                    for (y = 0; y <= OCEAN_FRAG; y++) {
+	                        xLineGeometry.vertices.push(vertices[x + y * (OCEAN_FRAG + 1)]);
+	                    }
+	                    xLine = new THREE.Line(xLineGeometry, lineMaterial);
+	
+	                    lines.push(xLine);
+	                    linesPlane.add(xLine);
+	                }
+	
+	                linesPlane.rotation.x = Math.PI / 2;
+	                object.add(linesPlane);
 	
 	                deferred.resolve();
 	
-	            case 15:
+	            case 8:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -45153,18 +45228,18 @@ THREE.OBJLoader.prototype = {
 	function buildStars(z) {
 	    var material = new THREE.PointsMaterial({ // 星星
 	        size: 2 * Math.random() + 2,
-	        opacity: 1,
+	        opacity: 0.5 + Math.random() * 0.5,
 	        vertexColors: THREE.VertexColors,
-	        side: THREE.DoubleSide
+	        side: THREE.FontSide
 	    });
 	
-	    var total = 8000;
+	    var total = 20000;
 	    var vertices = new Float32Array(3 * total);
 	    var colors = new Float32Array(3 * total);
 	    while (total-- > 0) {
-	        vertices[total * 3] = Math.random() * 8000 - 4000;
-	        vertices[total * 3 + 1] = Math.random() * 8000 - 4000;
-	        vertices[total * 3 + 2] = z * Math.random() * 10;
+	        vertices[total * 3] = Math.random() * 10000 - 5000;
+	        vertices[total * 3 + 1] = Math.random() * 4000 - 2000;
+	        vertices[total * 3 + 2] = z * Math.random() * -100;
 	        colors[total * 3 + 2] = colors[total * 3 + 1] = colors[total * 3] = Math.random();
 	    }
 	
@@ -45245,7 +45320,7 @@ THREE.OBJLoader.prototype = {
 	}, _prologue.onProgress, _prologue.onError);
 	
 	function render() {
-	    houseTopGroup.rotation.z += 0.01;
+	    houseTopGroup.rotation.z += 0.005;
 	}
 	
 	(function callee$0$0() {
@@ -45259,14 +45334,14 @@ THREE.OBJLoader.prototype = {
 	            case 2:
 	                exports.object = object = new THREE.Object3D();
 	
-	                lightCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 3, 80, 64, 1), new THREE.MeshBasicMaterial({
+	                lightCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 3, 100, 64, 1, true), new THREE.MeshBasicMaterial({
 	                    color: 0xCCCCCC,
 	                    opacity: 0.5,
 	                    transparent: true,
 	                    side: THREE.DoubleSide
 	                }));
 	
-	                lightCylinder.position.set(0, -40, 7.5);
+	                lightCylinder.position.set(0, -50, 7.5);
 	                houseTopGroup.add(lightCylinder);
 	                houseTopGroup.remove(lightPlane);
 	                // lightPlane.material = new THREE.MeshBasicMaterial({
@@ -45275,7 +45350,7 @@ THREE.OBJLoader.prototype = {
 	                //     transparent: true,
 	                //     side: THREE.DoubleSide
 	                // });
-	                lighthouse.scale.set(50, 50, 50);
+	                lighthouse.scale.set(100, 100, 100);
 	                object.add(lighthouse);
 	                deferred.resolve();
 	

@@ -10,18 +10,18 @@ export var object;
 function buildStars(z) {
     var material = new THREE.PointsMaterial({  // 星星
         size: 2 * Math.random() + 2,
-        opacity: 1,
+        opacity: 0.5 + Math.random() * 0.5,
         vertexColors: THREE.VertexColors,
-        side: THREE.DoubleSide
+        side: THREE.FontSide
     });
 
-    var total = 8000;
+    var total = 20000;
     var vertices = new Float32Array(3 * total); 
     var colors = new Float32Array(3 * total);
     while (total-- > 0) {
-        vertices[total * 3] = Math.random() * 8000 - 4000;
-        vertices[total * 3 + 1] = Math.random() * 8000 - 4000;
-        vertices[total * 3 + 2] = z * Math.random() * 10;
+        vertices[total * 3] = Math.random() * 10000 - 5000;
+        vertices[total * 3 + 1] = Math.random() * 4000 - 2000;
+        vertices[total * 3 + 2] = z * Math.random() * -100;
         colors[total * 3 + 2] = colors[total * 3 + 1] = colors[total * 3] = Math.random();
     }
 

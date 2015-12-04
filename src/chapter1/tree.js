@@ -8,10 +8,10 @@ var deferred = defer();
 export var ready = () => deferred.promise;
 export var object;
 
-const THREE_TRUNK_COLOR = 0x8792B9;
+const THREE_TRUNK_COLOR = 0x7b7b7b;
 const THREE_TRUNK_EMISSIVE = 0x494949;
-const THREE_LEAF_COLOR = 0xE220BF;
-const THREE_LEAF_EMISSIVE = 0x494949;
+const THREE_LEAF_COLOR = 0x333333;
+const THREE_LEAF_EMISSIVE = 0x333333;
 
 var loader = new THREE.JSONLoader(manager);
 loader.load('assets/obj/01_fog/tree1.js', function(geometry, materials) {

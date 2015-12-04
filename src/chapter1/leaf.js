@@ -113,8 +113,8 @@ export function render() {
     }
 }
 
-const THREE_LEAF_COLOR = 0xE220BF;
-const THREE_LEAF_EMISSIVE = 0x494949;
+const THREE_LEAF_COLOR = 0x555555;
+const THREE_LEAF_EMISSIVE = 0x333333;
 
 var loader = new THREE.JSONLoader(manager);
 loader.load('assets/obj/01_fog/leaf.js', function(geometry, materials) {

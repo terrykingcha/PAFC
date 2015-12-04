@@ -46,7 +46,7 @@ export function flyIn() {
     raduis -= 0.2;
     raduis = Math.max(raduis, 0);
 
-    if (raduis <= 1) {
+    if (raduis <= 0.5) {
         isRotation = false;
         lonStep = 0.1;
         flyInDeferred.resolve();
