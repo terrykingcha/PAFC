@@ -149,6 +149,8 @@ function template() {
         <div id="category">
             <a class="back">Back</a>
             <div class="circle"></div>
+            <p>The wind shows us its different forms in different times.
+enjoy the vioce of nature.</p>
         </div>
         <div id="category-name"></div>
     `;

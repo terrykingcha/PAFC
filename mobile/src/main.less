@@ -1,0 +1,148 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: "Microsoft YaHei", "SC Heiti", sans-serif;
+}
+
+#wrap {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    background: url(assets/bg.jpg) no-repeat center center;
+    background-size: cover;
+}
+
+#logo {
+    position: absolute;
+    width: 483 / 64rem;
+    height: 367 / 64rem;
+    top: 50%;
+    left: 50%;
+    margin-top: -367 / 64 / 2rem;
+    margin-left: -483 / 64 / 2rem;
+    background: url(assets/logo.png) no-repeat center center;
+    background-size: contain;
+}
+
+#tips {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 2em;
+    font-size: 24 / 64rem;
+    color: #FFF;
+    top: 70%;
+}
+
+#story-btn {
+    position: absolute;
+    width: 280 / 64rem;
+    height: 70 / 64rem;
+    top: 80%;
+    left: 50%;
+    margin-left: -280 / 2 / 64rem;
+    box-sizing: border-box;
+    border: 1px solid #FFF;
+    font-size: 32 / 64rem;
+    color: #FFF;
+    text-align: center;
+    line-height: 68 / 64rem;
+
+    // &::hover {
+    //     background-color: rgba(255,255,255,0.23)
+    // }
+}
+
+#story {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    position: absolute;
+    background-color: #FFF;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+
+    &.show {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);  
+    }
+
+    &.anime {
+        -webkit-transition: -webkit-transform 0.4s ease 0s;
+        transition: transform 0.4s ease 0s;
+
+    }
+
+    img {
+        width: 100%;
+        vertical-align: middle;
+        font-size: 0;
+        line-height: 0;
+    }
+
+    .scrollWrap {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .scrollElement > * {
+        margin-left: auto;
+        margin-right: auto;
+        overflow: hidden;
+    }
+
+    .slogan {
+        width: 350 / 64rem;
+        height: 85 / 64rem;
+        padding-top: 120 / 64rem;
+    }
+
+    section {
+        width: 484 / 64rem;
+        padding-top: 40 / 64rem;
+
+        p {
+            font-size: 24 / 64rem;
+            color: #000;
+            margin: 0;
+            padding-top: 20 / 64rem;
+            line-height: 1.5em;
+        }
+    }
+
+    .video {
+        width: 610 / 64rem;
+        height: 340 / 64rem;
+        margin-top: 40 / 64rem;
+
+        video {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .img {
+        width: 100%;
+        margin-top: 80 / 64rem;
+    }
+
+    .close {
+        position: absolute;
+        width: 54 / 64rem;
+        height: 54 / 64rem;
+        overflow: hidden;
+        background: url(assets/story/close.png) no-repeat center center;
+        background-size: contain;
+        right: 28 / 64rem;
+        top: 28 / 64rem;
+    }
+}
+

@@ -5,7 +5,7 @@ sourceMapPlugin = new webpack.SourceMapDevToolPlugin({
   test: /\.js$/,
 
   // file and reference
-  filename: './temp/[name].js.map',
+  filename: './mobile/temp/[name].js.map',
   append: '//# sourceMappingURL=[url]',
 
   moduleFilenameTemplate: '../[resourcePath]'
@@ -13,10 +13,10 @@ sourceMapPlugin = new webpack.SourceMapDevToolPlugin({
 
 module.exports = {
   entry: {
-    pafc: './src/main.js',
+    "pafc-mobile": './mobile/src/main.js',
   },
   output: {
-    filename: './temp/[name].js',
+    filename: './mobile/temp/[name].js',
     devtoolModuleFilenameTemplate: '/[resourcePath]'
   },
   module: {
