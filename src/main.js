@@ -15,6 +15,7 @@ import * as opening from './opening';
 import * as chapter1 from './chapter1';
 import * as chapter2 from './chapter2';
 import * as chapter3 from './chapter3';
+import * as chapter4 from './chapter4';
 import * as chapter5 from './chapter5';
 import * as chapter6 from './chapter6';
 
@@ -22,6 +23,7 @@ var chapters = new Array(6);
 chapters[0] = chapter1;
 chapters[1] = chapter2;
 chapters[2] = chapter3;
+chapters[3] = chapter4;
 chapters[4] = chapter5;
 chapters[5] = chapter6;
 var currentChapter;

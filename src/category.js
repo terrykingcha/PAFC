@@ -3,7 +3,8 @@ import {defer, domReady, delay} from './lib/promise';
 import {manager, onProgress, onError} from './prologue';
 
 var categorys = ['雾', '云', '日', '雷', '雨', '星'];
-var avialables = ['雾', '云', '日', '雨', '星'];
+var avialables = ['雾', '云', '日', '雷','雨', '星'];
+var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
 
 export var length = categorys.length;
 
@@ -28,6 +29,10 @@ images = images.map(function(image) {
 
 export function get(index) {
     return categorys[index];
+}
+
+export function getIconFont(index) {
+    return iconfonts[index];
 }
 
 var $category;
