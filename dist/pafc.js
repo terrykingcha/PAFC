@@ -38451,11 +38451,11 @@ THREE.OBJLoader.prototype = {
 	
 	var chapter4 = _interopRequireWildcard(_chapter4);
 	
-	var _chapter5 = __webpack_require__(93);
+	var _chapter5 = __webpack_require__(94);
 	
 	var chapter5 = _interopRequireWildcard(_chapter5);
 	
-	var _chapter6 = __webpack_require__(102);
+	var _chapter6 = __webpack_require__(103);
 	
 	var chapter6 = _interopRequireWildcard(_chapter6);
 	
@@ -45473,18 +45473,22 @@ THREE.OBJLoader.prototype = {
 	
 	var People = _interopRequireWildcard(_people);
 	
-	var _controls = __webpack_require__(92);
+	var _wave = __webpack_require__(92);
+	
+	var Wave = _interopRequireWildcard(_wave);
+	
+	var _controls = __webpack_require__(93);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var scene, camera, renderer, domElement, light, people, visualizer;
+	var scene, camera, renderer, domElement, light, people, wave, visualizer;
 	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), People.ready(), Light.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), People.ready(), Wave.ready(), Light.ready()]));
 	
 	            case 2:
 	
@@ -45493,21 +45497,23 @@ THREE.OBJLoader.prototype = {
 	                renderer = Renderer.renderer;
 	                domElement = Renderer.domElement;
 	                people = People.object;
+	                wave = Wave.object;
 	                light = Light.light;
 	
 	                scene.add(camera);
 	                scene.add(light);
 	                scene.add(people);
+	                scene.add(wave);
 	
 	                light.position.set(-10, 10, 10);
 	                camera.position.set(0, 0, 200);
-	                // people.rotation.set(-Math.PI / 2, 0, 0);
+	                wave.position.set(0, -30, 10);
 	
 	                // await Controls.init(camera, renderer);
-	                context$1$0.next = 15;
+	                context$1$0.next = 18;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 15:
+	            case 18:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -45516,7 +45522,7 @@ THREE.OBJLoader.prototype = {
 	                // window.camera = camera;
 	                // window.renderer = renderer;
 	
-	            case 17:
+	            case 20:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -45544,8 +45550,19 @@ THREE.OBJLoader.prototype = {
 	    }
 	}
 	
+	var lastTime = 0;
+	var waveInterval = 0.1;
+	function renderWave() {
+	    var time = visualizer.getTime();
+	    if (time - lastTime >= 0.1) {
+	        lastTime = time;
+	        Wave.render(visualizer);
+	    }
+	}
+	
 	function render() {
 	    togglePeople();
+	    renderWave();
 	    // Controls.render();
 	    renderer.render(scene, camera);
 	}
@@ -46016,6 +46033,117 @@ THREE.OBJLoader.prototype = {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	
+	var _this = this;
+	
+	exports.render = render;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(56);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var lines = [];
+	var lineMaterial = new THREE.LineBasicMaterial({
+	    color: 0xFFFFFF,
+	    linewidth: 2
+	});
+	var count = 0;
+	
+	function render(visualizer) {
+	    visualizer.analysis();
+	    var times = visualizer.times;
+	    times = times.filter(function (i) {
+	        return !!i;
+	    });
+	    var max = Math.max.apply(Math, _toConsumableArray(times));
+	    var min = Math.min.apply(Math, _toConsumableArray(times));
+	    var offset = max - min;
+	
+	    var lineList = [].concat(lines);
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = lineList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var _line = _step.value;
+	
+	            _line.position.x -= 4;
+	            if (_line.position.x < -100) {
+	                object.remove(_line);
+	                lines.splice(lines.indexOf(_line), 1);
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	                _iterator['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    var lineGeometry = new THREE.Geometry();
+	    lineGeometry.vertices.push(new THREE.Vector3(0, offset / 4, 0));
+	    lineGeometry.vertices.push(new THREE.Vector3(0, -offset / 4, 0));
+	
+	    var line = new THREE.Line(lineGeometry, lineMaterial.clone());
+	    line.position.x = 100;
+	    lines.push(line);
+	    object.add(line);
+	}
+	
+	(function callee$0$0() {
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	
+	                exports.object = object = new THREE.Object3D();
+	                deferred.resolve();
+	
+	            case 2:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 93 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
 	exports.init = init;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -46047,7 +46175,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 93 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46065,7 +46193,7 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(94);
+	__webpack_require__(95);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -46073,27 +46201,27 @@ THREE.OBJLoader.prototype = {
 	
 	var _color = __webpack_require__(38);
 	
-	var _scene = __webpack_require__(96);
+	var _scene = __webpack_require__(97);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(97);
+	var _camera = __webpack_require__(98);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(98);
+	var _renderer = __webpack_require__(99);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(99);
+	var _light = __webpack_require__(100);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _rain = __webpack_require__(100);
+	var _rain = __webpack_require__(101);
 	
 	var Rain = _interopRequireWildcard(_rain);
 	
-	var _controls = __webpack_require__(101);
+	var _controls = __webpack_require__(102);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -46311,13 +46439,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 94 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(95);
+	var content = __webpack_require__(96);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -46337,13 +46465,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 95 */
+/* 96 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46369,7 +46497,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 97 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46440,7 +46568,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 98 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46508,7 +46636,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46537,7 +46665,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46763,7 +46891,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46802,7 +46930,7 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46820,7 +46948,7 @@ THREE.OBJLoader.prototype = {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(103);
+	__webpack_require__(104);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -46828,27 +46956,27 @@ THREE.OBJLoader.prototype = {
 	
 	var _color = __webpack_require__(38);
 	
-	var _scene = __webpack_require__(105);
+	var _scene = __webpack_require__(106);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(106);
+	var _camera = __webpack_require__(107);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(107);
+	var _renderer = __webpack_require__(108);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(108);
+	var _light = __webpack_require__(109);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(109);
+	var _galaxy = __webpack_require__(110);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(110);
+	var _controls = __webpack_require__(111);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -47063,13 +47191,13 @@ THREE.OBJLoader.prototype = {
 	exports.hide = hide;
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(104);
+	var content = __webpack_require__(105);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -47089,13 +47217,13 @@ THREE.OBJLoader.prototype = {
 	}
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 105 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47121,7 +47249,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 106 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47192,7 +47320,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 107 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47260,7 +47388,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 108 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47289,7 +47417,7 @@ THREE.OBJLoader.prototype = {
 	deferred.resolve();
 
 /***/ },
-/* 109 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47523,7 +47651,7 @@ THREE.OBJLoader.prototype = {
 	})();
 
 /***/ },
-/* 110 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

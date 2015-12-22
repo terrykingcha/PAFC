@@ -39,7 +39,7 @@ export var init = async () => {
 
     light.position.set(-10, 10, 10);
     camera.position.set(0, 0, 200);
-    wave.position.set(0, 0, 10);
+    wave.position.set(0, -30, 10);
     
     // await Controls.init(camera, renderer);
     await pageLoad();
@@ -72,8 +72,19 @@ function togglePeople() {
     }
 }
 
+var lastTime = 0;
+var waveInterval = 0.1;
+function renderWave() {
+    var time = visualizer.getTime();
+    if (time - lastTime >= 0.1) {
+        lastTime = time;
+        Wave.render(visualizer);
+    }
+}
+
 export function render() {
     togglePeople();
+    renderWave();
     // Controls.render();
     renderer.render(scene, camera);
 }
