@@ -45554,7 +45554,7 @@ THREE.OBJLoader.prototype = {
 	var waveInterval = 0.1;
 	function renderWave() {
 	    var time = visualizer.getTime();
-	    if (time - lastTime >= 0.1) {
+	    if (time - lastTime >= 0.1 || time - lastTime < 0) {
 	        lastTime = time;
 	        Wave.render(visualizer);
 	    }
