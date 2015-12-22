@@ -8,9 +8,11 @@ import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as People from './people';
+import * as Wave from './wave';
+
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, people, visualizer;
+var scene, camera, renderer, domElement, light, people,wave, visualizer;
 
 export var init = async () => {    
     await Promise.all([
@@ -18,6 +20,7 @@ export var init = async () => {
         Camera.ready(),
         Renderer.ready(),
         People.ready(),
+        Wave.ready(),
         Light.ready()
     ]);
 
@@ -26,15 +29,17 @@ export var init = async () => {
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
     people = People.object;
+    wave = Wave.object;
     light = Light.light;
 
     scene.add(camera);
     scene.add(light);
     scene.add(people);
+    scene.add(wave);
 
     light.position.set(-10, 10, 10);
     camera.position.set(0, 0, 200);
-    // people.rotation.set(-Math.PI / 2, 0, 0);
+    wave.position.set(0, 0, 10);
     
     // await Controls.init(camera, renderer);
     await pageLoad();

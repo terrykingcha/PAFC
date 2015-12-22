@@ -45263,7 +45263,7 @@ THREE.OBJLoader.prototype = {
 	    var vertices = new Float32Array(3 * total);
 	    var colors = new Float32Array(3 * total);
 	    while (total-- > 0) {
-	        vertices[total * 3] = Math.random() * 10000 - 5000;
+	        vertices[total * 3] = Math.random() * 20000 - 10000;
 	        vertices[total * 3 + 1] = Math.random() * 4000 - 2000;
 	        vertices[total * 3 + 2] = z * Math.random() * -100;
 	        colors[total * 3 + 2] = colors[total * 3 + 1] = colors[total * 3] = Math.random();
