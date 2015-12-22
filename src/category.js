@@ -3,21 +3,21 @@ import {defer, domReady, delay} from './lib/promise';
 import {manager, onProgress, onError} from './prologue';
 
 var categorys = ['雾', '云', '日', '雷', '雨', '星'];
-var avialables = ['雾', '云', '日', '雷','雨', '星'];
 var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
 
 export var length = categorys.length;
 
+const IMG_PATH = './assets/images';
 var images = [
-    'circle.png', 'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png',
-    'c1_disable.png', 'c2_disable.png', 'c3_disable.png', 'c4_disable.png', 'c5_disable.png', 'c6_disable.png'
+    'circle.png', 'c1_new.png', 'c2_new.png', 'c3_new.png', 'c4_new.png', 'c5_new.png', 'c6_new.png',
+    'c1_a1.png', 'c1_a2.png', 'c1_a3.png', 'c2_a1.png', 'c3_a1.png', 'c3_a2.png', 'c4_a1.png', 'c5_a1.png', 'c5_a2.png', 'c6_a1.png'
 ];
 images = images.map(function(image) {
     var loader = new THREE.ImageLoader(manager);
 
     return new Promise(function(resolve, reject) {
         loader.load(
-            `./assets/images/${image}`, 
+            `${IMG_PATH}/${image}`, 
             function(img) {
                 resolve(img);
             },
@@ -96,7 +96,9 @@ function bindCategoryEvents() {
     var changed;
     $circle::$on('mousemove mousedown', function(e) {
             var eventName = e.type;
-            $circle::$findAll('img').forEach(img => img::$removeClass('hover'));
+            $circle::$findAll('.wrap').forEach(
+                $wrap => $wrap::$removeClass('hover')
+            );
 
             var {radius, rad} = parse(e);
             if (radius <= circleWidth / 2 &&
@@ -105,19 +107,18 @@ function bindCategoryEvents() {
                 var name = get(index - 1);
 
                 var type;
-                if (avialables.indexOf(name) < 0) {
-                    $circle::$find(`.c${index}.disable`)::$addClass('hover');
-                } else {
-                    $circle::$find(`.c${index}.enable`)::$addClass('hover');
+                $circle::$find(`.c${index}`)::$addClass('hover');
 
-                    if (eventName === 'mousedown') {
-                        $circle::$trigger('change', [index, changed]);
-                        changed = index;
-                    }
+                if (eventName === 'mousedown') {
+                    $circle::$trigger('change', [index, changed]);
+                    changed = index;
                 }
             }
         })::$on('mouseup mouseleave', function(e) {
-            $circle::$findAll('img').forEach(img => img::$removeClass('hover'));
+            $circle::$findAll('.wrap').forEach(
+                $wrap => $wrap::$removeClass('hover')
+
+            );
         });
 }
 
@@ -161,6 +162,52 @@ enjoy the vioce of nature.</p>
     `;
 }
 
+function logoTemplate(name) {
+    switch(name) {
+        case 'c1':
+            return `
+                <img src="${IMG_PATH}/c1_a1.png">
+                <img src="${IMG_PATH}/c1_a2.png">
+                <img src="${IMG_PATH}/c1_a3.png">
+            `;
+            break;
+        case 'c2':
+            return `
+                <img src="${IMG_PATH}/c2_a1.png">
+            `;
+            break;
+        case 'c3':
+            return `
+                <img src="${IMG_PATH}/c3_a1.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+                <img src="${IMG_PATH}/c3_a2.png">
+            `;
+            break;
+        case 'c4':
+            return `
+                <img src="${IMG_PATH}/c4_a1.png">
+            `;
+            break;
+        case 'c5':
+            return `
+                <img src="${IMG_PATH}/c5_a1.png">
+                <img src="${IMG_PATH}/c5_a1.png">
+            `;
+            break;
+        case 'c6':
+            return `
+                <img src="${IMG_PATH}/c6_a1.png">
+            `;
+            break;
+    }
+}
+
 (async () => {
     await domReady();
 
@@ -169,18 +216,18 @@ enjoy the vioce of nature.</p>
     $circle = $category::$find('.circle');
 
     var imgs = await Promise.all(images);
-    imgs.forEach(function(image) {
-        var src = image::$attr('src');
-        var name = src.match(/(c\d)(?:_disable)?.png/);
+    imgs.forEach(function($image) {
+        var $wrap = document.createElement('div');
+        $wrap::$addClass('wrap');
+        var src = $image::$attr('src');
+        var name = src.match(/(c\d)(?:_new)?.png/);
 
         if (name) {
-            image::$addClass(name[1]);
-            if (src.indexOf('disable') > 0) {
-                image::$addClass('disable');
-            } else {
-                image::$addClass('enable');
-            }
-            $circle::$append(image);
+            $wrap::$addClass(name[1])
+                ::$html(`<div class="logo">${logoTemplate(name[1])}</div>`)
+                ::$append($image);
+
+            $circle::$append($wrap);
         }
     });
 })();
