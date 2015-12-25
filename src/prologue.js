@@ -41,7 +41,7 @@ function initWave(canvas) {
 
     canvas.minX = width * (Math.random() * 0.5 + 0.1) + minX;
     canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
-    canvas.minY = minY * (Math.random() * 0.2 + 0.1);
+    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height * 0.75
     canvas.maxY = -canvas.minY;
     canvas.curY = Math.random() * canvas.maxY;
     canvas.color = `rgba(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.random() * 0.3 + 0.3})`;
@@ -56,23 +56,27 @@ function renderWave({canvas, ctx2d}) {
         return [width / 2 + x, height / 2 - y];
     }
 
+    function bezier(cx, cy) {
+        return axis(minX + (maxX - minX) * cx / 2, curY * cy);
+    }
+
     var path = new Path2D();
 
     path.moveTo(...axis(minX, 0));
-    var [c1X, c1Y] = axis((maxX - minX) / 4 + minX, 0);
-    var [c2X, c2Y] = axis((maxX - minX) / 4 + minX, curY);
+    var [c1X, c1Y] = bezier(1, 0); //axis((maxX - minX) / 4 + minX, 0);
+    var [c2X, c2Y] = bezier(0.8, 1); //axis((maxX - minX) / 4 + minX, curY);
     path.bezierCurveTo(c1X, c1Y, c2X, c2Y, ...axis((maxX - minX) / 2 + minX, curY));
 
-    var [c1X, c1Y] = axis((maxX - minX) * 0.75 + minX, curY);
-    var [c2X, c2Y] = axis((maxX - minX) * 0.75 + minX, 0);
+    var [c1X, c1Y] = bezier(1.2, 1); //axis((maxX - minX) * 0.75 + minX, curY);
+    var [c2X, c2Y] = bezier(1, 0); //axis((maxX - minX) * 0.75 + minX, 0);
     path.bezierCurveTo(c1X, c1Y, c2X, c2Y, ...axis(maxX, 0));
 
-    var [c1X, c1Y] = axis((maxX - minX) * 0.75 + minX, 0);
-    var [c2X, c2Y] = axis((maxX - minX) * 0.75 + minX, -curY);
+    var [c1X, c1Y] = bezier(1, 0); //axis((maxX - minX) * 0.75 + minX, 0);
+    var [c2X, c2Y] = bezier(1.2, -1); //axis((maxX - minX) * 0.75 + minX, -curY);
     path.bezierCurveTo(c1X, c1Y, c2X, c2Y, ...axis((maxX - minX) / 2 + minX, -curY));
 
-    var [c1X, c1Y] = axis((maxX - minX) / 4 + minX, -curY);
-    var [c2X, c2Y] = axis((maxX - minX) / 4 + minX, 0);
+    var [c1X, c1Y] = bezier(0.8, -1) // ;axis((maxX - minX) / 4 + minX, -curY);
+    var [c2X, c2Y] = bezier(1, 0); //axis((maxX - minX) / 4 + minX, 0);
     path.bezierCurveTo(c1X, c1Y, c2X, c2Y, ...axis(minX, 0));
 
     path.closePath();

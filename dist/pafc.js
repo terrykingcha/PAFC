@@ -39518,7 +39518,7 @@ THREE.OBJLoader.prototype = {
 	
 	    canvas.minX = width * (Math.random() * 0.5 + 0.1) + minX;
 	    canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
-	    canvas.minY = minY * (Math.random() * 0.2 + 0.1);
+	    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height * 0.75;
 	    canvas.maxY = -canvas.minY;
 	    canvas.curY = Math.random() * canvas.maxY;
 	    canvas.color = 'rgba(' + Math.round(Math.random() * 255) + ', ' + Math.round(Math.random() * 255) + ', ' + Math.round(Math.random() * 255) + ', ' + (Math.random() * 0.3 + 0.3) + ')';
@@ -39544,72 +39544,80 @@ THREE.OBJLoader.prototype = {
 	        return [width / 2 + x, height / 2 - y];
 	    }
 	
+	    function bezier(cx, cy) {
+	        return axis(minX + (maxX - minX) * cx / 2, curY * cy);
+	    }
+	
 	    var path = new Path2D();
 	
 	    path.moveTo.apply(path, _toConsumableArray(axis(minX, 0)));
 	
-	    var _axis = axis((maxX - minX) / 4 + minX, 0);
+	    var _bezier = bezier(1, 0);
 	
-	    var _axis2 = _slicedToArray(_axis, 2);
+	    var _bezier2 = _slicedToArray(_bezier, 2);
 	
-	    var c1X = _axis2[0];
-	    var c1Y = _axis2[1];
+	    var c1X = _bezier2[0];
+	    var c1Y = _bezier2[1];
+	    //axis((maxX - minX) / 4 + minX, 0);
 	
-	    var _axis3 = axis((maxX - minX) / 4 + minX, curY);
+	    var _bezier3 = bezier(0.8, 1);
 	
-	    var _axis32 = _slicedToArray(_axis3, 2);
+	    var _bezier32 = _slicedToArray(_bezier3, 2);
 	
-	    var c2X = _axis32[0];
-	    var c2Y = _axis32[1];
-	
+	    var c2X = _bezier32[0];
+	    var c2Y = _bezier32[1];
+	    //axis((maxX - minX) / 4 + minX, curY);
 	    path.bezierCurveTo.apply(path, [c1X, c1Y, c2X, c2Y].concat(_toConsumableArray(axis((maxX - minX) / 2 + minX, curY))));
 	
-	    var _axis4 = axis((maxX - minX) * 0.75 + minX, curY);
+	    var _bezier4 = bezier(1.2, 1);
 	
-	    var _axis42 = _slicedToArray(_axis4, 2);
+	    var _bezier42 = _slicedToArray(_bezier4, 2);
 	
-	    var c1X = _axis42[0];
-	    var c1Y = _axis42[1];
+	    var c1X = _bezier42[0];
+	    var c1Y = _bezier42[1];
+	    //axis((maxX - minX) * 0.75 + minX, curY);
 	
-	    var _axis5 = axis((maxX - minX) * 0.75 + minX, 0);
+	    var _bezier5 = bezier(1, 0);
 	
-	    var _axis52 = _slicedToArray(_axis5, 2);
+	    var _bezier52 = _slicedToArray(_bezier5, 2);
 	
-	    var c2X = _axis52[0];
-	    var c2Y = _axis52[1];
-	
+	    var c2X = _bezier52[0];
+	    var c2Y = _bezier52[1];
+	    //axis((maxX - minX) * 0.75 + minX, 0);
 	    path.bezierCurveTo.apply(path, [c1X, c1Y, c2X, c2Y].concat(_toConsumableArray(axis(maxX, 0))));
 	
-	    var _axis6 = axis((maxX - minX) * 0.75 + minX, 0);
+	    var _bezier6 = bezier(1, 0);
 	
-	    var _axis62 = _slicedToArray(_axis6, 2);
+	    var _bezier62 = _slicedToArray(_bezier6, 2);
 	
-	    var c1X = _axis62[0];
-	    var c1Y = _axis62[1];
+	    var c1X = _bezier62[0];
+	    var c1Y = _bezier62[1];
+	    //axis((maxX - minX) * 0.75 + minX, 0);
 	
-	    var _axis7 = axis((maxX - minX) * 0.75 + minX, -curY);
+	    var _bezier7 = bezier(1.2, -1);
 	
-	    var _axis72 = _slicedToArray(_axis7, 2);
+	    var _bezier72 = _slicedToArray(_bezier7, 2);
 	
-	    var c2X = _axis72[0];
-	    var c2Y = _axis72[1];
-	
+	    var c2X = _bezier72[0];
+	    var c2Y = _bezier72[1];
+	    //axis((maxX - minX) * 0.75 + minX, -curY);
 	    path.bezierCurveTo.apply(path, [c1X, c1Y, c2X, c2Y].concat(_toConsumableArray(axis((maxX - minX) / 2 + minX, -curY))));
 	
-	    var _axis8 = axis((maxX - minX) / 4 + minX, -curY);
+	    var _bezier8 = bezier(0.8, -1);
 	
-	    var _axis82 = _slicedToArray(_axis8, 2);
+	    var _bezier82 = _slicedToArray(_bezier8, 2);
 	
-	    var c1X = _axis82[0];
-	    var c1Y = _axis82[1];
+	    var c1X = _bezier82[0];
+	    var c1Y = _bezier82[1];
+	    // ;axis((maxX - minX) / 4 + minX, -curY);
 	
-	    var _axis9 = axis((maxX - minX) / 4 + minX, 0);
+	    var _bezier9 = bezier(1, 0);
 	
-	    var _axis92 = _slicedToArray(_axis9, 2);
+	    var _bezier92 = _slicedToArray(_bezier9, 2);
 	
-	    var c2X = _axis92[0];
-	    var c2Y = _axis92[1];
-	
+	    var c2X = _bezier92[0];
+	    var c2Y = _bezier92[1];
+	    //axis((maxX - minX) / 4 + minX, 0);
 	    path.bezierCurveTo.apply(path, [c1X, c1Y, c2X, c2Y].concat(_toConsumableArray(axis(minX, 0))));
 	
 	    path.closePath();
