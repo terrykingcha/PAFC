@@ -27,6 +27,7 @@ export async function hide() {
     $prologue::$remove();
 }
 
+const WAVE_COLOR = [[52, 240, 226], [207, 28, 60], [41, 122, 66]];
 function initWave(canvas) {
     var {width, height} = canvas.getBoundingClientRect();
     width *= dpr();
@@ -38,13 +39,16 @@ function initWave(canvas) {
     var minX = -width / 2;
     var maxY = height / 2;
     var minY = -height / 2;
+    var colorIndex = Math.floor(Math.random() * WAVE_COLOR.length)
 
     canvas.minX = width * (Math.random() * 0.5 + 0.1) + minX;
     canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
-    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height * 0.75
+    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height
     canvas.maxY = -canvas.minY;
     canvas.curY = Math.random() * canvas.maxY;
-    canvas.color = `rgba(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.random() * 0.3 + 0.3})`;
+
+    canvas.color = `rgba(${WAVE_COLOR[colorIndex].join(',')}, ${Math.random() * 0.3 + 0.3})`;
+    // canvas.color = `rgba(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.random() * 0.3 + 0.3})`;
     canvas.speed = canvas.maxY / (Math.random() * 50 + 50);
 }
 
@@ -87,6 +91,9 @@ function renderWave({canvas, ctx2d}) {
     curY += speed;
     if (curY >= maxY) {
         canvas.curY = maxY;
+        canvas.speed = -speed;
+    } else if (curY <= minY) {
+        canvas.curY = minY;
         canvas.speed = -speed;
     } else {
         canvas.curY = curY;
@@ -156,16 +163,9 @@ function template() {
     $waves.forEach($wave => initWave($wave));
 
     void function checkPercent() {
-        // if (percent < 1) {
+        if (percent < 1) {
             requestAnimationFrame(checkPercent);
-
-        //     percent += 0.0001;
-        //     if (total && loaded < total) {
-        //         percent = Math.min(percent, (loaded + 1) / total * 0.95);
-        //     } else if (total && loaded === total) {
-        //         percent = 1;
-        //     }
-        // }
+        }
 
         $percent::$text(parseInt(percent * 100));
         $waves.forEach($wave => renderWave({canvas: $wave, ctx2d: $wave.getContext('2d')}));

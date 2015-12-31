@@ -17,6 +17,7 @@
         "blending": "NormalBlending",
         "shading": "Lambert",
         "DbgName": "lambert1",
+        "colorAmbient": [0.0, 0.0, 0.0],
         "transparent": false,
         "depthTest": true,
         "vertexColors": false
@@ -27,6 +28,7 @@
         "blending": "NormalBlending",
         "shading": "Lambert",
         "DbgName": "lambert2",
+        "colorAmbient": [0.0, 0.0, 0.0],
         "transparent": false,
         "depthTest": true,
         "vertexColors": false

@@ -39500,6 +39500,7 @@ THREE.OBJLoader.prototype = {
 	    }, null, this);
 	}
 	
+	var WAVE_COLOR = [[52, 240, 226], [207, 28, 60], [41, 122, 66]];
 	function initWave(canvas) {
 	    var _canvas$getBoundingClientRect = canvas.getBoundingClientRect();
 	
@@ -39515,13 +39516,16 @@ THREE.OBJLoader.prototype = {
 	    var minX = -width / 2;
 	    var maxY = height / 2;
 	    var minY = -height / 2;
+	    var colorIndex = Math.floor(Math.random() * WAVE_COLOR.length);
 	
 	    canvas.minX = width * (Math.random() * 0.5 + 0.1) + minX;
 	    canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
-	    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height * 0.75;
+	    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height;
 	    canvas.maxY = -canvas.minY;
 	    canvas.curY = Math.random() * canvas.maxY;
-	    canvas.color = 'rgba(' + Math.round(Math.random() * 255) + ', ' + Math.round(Math.random() * 255) + ', ' + Math.round(Math.random() * 255) + ', ' + (Math.random() * 0.3 + 0.3) + ')';
+	
+	    canvas.color = 'rgba(' + WAVE_COLOR[colorIndex].join(',') + ', ' + (Math.random() * 0.3 + 0.3) + ')';
+	    // canvas.color = `rgba(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.random() * 0.3 + 0.3})`;
 	    canvas.speed = canvas.maxY / (Math.random() * 50 + 50);
 	}
 	
@@ -39629,6 +39633,9 @@ THREE.OBJLoader.prototype = {
 	    if (curY >= maxY) {
 	        canvas.curY = maxY;
 	        canvas.speed = -speed;
+	    } else if (curY <= minY) {
+	        canvas.curY = minY;
+	        canvas.speed = -speed;
 	    } else {
 	        canvas.curY = curY;
 	    }
@@ -39699,16 +39706,9 @@ THREE.OBJLoader.prototype = {
 	                });
 	
 	                void (function checkPercent() {
-	                    // if (percent < 1) {
-	                    (0, _libUtil.requestAnimationFrame)(checkPercent);
-	
-	                    //     percent += 0.0001;
-	                    //     if (total && loaded < total) {
-	                    //         percent = Math.min(percent, (loaded + 1) / total * 0.95);
-	                    //     } else if (total && loaded === total) {
-	                    //         percent = 1;
-	                    //     }
-	                    // }
+	                    if (percent < 1) {
+	                        (0, _libUtil.requestAnimationFrame)(checkPercent);
+	                    }
 	
 	                    $text.call($percent, parseInt(percent * 100));
 	                    $waves.forEach(function ($wave) {
@@ -42895,7 +42895,7 @@ THREE.OBJLoader.prototype = {
 	
 	var _libEnv = __webpack_require__(14);
 	
-	var COLOR = 0xFFFFFF;
+	var COLOR = 0x000000;
 	var ALPHA = 1;
 	
 	var deferred = (0, _libPromise.defer)();
@@ -43308,7 +43308,7 @@ THREE.OBJLoader.prototype = {
 	
 	    var plane = new THREE.PlaneGeometry(X_SIZE, Z_SIZE);
 	    var planeMesh = new THREE.Mesh(plane, new THREE.MeshBasicMaterial({
-	        color: 0x353535,
+	        color: 0x000000,
 	        side: THREE.FontSide
 	    }));
 	    planeMesh.rotation.set(-Math.PI / 2, 0, 0);
@@ -43548,24 +43548,30 @@ THREE.OBJLoader.prototype = {
 	var THREE_LEAF_COLOR = 0xE220BF;
 	var THREE_LEAF_EMISSIVE = 0x494949;
 	
-	var textureDeferred = (0, _libPromise.defer)();
+	var texturePrmoises = [];
 	var loader = new THREE.TextureLoader(_prologue.manager);
-	loader.load('assets/images/fog.png', function (texture) {
-	    var material = new THREE.MeshBasicMaterial({
-	        // color: 0x000000,
-	        map: texture,
-	        transparent: true,
-	        side: THREE.DoubleSide
-	    });
-	    textureDeferred.resolve(material);
-	}, _prologue.onProgress, _prologue.onError);
+	
+	var _loop = function (i) {
+	    texturePrmoises.push(new Promise(function (resolve, reject) {
+	        loader.load('assets/images/fog_cloud' + (i + 1) + '.png', function (texture) {
+	            var material = new THREE.MeshBasicMaterial({
+	                map: texture,
+	                transparent: true,
+	                side: THREE.FrontSide
+	            });
+	            resolve(material);
+	        }, _prologue.onProgress, _prologue.onError);
+	    }));
+	};
+	
+	for (var i = 0; i < 4; i++) {
+	    _loop(i);
+	}
 	
 	var planes = [];
-	var WIDTH = 7.3;
-	exports.WIDTH = WIDTH;
-	var HEIGHT = 1;
+	var WIDTH = 10;
 	
-	exports.HEIGHT = HEIGHT;
+	exports.WIDTH = WIDTH;
 	
 	function render() {
 	    var _iteratorNormalCompletion = true;
@@ -43576,7 +43582,7 @@ THREE.OBJLoader.prototype = {
 	        for (var _iterator = planes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var plane = _step.value;
 	
-	            plane.position.x -= 0.03 * Math.random() + 0.01;
+	            plane.position.x -= 0.001 * Math.random() + 0.001;
 	            if (plane.position.x < -WIDTH / 2) {
 	                plane.position.x = WIDTH / 2;
 	            }
@@ -43598,30 +43604,34 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	(function callee$0$0() {
-	    var planeMaterial, planeGemoetry, plane, i, clonedPlane;
+	    var planeMaterials;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                exports.object = object = new THREE.Object3D();
 	
 	                context$1$0.next = 3;
-	                return regeneratorRuntime.awrap(textureDeferred.promise);
+	                return regeneratorRuntime.awrap(Promise.all(texturePrmoises));
 	
 	            case 3:
-	                planeMaterial = context$1$0.sent;
-	                planeGemoetry = new THREE.PlaneGeometry(WIDTH, HEIGHT);
-	                plane = new THREE.Mesh(planeGemoetry, planeMaterial);
+	                planeMaterials = context$1$0.sent;
 	
-	                for (i = 0; i < 4; i++) {
-	                    clonedPlane = plane.clone();
+	                planeMaterials.forEach(function (material) {
+	                    var image = material.map.image;
+	                    var width = image.width / 400;
+	                    var height = image.height / 400;
+	                    var geometry = new THREE.PlaneGeometry(width, height);
+	                    var mesh = new THREE.Mesh(geometry, material);
+	                    mesh.position.x = Math.random() * WIDTH / 2 - WIDTH / 4;
+	                    mesh.position.y = -Math.random() * 0.3;
+	                    mesh.position.z = Math.random() * 5 - 10;
+	                    planes.push(mesh);
+	                    object.add(mesh);
+	                });
 	
-	                    clonedPlane.position.set(-Math.random() * WIDTH / 2, 0, Math.random() * 50 - 25);
-	                    planes.push(clonedPlane);
-	                    object.add(clonedPlane);
-	                }
 	                deferred.resolve();
 	
-	            case 8:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -45474,54 +45484,60 @@ THREE.OBJLoader.prototype = {
 	var object;
 	
 	exports.object = object;
-	var lighthouse;
-	var houseTopGroup;
-	var lightPlane;
-	var lighthouseDeferred = (0, _libPromise.defer)();
-	var loader = new THREE.ObjectLoader(_prologue.manager);
-	loader.load('assets/obj/03_sun/lighthouse1.js', function (scene) {
-	    lighthouse = scene.children[0];
-	    houseTopGroup = lighthouse.children[0].children[0];
-	    lightPlane = houseTopGroup.children[2];
-	    lighthouseDeferred.resolve();
+	var lighthouse = new THREE.Object3D();
+	var topGroup = new THREE.Object3D();
+	lighthouse.add(topGroup);
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	
+	loader.load('assets/obj/03_sun/top.js', function (geometry, materials) {
+	    materials.forEach(function (material) {
+	        material.color.setRGB(1, 1, 1);
+	    });
+	    topGroup.add(new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials)));
+	}, _prologue.onProgress, _prologue.onError);
+	
+	loader.load('assets/obj/03_sun/middle.js', function (geometry, materials) {
+	    materials.forEach(function (material) {
+	        material.color.setRGB(1, 1, 1);
+	    });
+	    topGroup.add(new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials)));
+	}, _prologue.onProgress, _prologue.onError);
+	
+	loader.load('assets/obj/03_sun/bottom.js', function (geometry, materials) {
+	    materials.forEach(function (material) {
+	        material.color.setRGB(1, 1, 1);
+	    });
+	    lighthouse.add(new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials)));
 	}, _prologue.onProgress, _prologue.onError);
 	
 	function render() {
-	    houseTopGroup.rotation.z += 0.005;
+	    topGroup.rotation.y += 0.005;
 	}
 	
 	(function callee$0$0() {
-	    var lightCylinder;
+	    var light;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(lighthouseDeferred.promise);
-	
-	            case 2:
 	                exports.object = object = new THREE.Object3D();
 	
-	                lightCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 3, 100, 64, 1, true), new THREE.MeshBasicMaterial({
+	                light = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 3, 100, 64, 1, true), new THREE.MeshBasicMaterial({
 	                    color: 0xCCCCCC,
 	                    opacity: 0.5,
 	                    transparent: true,
 	                    side: THREE.DoubleSide
 	                }));
 	
-	                lightCylinder.position.set(0, -50, 7.5);
-	                houseTopGroup.add(lightCylinder);
-	                houseTopGroup.remove(lightPlane);
-	                // lightPlane.material = new THREE.MeshBasicMaterial({
-	                //     color: 0x333333,
-	                //     opacity: 0.3,
-	                //     transparent: true,
-	                //     side: THREE.DoubleSide
-	                // });
+	                light.rotation.x = Math.PI / 2;
+	                light.position.set(0, 7.5, -50);
+	                topGroup.add(light);
+	
 	                lighthouse.scale.set(100, 100, 100);
 	                object.add(lighthouse);
+	
 	                deferred.resolve();
 	
-	            case 10:
+	            case 8:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
