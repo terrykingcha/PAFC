@@ -59,6 +59,14 @@
         background-size: 700px * @scale-ratio 700px * @scale-ratio;
         cursor: pointer;
 
+        canvas {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
         .wrap {
             width: 100%;
             height: 100%;
@@ -281,6 +289,7 @@
     border-radius: 15px;
     left: 25px;
     top: 25px;
+    .transform(scale(0));
 }
 
 body.black #category-name {

@@ -743,6 +743,10 @@
 	
 	            case 2:
 	
+	                $on.call(doc, 'touchmove', function (e) {
+	                    e.preventDefault();
+	                });
+	
 	                (_context = $find.call(doc, 'body'), $append).call(_context, CONTAINER);
 	
 	                $storyBtn = $find.call(doc, '#story-btn');
@@ -807,7 +811,7 @@
 	                    }, null, this);
 	                });
 	
-	            case 10:
+	            case 11:
 	            case 'end':
 	                return context$1$0.stop();
 	        }

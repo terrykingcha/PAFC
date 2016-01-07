@@ -47,7 +47,7 @@ export var init = async () => {
     camera.position.set(0, 400, 3000);
     camera.lookAt(new THREE.Vector3(0, 400, 0));
     
-    await Controls.init(camera, renderer);
+    // await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -65,7 +65,7 @@ export function resize() {
 }
 
 export function render() {
-    Controls.render();
+    // Controls.render();
     Wave.render();
     Lighthouse.render();
     renderer.render(scene, camera);

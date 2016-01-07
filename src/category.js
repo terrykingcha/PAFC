@@ -1,5 +1,6 @@
 import './category.less';
 import {defer, domReady, delay} from './lib/promise';
+import {requestAnimationFrame, cancelAnimationFrame} from './lib/util';
 import {manager, onProgress, onError} from './prologue';
 
 var categorys = ['雾', '云', '日', '雷', '雨', '星'];
@@ -37,6 +38,7 @@ export function getIconFont(index) {
 
 var $category;
 var $circle;
+var $canvas;
 export function on() {
     $category::$on(...arguments);
 }
@@ -68,6 +70,11 @@ function resizeHandler() {
     circleTop = circleRect.top;
     centerX = circleLeft + circleWidth / 2;
     centerY = circleTop + circleHeight / 2;
+
+
+    var canvasRect = $canvas.getBoundingClientRect();
+    $canvas.width = canvasRect.width * window.devicePixelRatio;
+    $canvas.height = canvasRect.height * window.devicePixelRatio;
 }
 
 function bindCategoryEvents() {
@@ -93,6 +100,7 @@ function bindCategoryEvents() {
         };
     }
 
+    var lastIndex;
     var changed;
     $circle::$on('mousemove mousedown', function(e) {
             var eventName = e.type;
@@ -104,10 +112,13 @@ function bindCategoryEvents() {
             if (radius <= circleWidth / 2 &&
                     radius <= circleHeight / 2) {
                 var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
-                var name = get(index - 1);
 
-                var type;
                 $circle::$find(`.c${index}`)::$addClass('hover');
+                if (index !== lastIndex) {
+                    lastIndex = index;
+                    clearArc();
+                    drawArc(index - 1);
+                }
 
                 if (eventName === 'mousedown') {
                     $circle::$trigger('change', [index, changed]);
@@ -115,9 +126,9 @@ function bindCategoryEvents() {
                 }
             }
         })::$on('mouseup mouseleave', function(e) {
+            clearArc();
             $circle::$findAll('.wrap').forEach(
                 $wrap => $wrap::$removeClass('hover')
-
             );
         });
 }
@@ -125,6 +136,39 @@ function bindCategoryEvents() {
 function bindBackEvents() {
     $category::$find('.back')
         ::$on('click', hide);
+}
+
+var arcId;
+const PI2 = Math.PI * 2;
+function drawArc(i) {
+    var {width, height} = $canvas;
+    var context = $canvas.getContext('2d');
+    var percent = 0;
+
+    arcId = requestAnimationFrame(function draw() {
+        if (percent < 1) {
+            arcId = requestAnimationFrame(draw);
+        }
+        percent = Math.min(percent + 0.05, 1);
+        context.clearRect(0, 0, width, height);
+        let c = PI2 / 6 * i + PI2 / 12 - PI2 / 4;
+        let s = c - PI2 / 12 * percent;
+        let e = c + PI2 / 12 * percent;
+        context.beginPath();
+        context.arc(width / 2, height / 2 - 4, width * 0.905 / 2, s, e, false);
+        context.strokeStyle = 'white';
+        context.lineWidth = 2;
+        context.stroke();
+    });
+}
+
+function clearArc() {
+    if (arcId) {
+        cancelAnimationFrame(arcId);
+    }
+    var {width, height} = $canvas;
+    var context = $canvas.getContext('2d');
+    context.clearRect(0, 0, width, height);
 }
 
 var isBoundEvents = false;
@@ -141,7 +185,6 @@ export async function show() {
         bindBackEvents();
         bindCategoryEvents();
     }
-
 }
 
 export async function hide() {
@@ -154,11 +197,13 @@ function template() {
     return `
         <div id="category">
             <a class="back">Back</a>
-            <div class="circle"></div>
+            <div class="circle">
+                <canvas></canvas>
+            </div>
             <p>The wind shows us its different forms in different times.
 enjoy the vioce of nature.</p>
         </div>
-        <div id="category-name"></div>
+        <div id="category-name" class="bounceIn"></div>
     `;
 }
 
@@ -214,6 +259,7 @@ function logoTemplate(name) {
     $category = document.body::$append(template())::$find('#category');
     $categoryName = document.body::$find('#category-name');
     $circle = $category::$find('.circle');
+    $canvas = $category::$find('canvas');
 
     var imgs = await Promise.all(images);
     imgs.forEach(function($image) {
@@ -227,7 +273,9 @@ function logoTemplate(name) {
                 ::$html(`<div class="logo">${logoTemplate(name[1])}</div>`)
                 ::$append($image);
 
-            $circle::$append($wrap);
+            $circle::$prepend($wrap);
         }
     });
+
+
 })();

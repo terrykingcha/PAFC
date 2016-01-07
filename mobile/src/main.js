@@ -69,6 +69,10 @@ var storyScroll;
 (async () => {
     await domReady();
 
+    doc::$on('touchmove', function(e) {
+        e.preventDefault();
+    });
+
     doc::$find('body')::$append(CONTAINER);
 
     $storyBtn = doc::$find('#story-btn');

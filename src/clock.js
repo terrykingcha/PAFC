@@ -104,7 +104,7 @@ export function run() {
 function template() {
     return `
         <div id="clock">
-            <span class="category"></span>
+            <span class="category bounceIn"></span>
             <span class="ampm"></span>
             <span class="time"></span>
         </div>

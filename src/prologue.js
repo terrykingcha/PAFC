@@ -41,9 +41,9 @@ function initWave(canvas) {
     var minY = -height / 2;
     var colorIndex = Math.floor(Math.random() * WAVE_COLOR.length)
 
-    canvas.minX = width * (Math.random() * 0.5 + 0.1) + minX;
+    canvas.minX = width * Math.random() * 0.5 + minX;
     canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
-    canvas.minY = -(canvas.maxX - canvas.minX) / width / 2 * height
+    canvas.minY = -(canvas.maxX - canvas.minX) / width / 1.5 * height
     canvas.maxY = -canvas.minY;
     canvas.curY = Math.random() * canvas.maxY;
 

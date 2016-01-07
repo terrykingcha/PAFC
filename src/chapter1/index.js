@@ -53,16 +53,17 @@ export var init = async () => {
     light1.position.set(0, 100, 100);
     light2.position.set(-100, 100, 0);
     light3.position.set(100, 100, 0);
-    camera.position.set(0, 0, Grass.Z_SIZE * 0.5);
+    camera.position.set(0, 5, Grass.Z_SIZE * 0.5);
+    camera.lookAt(new THREE.Vector3(0, 5, 0));
     grass.position.set(-Grass.X_SIZE / 2, -50, -Grass.Z_SIZE / 2);
-    grass.rotation.set(-0.28, 0, 0);
+    grass.rotation.set(-0.29, 0, 0);
     tree.position.set(-5, -37, -20);
     leaf.position.set(-Leaf.X_SIZE / 2, -Leaf.Y_SIZE, -Leaf.Z_SIZE / 2);
     leaf.rotation.set(-0.28, 0, 0);
     fog.scale.set(Grass.X_SIZE / Fog.WIDTH / 2, Grass.X_SIZE / Fog.WIDTH / 4, 1);
     fog.rotation.set(-0.28, 0, 0);
     fog.position.set(0, -15, 20);
-    
+
     // await Controls.init(camera, renderer);
     await pageLoad();
     
@@ -123,7 +124,7 @@ export var entering = async (_visualizer) => {
     isEntering = true;
     onenteringHandlers.forEach((h) => h());
     visualizer.togglePlayback(true);
-    changeColor('black');
+    changeColor('white');
 }
 
 var onleavingHandlers = [];

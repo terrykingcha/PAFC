@@ -41,7 +41,7 @@ export async function show() {
     $nav::$show()
         ::$on('click', 'a', function() {
             var className = this::$attr('class');
-            className = className.replace(/\b(on|off|iconfont|\s)\b/ig, '');
+            className = className.replace(/\b(on|off|iconfont|bounceIn|\s)\b/ig, '');
             $nav::$trigger('change', [className, changed]);
             changed = className;
             if (changed === 'music') {
@@ -53,10 +53,10 @@ export async function show() {
 function template() {
     return `
         <div id="nav">
-            <a class="music on iconfont"></a>
-            <a class="clock iconfont" anim><span>CLOCK</span></a>
-            <a class="info iconfont" anim><span>INFO</span></a>
-            <a class="index iconfont" anim><span>INDEX</span></a>
+            <a class="music on iconfont bounceIn"></a>
+            <a class="clock iconfont bounceIn" anim><span>CLOCK</span></a>
+            <a class="info iconfont bounceIn" anim><span>INFO</span></a>
+            <a class="index iconfont bounceIn" anim><span>INDEX</span></a>
         </div>
     `;
 }
@@ -68,5 +68,4 @@ function template() {
 
     $nav = document.body::$append(template())::$find('#nav');
     deferred.resolve();
-
 })(); 
