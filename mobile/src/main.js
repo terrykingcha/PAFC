@@ -5,6 +5,10 @@ import {domReady, waitForEvent, delay} from './lib/promise';
 var win = window;
 var doc = win.document;
 
+doc::$on('touchmove', function(e) {
+    e.preventDefault();
+});
+
 const CONTAINER = `
 <div id="wrap">
     <div id="logo"></div>
@@ -68,10 +72,6 @@ var storyScroll;
 
 (async () => {
     await domReady();
-
-    doc::$on('touchmove', function(e) {
-        e.preventDefault();
-    });
 
     doc::$find('body')::$append(CONTAINER);
 
