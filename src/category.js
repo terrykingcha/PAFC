@@ -4,8 +4,17 @@ import {requestAnimationFrame, cancelAnimationFrame} from './lib/util';
 import {manager, onProgress, onError} from './prologue';
 
 var categorys = ['雾', '云', '日', '雷', '雨', '星'];
+var disables = ['雷'];
 var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
-
+var titles = [
+    'The wind shows us its different forms in different times. enjoy the vioce of nature.',
+    '02_Behold_My_Vision', 
+    '03_The_Flow_of_Wisdom', 
+    '06_Hear_the_Silence',
+    '05_Moonstone_Stardust',
+    '08_Amethyst_Whispers',
+    '04_Elegies_of_Spring'
+]
 export var length = categorys.length;
 
 const IMG_PATH = './assets/images';
@@ -39,6 +48,7 @@ export function getIconFont(index) {
 var $category;
 var $circle;
 var $canvas;
+var $title;
 export function on() {
     $category::$on(...arguments);
 }
@@ -113,11 +123,18 @@ function bindCategoryEvents() {
                     radius <= circleHeight / 2) {
                 var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
 
+                if (disables.indexOf(categorys[index - 1]) > -1) {
+                    clearArc();
+                    $title::$html(titles[0]);
+                    return;
+                };
+
                 $circle::$find(`.c${index}`)::$addClass('hover');
                 if (index !== lastIndex) {
                     lastIndex = index;
                     clearArc();
                     drawArc(index - 1);
+                    $title::$html(titles[index]);
                 }
 
                 if (eventName === 'mousedown') {
@@ -127,6 +144,7 @@ function bindCategoryEvents() {
             }
         })::$on('mouseup mouseleave', function(e) {
             clearArc();
+            $title::$html(titles[0]);
             $circle::$findAll('.wrap').forEach(
                 $wrap => $wrap::$removeClass('hover')
             );
@@ -260,6 +278,7 @@ function logoTemplate(name) {
     $categoryName = document.body::$find('#category-name');
     $circle = $category::$find('.circle');
     $canvas = $category::$find('canvas');
+    $title = $category::$find('p');
 
     var imgs = await Promise.all(images);
     imgs.forEach(function($image) {

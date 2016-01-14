@@ -27,8 +27,16 @@ export async function hide() {
     $prologue::$remove();
 }
 
-const WAVE_COLOR = [[52, 240, 226], [207, 28, 60], [41, 122, 66]];
-function initWave(canvas) {
+const WAVE_COLOR = [[255, 255, 255]];
+const WAVE_POS_X = [
+    [-200 * dpr(), 100 * dpr()], 
+    [-160 * dpr(), 120 * dpr()], 
+    [-180 * dpr(), 80 * dpr()],
+    [30 * dpr(), 60 * dpr()],
+    [50 * dpr(), 140 * dpr()],
+    [80 * dpr(), 120 * dpr()]
+]
+function initWave(canvas, index) {
     var {width, height} = canvas.getBoundingClientRect();
     width *= dpr();
     height *= dpr();
@@ -41,8 +49,10 @@ function initWave(canvas) {
     var minY = -height / 2;
     var colorIndex = Math.floor(Math.random() * WAVE_COLOR.length)
 
-    canvas.minX = width * Math.random() * 0.5 + minX;
-    canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
+    // canvas.minX = width * Math.random() * 0.5 + minX;
+    // canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
+    canvas.minX = WAVE_POS_X[index][0];
+    canvas.maxX = canvas.minX + WAVE_POS_X[index][1];
     canvas.minY = -(canvas.maxX - canvas.minX) / width / 1.5 * height
     canvas.maxY = -canvas.minY;
     canvas.curY = Math.random() * canvas.maxY;
@@ -137,7 +147,6 @@ function template() {
                 <canvas class="wave"></canvas>
                 <canvas class="wave"></canvas>
                 <canvas class="wave"></canvas>
-                <canvas class="wave"></canvas>
                 <div></div>
                 <p></p>
             </div>
@@ -160,7 +169,7 @@ function template() {
     $progress.height = height * dpr();
 
     var $waves = document::$findAll('#prologue .wave');
-    $waves.forEach($wave => initWave($wave));
+    $waves.forEach(($wave, i) => initWave($wave, i));
 
     void function checkPercent() {
         if (percent < 1) {

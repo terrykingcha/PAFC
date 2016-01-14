@@ -15,7 +15,7 @@ function buildStars(z) {
         side: THREE.FontSide
     });
 
-    var total = 10000;
+    var total = 5000;
     var vertices = new Float32Array(3 * total); 
     var colors = new Float32Array(3 * total);
     while (total-- > 0) {

@@ -39500,8 +39500,9 @@ THREE.OBJLoader.prototype = {
 	    }, null, this);
 	}
 	
-	var WAVE_COLOR = [[52, 240, 226], [207, 28, 60], [41, 122, 66]];
-	function initWave(canvas) {
+	var WAVE_COLOR = [[255, 255, 255]];
+	var WAVE_POS_X = [[-200 * (0, _libEnv.dpr)(), 100 * (0, _libEnv.dpr)()], [-160 * (0, _libEnv.dpr)(), 120 * (0, _libEnv.dpr)()], [-180 * (0, _libEnv.dpr)(), 80 * (0, _libEnv.dpr)()], [30 * (0, _libEnv.dpr)(), 60 * (0, _libEnv.dpr)()], [50 * (0, _libEnv.dpr)(), 140 * (0, _libEnv.dpr)()], [80 * (0, _libEnv.dpr)(), 120 * (0, _libEnv.dpr)()]];
+	function initWave(canvas, index) {
 	    var _canvas$getBoundingClientRect = canvas.getBoundingClientRect();
 	
 	    var width = _canvas$getBoundingClientRect.width;
@@ -39518,8 +39519,10 @@ THREE.OBJLoader.prototype = {
 	    var minY = -height / 2;
 	    var colorIndex = Math.floor(Math.random() * WAVE_COLOR.length);
 	
-	    canvas.minX = width * Math.random() * 0.5 + minX;
-	    canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
+	    // canvas.minX = width * Math.random() * 0.5 + minX;
+	    // canvas.maxX = (maxX - canvas.minX) * (Math.random() * 0.4 + 0.2) + canvas.minX;
+	    canvas.minX = WAVE_POS_X[index][0];
+	    canvas.maxX = canvas.minX + WAVE_POS_X[index][1];
 	    canvas.minY = -(canvas.maxX - canvas.minX) / width / 1.5 * height;
 	    canvas.maxY = -canvas.minY;
 	    canvas.curY = Math.random() * canvas.maxY;
@@ -39671,7 +39674,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function template() {
-	    return '\n        <div id="prologue">\n            <div class="loading">\n                <canvas class="progress"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <div></div>\n                <p></p>\n            </div>\n        </div>\n    ';
+	    return '\n        <div id="prologue">\n            <div class="loading">\n                <canvas class="progress"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <canvas class="wave"></canvas>\n                <div></div>\n                <p></p>\n            </div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -39701,8 +39704,8 @@ THREE.OBJLoader.prototype = {
 	
 	                $waves = $findAll.call(document, '#prologue .wave');
 	
-	                $waves.forEach(function ($wave) {
-	                    return initWave($wave);
+	                $waves.forEach(function ($wave, i) {
+	                    return initWave($wave, i);
 	                });
 	
 	                void (function checkPercent() {
@@ -39758,7 +39761,7 @@ THREE.OBJLoader.prototype = {
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.bounceIn {\n  -webkit-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -ms-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n  width: 400px;\n  height: 115px;\n}\n#prologue .loading canvas.wave {\n  position: absolute;\n  width: 600px;\n  height: 95px;\n  left: 0;\n  top: 0;\n}\n#prologue .loading canvas.progress {\n  position: absolute;\n  width: 95px;\n  height: 95px;\n  left: 152.5px;\n  top: 0;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 95px;\n  height: 95px;\n  top: 0;\n  left: 152.5px;\n  background-image: url(data:image/png;base64,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);\n  background-size: 80%;\n  background-repeat: no-repeat;\n  background-position: center;\n}\n#prologue .loading p {\n  position: absolute;\n  left: 0;\n  top: 95px;\n  font-family: arial;\n  width: 100%;\n  height: 20px;\n  line-height: 20px;\n  color: #FFF;\n  font-size: 16px;\n  text-align: center;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.bounceIn {\n  -webkit-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -ms-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue {\n  z-index: 999;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#prologue .loading {\n  position: relative;\n  display: none;\n  width: 400px;\n  height: 115px;\n}\n#prologue .loading canvas.wave {\n  position: absolute;\n  width: 400px;\n  height: 95px;\n  left: 0;\n  top: 0;\n}\n#prologue .loading canvas.progress {\n  position: absolute;\n  width: 95px;\n  height: 95px;\n  left: 152.5px;\n  top: 0;\n}\n#prologue .loading div {\n  position: absolute;\n  width: 95px;\n  height: 95px;\n  top: 0;\n  left: 152.5px;\n  background-image: url(data:image/png;base64,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);\n  background-size: 80%;\n  background-repeat: no-repeat;\n  background-position: center;\n}\n#prologue .loading p {\n  position: absolute;\n  left: 0;\n  top: 95px;\n  font-family: arial;\n  width: 100%;\n  height: 20px;\n  line-height: 20px;\n  color: #FFF;\n  font-size: 16px;\n  text-align: center;\n}\n"
 
 /***/ },
 /* 14 */
@@ -40242,8 +40245,9 @@ THREE.OBJLoader.prototype = {
 	var _prologue = __webpack_require__(11);
 	
 	var categorys = ['雾', '云', '日', '雷', '雨', '星'];
+	var disables = ['雷'];
 	var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
-	
+	var titles = ['The wind shows us its different forms in different times. enjoy the vioce of nature.', '02_Behold_My_Vision', '03_The_Flow_of_Wisdom', '06_Hear_the_Silence', '05_Moonstone_Stardust', '08_Amethyst_Whispers', '04_Elegies_of_Spring'];
 	var length = categorys.length;
 	
 	exports.length = length;
@@ -40270,6 +40274,7 @@ THREE.OBJLoader.prototype = {
 	var $category;
 	var $circle;
 	var $canvas;
+	var $title;
 	
 	function on() {
 	    var _context, _ref;
@@ -40360,38 +40365,50 @@ THREE.OBJLoader.prototype = {
 	        var rad = _parse.rad;
 	
 	        if (radius <= circleWidth / 2 && radius <= circleHeight / 2) {
-	            var _context8;
+	            var _context9;
 	
 	            var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
 	
-	            (_context8 = (_context8 = $circle, $find).call(_context8, '.c' + index), $addClass).call(_context8, 'hover');
+	            if (disables.indexOf(categorys[index - 1]) > -1) {
+	                var _context8;
+	
+	                clearArc();
+	                (_context8 = $title, $html).call(_context8, titles[0]);
+	                return;
+	            };
+	
+	            (_context9 = (_context9 = $circle, $find).call(_context9, '.c' + index), $addClass).call(_context9, 'hover');
 	            if (index !== lastIndex) {
+	                var _context10;
+	
 	                lastIndex = index;
 	                clearArc();
 	                drawArc(index - 1);
+	                (_context10 = $title, $html).call(_context10, titles[index]);
 	            }
 	
 	            if (eventName === 'mousedown') {
-	                var _context9;
+	                var _context11;
 	
-	                (_context9 = $circle, $trigger).call(_context9, 'change', [index, changed]);
+	                (_context11 = $circle, $trigger).call(_context11, 'change', [index, changed]);
 	                changed = index;
 	            }
 	        }
 	    }), $on).call(_context6, 'mouseup mouseleave', function (e) {
-	        var _context10;
+	        var _context12;
 	
 	        clearArc();
-	        (_context10 = $circle, $findAll).call(_context10, '.wrap').forEach(function ($wrap) {
+	        (_context12 = $title, $html).call(_context12, titles[0]);
+	        (_context12 = $circle, $findAll).call(_context12, '.wrap').forEach(function ($wrap) {
 	            return $removeClass.call($wrap, 'hover');
 	        });
 	    });
 	}
 	
 	function bindBackEvents() {
-	    var _context11;
+	    var _context13;
 	
-	    (_context11 = (_context11 = $category, $find).call(_context11, '.back'), $on).call(_context11, 'click', hide);
+	    (_context13 = (_context13 = $category, $find).call(_context13, '.back'), $on).call(_context13, 'click', hide);
 	}
 	
 	var arcId;
@@ -40436,17 +40453,17 @@ THREE.OBJLoader.prototype = {
 	var isBoundEvents = false;
 	
 	function show() {
-	    var _context12;
+	    var _context14;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context12 = $category, $show).call(_context12);
+	                (_context14 = $category, $show).call(_context14);
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
 	
 	            case 3:
-	                (_context12 = $category, $addClass).call(_context12, 'fadeIn');
+	                (_context14 = $category, $addClass).call(_context14, 'fadeIn');
 	                context$1$0.next = 6;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
@@ -40468,17 +40485,17 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context13;
+	    var _context15;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context13 = (_context13 = $category, $removeClass).call(_context13, 'fadeIn'), $addClass).call(_context13, 'fadeOut');
+	                (_context15 = (_context15 = $category, $removeClass).call(_context15, 'fadeIn'), $addClass).call(_context15, 'fadeOut');
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
 	            case 3:
-	                (_context13 = (_context13 = $category, $removeClass).call(_context13, 'fadeOut'), $hide).call(_context13);
+	                (_context15 = (_context15 = $category, $removeClass).call(_context15, 'fadeOut'), $hide).call(_context15);
 	
 	            case 4:
 	            case 'end':
@@ -40515,7 +40532,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	(function callee$0$0() {
-	    var _context14;
+	    var _context16;
 	
 	    var imgs;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -40526,15 +40543,16 @@ THREE.OBJLoader.prototype = {
 	
 	            case 2:
 	
-	                $category = (_context14 = (_context14 = document.body, $append).call(_context14, template()), $find).call(_context14, '#category');
-	                $categoryName = (_context14 = document.body, $find).call(_context14, '#category-name');
-	                $circle = (_context14 = $category, $find).call(_context14, '.circle');
-	                $canvas = (_context14 = $category, $find).call(_context14, 'canvas');
+	                $category = (_context16 = (_context16 = document.body, $append).call(_context16, template()), $find).call(_context16, '#category');
+	                $categoryName = (_context16 = document.body, $find).call(_context16, '#category-name');
+	                $circle = (_context16 = $category, $find).call(_context16, '.circle');
+	                $canvas = (_context16 = $category, $find).call(_context16, 'canvas');
+	                $title = (_context16 = $category, $find).call(_context16, 'p');
 	
-	                context$1$0.next = 8;
+	                context$1$0.next = 9;
 	                return regeneratorRuntime.awrap(Promise.all(images));
 	
-	            case 8:
+	            case 9:
 	                imgs = context$1$0.sent;
 	
 	                imgs.forEach(function ($image) {
@@ -40544,15 +40562,15 @@ THREE.OBJLoader.prototype = {
 	                    var name = src.match(/(c\d)(?:_new)?.png/);
 	
 	                    if (name) {
-	                        var _context15;
+	                        var _context17;
 	
-	                        (_context15 = (_context15 = $addClass.call($wrap, name[1]), $html).call(_context15, '<div class="logo">' + logoTemplate(name[1]) + '</div>'), $append).call(_context15, $image);
+	                        (_context17 = (_context17 = $addClass.call($wrap, name[1]), $html).call(_context17, '<div class="logo">' + logoTemplate(name[1]) + '</div>'), $append).call(_context17, $image);
 	
-	                        (_context15 = $circle, $prepend).call(_context15, $wrap);
+	                        (_context17 = $circle, $prepend).call(_context17, $wrap);
 	                    }
 	                });
 	
-	            case 10:
+	            case 11:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41057,7 +41075,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function template() {
-	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.We invite the artists from Nexus Interactive Arts to design such a special windtrument.</p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/video-banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Well-known jazz musician and composer Dr. Wang Cong, cooperating with Etienne Schwarcz, lighting director of the closing ceremony of Athens Olympics, helped us to make it come true. Wind sounds of 600 meters above the ground was firstly collected, based on features of wind at different times as well as 12 Earthly Time Branches (an ancient Chinese time measure), and sculpted the wind into 8 different pieces of music.</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    </section>\n                    <section>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                    </section>\n                    <div class="player">\n                        <iframe src="player/index.html" border="0"></iframe>\n                    </div>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
+	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.We invite the artists from Nexus Interactive Arts to design such a special windtrument.</p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/video-banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Well-known jazz musician and composer Dr. Wang Cong, cooperating with Etienne Schwarcz, lighting director of the closing ceremony of Athens Olympics, helped us to make it come true. Wind sounds of 600 meters above the ground was firstly collected, based on features of wind at different times as well as 12 Earthly Time Branches (an ancient Chinese time measure), and sculpted the wind into 8 different pieces of music.</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    </section>\n                    <section>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                    </section>\n                    <div class="player">\n                        <iframe src="player/index.html" border="0"></iframe>\n                    </div>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -45460,7 +45478,7 @@ THREE.OBJLoader.prototype = {
 	        side: THREE.FontSide
 	    });
 	
-	    var total = 10000;
+	    var total = 5000;
 	    var vertices = new Float32Array(3 * total);
 	    var colors = new Float32Array(3 * total);
 	    while (total-- > 0) {

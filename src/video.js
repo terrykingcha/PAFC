@@ -97,8 +97,8 @@ function template() {
                 <div class="scrollElement">
                     <div class="slogan"></div>
                     <section>
-                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, the Creators from Saatchi & Saatchi GZ, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>
-                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>
+                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>
+                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>
                     </section>
                     <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
                     <section>
