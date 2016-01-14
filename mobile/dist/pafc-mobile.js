@@ -722,6 +722,10 @@
 	var win = window;
 	var doc = win.document;
 	
+	$on.call(doc, 'touchmove', function (e) {
+	    e.preventDefault();
+	});
+	
 	var CONTAINER = '\n<div id="wrap">\n    <div id="logo"></div>\n    <div id="tips">请在电脑上浏览本站<br>please visit this website via PC</div>\n    <a id="story-btn">THE STORY</a>\n</div>\n<div id="story"></div>\n';
 	
 	var PATH = 'assets/story';
@@ -742,10 +746,6 @@
 	                return regeneratorRuntime.awrap((0, _libPromise.domReady)());
 	
 	            case 2:
-	
-	                $on.call(doc, 'touchmove', function (e) {
-	                    e.preventDefault();
-	                });
 	
 	                (_context = $find.call(doc, 'body'), $append).call(_context, CONTAINER);
 	
@@ -811,7 +811,7 @@
 	                    }, null, this);
 	                });
 	
-	            case 11:
+	            case 10:
 	            case 'end':
 	                return context$1$0.stop();
 	        }

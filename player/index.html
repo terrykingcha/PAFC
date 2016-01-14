@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="js/jquery-1.6.1.min.js"></script>
+<script src="js/jquery.jplayer.js"></script>
+<script src="js/ttw-music-player-min.js"></script>
+<script src="js/myplaylist.js"></script>
+</script>
+</head>
+<body>
+<script type="text/javascript">
+$(function() {
+    $('body').ttwMusicPlayer(myPlaylist, {
+        autoPlay:false, 
+        tracksToShow: 8,
+        ratingCallback: function(index, media) {
+            var el = $('<a href="' + media.mp3 + '" download="' + media.title.replace(/\d+(&nbsp;)+/, '') + '.mp3' + '"></a>')
+                .appendTo('body')[0]
+
+            var ev = document.createEvent('HTMLEvents');
+            ev.initEvent('click', false, false);
+            el.dispatchEvent(ev);
+        },
+        jPlayer:{
+            swfPath:'js'
+        }
+    });
+
+    $('.player-controls').insertAfter('.tracklist');
+    $('.jp-interface, .description').remove();
+    $('<div class="page-cover"><img src="images/cover.jpg"></div>')
+        .insertBefore('.ttw-music-player');
+    $('<div class="player-info"><span class="title"></span><span class="time"></span></div>')
+        .appendTo('.player-controls')
+
+    function formatTime(time) {
+        return parseInt(time / 60) + ':' + parseInt(time % 60);
+    }
+
+    var jPlayer = $('.ttw-music-player .jPlayer-container');
+    var jEvent = $.jPlayer.event;
+    jPlayer.bind(jEvent.ready, function() {
+        jPlayer.bind(jEvent.timeupdate, function(e) {
+            var title = e.jPlayer.status.media.title;
+            var time = e.jPlayer.status.currentTime;
+            $('.player-info .title').html(title);
+            $('.player-info .time').html(formatTime(time));
+        });
+    });
+});
+</script>
+</body>
+</html>
