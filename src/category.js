@@ -18,23 +18,49 @@ var titles = [
 export var length = categorys.length;
 
 const IMG_PATH = './assets/images';
-var images = [
-    'circle.png', 'c1_new.png', 'c2_new.png', 'c3_new.png', 'c4_new.png', 'c5_new.png', 'c6_new.png',
-    'c1_a1.png', 'c1_a2.png', 'c1_a3.png', 'c2_a1.png', 'c3_a1.png', 'c3_a2.png', 'c4_a1.png', 'c5_a1.png', 'c5_a2.png', 'c6_a1.png'
+
+var circles = [
+    'circle.png', 
+    'c1_new.png', 
+    'c2_new.png', 
+    'c3_new.png', 
+    'c4_new.png', 
+    'c5_new.png', 
+    'c6_new.png'
 ];
-images = images.map(function(image) {
+circles = circles.map(function(image) {
     var loader = new THREE.ImageLoader(manager);
 
     return new Promise(function(resolve, reject) {
         loader.load(
             `${IMG_PATH}/${image}`, 
-            function(img) {
-                resolve(img);
-            },
+            img => resolve(img),
             onProgress,
             onError
         );
     });
+});
+
+var logos = {
+    'c1': [],
+    'c2': [],
+    'c3': [],
+    'c4': [],
+    'c5': [],
+    'c6': []
+};
+Object.keys(logos).forEach(function(s) {
+    for (let i = 0; i <= 20; i++) {
+        let loader = new THREE.ImageLoader(manager);
+        logos[s].push(new Promise(function(resolve, reject) {
+            loader.load(
+                `${IMG_PATH}/categorys/${s}/i${i}.png`,
+                img => resolve(img),
+                onProgress,
+                onError
+            );
+        }));
+    }
 });
 
 export function get(index) {
@@ -110,6 +136,29 @@ function bindCategoryEvents() {
         };
     }
 
+    var logoId;
+    function showLogo(name) {
+        if (logoId) {
+            clearTimeout(logoId);
+        }
+
+        var index = 0;
+        var $logo = $circle::$find(`.c${name} .logo`);
+        logoId = setTimeout(async function handler() {
+            logoId = setTimeout(handler, 60);
+            index %= logos[`c${name}`].length;
+            var img = await logos[`c${name}`][index++];
+            $logo::$html('')
+                ::$append(img);
+        }, 60);
+    }
+
+    function hideLogo() {
+        if (logoId) {
+            clearTimeout(logoId)
+        }
+    }
+
     var lastIndex;
     var changed;
     $circle::$on('mousemove mousedown', function(e) {
@@ -125,6 +174,7 @@ function bindCategoryEvents() {
 
                 if (disables.indexOf(categorys[index - 1]) > -1) {
                     clearArc();
+                    hideLogo();
                     $title::$html(titles[0]);
                     return;
                 };
@@ -134,6 +184,7 @@ function bindCategoryEvents() {
                     lastIndex = index;
                     clearArc();
                     drawArc(index - 1);
+                    showLogo(index);
                     $title::$html(titles[index]);
                 }
 
@@ -144,6 +195,7 @@ function bindCategoryEvents() {
             }
         })::$on('mouseup mouseleave', function(e) {
             clearArc();
+            hideLogo();
             $title::$html(titles[0]);
             $circle::$findAll('.wrap').forEach(
                 $wrap => $wrap::$removeClass('hover')
@@ -225,52 +277,6 @@ enjoy the vioce of nature.</p>
     `;
 }
 
-function logoTemplate(name) {
-    switch(name) {
-        case 'c1':
-            return `
-                <img src="${IMG_PATH}/c1_a1.png">
-                <img src="${IMG_PATH}/c1_a2.png">
-                <img src="${IMG_PATH}/c1_a3.png">
-            `;
-            break;
-        case 'c2':
-            return `
-                <img src="${IMG_PATH}/c2_a1.png">
-            `;
-            break;
-        case 'c3':
-            return `
-                <img src="${IMG_PATH}/c3_a1.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-                <img src="${IMG_PATH}/c3_a2.png">
-            `;
-            break;
-        case 'c4':
-            return `
-                <img src="${IMG_PATH}/c4_a1.png">
-            `;
-            break;
-        case 'c5':
-            return `
-                <img src="${IMG_PATH}/c5_a1.png">
-                <img src="${IMG_PATH}/c5_a1.png">
-            `;
-            break;
-        case 'c6':
-            return `
-                <img src="${IMG_PATH}/c6_a1.png">
-            `;
-            break;
-    }
-}
-
 (async () => {
     await domReady();
 
@@ -280,7 +286,7 @@ function logoTemplate(name) {
     $canvas = $category::$find('canvas');
     $title = $category::$find('p');
 
-    var imgs = await Promise.all(images);
+    var imgs = await Promise.all(circles);
     imgs.forEach(function($image) {
         var $wrap = document.createElement('div');
         $wrap::$addClass('wrap');
@@ -289,7 +295,7 @@ function logoTemplate(name) {
 
         if (name) {
             $wrap::$addClass(name[1])
-                ::$html(`<div class="logo">${logoTemplate(name[1])}</div>`)
+                ::$html('<div class="logo"></div>')
                 ::$append($image);
 
             $circle::$prepend($wrap);

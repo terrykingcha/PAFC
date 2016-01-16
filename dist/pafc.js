@@ -40252,15 +40252,39 @@ THREE.OBJLoader.prototype = {
 	
 	exports.length = length;
 	var IMG_PATH = './assets/images';
-	var images = ['circle.png', 'c1_new.png', 'c2_new.png', 'c3_new.png', 'c4_new.png', 'c5_new.png', 'c6_new.png', 'c1_a1.png', 'c1_a2.png', 'c1_a3.png', 'c2_a1.png', 'c3_a1.png', 'c3_a2.png', 'c4_a1.png', 'c5_a1.png', 'c5_a2.png', 'c6_a1.png'];
-	images = images.map(function (image) {
+	
+	var circles = ['circle.png', 'c1_new.png', 'c2_new.png', 'c3_new.png', 'c4_new.png', 'c5_new.png', 'c6_new.png'];
+	circles = circles.map(function (image) {
 	    var loader = new THREE.ImageLoader(_prologue.manager);
 	
 	    return new Promise(function (resolve, reject) {
 	        loader.load(IMG_PATH + '/' + image, function (img) {
-	            resolve(img);
+	            return resolve(img);
 	        }, _prologue.onProgress, _prologue.onError);
 	    });
+	});
+	
+	var logos = {
+	    'c1': [],
+	    'c2': [],
+	    'c3': [],
+	    'c4': [],
+	    'c5': [],
+	    'c6': []
+	};
+	Object.keys(logos).forEach(function (s) {
+	    var _loop = function (i) {
+	        var loader = new THREE.ImageLoader(_prologue.manager);
+	        logos[s].push(new Promise(function (resolve, reject) {
+	            loader.load(IMG_PATH + '/categorys/' + s + '/i' + i + '.png', function (img) {
+	                return resolve(img);
+	            }, _prologue.onProgress, _prologue.onError);
+	        }));
+	    };
+	
+	    for (var i = 0; i <= 20; i++) {
+	        _loop(i);
+	    }
 	});
 	
 	function get(index) {
@@ -40325,7 +40349,7 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function bindCategoryEvents() {
-	    var _context6;
+	    var _context8;
 	
 	    $on.call(window, 'resize', resizeHandler);
 	
@@ -40349,13 +40373,54 @@ THREE.OBJLoader.prototype = {
 	        };
 	    }
 	
+	    var logoId;
+	    function showLogo(name) {
+	        var _context6;
+	
+	        if (logoId) {
+	            clearTimeout(logoId);
+	        }
+	
+	        var index = 0;
+	        var $logo = (_context6 = $circle, $find).call(_context6, '.c' + name + ' .logo');
+	        logoId = setTimeout(function handler() {
+	            var _context7;
+	
+	            var img;
+	            return regeneratorRuntime.async(function handler$(context$3$0) {
+	                while (1) switch (context$3$0.prev = context$3$0.next) {
+	                    case 0:
+	                        logoId = setTimeout(handler, 60);
+	                        index %= logos['c' + name].length;
+	                        context$3$0.next = 4;
+	                        return regeneratorRuntime.awrap(logos['c' + name][index++]);
+	
+	                    case 4:
+	                        img = context$3$0.sent;
+	
+	                        (_context7 = $html.call($logo, ''), $append).call(_context7, img);
+	
+	                    case 6:
+	                    case 'end':
+	                        return context$3$0.stop();
+	                }
+	            }, null, this);
+	        }, 60);
+	    }
+	
+	    function hideLogo() {
+	        if (logoId) {
+	            clearTimeout(logoId);
+	        }
+	    }
+	
 	    var lastIndex;
 	    var changed;
-	    (_context6 = (_context6 = $circle, $on).call(_context6, 'mousemove mousedown', function (e) {
-	        var _context7;
+	    (_context8 = (_context8 = $circle, $on).call(_context8, 'mousemove mousedown', function (e) {
+	        var _context9;
 	
 	        var eventName = e.type;
-	        (_context7 = $circle, $findAll).call(_context7, '.wrap').forEach(function ($wrap) {
+	        (_context9 = $circle, $findAll).call(_context9, '.wrap').forEach(function ($wrap) {
 	            return $removeClass.call($wrap, 'hover');
 	        });
 	
@@ -40365,50 +40430,53 @@ THREE.OBJLoader.prototype = {
 	        var rad = _parse.rad;
 	
 	        if (radius <= circleWidth / 2 && radius <= circleHeight / 2) {
-	            var _context9;
+	            var _context11;
 	
 	            var index = Math.floor(rad / (Math.PI * 2 / categorys.length)) + 1;
 	
 	            if (disables.indexOf(categorys[index - 1]) > -1) {
-	                var _context8;
+	                var _context10;
 	
 	                clearArc();
-	                (_context8 = $title, $html).call(_context8, titles[0]);
+	                hideLogo();
+	                (_context10 = $title, $html).call(_context10, titles[0]);
 	                return;
 	            };
 	
-	            (_context9 = (_context9 = $circle, $find).call(_context9, '.c' + index), $addClass).call(_context9, 'hover');
+	            (_context11 = (_context11 = $circle, $find).call(_context11, '.c' + index), $addClass).call(_context11, 'hover');
 	            if (index !== lastIndex) {
-	                var _context10;
+	                var _context12;
 	
 	                lastIndex = index;
 	                clearArc();
 	                drawArc(index - 1);
-	                (_context10 = $title, $html).call(_context10, titles[index]);
+	                showLogo(index);
+	                (_context12 = $title, $html).call(_context12, titles[index]);
 	            }
 	
 	            if (eventName === 'mousedown') {
-	                var _context11;
+	                var _context13;
 	
-	                (_context11 = $circle, $trigger).call(_context11, 'change', [index, changed]);
+	                (_context13 = $circle, $trigger).call(_context13, 'change', [index, changed]);
 	                changed = index;
 	            }
 	        }
-	    }), $on).call(_context6, 'mouseup mouseleave', function (e) {
-	        var _context12;
+	    }), $on).call(_context8, 'mouseup mouseleave', function (e) {
+	        var _context14;
 	
 	        clearArc();
-	        (_context12 = $title, $html).call(_context12, titles[0]);
-	        (_context12 = $circle, $findAll).call(_context12, '.wrap').forEach(function ($wrap) {
+	        hideLogo();
+	        (_context14 = $title, $html).call(_context14, titles[0]);
+	        (_context14 = $circle, $findAll).call(_context14, '.wrap').forEach(function ($wrap) {
 	            return $removeClass.call($wrap, 'hover');
 	        });
 	    });
 	}
 	
 	function bindBackEvents() {
-	    var _context13;
+	    var _context15;
 	
-	    (_context13 = (_context13 = $category, $find).call(_context13, '.back'), $on).call(_context13, 'click', hide);
+	    (_context15 = (_context15 = $category, $find).call(_context15, '.back'), $on).call(_context15, 'click', hide);
 	}
 	
 	var arcId;
@@ -40453,17 +40521,17 @@ THREE.OBJLoader.prototype = {
 	var isBoundEvents = false;
 	
 	function show() {
-	    var _context14;
+	    var _context16;
 	
 	    return regeneratorRuntime.async(function show$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context14 = $category, $show).call(_context14);
+	                (_context16 = $category, $show).call(_context16);
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(1));
 	
 	            case 3:
-	                (_context14 = $category, $addClass).call(_context14, 'fadeIn');
+	                (_context16 = $category, $addClass).call(_context16, 'fadeIn');
 	                context$1$0.next = 6;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
@@ -40485,17 +40553,17 @@ THREE.OBJLoader.prototype = {
 	}
 	
 	function hide() {
-	    var _context15;
+	    var _context17;
 	
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                (_context15 = (_context15 = $category, $removeClass).call(_context15, 'fadeIn'), $addClass).call(_context15, 'fadeOut');
+	                (_context17 = (_context17 = $category, $removeClass).call(_context17, 'fadeIn'), $addClass).call(_context17, 'fadeOut');
 	                context$1$0.next = 3;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(450));
 	
 	            case 3:
-	                (_context15 = (_context15 = $category, $removeClass).call(_context15, 'fadeOut'), $hide).call(_context15);
+	                (_context17 = (_context17 = $category, $removeClass).call(_context17, 'fadeOut'), $hide).call(_context17);
 	
 	            case 4:
 	            case 'end':
@@ -40508,31 +40576,8 @@ THREE.OBJLoader.prototype = {
 	    return '\n        <div id="category">\n            <a class="back">Back</a>\n            <div class="circle">\n                <canvas></canvas>\n            </div>\n            <p>The wind shows us its different forms in different times.\nenjoy the vioce of nature.</p>\n        </div>\n        <div id="category-name" class="bounceIn"></div>\n    ';
 	}
 	
-	function logoTemplate(name) {
-	    switch (name) {
-	        case 'c1':
-	            return '\n                <img src="' + IMG_PATH + '/c1_a1.png">\n                <img src="' + IMG_PATH + '/c1_a2.png">\n                <img src="' + IMG_PATH + '/c1_a3.png">\n            ';
-	            break;
-	        case 'c2':
-	            return '\n                <img src="' + IMG_PATH + '/c2_a1.png">\n            ';
-	            break;
-	        case 'c3':
-	            return '\n                <img src="' + IMG_PATH + '/c3_a1.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n                <img src="' + IMG_PATH + '/c3_a2.png">\n            ';
-	            break;
-	        case 'c4':
-	            return '\n                <img src="' + IMG_PATH + '/c4_a1.png">\n            ';
-	            break;
-	        case 'c5':
-	            return '\n                <img src="' + IMG_PATH + '/c5_a1.png">\n                <img src="' + IMG_PATH + '/c5_a1.png">\n            ';
-	            break;
-	        case 'c6':
-	            return '\n                <img src="' + IMG_PATH + '/c6_a1.png">\n            ';
-	            break;
-	    }
-	}
-	
 	(function callee$0$0() {
-	    var _context16;
+	    var _context18;
 	
 	    var imgs;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
@@ -40543,14 +40588,14 @@ THREE.OBJLoader.prototype = {
 	
 	            case 2:
 	
-	                $category = (_context16 = (_context16 = document.body, $append).call(_context16, template()), $find).call(_context16, '#category');
-	                $categoryName = (_context16 = document.body, $find).call(_context16, '#category-name');
-	                $circle = (_context16 = $category, $find).call(_context16, '.circle');
-	                $canvas = (_context16 = $category, $find).call(_context16, 'canvas');
-	                $title = (_context16 = $category, $find).call(_context16, 'p');
+	                $category = (_context18 = (_context18 = document.body, $append).call(_context18, template()), $find).call(_context18, '#category');
+	                $categoryName = (_context18 = document.body, $find).call(_context18, '#category-name');
+	                $circle = (_context18 = $category, $find).call(_context18, '.circle');
+	                $canvas = (_context18 = $category, $find).call(_context18, 'canvas');
+	                $title = (_context18 = $category, $find).call(_context18, 'p');
 	
 	                context$1$0.next = 9;
-	                return regeneratorRuntime.awrap(Promise.all(images));
+	                return regeneratorRuntime.awrap(Promise.all(circles));
 	
 	            case 9:
 	                imgs = context$1$0.sent;
@@ -40562,11 +40607,11 @@ THREE.OBJLoader.prototype = {
 	                    var name = src.match(/(c\d)(?:_new)?.png/);
 	
 	                    if (name) {
-	                        var _context17;
+	                        var _context19;
 	
-	                        (_context17 = (_context17 = $addClass.call($wrap, name[1]), $html).call(_context17, '<div class="logo">' + logoTemplate(name[1]) + '</div>'), $append).call(_context17, $image);
+	                        (_context19 = (_context19 = $addClass.call($wrap, name[1]), $html).call(_context19, '<div class="logo"></div>'), $append).call(_context19, $image);
 	
-	                        (_context17 = $circle, $prepend).call(_context17, $wrap);
+	                        (_context19 = $circle, $prepend).call(_context19, $wrap);
 	                    }
 	                });
 	
@@ -40607,7 +40652,7 @@ THREE.OBJLoader.prototype = {
 /* 24 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.bounceIn {\n  -webkit-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -ms-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 5%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .back:hover {\n  text-decoration: line-through;\n}\n#category p {\n  position: absolute;\n  display: block;\n  width: 15%;\n  word-break: break-all;\n  line-height: 1.5em;\n  font-size: 14px;\n  right: 5%;\n  top: 50%;\n  margin-top: -20px;\n  color: #FFF;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -280px;\n  margin-top: -280px;\n  width: 560px;\n  height: 560px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 560px 560px;\n  cursor: pointer;\n}\n#category .circle canvas {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n}\n#category .circle .wrap {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  overflow: hidden;\n}\n#category .circle .wrap > img {\n  opacity: 0;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle .wrap.hover > img {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category .circle .wrap .logo {\n  overflow: hidden;\n  width: 160px;\n  height: 160px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -80px;\n  margin-left: -80px;\n}\n#category .circle .wrap .logo img {\n  position: absolute;\n  width: 160px;\n  height: 160px;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle .wrap.c1 .logo img {\n  -webkit-transform: translateX(-100%);\n  -ms-transform: translateX(-100%);\n  transform: translateX(-100%);\n}\n#category .circle .wrap.c1.hover .logo img:first-child {\n  -webkit-transition: -webkit-transform 0.4s ease-in 0s;\n  -ms-transition: -ms-transform 0.4s ease-in 0s;\n  transition: transform 0.4s ease-in 0s;\n}\n#category .circle .wrap.c1.hover .logo img:nth-child(2) {\n  -webkit-transition: -webkit-transform 0.4s ease-in 0.15s;\n  -ms-transition: -ms-transform 0.4s ease-in 0.15s;\n  transition: transform 0.4s ease-in 0.15s;\n}\n#category .circle .wrap.c1.hover .logo img:last-child {\n  -webkit-transition: -webkit-transform 0.4s ease-in 0.3s;\n  -ms-transition: -ms-transform 0.4s ease-in 0.3s;\n  transition: transform 0.4s ease-in 0.3s;\n}\n#category .circle .wrap.c1.hover .logo img {\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n}\n#category .circle .wrap.c2 .logo img {\n  -webkit-transform: translateX(-100%);\n  -ms-transform: translateX(-100%);\n  transform: translateX(-100%);\n  opacity: 0;\n}\n#category .circle .wrap.c2.hover .logo img {\n  -webkit-transition: all 0.4s ease-in 0s;\n  -ms-transition: all 0.4s ease-in 0s;\n  transition: all 0.4s ease-in 0s;\n  -webkit-transform: translateX(0);\n  -ms-transform: translateX(0);\n  transform: translateX(0);\n  opacity: 1;\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(2) {\n  -webkit-transform: rotate(0deg);\n  -ms-transform: rotate(0deg);\n  transform: rotate(0deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(3) {\n  -webkit-transform: rotate(45deg);\n  -ms-transform: rotate(45deg);\n  transform: rotate(45deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(4) {\n  -webkit-transform: rotate(90deg);\n  -ms-transform: rotate(90deg);\n  transform: rotate(90deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(5) {\n  -webkit-transform: rotate(135deg);\n  -ms-transform: rotate(135deg);\n  transform: rotate(135deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(6) {\n  -webkit-transform: rotate(180deg);\n  -ms-transform: rotate(180deg);\n  transform: rotate(180deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(7) {\n  -webkit-transform: rotate(225deg);\n  -ms-transform: rotate(225deg);\n  transform: rotate(225deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(8) {\n  -webkit-transform: rotate(270deg);\n  -ms-transform: rotate(270deg);\n  transform: rotate(270deg);\n}\n#category .circle .wrap.c3 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c3 .logo img:nth-child(9) {\n  -webkit-transform: rotate(315deg);\n  -ms-transform: rotate(315deg);\n  transform: rotate(315deg);\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(1) {\n  -webkit-transition: opacity 0.4s ease-in 0s;\n  -ms-transition: opacity 0.4s ease-in 0s;\n  transition: opacity 0.4s ease-in 0s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(2) {\n  -webkit-transition: opacity 0.4s ease-in 0.05s;\n  -ms-transition: opacity 0.4s ease-in 0.05s;\n  transition: opacity 0.4s ease-in 0.05s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(3) {\n  -webkit-transition: opacity 0.4s ease-in 0.1s;\n  -ms-transition: opacity 0.4s ease-in 0.1s;\n  transition: opacity 0.4s ease-in 0.1s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(4) {\n  -webkit-transition: opacity 0.4s ease-in 0.15s;\n  -ms-transition: opacity 0.4s ease-in 0.15s;\n  transition: opacity 0.4s ease-in 0.15s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(5) {\n  -webkit-transition: opacity 0.4s ease-in 0.2s;\n  -ms-transition: opacity 0.4s ease-in 0.2s;\n  transition: opacity 0.4s ease-in 0.2s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(6) {\n  -webkit-transition: opacity 0.4s ease-in 0.25s;\n  -ms-transition: opacity 0.4s ease-in 0.25s;\n  transition: opacity 0.4s ease-in 0.25s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(7) {\n  -webkit-transition: opacity 0.4s ease-in 0.3s;\n  -ms-transition: opacity 0.4s ease-in 0.3s;\n  transition: opacity 0.4s ease-in 0.3s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(8) {\n  -webkit-transition: opacity 0.4s ease-in 0.35s;\n  -ms-transition: opacity 0.4s ease-in 0.35s;\n  transition: opacity 0.4s ease-in 0.35s;\n  opacity: 1;\n}\n#category .circle .wrap.c3.hover .logo img:nth-child(9) {\n  -webkit-transition: opacity 0.4s ease-in 0.4s;\n  -ms-transition: opacity 0.4s ease-in 0.4s;\n  transition: opacity 0.4s ease-in 0.4s;\n  opacity: 1;\n}\n#category .circle .wrap.c4 .logo {\n  height: 0;\n}\n#category .circle .wrap.c4.hover .logo {\n  -webkit-transition: height 0.4s ease-in 0s;\n  -ms-transition: height 0.4s ease-in 0s;\n  transition: height 0.4s ease-in 0s;\n  height: 160px;\n}\n#category .circle .wrap.c5 .logo img {\n  opacity: 0;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#category .circle .wrap.c5.hover .logo img:nth-child(1) {\n  -webkit-animation: c5-logo-falling 2s ease 0s infinite;\n  -ms-animation: c5-logo-falling 2s ease 0s infinite;\n  animation: c5-logo-falling 2s ease 0s infinite;\n}\n#category .circle .wrap.c5.hover .logo img:nth-child(2) {\n  -webkit-animation: c5-logo-falling 2s ease 1s infinite;\n  -ms-animation: c5-logo-falling 2s ease 1s infinite;\n  animation: c5-logo-falling 2s ease 1s infinite;\n}\n#category .circle .wrap.c6 .logo img {\n  opacity: 0;\n}\n#category .circle .wrap.c6.hover .logo img {\n  opacity: 1;\n  -webkit-animation: c6-logo-rotation 1s linear 0s infinite;\n  -ms-animation: c6-logo-rotation 1s linear 0s infinite;\n  animation: c6-logo-rotation 1s linear 0s infinite;\n}\n@keyframes c5-logo-falling {\n  0% {\n    opacity: 0;\n    -webkit-transform: translateY(0);\n    -ms-transform: translateY(0);\n    transform: translateY(0);\n  }\n  25% {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n    -ms-transform: translateY(0);\n    transform: translateY(0);\n  }\n  50% {\n    opacity: 1;\n    -webkit-transform: translateY(20%);\n    -ms-transform: translateY(20%);\n    transform: translateY(20%);\n  }\n  75% {\n    opacity: 1;\n    -webkit-transform: translateY(20%);\n    -ms-transform: translateY(20%);\n    transform: translateY(20%);\n  }\n  100% {\n    opacity: 0;\n    -webkit-transform: translateY(20%);\n    -ms-transform: translateY(20%);\n    transform: translateY(20%);\n  }\n}\n@-webkit-keyframes c6-logo-rotation {\n  0% {\n    -webkit-transform: rotate(0deg);\n    -ms-transform: rotate(0deg);\n    transform: rotate(0deg);\n  }\n  100% {\n    -webkit-transform: rotate(360deg);\n    -ms-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n@-ms-keyframes c6-logo-rotation {\n  0% {\n    -webkit-transform: rotate(0deg);\n    -ms-transform: rotate(0deg);\n    transform: rotate(0deg);\n  }\n  100% {\n    -webkit-transform: rotate(360deg);\n    -ms-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n@keyframes c6-logo-rotation {\n  0% {\n    -webkit-transform: rotate(0deg);\n    -ms-transform: rotate(0deg);\n    transform: rotate(0deg);\n  }\n  100% {\n    -webkit-transform: rotate(360deg);\n    -ms-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n  -webkit-transform: scale(0);\n  -ms-transform: scale(0);\n  transform: scale(0);\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.bounceIn {\n  -webkit-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -ms-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#category {\n  display: none;\n  position: absolute;\n  opacity: 0;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.8);\n}\n#category .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 5%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #FFF;\n  cursor: pointer;\n}\n#category .back:hover {\n  text-decoration: line-through;\n}\n#category p {\n  position: absolute;\n  display: block;\n  width: 15%;\n  word-break: break-all;\n  line-height: 1.5em;\n  font-size: 14px;\n  right: 5%;\n  top: 50%;\n  margin-top: -20px;\n  color: #FFF;\n}\n#category .circle {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin-left: -280px;\n  margin-top: -280px;\n  width: 560px;\n  height: 560px;\n  overflow: hidden;\n  background: url(assets/images/circle.png) no-repeat center center;\n  background-size: 560px 560px;\n  cursor: pointer;\n}\n#category .circle canvas {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n}\n#category .circle .wrap {\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  overflow: hidden;\n}\n#category .circle .wrap > img {\n  opacity: 0;\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle .wrap.hover > img {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n#category .circle .wrap .logo {\n  display: none;\n  overflow: hidden;\n  width: 160px;\n  height: 160px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -80px;\n  margin-left: -80px;\n}\n#category .circle .wrap .logo img {\n  position: absolute;\n  width: 360px;\n  height: 300px;\n  left: -100px;\n  top: -70px;\n  overflow: hidden;\n  vertical-align: middle;\n  border: 0;\n}\n#category .circle .wrap.hover .logo {\n  display: block;\n}\n#category .circle .wrap.c1 .logo img {\n  left: -93px;\n  top: -84px;\n}\n#category .circle .wrap.c2 .logo img {\n  left: -103px;\n  top: -75px;\n}\n#category .circle .wrap.c3 .logo img {\n  left: -95px;\n  top: -70px;\n}\n#category .circle .wrap.c4 .logo img {\n  left: -100px;\n  top: -70px;\n}\n#category .circle .wrap.c5 .logo img {\n  left: -100px;\n  top: -70px;\n}\n#category .circle .wrap.c6 .logo img {\n  left: -95px;\n  top: -72px;\n}\n#category-name {\n  display: none;\n  position: absolute;\n  z-index: 999;\n  width: 30px;\n  height: 30px;\n  line-height: 35px;\n  text-align: center;\n  color: #FFF;\n  border: 1px solid #FFF;\n  font-size: 18px;\n  border-radius: 15px;\n  left: 25px;\n  top: 25px;\n  -webkit-transform: scale(0);\n  -ms-transform: scale(0);\n  transform: scale(0);\n}\nbody.black #category-name {\n  border-color: #1C1C1C;\n  color: #1C1C1C;\n}\nbody.white #category-name {\n  border-color: #FFFFFF;\n  color: #FFFFFF;\n}\n"
 
 /***/ },
 /* 25 */
