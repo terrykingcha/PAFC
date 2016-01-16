@@ -8,10 +8,12 @@ export var render = () => controls.update();
 
 var deferred = defer();
 
-export function init(camera, renderer) {
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+export function init(objects, renderer) {
+    controls = new THREE.OrbitControls(objects, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
     controls.enableZoom = true;
+    // controls.enablePan = false;
+    // controls.enableRotate = false;
     deferred.resolve();
 }

@@ -62,14 +62,8 @@ export var init = async () => {
     hill.position.set(0, 0, 0);
     sky.position.set(0, 60, -100);
     bird.position.set(0, -30, -30);
-
-    // scene.add(new THREE.PointLightHelper(light1, 2));
-    // scene.add(new THREE.PointLightHelper(light2, 2))
-    // scene.add(new THREE.PointLightHelper(light3, 2))
-    // scene.add(new THREE.PointLightHelper(light4, 2))
-
     
-    // await Controls.init(camera, renderer);
+    await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -100,7 +94,7 @@ function flyingBirds() {
 }
 
 export function render() {
-    // Controls.render();
+    Controls.render();
     flyingBirds();
     Bird.render();
     Cloud.render();
