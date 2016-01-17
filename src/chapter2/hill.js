@@ -9,14 +9,17 @@ export var ready = () => deferred.promise;
 export var object;
 
 var loader = new THREE.JSONLoader(manager);
-loader.load('assets/obj/02_cloud/hill2.js', function(geometry, materials) {
+loader.load('assets/obj/02_cloud/hill.js', function(geometry, materials) {
+    var material = materials[0];
     object = new THREE.Object3D();
 
-    var hillMaterial = new THREE.MeshFaceMaterial(materials);
-    var hillMesh = new THREE.Mesh(geometry, hillMaterial);
+    var hillMaterial = new THREE.MeshFaceMaterial([material.clone()]);
+    var hillMesh = new THREE.Mesh(geometry.clone(), hillMaterial);
+    // hillMesh.material.materials[0].color.setHex(0x000000);
     object.add(hillMesh);
 
-    var outerMesh = new THREE.Mesh(geometry.clone(), hillMaterial.clone());
+    var outerMaterial = new THREE.MeshFaceMaterial([material.clone()])
+    var outerMesh = new THREE.Mesh(geometry.clone(), outerMaterial);
     outerMesh.position.set(0, 1, 0);
     outerMesh.material.materials[0].opacity = 0.2;
     outerMesh.material.materials[0].transparent = true;

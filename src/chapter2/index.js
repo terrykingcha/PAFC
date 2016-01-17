@@ -63,7 +63,7 @@ export var init = async () => {
     sky.position.set(0, 60, -100);
     bird.position.set(0, -30, -30);
     
-    await Controls.init(camera, renderer);
+    // await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -94,7 +94,7 @@ function flyingBirds() {
 }
 
 export function render() {
-    Controls.render();
+    // Controls.render();
     flyingBirds();
     Bird.render();
     Cloud.render();

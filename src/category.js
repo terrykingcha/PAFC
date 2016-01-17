@@ -8,12 +8,12 @@ var disables = ['雷'];
 var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
 var titles = [
     'The wind shows us its different forms in different times. enjoy the vioce of nature.',
-    '02_Behold_My_Vision', 
-    '03_The_Flow_of_Wisdom', 
-    '06_Hear_the_Silence',
-    '05_Moonstone_Stardust',
-    '08_Amethyst_Whispers',
-    '04_Elegies_of_Spring'
+    'Behold My Vision', 
+    'The Flow of Wisdom', 
+    'Hear the Silence',
+    'Moonstone Stardust',
+    'Amethyst Whispers',
+    'Elegies of Spring'
 ]
 export var length = categorys.length;
 

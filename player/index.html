@@ -49,6 +49,10 @@ $(function() {
             $('.player-info .time').html(formatTime(time));
         });
     });
+
+    window.pausePlayer = function() {
+        jPlayer.jPlayer('pause');
+    }
 });
 </script>
 </body>

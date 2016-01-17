@@ -40548,7 +40548,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	var categorys = ['雾', '云', '日', '雷', '雨', '星'];
 	var disables = ['雷'];
 	var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
-	var titles = ['The wind shows us its different forms in different times. enjoy the vioce of nature.', '02_Behold_My_Vision', '03_The_Flow_of_Wisdom', '06_Hear_the_Silence', '05_Moonstone_Stardust', '08_Amethyst_Whispers', '04_Elegies_of_Spring'];
+	var titles = ['The wind shows us its different forms in different times. enjoy the vioce of nature.', 'Behold My Vision', 'The Flow of Wisdom', 'Hear the Silence', 'Moonstone Stardust', 'Amethyst Whispers', 'Elegies of Spring'];
 	var length = categorys.length;
 	
 	exports.length = length;
@@ -41405,15 +41405,16 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	    return regeneratorRuntime.async(function hide$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
+	                (_context6 = $video, $find).call(_context6, '.player iframe').contentWindow.pausePlayer();
 	                (_context6 = $video, $addClass).call(_context6, 'hide');
-	                context$1$0.next = 3;
+	                context$1$0.next = 4;
 	                return regeneratorRuntime.awrap((0, _libPromise.delay)(650));
 	
-	            case 3:
+	            case 4:
 	                (_context6 = $video, $removeClass).call(_context6, 'show hide');
 	                music.togglePlayback(true);
 	
-	            case 5:
+	            case 6:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -41421,7 +41422,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 	
 	function template() {
-	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.We invite the artists from Nexus Interactive Arts to design such a special windtrument.</p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/video-banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Well-known jazz musician and composer Dr. Wang Cong, cooperating with Etienne Schwarcz, lighting director of the closing ceremony of Athens Olympics, helped us to make it come true. Wind sounds of 600 meters above the ground was firstly collected, based on features of wind at different times as well as 12 Earthly Time Branches (an ancient Chinese time measure), and sculpted the wind into 8 different pieces of music.</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    </section>\n                    <section>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                    </section>\n                    <div class="player">\n                        <iframe src="player/index.html" border="0"></iframe>\n                    </div>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
+	    return '\n        <div id="video">\n            <div class="scrollWrap">\n                <div class="scrollElement">\n                    <div class="slogan"></div>\n                    <section>\n                        <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>\n                        <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>\n                    </section>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                    <section>\n                        <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>\n                        <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>\n                        <p class="en">It is more difficult to preserve wind as it is than to change it. We had to do a lot of calculations to create this instrument, which is designed specifically to catch the sound of the wind.We invite the artists from Nexus Interactive Arts to design such a special windtrument.</p>\n                        <p class="cn">保留风的原貌比改变它更难。为了捕捉到风的原始形态，需要经过精密计算，设计特殊乐器收集这些珍贵的音频。为此，我们邀请了伦敦艺术团队Nexus Interactive Arts，耗时2个月，设计了这一独特的捕风装置。</p>       \n                    </section>\n                    <div class="banner" img-src="' + PATH + '/video-banner.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/01.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/02.jpg">\n                    </div>\n                    <div class="img" img-src="' + PATH + '/03.jpg">\n                    </div>\n                    <section>\n                        <p class="en">The wind is collected at one end and the pure sounds of nature is saved after travelling the length of each tube, thereby preserving the true, original sound.</p>\n                        <p class="cn">我们从特殊装置末端收集穿梭每一条铝管的风，从而实现保留最真实、最纯粹的风的音符。</p>\n                        <p class="en">The wind shows us its different forms in different times. We want to recover its true sound and present it in music. Well-known jazz musician and composer Dr. Wang Cong, cooperating with Etienne Schwarcz, lighting director of the closing ceremony of Athens Olympics, helped us to make it come true. Wind sounds of 600 meters above the ground was firstly collected, based on features of wind at different times as well as 12 Earthly Time Branches (an ancient Chinese time measure), and sculpted the wind into 8 different pieces of music.</p>\n                        <p class="cn">风在不同的时间段表现出不同的生命力。我们要做的，是通过音乐让风声返璞归真。著名爵士音乐家和作曲家王璁博士帮我们实现了这一点，她联合希腊奥运多媒体、灯光总监Etienne Schwarc，通过在600米高空的捕风取样，根据风声在城市中不同时间段的不同特点、按照中国传统的12时辰划分为8段，形成一张独特的风之音乐原声大碟。</p>\n                    </section>\n                    <section>\n                        <p class="en">This is a great attempt for art and technology. We were hoping to recall people’s respect for nature. Instead, a miracle was created. Here is the album, feel free to download and share it. Enjoy~</p>\n                        <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。</p>\n                    </section>\n                    <div class="player">\n                        <iframe src="player/index.html" border="0"></iframe>\n                    </div>\n                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>\n                </div>\n            </div>\n            <div class="back">Back</div>\n        </div>\n    ';
 	}
 	
 	(function callee$0$0() {
@@ -44201,14 +44202,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                sky.position.set(0, 60, -100);
 	                bird.position.set(0, -30, -30);
 	
+	                // await Controls.init(camera, renderer);
 	                context$1$0.next = 34;
-	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
-	
-	            case 34:
-	                context$1$0.next = 36;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 36:
+	            case 34:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -44217,7 +44215,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 41:
+	            case 39:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -44246,7 +44244,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 	
 	function render() {
-	    Controls.render();
+	    // Controls.render();
 	    flyingBirds();
 	    Bird.render();
 	    Cloud.render();
@@ -44660,14 +44658,17 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	exports.object = object;
 	var loader = new THREE.JSONLoader(_prologue.manager);
-	loader.load('assets/obj/02_cloud/hill2.js', function (geometry, materials) {
+	loader.load('assets/obj/02_cloud/hill.js', function (geometry, materials) {
+	    var material = materials[0];
 	    exports.object = object = new THREE.Object3D();
 	
-	    var hillMaterial = new THREE.MeshFaceMaterial(materials);
-	    var hillMesh = new THREE.Mesh(geometry, hillMaterial);
+	    var hillMaterial = new THREE.MeshFaceMaterial([material.clone()]);
+	    var hillMesh = new THREE.Mesh(geometry.clone(), hillMaterial);
+	    // hillMesh.material.materials[0].color.setHex(0x000000);
 	    object.add(hillMesh);
 	
-	    var outerMesh = new THREE.Mesh(geometry.clone(), hillMaterial.clone());
+	    var outerMaterial = new THREE.MeshFaceMaterial([material.clone()]);
+	    var outerMesh = new THREE.Mesh(geometry.clone(), outerMaterial);
 	    outerMesh.position.set(0, 1, 0);
 	    outerMesh.material.materials[0].opacity = 0.2;
 	    outerMesh.material.materials[0].transparent = true;
@@ -44782,7 +44783,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 	
 	var clouds = [];
-	var properties = [[-15, 2, 10, 0.6], [-25, -5, 15, 0.7], [5, -4, 20, 0.5], [-5, -3, 25, 0.3], [50, 10, -20, 0.4], [25, -2, 10, 0.6], [-15, 2, 15, 0.2]];
+	var properties = [[-15, 2, 10, 0.6], [-25, -5, 15, 0.7], [5, -4, 20, 0.5], [-5, -3, 25, 0.3], [50, 10, -20, 0.4], [25, -2, 10, 0.55], [-15, 2, 15, 0.2]];
 	
 	function render() {
 	    for (var i = 0; i < clouds.length; i++) {

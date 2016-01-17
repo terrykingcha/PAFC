@@ -84,9 +84,10 @@ export async function show(currentMusic) {
 }
 
 export async function hide() {
+    $video::$find('.player iframe').contentWindow.pausePlayer();
     $video::$addClass('hide');
     await delay(650);
-    $video::$removeClass('show hide');
+    $video::$removeClass('show hide')
     music.togglePlayback(true);
 }
 
@@ -100,7 +101,7 @@ function template() {
                         <p class="en">Among all the sounds in nature, wind is the most mysterious. It is a messenger of nature, wind communicates to humans. Our Team, try to collect these messages.We want to re-express nature found in prosperity,  through a Concert of the Wind.</p>
                         <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>
                     </section>
-                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
                     <section>
                         <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>
                         <p class="cn">首先要找到合适的捕风地。深圳速度堪称为奇迹，是中国的缩影。600米高的PAFC（深圳平安金融大厦）就在这个奇迹之颠。这里，连接天、地与人，没有比这更适合的了，是风选择了这里。</p>
@@ -128,7 +129,7 @@ function template() {
                     <div class="player">
                         <iframe src="player/index.html" border="0"></iframe>
                     </div>
-                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+                    <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
                 </div>
             </div>
             <div class="back">Back</div>
