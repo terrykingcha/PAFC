@@ -41505,7 +41505,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 /* 33 */
 /***/ function(module, exports) {
 
-	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.bounceIn {\n  -webkit-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -ms-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .back:hover {\n  text-decoration: line-through;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n  width: 100%;\n  position: relative;\n}\n#video .banner img {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n#video .img img {\n  width: 50%;\n}\n#video .player iframe {\n  border: 0;\n  width: 330px;\n  height: 560px;\n}\n"
+	module.exports = ".fadeIn {\n  -webkit-animation: fadeIn 0.4s ease-in 0s;\n  -ms-animation: fadeIn 0.4s ease-in 0s;\n  animation: fadeIn 0.4s ease-in 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.fadeOut {\n  -webkit-animation: fadeOut 0.4s ease-out 0s;\n  -ms-animation: fadeOut 0.4s ease-out 0s;\n  animation: fadeOut 0.4s ease-out 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.bounceIn {\n  -webkit-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -ms-animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  animation: bounceIn 0.6s cubic-bezier(0.13, 0.53, 0.28, 1.9) 0s;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n.flex {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n.flex-horizontal {\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -moz-box-orient: horizontal;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: row;\n  -ms-flex-direction: row;\n  flex-direction: row;\n}\n.flex-horizontal-center {\n  -webkit-box-pack: center;\n  -ms-flex-pack: center;\n  justify-content: center;\n}\n.flex-vertical {\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n}\n.flex-vertical-center {\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video {\n  display: none;\n  opacity: 0;\n  position: absolute;\n  z-index: 999999;\n  width: 100%;\n  height: 100%;\n  left: 0;\n  top: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video.show {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 1;\n  -webkit-transform: translateY(0);\n  -ms-transform: translateY(0);\n  transform: translateY(0);\n}\n#video.hide {\n  -webkit-transition: all 0.6s ease 0s;\n  -ms-transition: all 0.6s ease 0s;\n  transition: all 0.6s ease 0s;\n  opacity: 0;\n  -webkit-transform: translateY(100%);\n  -ms-transform: translateY(100%);\n  transform: translateY(100%);\n}\n#video .scrollWrap {\n  width: 100%;\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#video .scrollElement {\n  width: 100%;\n  padding: 200px 0;\n  background: url(assets/images/video/logo.jpg) no-repeat 90px 90px;\n  background-color: #FFF;\n  background-size: 20%;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -moz-box-orient: vertical;\n  -moz-box-direction: normal;\n  -webkit-flex-direction: column;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-align: center;\n  -ms-flex-align: center;\n  align-items: center;\n}\n#video .back {\n  position: absolute;\n  display: block;\n  width: 60px;\n  height: 36px;\n  line-height: 36px;\n  font-size: 18px;\n  left: 10%;\n  top: 50%;\n  margin-top: -23px;\n  text-align: center;\n  color: #1C1C1C;\n  cursor: pointer;\n}\n#video .back:hover {\n  text-decoration: line-through;\n}\n#video .slogan {\n  width: 398.3px;\n  height: 294px;\n  background: url(assets/images/video/title.jpg) no-repeat 0 0;\n  background-size: contain;\n}\n#video section {\n  width: 336px;\n  font-size: 14px;\n  color: #000;\n  line-height: 1.5em;\n}\n#video section p.en {\n  margin-top: 20px;\n}\n#video section p.cn {\n  margin-bottom: 40px;\n}\n#video .banner,\n#video .img {\n  vertical-align: middle;\n  overflow: hidden;\n  margin: 10px auto;\n  text-align: center;\n  width: 100%;\n  position: relative;\n}\n#video .banner img {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n#video .img img {\n  width: 50%;\n}\n#video .player iframe {\n  border: 0;\n  width: 330px;\n  height: 600px;\n}\n"
 
 /***/ },
 /* 34 */
@@ -44190,23 +44190,26 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                scene.add(hill);
 	                scene.add(sky);
 	                scene.add(bird);
-	                scene.add(cloud);
+	
+	                // scene.add(new THREE.AxisHelper(100));
+	                // scene.add(cloud);
 	
 	                light1.position.set(0, 20, 20);
 	                light2.position.set(-20, 20, 0);
 	                light3.position.set(50, 20, 0);
 	                light4.position.set(0, 0, -50);
-	                camera.position.set(0, -5, 60);
-	                camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
-	                hill.position.set(0, 0, 0);
+	                hill.position.set(0, 0, 30);
 	                sky.position.set(0, 60, -100);
-	                bird.position.set(0, -30, -30);
+	                bird.position.set(0, -30, 0);
+	                camera.position.set(0, 3, 90);
+	                // camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
+	                camera.lookAt(new THREE.Vector3(0, 3, 0));
 	
 	                // await Controls.init(camera, renderer);
-	                context$1$0.next = 34;
+	                context$1$0.next = 33;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 34:
+	            case 33:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -44215,7 +44218,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 39:
+	            case 38:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -44635,6 +44638,12 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	    value: true
 	});
 	
+	var _this = this;
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	exports.render = render;
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _libPromise = __webpack_require__(10);
@@ -44657,30 +44666,145 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	var object;
 	
 	exports.object = object;
+	
+	function render() {
+	    // object.rotation.y += 0.01;
+	}
+	
+	var hillDeferred = (0, _libPromise.defer)();
 	var loader = new THREE.JSONLoader(_prologue.manager);
-	loader.load('assets/obj/02_cloud/hill.js', function (geometry, materials) {
-	    var material = materials[0];
-	    exports.object = object = new THREE.Object3D();
-	
-	    var hillMaterial = new THREE.MeshFaceMaterial([material.clone()]);
-	    var hillMesh = new THREE.Mesh(geometry.clone(), hillMaterial);
-	    // hillMesh.material.materials[0].color.setHex(0x000000);
-	    object.add(hillMesh);
-	
-	    var outerMaterial = new THREE.MeshFaceMaterial([material.clone()]);
-	    var outerMesh = new THREE.Mesh(geometry.clone(), outerMaterial);
-	    outerMesh.position.set(0, 1, 0);
-	    outerMesh.material.materials[0].opacity = 0.2;
-	    outerMesh.material.materials[0].transparent = true;
-	    outerMesh.material.materials[0].color.setHex(0xFFFFFF);
-	    outerMesh.material.materials[0].emissive.setHex(0xFFFFFF);
-	    object.add(outerMesh);
-	
-	    // mesh.rotation.set(-0.25, Math.PI * 0.35, 0);
-	    // mesh.scale.set(6, 6, 6);
-	
-	    deferred.resolve();
+	loader.load('assets/obj/02_cloud/hill2.js', function (geometry, materials) {
+	    var material = new THREE.MeshFaceMaterial(materials);
+	    hillDeferred.resolve([geometry, material]);
 	}, _prologue.onProgress, _prologue.onError);
+	
+	(function callee$0$0() {
+	    var _ref, _ref2, hillGeometry, hillMaterial, hillMesh, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, m, outerMesh, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(hillDeferred.promise);
+	
+	            case 2:
+	                _ref = context$1$0.sent;
+	                _ref2 = _slicedToArray(_ref, 2);
+	                hillGeometry = _ref2[0];
+	                hillMaterial = _ref2[1];
+	
+	                exports.object = object = new THREE.Object3D();
+	
+	                hillMesh = new THREE.Mesh(hillGeometry, hillMaterial);
+	                _iteratorNormalCompletion = true;
+	                _didIteratorError = false;
+	                _iteratorError = undefined;
+	                context$1$0.prev = 11;
+	
+	                for (_iterator = hillMesh.material.materials[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    m = _step.value;
+	
+	                    m.opacity = 0.9;
+	                    m.emissive.setHex(0x000000);
+	                }
+	                context$1$0.next = 19;
+	                break;
+	
+	            case 15:
+	                context$1$0.prev = 15;
+	                context$1$0.t0 = context$1$0['catch'](11);
+	                _didIteratorError = true;
+	                _iteratorError = context$1$0.t0;
+	
+	            case 19:
+	                context$1$0.prev = 19;
+	                context$1$0.prev = 20;
+	
+	                if (!_iteratorNormalCompletion && _iterator['return']) {
+	                    _iterator['return']();
+	                }
+	
+	            case 22:
+	                context$1$0.prev = 22;
+	
+	                if (!_didIteratorError) {
+	                    context$1$0.next = 25;
+	                    break;
+	                }
+	
+	                throw _iteratorError;
+	
+	            case 25:
+	                return context$1$0.finish(22);
+	
+	            case 26:
+	                return context$1$0.finish(19);
+	
+	            case 27:
+	                object.add(hillMesh);
+	
+	                outerMesh = new THREE.Mesh(hillGeometry.clone(), hillMaterial.clone());
+	
+	                outerMesh.position.set(0, 1, 0);
+	                _iteratorNormalCompletion2 = true;
+	                _didIteratorError2 = false;
+	                _iteratorError2 = undefined;
+	                context$1$0.prev = 33;
+	                for (_iterator2 = outerMesh.material.materials[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    m = _step2.value;
+	
+	                    m.opacity = 0.2;
+	                    m.wireframe = true;
+	                    m.wireframeLinewidth = 0.1;
+	                    m.transparent = true;
+	                    m.color.setHex(0xFFFFFF);
+	                    m.emissive.setHex(0xFFFFFF);
+	                }
+	
+	                context$1$0.next = 41;
+	                break;
+	
+	            case 37:
+	                context$1$0.prev = 37;
+	                context$1$0.t1 = context$1$0['catch'](33);
+	                _didIteratorError2 = true;
+	                _iteratorError2 = context$1$0.t1;
+	
+	            case 41:
+	                context$1$0.prev = 41;
+	                context$1$0.prev = 42;
+	
+	                if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+	                    _iterator2['return']();
+	                }
+	
+	            case 44:
+	                context$1$0.prev = 44;
+	
+	                if (!_didIteratorError2) {
+	                    context$1$0.next = 47;
+	                    break;
+	                }
+	
+	                throw _iteratorError2;
+	
+	            case 47:
+	                return context$1$0.finish(44);
+	
+	            case 48:
+	                return context$1$0.finish(41);
+	
+	            case 49:
+	                object.add(outerMesh);
+	
+	                deferred.resolve();
+	
+	            case 51:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this, [[11, 15, 19, 27], [20,, 22, 26], [33, 37, 41, 49], [42,, 44, 48]]);
+	})();
 
 /***/ },
 /* 69 */
@@ -45013,6 +45137,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
+	exports.render = render;
 	exports.init = init;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -45028,20 +45153,34 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	var controls;
 	
 	exports.controls = controls;
-	var render = function render() {
-	    return controls.update();
-	};
+	// export var render = () => controls.update();
 	
-	exports.render = render;
 	var deferred = (0, _libPromise.defer)();
 	
-	function init(objects, renderer) {
-	    exports.controls = controls = new THREE.OrbitControls(objects, renderer.domElement);
-	    controls.enableDamping = true;
-	    controls.dampingFactor = 0.25;
-	    controls.enableZoom = true;
+	var camera;
+	var raduis;
+	var lon = 90;
+	var lonStep = 0.1;
+	
+	function render() {
+	    lon += lonStep;
+	    var theta = THREE.Math.degToRad(lon);
+	    camera.position.x = raduis * Math.cos(theta);
+	    camera.position.z = raduis * Math.sin(theta);
+	    camera.lookAt(new THREE.Vector3(0, 3, 0));
+	    camera.updateProjectionMatrix();
+	    camera.updateMatrixWorld();
+	}
+	
+	function init(_camera, _renderer) {
+	    // controls = new THREE.OrbitControls(camera, renderer.domElement);
+	    // controls.enableDamping = true;
+	    // controls.dampingFactor = 0.25;
+	    // controls.enableZoom = true;
 	    // controls.enablePan = false;
 	    // controls.enableRotate = false;
+	    camera = _camera;
+	    raduis = camera.position.z;
 	    deferred.resolve();
 	}
 

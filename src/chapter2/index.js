@@ -51,17 +51,20 @@ export var init = async () => {
     scene.add(hill);
     scene.add(sky);
     scene.add(bird);
-    scene.add(cloud);
+
+    // scene.add(new THREE.AxisHelper(100));
+    // scene.add(cloud);
 
     light1.position.set(0, 20, 20);
     light2.position.set(-20, 20, 0);
     light3.position.set(50, 20, 0);
     light4.position.set(0, 0, -50);
-    camera.position.set(0, -5, 60);
-    camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
-    hill.position.set(0, 0, 0);
+    hill.position.set(0, 0, 30);
     sky.position.set(0, 60, -100);
-    bird.position.set(0, -30, -30);
+    bird.position.set(0, -30, 0);
+    camera.position.set(0, 3, 90);
+    // camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
+    camera.lookAt(new THREE.Vector3(0, 3, 0));
     
     // await Controls.init(camera, renderer);
     await pageLoad();
