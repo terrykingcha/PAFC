@@ -8,11 +8,12 @@ import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as People from './people';
+import * as Head from './head';
 import * as Wave from './wave';
 
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, people,wave, visualizer;
+var scene, camera, renderer, domElement, light, people, head, wave, visualizer;
 
 export var init = async () => {    
     await Promise.all([
@@ -21,6 +22,7 @@ export var init = async () => {
         Renderer.ready(),
         People.ready(),
         Wave.ready(),
+        Head.ready(),
         Light.ready()
     ]);
 
@@ -30,19 +32,25 @@ export var init = async () => {
     domElement = Renderer.domElement;
     people = People.object;
     wave = Wave.object;
+    head = Head.object;
     light = Light.light;
 
     scene.add(camera);
     scene.add(light);
-    scene.add(people);
+    // scene.add(people);
     scene.add(wave);
+    scene.add(head);
 
-    light.position.set(-10, 10, 10);
+    light.position.set(-50, 100, 100);
     camera.position.set(0, 0, 200);
-    wave.position.set(0, -30, 10);
+    wave.position.set(0, -30, 30);
+    head.scale.set(20, 20, 20);
+    head.position.set(0, -370, -20);
     
     // await Controls.init(camera, renderer);
     await pageLoad();
+
+    // scene.add(new THREE.AxisHelper(100));
     
     domElement.setAttribute('scene', 'chapters');
     document.body.appendChild(domElement);
@@ -68,7 +76,7 @@ function togglePeople() {
     }
     if (Math.floor(time) >= note[0]) {
         tempNode.push(note.shift());
-        People.toggle();
+        // People.toggle();
     }
 }
 
@@ -83,9 +91,10 @@ function renderWave() {
 }
 
 export function render() {
-    togglePeople();
-    renderWave();
     // Controls.render();
+    // togglePeople();
+    Head.render();
+    renderWave();
     renderer.render(scene, camera);
 }
 

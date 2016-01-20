@@ -4,7 +4,7 @@ import {requestAnimationFrame, cancelAnimationFrame} from './lib/util';
 import {manager, onProgress, onError} from './prologue';
 
 var categorys = ['雾', '云', '日', '雷', '雨', '星'];
-var disables = ['雷'];
+var disables = [];
 var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
 var titles = [
     'The wind shows us its different forms in different times. enjoy the vioce of nature.',

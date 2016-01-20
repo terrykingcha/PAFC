@@ -14,6 +14,7 @@ var texture = new Promise(function(resolve, reject) {
         function(texture) {
             texture.minFilter = THREE.LinearFilter;
             texture.magFilter = THREE.LinearFilter;
+            texture.wrapS = THREE.RepeatWrapping;
             resolve(texture);
         }, 
         onProgress, 
@@ -24,12 +25,15 @@ var texture = new Promise(function(resolve, reject) {
 
 (async () => {
     var image = await texture;
-    var geometry = new THREE.SphereGeometry(
-        100, 64, 64
+    var geometry = new THREE.PlaneGeometry(
+        16000, 4000
     );
+    image.wrapS = THREE.RepeatWrapping;
+    image.wrapT = THREE.RepeatWrapping;
+    image.repeat.set(2, 1);
     var material = new THREE.MeshBasicMaterial({
         map: image,
-        side: THREE.BackSide
+        side: THREE.FrontSide
     });
     object = new THREE.Mesh(geometry, material);
     deferred.resolve();

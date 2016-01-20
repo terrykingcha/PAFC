@@ -60,13 +60,13 @@ export var init = async () => {
     light3.position.set(50, 20, 0);
     light4.position.set(0, 0, -50);
     hill.position.set(0, 0, 30);
-    sky.position.set(0, 60, -100);
+    sky.position.set(0, 0, 0);
     bird.position.set(0, -30, 0);
-    camera.position.set(0, 3, 90);
+    camera.position.set(0, 8, 90);
     // camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
-    camera.lookAt(new THREE.Vector3(0, 3, 0));
+    camera.lookAt(new THREE.Vector3(0, 15, 0));
     
-    // await Controls.init(camera, renderer);
+    await Controls.init(camera, renderer);
     await pageLoad();
     
     domElement.setAttribute('scene', 'chapters');
@@ -97,7 +97,7 @@ function flyingBirds() {
 }
 
 export function render() {
-    // Controls.render();
+    Controls.render();
     flyingBirds();
     Bird.render();
     Cloud.render();

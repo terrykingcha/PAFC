@@ -40546,7 +40546,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	var _prologue = __webpack_require__(11);
 	
 	var categorys = ['雾', '云', '日', '雷', '雨', '星'];
-	var disables = ['雷'];
+	var disables = [];
 	var iconfonts = ['&#xe60b;', '&#xe608;', '&#xe60c;', '&#xe60d;', '&#xe609;', '&#xe60a;'];
 	var titles = ['The wind shows us its different forms in different times. enjoy the vioce of nature.', 'Behold My Vision', 'The Flow of Wisdom', 'Hear the Silence', 'Moonstone Stardust', 'Amethyst Whispers', 'Elegies of Spring'];
 	var length = categorys.length;
@@ -44199,17 +44199,20 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                light3.position.set(50, 20, 0);
 	                light4.position.set(0, 0, -50);
 	                hill.position.set(0, 0, 30);
-	                sky.position.set(0, 60, -100);
+	                sky.position.set(0, 0, 0);
 	                bird.position.set(0, -30, 0);
-	                camera.position.set(0, 3, 90);
+	                camera.position.set(0, 8, 90);
 	                // camera.rotation.set(THREE.Math.degToRad(18), 0, 0);
-	                camera.lookAt(new THREE.Vector3(0, 3, 0));
+	                camera.lookAt(new THREE.Vector3(0, 15, 0));
 	
-	                // await Controls.init(camera, renderer);
 	                context$1$0.next = 33;
-	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	                return regeneratorRuntime.awrap(Controls.init(camera, renderer));
 	
 	            case 33:
+	                context$1$0.next = 35;
+	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
+	
+	            case 35:
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -44218,7 +44221,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                window.camera = camera;
 	                window.renderer = renderer;
 	
-	            case 38:
+	            case 40:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -44247,7 +44250,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 	
 	function render() {
-	    // Controls.render();
+	    Controls.render();
 	    flyingBirds();
 	    Bird.render();
 	    Cloud.render();
@@ -44816,6 +44819,8 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	    value: true
 	});
 	
+	var _this = this;
+	
 	var _libPromise = __webpack_require__(10);
 	
 	var _libEnv = __webpack_require__(14);
@@ -44832,21 +44837,39 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	exports.object = object;
 	var material;
 	var loader = new THREE.TextureLoader(_prologue.manager);
-	loader.load('assets/images/blackstar.jpg', function (texture) {
-	    exports.object = object = new THREE.Object3D();
+	var texture = new Promise(function (resolve, reject) {
+	    loader.load('assets/images/black_bg.jpg', function (texture) {
+	        texture.minFilter = THREE.LinearFilter;
+	        texture.magFilter = THREE.LinearFilter;
+	        resolve(texture);
+	    }, _prologue.onProgress, _prologue.onError);
+	});
 	
-	    texture.minFilter = THREE.LinearFilter;
-	    texture.magFilter = THREE.LinearFilter;
+	(function callee$0$0() {
+	    var image, geometry, material;
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(texture);
 	
-	    var geometry = new THREE.PlaneGeometry(380, 200);
-	    var material = new THREE.MeshBasicMaterial({
-	        map: texture
-	    });
-	    var mesh = new THREE.Mesh(geometry, material);
-	    object.add(mesh);
+	            case 2:
+	                image = context$1$0.sent;
+	                geometry = new THREE.SphereGeometry(100, 64, 64);
+	                material = new THREE.MeshBasicMaterial({
+	                    map: image,
+	                    side: THREE.BackSide
+	                });
 	
-	    deferred.resolve();
-	}, _prologue.onProgress, _prologue.onError);
+	                exports.object = object = new THREE.Mesh(geometry, material);
+	                deferred.resolve();
+	
+	            case 7:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
 
 /***/ },
 /* 70 */
@@ -45150,35 +45173,31 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var _libUtil = __webpack_require__(15);
 	
-	var controls;
-	
-	exports.controls = controls;
-	// export var render = () => controls.update();
-	
 	var deferred = (0, _libPromise.defer)();
+	
+	// export var controls;
+	
+	// export var render = () => controls.update();
 	
 	var camera;
 	var raduis;
 	var lon = 90;
-	var lonStep = 0.1;
+	var lonStep = 0.05;
 	
 	function render() {
 	    lon += lonStep;
 	    var theta = THREE.Math.degToRad(lon);
 	    camera.position.x = raduis * Math.cos(theta);
 	    camera.position.z = raduis * Math.sin(theta);
-	    camera.lookAt(new THREE.Vector3(0, 3, 0));
+	    camera.lookAt(new THREE.Vector3(0, 15, 0));
 	    camera.updateProjectionMatrix();
 	    camera.updateMatrixWorld();
 	}
 	
 	function init(_camera, _renderer) {
-	    // controls = new THREE.OrbitControls(camera, renderer.domElement);
+	    // controls = new THREE.OrbitControls(_camera, _renderer.domElement);
 	    // controls.enableDamping = true;
 	    // controls.dampingFactor = 0.25;
-	    // controls.enableZoom = true;
-	    // controls.enablePan = false;
-	    // controls.enableRotate = false;
 	    camera = _camera;
 	    raduis = camera.position.z;
 	    deferred.resolve();
@@ -45231,9 +45250,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var Wave = _interopRequireWildcard(_wave);
 	
-	var _star = __webpack_require__(81);
+	// import * as Star from './star';
 	
-	var Star = _interopRequireWildcard(_star);
+	var _sky = __webpack_require__(81);
+	
+	var Sky = _interopRequireWildcard(_sky);
 	
 	var _lighthouse = __webpack_require__(82);
 	
@@ -45243,14 +45264,16 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var scene, camera, renderer, domElement, light, wave, star, lighthouse, visualizer;
+	var scene, camera, renderer, domElement, light, wave, star, sky, lighthouse, visualizer;
 	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Wave.ready(), Star.ready(), Lighthouse.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), Light.ready(), Wave.ready(),
+	                // Star.ready(),
+	                Sky.ready(), Lighthouse.ready()]));
 	
 	            case 2:
 	
@@ -45260,18 +45283,21 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                domElement = Renderer.domElement;
 	                light = Light.light;
 	                wave = Wave.object;
-	                star = Star.object;
+	                // star = Star.object;
+	                sky = Sky.object;
 	                lighthouse = Lighthouse.object;
 	
 	                scene.add(camera);
 	                scene.add(light);
 	                scene.add(wave);
-	                scene.add(star);
+	                // scene.add(star);
+	                scene.add(sky);
 	                scene.add(lighthouse);
 	
 	                light.position.set(1000, 1000, 1000);
 	                wave.position.set(0, 0, 0);
-	                star.position.set(0, 2000, -4000);
+	                // star.position.set(0, 2000, -4000);
+	                sky.position.set(0, 2000, -4000);
 	                lighthouse.position.set(-2500, 0, -3000);
 	                camera.position.set(0, 400, 3000);
 	                camera.lookAt(new THREE.Vector3(0, 400, 0));
@@ -45933,17 +45959,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var _this = this;
 	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
 	var _libPromise = __webpack_require__(10);
 	
 	var _libEnv = __webpack_require__(14);
 	
 	var _prologue = __webpack_require__(11);
-	
-	var _clock = __webpack_require__(19);
-	
-	var Clock = _interopRequireWildcard(_clock);
 	
 	var deferred = (0, _libPromise.defer)();
 	var ready = function ready() {
@@ -45953,46 +45973,41 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	var object;
 	
 	exports.object = object;
-	function buildStars(z) {
-	    var material = new THREE.PointsMaterial({ // 星星
-	        size: 2 * Math.random() + 2,
-	        opacity: 0.5 + Math.random() * 0.5,
-	        vertexColors: THREE.VertexColors,
-	        side: THREE.FontSide
-	    });
-	
-	    var total = 5000;
-	    var vertices = new Float32Array(3 * total);
-	    var colors = new Float32Array(3 * total);
-	    while (total-- > 0) {
-	        vertices[total * 3] = Math.random() * 20000 - 10000;
-	        vertices[total * 3 + 1] = Math.random() * 4000 - 2000;
-	        vertices[total * 3 + 2] = z * Math.random() * -100;
-	        colors[total * 3 + 2] = colors[total * 3 + 1] = colors[total * 3] = Math.random();
-	    }
-	
-	    var geometry = new THREE.BufferGeometry();
-	    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-	    geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-	    geometry.computeBoundingSphere();
-	
-	    return new THREE.Points(geometry, material);
-	}
+	var material;
+	var loader = new THREE.TextureLoader(_prologue.manager);
+	var texture = new Promise(function (resolve, reject) {
+	    loader.load('assets/images/black_bg.jpg', function (texture) {
+	        texture.minFilter = THREE.LinearFilter;
+	        texture.magFilter = THREE.LinearFilter;
+	        texture.wrapS = THREE.RepeatWrapping;
+	        resolve(texture);
+	    }, _prologue.onProgress, _prologue.onError);
+	});
 	
 	(function callee$0$0() {
-	    var i;
+	    var image, geometry, material;
 	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
-	                exports.object = object = new THREE.Object3D();
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(texture);
 	
-	                for (i = 1; i < 4; i++) {
-	                    object.add(buildStars(i));
-	                }
+	            case 2:
+	                image = context$1$0.sent;
+	                geometry = new THREE.PlaneGeometry(16000, 4000);
 	
+	                image.wrapS = THREE.RepeatWrapping;
+	                image.wrapT = THREE.RepeatWrapping;
+	                image.repeat.set(2, 1);
+	                material = new THREE.MeshBasicMaterial({
+	                    map: image,
+	                    side: THREE.FrontSide
+	                });
+	
+	                exports.object = object = new THREE.Mesh(geometry, material);
 	                deferred.resolve();
 	
-	            case 3:
+	            case 10:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -46181,6 +46196,10 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var People = _interopRequireWildcard(_people);
 	
+	var _head = __webpack_require__(112);
+	
+	var Head = _interopRequireWildcard(_head);
+	
 	var _wave = __webpack_require__(92);
 	
 	var Wave = _interopRequireWildcard(_wave);
@@ -46189,14 +46208,14 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
-	var scene, camera, renderer, domElement, light, people, wave, visualizer;
+	var scene, camera, renderer, domElement, light, people, head, wave, visualizer;
 	
 	var init = function init() {
 	    return regeneratorRuntime.async(function init$(context$1$0) {
 	        while (1) switch (context$1$0.prev = context$1$0.next) {
 	            case 0:
 	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), People.ready(), Wave.ready(), Light.ready()]));
+	                return regeneratorRuntime.awrap(Promise.all([Scene.ready(), Camera.ready(), Renderer.ready(), People.ready(), Wave.ready(), Head.ready(), Light.ready()]));
 	
 	            case 2:
 	
@@ -46206,22 +46225,28 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                domElement = Renderer.domElement;
 	                people = People.object;
 	                wave = Wave.object;
+	                head = Head.object;
 	                light = Light.light;
 	
 	                scene.add(camera);
 	                scene.add(light);
-	                scene.add(people);
+	                // scene.add(people);
 	                scene.add(wave);
+	                scene.add(head);
 	
-	                light.position.set(-10, 10, 10);
+	                light.position.set(-50, 100, 100);
 	                camera.position.set(0, 0, 200);
-	                wave.position.set(0, -30, 10);
+	                wave.position.set(0, -30, 30);
+	                head.scale.set(20, 20, 20);
+	                head.position.set(0, -370, -20);
 	
 	                // await Controls.init(camera, renderer);
-	                context$1$0.next = 18;
+	                context$1$0.next = 21;
 	                return regeneratorRuntime.awrap((0, _libPromise.pageLoad)());
 	
-	            case 18:
+	            case 21:
+	
+	                // scene.add(new THREE.AxisHelper(100));
 	
 	                domElement.setAttribute('scene', 'chapters');
 	                document.body.appendChild(domElement);
@@ -46230,7 +46255,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	                // window.camera = camera;
 	                // window.renderer = renderer;
 	
-	            case 20:
+	            case 23:
 	            case 'end':
 	                return context$1$0.stop();
 	        }
@@ -46254,7 +46279,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	    }
 	    if (Math.floor(time) >= note[0]) {
 	        tempNode.push(note.shift());
-	        People.toggle();
+	        // People.toggle();
 	    }
 	}
 	
@@ -46269,9 +46294,10 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 	
 	function render() {
-	    togglePeople();
-	    renderWave();
 	    // Controls.render();
+	    // togglePeople();
+	    Head.render();
+	    renderWave();
 	    renderer.render(scene, camera);
 	}
 	
@@ -48396,6 +48422,102 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	    controls.enableZoom = false;
 	    deferred.resolve();
 	}
+
+/***/ },
+/* 112 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(56);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var clock = new THREE.Clock();
+	var mixer;
+	var render = function render() {
+	    var delta = clock.getDelta();
+	    mixer.update(delta);
+	};
+	
+	exports.render = render;
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	var head = new Promise(function (resolve, reject) {
+	    loader.load('assets/obj/04_thunder/head.js', function (geometry, materials) {
+	        resolve([geometry, materials]);
+	    }, _prologue.onProgress, _prologue.onError);
+	});
+	
+	(function callee$0$0() {
+	    var _ref, _ref2, geometry, materials, material, headMesh;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(head);
+	
+	            case 2:
+	                _ref = context$1$0.sent;
+	                _ref2 = _slicedToArray(_ref, 2);
+	                geometry = _ref2[0];
+	                materials = _ref2[1];
+	
+	                exports.object = object = new THREE.Object3D();
+	
+	                material = materials[0];
+	
+	                material.wireframe = true;
+	                material.wireframeLinewidth = 0.5;
+	                material.side = THREE.FrontSide;
+	                material.color.setHex(0xEEEEEE);
+	                // material.emissive.setHex(0xFFFFFF);
+	                material.morphTargets = true;
+	
+	                headMesh = new THREE.MorphBlendMesh(geometry, material);
+	
+	                // headMesh.createAnimation('FRAME001', 0, 90, 60);
+	                // headMesh.playAnimation('FRAME001');
+	
+	                mixer = headMesh;
+	                // mixer = new THREE.AnimationMixer(headMesh);
+	                // var clip = THREE.AnimationClip.CreateFromMorphTargetSequence('gallop', geometry.morphTargets, 30 );
+	                // mixer.addAction(new THREE.AnimationAction(clip).warpToDuration(1));
+	                object.add(headMesh);
+	                deferred.resolve();
+	
+	            case 17:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map

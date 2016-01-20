@@ -8,11 +8,12 @@ import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
 import * as Wave from './wave';
-import * as Star from './star';
+// import * as Star from './star';
+import * as Sky from './sky';
 import * as Lighthouse from './lighthouse';
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, wave, star, lighthouse, visualizer;
+var scene, camera, renderer, domElement, light, wave, star, sky, lighthouse, visualizer;
 
 export var init = async () => {    
     await Promise.all([
@@ -21,7 +22,8 @@ export var init = async () => {
         Renderer.ready(),
         Light.ready(),
         Wave.ready(),
-        Star.ready(),
+        // Star.ready(),
+        Sky.ready(),
         Lighthouse.ready()
     ]);
 
@@ -31,18 +33,21 @@ export var init = async () => {
     domElement = Renderer.domElement;
     light = Light.light;
     wave = Wave.object;
-    star = Star.object;
+    // star = Star.object;
+    sky = Sky.object;
     lighthouse = Lighthouse.object;
 
     scene.add(camera);
     scene.add(light);
     scene.add(wave);
-    scene.add(star);
+    // scene.add(star);
+    scene.add(sky);
     scene.add(lighthouse);
 
     light.position.set(1000, 1000, 1000);
     wave.position.set(0, 0, 0);
-    star.position.set(0, 2000, -4000);
+    // star.position.set(0, 2000, -4000);
+    sky.position.set(0, 2000, -4000);
     lighthouse.position.set(-2500, 0, -3000);
     camera.position.set(0, 400, 3000);
     camera.lookAt(new THREE.Vector3(0, 400, 0));
