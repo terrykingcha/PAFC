@@ -38752,11 +38752,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var chapter4 = _interopRequireWildcard(_chapter4);
 	
-	var _chapter5 = __webpack_require__(94);
+	var _chapter5 = __webpack_require__(95);
 	
 	var chapter5 = _interopRequireWildcard(_chapter5);
 	
-	var _chapter6 = __webpack_require__(103);
+	var _chapter6 = __webpack_require__(104);
 	
 	var chapter6 = _interopRequireWildcard(_chapter6);
 	
@@ -46196,15 +46196,15 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var People = _interopRequireWildcard(_people);
 	
-	var _head = __webpack_require__(112);
+	var _head = __webpack_require__(92);
 	
 	var Head = _interopRequireWildcard(_head);
 	
-	var _wave = __webpack_require__(92);
+	var _wave = __webpack_require__(93);
 	
 	var Wave = _interopRequireWildcard(_wave);
 	
-	var _controls = __webpack_require__(93);
+	var _controls = __webpack_require__(94);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -46770,6 +46770,102 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var _this = this;
 	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _libPromise = __webpack_require__(10);
+	
+	var _libEnv = __webpack_require__(14);
+	
+	var _libCubicbezier = __webpack_require__(56);
+	
+	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
+	
+	var _libUtil = __webpack_require__(15);
+	
+	var _prologue = __webpack_require__(11);
+	
+	var deferred = (0, _libPromise.defer)();
+	var ready = function ready() {
+	    return deferred.promise;
+	};
+	exports.ready = ready;
+	var object;
+	
+	exports.object = object;
+	var clock = new THREE.Clock();
+	var mixer;
+	var render = function render() {
+	    var delta = clock.getDelta();
+	    mixer.update(delta);
+	};
+	
+	exports.render = render;
+	var loader = new THREE.JSONLoader(_prologue.manager);
+	var head = new Promise(function (resolve, reject) {
+	    loader.load('assets/obj/04_thunder/head.js', function (geometry, materials) {
+	        resolve([geometry, materials]);
+	    }, _prologue.onProgress, _prologue.onError);
+	});
+	
+	(function callee$0$0() {
+	    var _ref, _ref2, geometry, materials, material, headMesh;
+	
+	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
+	        while (1) switch (context$1$0.prev = context$1$0.next) {
+	            case 0:
+	                context$1$0.next = 2;
+	                return regeneratorRuntime.awrap(head);
+	
+	            case 2:
+	                _ref = context$1$0.sent;
+	                _ref2 = _slicedToArray(_ref, 2);
+	                geometry = _ref2[0];
+	                materials = _ref2[1];
+	
+	                exports.object = object = new THREE.Object3D();
+	
+	                material = materials[0];
+	
+	                material.wireframe = true;
+	                material.wireframeLinewidth = 0.5;
+	                material.side = THREE.FrontSide;
+	                material.color.setHex(0xEEEEEE);
+	                // material.emissive.setHex(0xFFFFFF);
+	                material.morphTargets = true;
+	
+	                headMesh = new THREE.MorphBlendMesh(geometry, material);
+	
+	                // headMesh.createAnimation('FRAME001', 0, 90, 60);
+	                // headMesh.playAnimation('FRAME001');
+	
+	                mixer = headMesh;
+	                // mixer = new THREE.AnimationMixer(headMesh);
+	                // var clip = THREE.AnimationClip.CreateFromMorphTargetSequence('gallop', geometry.morphTargets, 30 );
+	                // mixer.addAction(new THREE.AnimationAction(clip).warpToDuration(1));
+	                object.add(headMesh);
+	                deferred.resolve();
+	
+	            case 17:
+	            case 'end':
+	                return context$1$0.stop();
+	        }
+	    }, null, _this);
+	})();
+
+/***/ },
+/* 93 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	
+	var _this = this;
+	
 	exports.render = render;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -46870,7 +46966,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 93 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46909,7 +47005,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 
 /***/ },
-/* 94 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46927,7 +47023,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(95);
+	__webpack_require__(96);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -46935,27 +47031,27 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var _color = __webpack_require__(38);
 	
-	var _scene = __webpack_require__(97);
+	var _scene = __webpack_require__(98);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(98);
+	var _camera = __webpack_require__(99);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(99);
+	var _renderer = __webpack_require__(100);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(100);
+	var _light = __webpack_require__(101);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _rain = __webpack_require__(101);
+	var _rain = __webpack_require__(102);
 	
 	var Rain = _interopRequireWildcard(_rain);
 	
-	var _controls = __webpack_require__(102);
+	var _controls = __webpack_require__(103);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -47173,13 +47269,13 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	exports.hide = hide;
 
 /***/ },
-/* 95 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(96);
+	var content = __webpack_require__(97);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -47199,13 +47295,13 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 97 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47231,7 +47327,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	deferred.resolve();
 
 /***/ },
-/* 98 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47302,7 +47398,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47370,7 +47466,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47399,7 +47495,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	deferred.resolve();
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47625,7 +47721,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47664,7 +47760,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47682,7 +47778,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	__webpack_require__(104);
+	__webpack_require__(105);
 	
 	var _libPromise = __webpack_require__(10);
 	
@@ -47690,27 +47786,27 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	
 	var _color = __webpack_require__(38);
 	
-	var _scene = __webpack_require__(106);
+	var _scene = __webpack_require__(107);
 	
 	var Scene = _interopRequireWildcard(_scene);
 	
-	var _camera = __webpack_require__(107);
+	var _camera = __webpack_require__(108);
 	
 	var Camera = _interopRequireWildcard(_camera);
 	
-	var _renderer = __webpack_require__(108);
+	var _renderer = __webpack_require__(109);
 	
 	var Renderer = _interopRequireWildcard(_renderer);
 	
-	var _light = __webpack_require__(109);
+	var _light = __webpack_require__(110);
 	
 	var Light = _interopRequireWildcard(_light);
 	
-	var _galaxy = __webpack_require__(110);
+	var _galaxy = __webpack_require__(111);
 	
 	var Galaxy = _interopRequireWildcard(_galaxy);
 	
-	var _controls = __webpack_require__(111);
+	var _controls = __webpack_require__(112);
 	
 	var Controls = _interopRequireWildcard(_controls);
 	
@@ -47925,13 +48021,13 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	exports.hide = hide;
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(105);
+	var content = __webpack_require__(106);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -47951,13 +48047,13 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	}
 
 /***/ },
-/* 105 */
+/* 106 */
 /***/ function(module, exports) {
 
 	module.exports = "[scene=\"chapters\"] {\n  position: absolute;\n  opacity: 0;\n  display: none;\n}\n"
 
 /***/ },
-/* 106 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47983,7 +48079,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	deferred.resolve();
 
 /***/ },
-/* 107 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48054,7 +48150,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 108 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48122,7 +48218,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 109 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48151,7 +48247,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	deferred.resolve();
 
 /***/ },
-/* 110 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48385,7 +48481,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	})();
 
 /***/ },
-/* 111 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48422,102 +48518,6 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	    controls.enableZoom = false;
 	    deferred.resolve();
 	}
-
-/***/ },
-/* 112 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	    value: true
-	});
-	
-	var _this = this;
-	
-	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _libPromise = __webpack_require__(10);
-	
-	var _libEnv = __webpack_require__(14);
-	
-	var _libCubicbezier = __webpack_require__(56);
-	
-	var _libCubicbezier2 = _interopRequireDefault(_libCubicbezier);
-	
-	var _libUtil = __webpack_require__(15);
-	
-	var _prologue = __webpack_require__(11);
-	
-	var deferred = (0, _libPromise.defer)();
-	var ready = function ready() {
-	    return deferred.promise;
-	};
-	exports.ready = ready;
-	var object;
-	
-	exports.object = object;
-	var clock = new THREE.Clock();
-	var mixer;
-	var render = function render() {
-	    var delta = clock.getDelta();
-	    mixer.update(delta);
-	};
-	
-	exports.render = render;
-	var loader = new THREE.JSONLoader(_prologue.manager);
-	var head = new Promise(function (resolve, reject) {
-	    loader.load('assets/obj/04_thunder/head.js', function (geometry, materials) {
-	        resolve([geometry, materials]);
-	    }, _prologue.onProgress, _prologue.onError);
-	});
-	
-	(function callee$0$0() {
-	    var _ref, _ref2, geometry, materials, material, headMesh;
-	
-	    return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
-	        while (1) switch (context$1$0.prev = context$1$0.next) {
-	            case 0:
-	                context$1$0.next = 2;
-	                return regeneratorRuntime.awrap(head);
-	
-	            case 2:
-	                _ref = context$1$0.sent;
-	                _ref2 = _slicedToArray(_ref, 2);
-	                geometry = _ref2[0];
-	                materials = _ref2[1];
-	
-	                exports.object = object = new THREE.Object3D();
-	
-	                material = materials[0];
-	
-	                material.wireframe = true;
-	                material.wireframeLinewidth = 0.5;
-	                material.side = THREE.FrontSide;
-	                material.color.setHex(0xEEEEEE);
-	                // material.emissive.setHex(0xFFFFFF);
-	                material.morphTargets = true;
-	
-	                headMesh = new THREE.MorphBlendMesh(geometry, material);
-	
-	                // headMesh.createAnimation('FRAME001', 0, 90, 60);
-	                // headMesh.playAnimation('FRAME001');
-	
-	                mixer = headMesh;
-	                // mixer = new THREE.AnimationMixer(headMesh);
-	                // var clip = THREE.AnimationClip.CreateFromMorphTargetSequence('gallop', geometry.morphTargets, 30 );
-	                // mixer.addAction(new THREE.AnimationAction(clip).warpToDuration(1));
-	                object.add(headMesh);
-	                deferred.resolve();
-	
-	            case 17:
-	            case 'end':
-	                return context$1$0.stop();
-	        }
-	    }, null, _this);
-	})();
 
 /***/ }
 /******/ ]);//# sourceMappingURL=pafc.js.map

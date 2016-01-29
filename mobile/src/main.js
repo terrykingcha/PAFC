@@ -29,11 +29,7 @@ const STORY = `
             <p class="cn">大自然的声音里面，风是最神秘的。以风为信使，大自然向人们传递讯息。我们的团队，广州 Saatchi & Saatchi 的创意者们，尝试把这些信息收集起来。用一场风的音乐会，让人们再次重视繁华下的自然。</p>
         </section>
         <div class="video">
-            <video controls
-                crossorigin="anonymous"
-                poster="${PATH}/poster.jpg"
-                preload="auto">
-            </video>
+            <embed src="http://player.youku.com/player.php/sid/XMTQ0NDY2NzE2MA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
         </div>
         <section>
             <p class="en">First, we look for the best location to catch the wind. Shenzhen mirrors China in its miraculous speed of progress. And 600 meters PAFC is at the top of Shenzhen, where the sky, land and humans meet. This is where the wind chose.</p>
@@ -55,11 +51,7 @@ const STORY = `
             <p class="cn">这是一次新的艺术与科技的尝试，我们希望做一些实实在在的东西，唤起人们对自然的敬畏。而我们也确实实现了这一奇迹。<!--以下是完整的专辑，请随意聆听、下载和分享，尽情地感受自然吧。--></p>
         </section>
         <div class="video">
-            <video controls
-                crossorigin="anonymous"
-                poster="${PATH}/poster.jpg"
-                preload="auto">
-            </video>
+            <embed src="http://player.youku.com/player.php/sid/XMTQ0NDYzMTQwNA==/v.swf" allowFullScreen="true" quality="high" width="480" height="310" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
         </div>
     </div>
 </div>
