@@ -7,20 +7,18 @@ import * as Scene from './scene';
 import * as Camera from './camera';
 import * as Renderer from './renderer';
 import * as Light from './light';
-import * as People from './people';
 import * as Head from './head';
 import * as Wave from './wave';
 
 import * as Controls from './controls';
 
-var scene, camera, renderer, domElement, light, people, head, wave, visualizer;
+var scene, camera, renderer, domElement, light, head, wave, visualizer;
 
 export var init = async () => {    
     await Promise.all([
         Scene.ready(),
         Camera.ready(),
         Renderer.ready(),
-        People.ready(),
         Wave.ready(),
         Head.ready(),
         Light.ready()
@@ -30,22 +28,21 @@ export var init = async () => {
     camera = Camera.camera;
     renderer = Renderer.renderer;
     domElement = Renderer.domElement;
-    people = People.object;
     wave = Wave.object;
     head = Head.object;
     light = Light.light;
 
     scene.add(camera);
     scene.add(light);
-    // scene.add(people);
     scene.add(wave);
     scene.add(head);
 
-    light.position.set(-50, 100, 100);
+    light.position.set(50, 100, 100);
     camera.position.set(0, 0, 200);
     wave.position.set(0, -30, 30);
-    head.scale.set(20, 20, 20);
-    head.position.set(0, -370, -20);
+    head.scale.set(10, 10, 10);
+    head.position.set(0, -470, -20);
+
     
     // await Controls.init(camera, renderer);
     await pageLoad();
@@ -66,9 +63,9 @@ export function resize() {
     Camera.resize();
 }
 
-var note = [0,9, 35,39, 51,58, 87,92, 109,115, 133,140];
+var note = [0, 7,13, 24,29, 40,45, 56,61, 66,72, 80, 85, 96,101, 112,117, 128,141];
 var tempNode = [];
-function togglePeople() {
+function toggleHead() {
     var time = visualizer.getTime();
     if (note.length === 0 && time < 1) {
         note = tempNode.slice(0);
@@ -76,7 +73,7 @@ function togglePeople() {
     }
     if (Math.floor(time) >= note[0]) {
         tempNode.push(note.shift());
-        // People.toggle();
+        Head.toggle();
     }
 }
 
@@ -92,9 +89,9 @@ function renderWave() {
 
 export function render() {
     // Controls.render();
-    // togglePeople();
-    Head.render();
+    toggleHead();
     renderWave();
+    Head.render();
     renderer.render(scene, camera);
 }
 

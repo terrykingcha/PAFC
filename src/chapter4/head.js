@@ -8,42 +8,56 @@ var deferred = defer();
 export var ready = () => deferred.promise;
 export var object;
 
-var clock = new THREE.Clock();
-var mixer;
-export var render = () => {
-    var delta = clock.getDelta();
-    mixer.update(delta);
-}
-
 var loader = new THREE.JSONLoader(manager);
-var head = new Promise(function(resolve, reject) {
-    loader.load('assets/obj/04_thunder/head.js', function(geometry, materials) {
-        resolve([geometry, materials]);
-    }, onProgress, onError);
-});
+var headPromise = [
+    new Promise(function(resolve, reject) {
+        loader.load('assets/obj/04_thunder/head01.js', function(geometry, materials) {
+            resolve([geometry, materials]);
+        }, onProgress, onError);
+    }),
 
+    new Promise(function(resolve, reject) {
+        loader.load('assets/obj/04_thunder/head02.js', function(geometry, materials) {
+            resolve([geometry, materials]);
+        }, onProgress, onError);
+    })
+];
 
-(async () => {
-    var [geometry, materials] = await head;
-
-    object = new THREE.Object3D();
-
+var heads = [];
+function build([geometry, materials]) {
     var material = materials[0];
     material.wireframe = true;
     material.wireframeLinewidth = 0.5;
     material.side = THREE.FrontSide;
     material.color.setHex(0xEEEEEE);
-    // material.emissive.setHex(0xFFFFFF);
     material.morphTargets = true;
 
-    var headMesh = new THREE.MorphBlendMesh(geometry, material);
-    // headMesh.createAnimation('FRAME001', 0, 90, 60);
-    // headMesh.playAnimation('FRAME001');
+    var headMesh = new THREE.Mesh(geometry, material);
+    heads.push(headMesh);
+    headMesh.position.z = 9999;
 
-    mixer = headMesh;
-    // mixer = new THREE.AnimationMixer(headMesh);
-    // var clip = THREE.AnimationClip.CreateFromMorphTargetSequence('gallop', geometry.morphTargets, 30 );
-    // mixer.addAction(new THREE.AnimationAction(clip).warpToDuration(1));
-    object.add(headMesh);
+    return headMesh;
+}
+
+export function render() {
+    object.rotation.y -= 0.0015;
+}
+
+export function toggle() {
+    var head = heads.shift();
+
+    head.position.z = 0;
+    heads[0].position.z = 9999;
+
+    heads.push(head);
+}
+
+
+(async () => {
+    var [head1, head2] = await Promise.all(headPromise);
+
+    object = new THREE.Object3D();
+    object.add(build(head1));
+    object.add(build(head2));
     deferred.resolve();
 })()
