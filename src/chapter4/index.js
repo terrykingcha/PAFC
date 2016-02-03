@@ -63,7 +63,7 @@ export function resize() {
     Camera.resize();
 }
 
-var note = [0, 7,13, 24,29, 40,45, 56,61, 66,72, 80, 85, 96,101, 112,117, 128,141];
+var note = [0, 8,14, 24,30, 40,45, 56,61, 64,71, 80,85, 96,101, 104,109, 112,117, 128,134, 136,143, 158];
 var tempNode = [];
 function toggleHead() {
     var time = visualizer.getTime();
